@@ -1,9 +1,10 @@
 ---
 name: Bug Report Template
-about: ''
+about: 버그용 템플릿입니다.
 title: ''
 labels: ''
 assignees: ''
+
 ---
 
 ## 발생 일시

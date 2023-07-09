@@ -1,9 +1,10 @@
 ---
 name: Custom Issue Template
-about: ''
+about: 이슈 생성용 템플릿입니다.
 title: ''
 labels: ''
 assignees: ''
+
 ---
 
 ## Description 🖊️
