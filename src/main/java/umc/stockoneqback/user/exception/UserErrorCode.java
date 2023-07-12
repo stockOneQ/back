@@ -1,0 +1,18 @@
+package umc.stockoneqback.user.exception;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import umc.stockoneqback.global.exception.ErrorCode;
+
+@Getter
+@RequiredArgsConstructor
+public enum UserErrorCode implements ErrorCode {
+    INVALID_EMAIL_FORMAT(HttpStatus.BAD_REQUEST, "USER_001", "이메일 형식이 올바르지 않습니다."),
+    INVALID_PASSWORD_PATTERN(HttpStatus.BAD_REQUEST, "USER_002", "비밀번호 형식이 올바르지 않습니다.")
+    ;
+
+    private final HttpStatus status;
+    private final String errorCode;
+    private final String message;
+}
