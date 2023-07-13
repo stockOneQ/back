@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.stockoneqback.global.BaseTimeEntity;
+import umc.stockoneqback.global.exception.ApplicationException;
+import umc.stockoneqback.user.exception.UserErrorCode;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -53,6 +55,6 @@ public class User extends BaseTimeEntity {
         return Arrays.stream(Role.values())
                 .filter(role -> role.getValue().equals(roleString))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new ApplicationException(UserErrorCode.ROLE_NOT_FOUND));
     }
 }
