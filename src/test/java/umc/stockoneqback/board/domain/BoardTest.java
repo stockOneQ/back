@@ -21,7 +21,7 @@ public class BoardTest {
     @BeforeEach
     void setUp() {
         writer[0] = SAEWOO.toUser();
-        writer[1] = WEEZ.toUser();
+        writer[1] = WIZ.toUser();
         board = BOARD_0.toBoard(writer[0]);
     }
 
