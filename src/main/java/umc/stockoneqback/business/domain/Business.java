@@ -15,8 +15,7 @@ import javax.persistence.*;
 /*
  * TODO : ADD "extends BaseTimeEntity"
  * */
-public class Business {
-
+public class  Business {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "business_id")

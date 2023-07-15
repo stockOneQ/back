@@ -16,7 +16,6 @@ import javax.persistence.*;
  * TODO : ADD "extends BaseTimeEntity"
  * */
 public class Store {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_id")
@@ -24,9 +23,12 @@ public class Store {
 
     @Column(name = "store_name")
     private String name;
+
     private String sector;
+
     @Column(name = "store_code")
     private String code;
+
     private String address;
 
     private Status status;

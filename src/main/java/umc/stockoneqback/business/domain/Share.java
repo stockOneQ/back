@@ -16,16 +16,19 @@ import javax.persistence.*;
  * TODO : ADD "extends BaseTimeEntity"
  * */
 public class Share {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "share_id")
     private Long id;
 
     private String title;
+
     private String file;
+
     private String content;
+
     private Category category;
+
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)

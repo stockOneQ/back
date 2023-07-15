@@ -20,7 +20,6 @@ import java.util.Date;
  * TODO : ADD "extends BaseTimeEntity"
  * */
 public class Product {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
@@ -28,25 +27,36 @@ public class Product {
 
     @Column(name = "product_name")
     private String name;
+
     private Long price;
+
     private String vendor;
+
     private String image;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date receivingDate;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expirationDate;
+
     @Nullable
     private String location;
+
     private Long requireQuant;
+
     private Long stockQuant;
+
     @Nullable
     private String siteToOrder;
+
     private Long orderFreq;
+
     private StoreCondition storeCondition;
+
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private Store store;
-
 }
