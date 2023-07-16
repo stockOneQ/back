@@ -42,7 +42,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     // Amazon S3 (NCP Object Storage)
-    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.450'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.232'
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE' // add
 
     // JWT
