@@ -163,7 +163,6 @@ class UserApiControllerTest extends ControllerTest {
                     .content(objectMapper.writeValueAsString(request));
 
             // then
-            final UserErrorCode expectedError = UserErrorCode.DUPLICATE_LOGIN_ID;
             mockMvc.perform(requestBuilder)
                     .andExpect(
                             status().isOk()
@@ -316,7 +315,6 @@ class UserApiControllerTest extends ControllerTest {
                     .content(objectMapper.writeValueAsString(request));
 
             // then
-            final UserErrorCode expectedError = UserErrorCode.INVALID_STORE_CODE;
             mockMvc.perform(requestBuilder)
                     .andExpect(
                             status().isOk()
@@ -451,6 +449,45 @@ class UserApiControllerTest extends ControllerTest {
                     );
         }
 
+        @Test
+        @DisplayName("슈퍼바이저 등록에 성공한다")
+        void success() throws Exception {
+            // given
+            doReturn(USER_ID)
+                    .when(userService)
+                    .saveSupervisor(any(), anyString(), anyString());
+
+            // when
+            final SignUpSupervisorRequest request = createSignUpSupervisorRequest();
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .post(BASE_URL)
+                    .with(csrf())
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request));
+
+            // then
+            mockMvc.perform(requestBuilder)
+                    .andExpect(
+                            status().isOk()
+                    )
+                    .andDo(
+                            document(
+                                    "UserApi/SignUp/Supervisor/Success",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestFields(
+                                            fieldWithPath("name").description("이름"),
+                                            fieldWithPath("birth").description("생일"),
+                                            fieldWithPath("email").description("이메일"),
+                                            fieldWithPath("loginId").description("아이디"),
+                                            fieldWithPath("password").description("비밀번호"),
+                                            fieldWithPath("phoneNumber").description("전화번호"),
+                                            fieldWithPath("companyName").description("회사 이름"),
+                                            fieldWithPath("companyCode").description("회사 코드")
+                                    )
+                            )
+                    );
+        }
     }
 
     private SignUpManagerRequest createSignUpManagerRequest() {
