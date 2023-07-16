@@ -1,18 +1,22 @@
 package umc.stockoneqback.file.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
+import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.file.utils.exception.FileErrorCode;
 import umc.stockoneqback.global.exception.ApplicationException;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.UUID;
 
 @Slf4j
@@ -76,5 +80,42 @@ public class FileService {
             case SHARE -> String.format("share/%s", fileKey);
             default -> throw ApplicationException.type(FileErrorCode.INVALID_DIR);
         };
+    }
+
+    // download
+    public ResponseEntity<byte[]> download(String fileUrl) throws IOException {
+        S3Object s3object = amazonS3.getObject(new GetObjectRequest(bucket, fileUrl));
+        S3ObjectInputStream objectInputStream = s3object.getObjectContent();
+        byte[] bytes = IOUtils.toByteArray(objectInputStream);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(contentType(fileUrl));
+        httpHeaders.setContentLength(bytes.length);
+        String[] arr = fileUrl.split("/");
+        String type = arr[arr.length - 1];
+        String fileName = URLEncoder.encode(type, "UTF-8").replaceAll("\\+", "%20");
+        httpHeaders.setContentDispositionFormData("attachment", fileName); // 파일 이름 지정
+
+        return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+    }
+
+    private MediaType contentType(String fileUrl) {
+        String[] arr = fileUrl.split("\\.");
+        String type = arr[arr.length - 1];
+
+        switch (type) {
+            case "txt" -> {
+                return MediaType.TEXT_PLAIN;
+            }
+            case "jpg" -> {
+                return MediaType.IMAGE_JPEG;
+            }
+            case "png" -> {
+                return MediaType.IMAGE_PNG;
+            }
+            default -> {
+                return MediaType.APPLICATION_OCTET_STREAM;
+            }
+        }
     }
 }

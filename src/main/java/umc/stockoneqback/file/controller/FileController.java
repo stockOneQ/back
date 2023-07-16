@@ -2,14 +2,13 @@ package umc.stockoneqback.file.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import umc.stockoneqback.file.dto.UploadRequest;
 import umc.stockoneqback.file.service.FileService;
 
 import javax.validation.Valid;
+
+import java.io.IOException;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
@@ -27,5 +26,11 @@ public class FileController {
                 : fileService.uploadShareFiles(request.file());
 
         return ResponseEntity.ok(uploadFileLink);
+    }
+
+    // download
+    @GetMapping(value = "/download")
+    public ResponseEntity<byte[]> download(String fileUrl) throws IOException {
+        return fileService.download(fileUrl);
     }
 }
