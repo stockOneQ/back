@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import umc.stockoneqback.global.BaseTimeEntity;
 import umc.stockoneqback.global.Status;
 
 import javax.persistence.*;
@@ -12,10 +13,8 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-/*
- * TODO : ADD "extends BaseTimeEntity"
- * */
-public class  Business {
+@Table(name = "business")
+public class Business extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "business_id")
