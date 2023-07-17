@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import umc.stockoneqback.global.BaseTimeEntity;
 import umc.stockoneqback.global.Status;
 
 import javax.persistence.*;
@@ -13,13 +14,12 @@ import javax.persistence.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 /*
- * TODO : ADD "extends BaseTimeEntity"
+ * TODO : file type change required
  * */
-public class Share {
+public class Share extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "share_id")
     private Long id;
 
     private String title;
@@ -31,4 +31,5 @@ public class Share {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_id")
     private Business business;
+
 }

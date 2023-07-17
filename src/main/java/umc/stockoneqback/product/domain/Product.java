@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
+import umc.stockoneqback.global.BaseTimeEntity;
 import umc.stockoneqback.global.Status;
 import umc.stockoneqback.role.domain.Store;
 
@@ -17,16 +18,14 @@ import java.util.Date;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 /*
- * TODO : ADD "extends BaseTimeEntity"
+ * TODO : image type change required
  * */
-public class Product {
+public class Product extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
     private Long id;
 
-    @Column(name = "product_name")
     private String name;
     private Long price;
     private String vendor;
