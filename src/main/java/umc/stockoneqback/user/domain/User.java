@@ -3,13 +3,18 @@ package umc.stockoneqback.user.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.global.BaseTimeEntity;
 import umc.stockoneqback.global.exception.ApplicationException;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+import static javax.persistence.CascadeType.PERSIST;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -36,6 +41,10 @@ public class User extends BaseTimeEntity {
     private Role role;
 
     private Boolean status;
+
+    // 회원 탈퇴시 작성한 게시글 모두 삭제
+    @OneToMany(mappedBy = "writer", cascade = PERSIST, orphanRemoval = true)
+    private List<Board> boardList = new ArrayList<>();
 
     private User(Email email, Password password, String username, LocalDate birth, String phoneNumber, Role role) {
         this.email = email;
