@@ -1,4 +1,4 @@
-package umc.stockoneqback.global;
+package umc.stockoneqback.global.base;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

@@ -1,14 +1,14 @@
-package umc.stockoneqback.global.exception;
+package umc.stockoneqback.global.base;
 
-public class ApplicationException extends RuntimeException {
+public class BaseException extends RuntimeException {
     private final ErrorCode code;
 
-    public ApplicationException(ErrorCode code) {
+    public BaseException(ErrorCode code) {
         super(code.getMessage());
         this.code = code;
     }
 
-    public static ApplicationException type(ErrorCode code) {
-        return new ApplicationException(code);
+    public static BaseException type(ErrorCode code) {
+        return new BaseException(code);
     }
 }

@@ -3,7 +3,7 @@ package umc.stockoneqback.user.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import umc.stockoneqback.global.exception.ApplicationException;
+import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +17,7 @@ public class PasswordTest {
     @DisplayName("비밀번호 패턴에 맞지 않아 비밀번호 생성에 실패한다")
     void throwExceptionByInvalidNicknamePattern(String value) {
         assertThatThrownBy(() -> Password.encrypt(value, ENCODER))
-                .isInstanceOf(ApplicationException.class)
+                .isInstanceOf(BaseException.class)
                 .hasMessage(UserErrorCode.INVALID_PASSWORD_PATTERN.getMessage());
     }
 

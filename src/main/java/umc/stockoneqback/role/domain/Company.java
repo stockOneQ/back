@@ -4,8 +4,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import umc.stockoneqback.global.BaseTimeEntity;
-import umc.stockoneqback.global.Status;
+import umc.stockoneqback.global.base.BaseTimeEntity;
+import umc.stockoneqback.global.base.Status;
 
 import javax.persistence.*;
 

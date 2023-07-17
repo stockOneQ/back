@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import umc.stockoneqback.global.exception.ApplicationException;
+import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
 import javax.persistence.Column;
@@ -35,7 +35,7 @@ public class Password {
 
     private static void validatePassword(String value) {
         if (isNotValidPattern(value)) {
-            throw ApplicationException.type(UserErrorCode.INVALID_PASSWORD_PATTERN);
+            throw BaseException.type(UserErrorCode.INVALID_PASSWORD_PATTERN);
         }    }
 
     private static boolean isNotValidPattern(String password) {

@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
-import umc.stockoneqback.global.BaseTimeEntity;
-import umc.stockoneqback.global.Status;
+import umc.stockoneqback.global.base.BaseTimeEntity;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.role.domain.Store;
 
 import javax.persistence.*;

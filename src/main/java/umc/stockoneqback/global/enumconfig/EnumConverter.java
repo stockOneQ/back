@@ -1,4 +1,4 @@
-package umc.stockoneqback.global;
+package umc.stockoneqback.global.enumconfig;
 
 import lombok.extern.slf4j.Slf4j;
 

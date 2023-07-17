@@ -3,7 +3,7 @@ package umc.stockoneqback.user.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import umc.stockoneqback.global.exception.ApplicationException;
+import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,7 +21,7 @@ class UserTest {
         @DisplayName("존재하지 않는 역할은 역할 Enum Class로 변환할 수 없다")
         void throwExceptionByRoleNotFound() {
             org.assertj.core.api.Assertions.assertThatThrownBy(() -> User.createUser(Email.from(ANNE.getEmail()), Password.encrypt(ANNE.getPassword(), ENCODER), ANNE.getUsername(), ANNE.getBirth(), ANNE.getPhoneNumber(), "시장님"))
-                    .isInstanceOf(ApplicationException.class)
+                    .isInstanceOf(BaseException.class)
                     .hasMessage(UserErrorCode.ROLE_NOT_FOUND.getMessage());
         }
 

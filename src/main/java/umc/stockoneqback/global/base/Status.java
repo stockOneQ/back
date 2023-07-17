@@ -1,7 +1,9 @@
-package umc.stockoneqback.global;
+package umc.stockoneqback.global.base;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import umc.stockoneqback.global.enumconfig.EnumConverter;
+import umc.stockoneqback.global.enumconfig.EnumStandard;
 
 @Getter
 @AllArgsConstructor
