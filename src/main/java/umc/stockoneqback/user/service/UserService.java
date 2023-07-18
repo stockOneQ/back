@@ -3,7 +3,7 @@ package umc.stockoneqback.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import umc.stockoneqback.global.exception.ApplicationException;
+import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.role.domain.company.Company;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.CompanyService;
@@ -33,7 +33,7 @@ public class UserService {
 
     private void validateDuplicateLoginId(String loginId) {
         if (userRepository.existsByLoginId(loginId)) {
-            throw ApplicationException.type(UserErrorCode.DUPLICATE_LOGIN_ID);
+            throw BaseException.type(UserErrorCode.DUPLICATE_LOGIN_ID);
         }
     }
 
@@ -51,7 +51,7 @@ public class UserService {
 
     private void validateStoreCode(String userCode, String savedCode) {
         if (!userCode.equals(savedCode)) {
-            throw ApplicationException.type(UserErrorCode.INVALID_STORE_CODE);
+            throw BaseException.type(UserErrorCode.INVALID_STORE_CODE);
         }
     }
 
@@ -69,7 +69,7 @@ public class UserService {
 
     private void validateCompanyCode(String userCode, String savedCode) {
         if (!userCode.equals(savedCode)) {
-            throw ApplicationException.type(UserErrorCode.INVALID_COMPANY_CODE);
+            throw BaseException.type(UserErrorCode.INVALID_COMPANY_CODE);
         }
     }
 }

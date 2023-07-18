@@ -1,8 +1,6 @@
 package umc.stockoneqback.fixture;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import umc.stockoneqback.user.domain.Email;
 import umc.stockoneqback.user.domain.Password;

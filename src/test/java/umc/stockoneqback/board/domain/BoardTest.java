@@ -3,14 +3,14 @@ package umc.stockoneqback.board.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.comment.domain.Comment;
-
+import umc.stockoneqback.user.domain.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
-import static umc.stockoneqback.fixture.UserFixture.*;
+import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
+import static umc.stockoneqback.fixture.UserFixture.WIZ;
 import static umc.stockoneqback.global.base.Status.NORMAL;
 
 @DisplayName("Board 도메인 테스트")
