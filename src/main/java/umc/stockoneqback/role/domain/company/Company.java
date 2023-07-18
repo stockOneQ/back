@@ -1,8 +1,8 @@
 package umc.stockoneqback.role.domain.company;
 
 import lombok.*;
-import umc.stockoneqback.global.BaseTimeEntity;
-import umc.stockoneqback.global.Status;
+import umc.stockoneqback.global.base.BaseTimeEntity;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.user.domain.User;
 
 import javax.persistence.*;

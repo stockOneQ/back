@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
 import static umc.stockoneqback.fixture.CommentFixture.COMMENT_0;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
-import static umc.stockoneqback.global.Status.NORMAL;
+import static umc.stockoneqback.global.base.Status.NORMAL;
 
 @DisplayName("Comment 도메인 테스트")
 public class CommentTest {

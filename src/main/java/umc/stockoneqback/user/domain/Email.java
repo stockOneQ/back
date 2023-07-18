@@ -3,7 +3,7 @@ package umc.stockoneqback.user.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import umc.stockoneqback.global.exception.ApplicationException;
+import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
 import javax.persistence.Column;
@@ -34,7 +34,7 @@ public class Email {
 
     private static void validateEmailPattern(String value) {
         if (isNotValidPattern(value)) {
-            throw ApplicationException.type(UserErrorCode.INVALID_EMAIL_FORMAT);
+            throw BaseException.type(UserErrorCode.INVALID_EMAIL_FORMAT);
         }
     }
 

@@ -1,4 +1,4 @@
-package umc.stockoneqback.global.exception;
+package umc.stockoneqback.global.base;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import umc.stockoneqback.global.exception.ApplicationException;
 
 import java.util.List;
 

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.global.Status;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.global.exception.ApplicationException;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.exception.StoreErrorCode;

@@ -1,4 +1,4 @@
-package umc.stockoneqback.global.exception;
+package umc.stockoneqback.global.base;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

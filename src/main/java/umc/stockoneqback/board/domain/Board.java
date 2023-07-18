@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.stockoneqback.comment.domain.Comment;
-import umc.stockoneqback.global.BaseTimeEntity;
-import umc.stockoneqback.global.Status;
+import umc.stockoneqback.global.base.BaseTimeEntity;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.user.domain.User;
 
 import javax.persistence.*;

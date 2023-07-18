@@ -1,7 +1,6 @@
 package umc.stockoneqback.reply.domain;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.comment.domain.Comment;
@@ -13,7 +12,7 @@ import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
 import static umc.stockoneqback.fixture.CommentFixture.COMMENT_0;
 import static umc.stockoneqback.fixture.ReplyFixture.REPLY_0;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
-import static umc.stockoneqback.global.Status.NORMAL;
+import static umc.stockoneqback.global.base.Status.NORMAL;
 
 @DisplayName("Reply 도메인 테스트")
 public class ReplyTest {

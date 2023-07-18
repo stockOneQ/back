@@ -3,10 +3,12 @@ package umc.stockoneqback.user.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import umc.stockoneqback.global.base.BaseTimeEntity;
+import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.Status;
+import umc.stockoneqback.user.exception.UserErrorCode;
 import org.springframework.format.annotation.DateTimeFormat;
 import umc.stockoneqback.board.domain.Board;
-import umc.stockoneqback.global.BaseTimeEntity;
-import umc.stockoneqback.global.Status;
 import umc.stockoneqback.role.domain.company.Company;
 
 import javax.persistence.*;
@@ -53,11 +55,11 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "writer", cascade = PERSIST, orphanRemoval = true)
     private List<Board> boardList = new ArrayList<>();
 
-    private User(Email email, Password password, String username, LocalDate birth, String phoneNumber, Role role) {
+    private User(Email email, String loginId, Password password, String username, LocalDate birth, String phoneNumber, Role role) {
         this.email = email;
         this.loginId = loginId;
         this.password = password;
-        this.name = name;
+        this.name = username;
         this.birth = birth;
         this.phoneNumber = phoneNumber;
         this.role = role;
@@ -68,6 +70,12 @@ public class User extends BaseTimeEntity {
         return new User(email, loginId, password, username, birth, phoneNumber, role);
     }
 
+    private static Role roleStringToEnum(String roleString) {
+        return Arrays.stream(Role.values())
+                .filter(role -> role.getValue().equals(roleString))
+                .findFirst()
+                .orElseThrow(() -> new BaseException(UserErrorCode.ROLE_NOT_FOUND));
+    }
     public void updateCompany(Company company) {
         this.company = company;
     }

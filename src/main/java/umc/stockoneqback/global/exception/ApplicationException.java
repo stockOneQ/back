@@ -1,6 +1,7 @@
 package umc.stockoneqback.global.exception;
 
 import lombok.Getter;
+import umc.stockoneqback.global.base.ErrorCode;
 
 @Getter
 public class ApplicationException extends RuntimeException {

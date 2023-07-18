@@ -3,7 +3,7 @@ package umc.stockoneqback.role.domain.company;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import umc.stockoneqback.fixture.UserFixture;
-import umc.stockoneqback.global.Status;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.user.domain.User;
 
 import static org.assertj.core.api.Assertions.assertThat;

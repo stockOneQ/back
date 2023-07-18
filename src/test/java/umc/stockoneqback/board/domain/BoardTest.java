@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
 import static umc.stockoneqback.fixture.UserFixture.*;
-import static umc.stockoneqback.global.Status.NORMAL;
+import static umc.stockoneqback.global.base.Status.NORMAL;
 
 @DisplayName("Board 도메인 테스트")
 public class BoardTest {

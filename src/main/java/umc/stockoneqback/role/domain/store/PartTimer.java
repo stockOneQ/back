@@ -3,7 +3,7 @@ package umc.stockoneqback.role.domain.store;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import umc.stockoneqback.global.BaseTimeEntity;
+import umc.stockoneqback.global.base.BaseTimeEntity;
 import umc.stockoneqback.user.domain.User;
 
 import javax.persistence.*;

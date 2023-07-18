@@ -2,7 +2,7 @@ package umc.stockoneqback.user.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import umc.stockoneqback.global.exception.ApplicationException;
+import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
 import java.util.Arrays;
@@ -30,7 +30,7 @@ public class EmailTest {
 
     private static void assertException(String value) {
         assertThatThrownBy(() -> Email.from(value))
-                .isInstanceOf(ApplicationException.class)
+                .isInstanceOf(BaseException.class)
                 .hasMessage(UserErrorCode.INVALID_EMAIL_FORMAT.getMessage());
     }
 
