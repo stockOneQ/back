@@ -4,14 +4,17 @@ import lombok.*;
 import umc.stockoneqback.global.base.BaseTimeEntity;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.user.domain.User;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table(name = "business")
 public class Business extends BaseTimeEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,5 +34,4 @@ public class Business extends BaseTimeEntity {
         this.manager = manager;
         this.supervisor = supervisor;
     }
-
 }

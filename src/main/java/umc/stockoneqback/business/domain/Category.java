@@ -8,7 +8,6 @@ import umc.stockoneqback.global.enumconfig.EnumStandard;
 @Getter
 @AllArgsConstructor
 public enum Category implements EnumStandard {
-
     ANNOUNCEMENT("공지사항"),
     RECIPE("레시피"),
     EVENT("행사내용"),

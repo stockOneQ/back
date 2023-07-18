@@ -8,7 +8,6 @@ import umc.stockoneqback.global.enumconfig.EnumStandard;
 @Getter
 @AllArgsConstructor
 public enum StoreCondition implements EnumStandard {
-
     FREEZING("냉동"),
     REFRIGERATING("냉장"),
     ROOM("상온");

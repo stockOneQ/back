@@ -8,7 +8,6 @@ import umc.stockoneqback.global.enumconfig.EnumStandard;
 @Getter
 @AllArgsConstructor
 public enum Status implements EnumStandard {
-
     NORMAL("정상"),
     EXPIRED("소멸");
 

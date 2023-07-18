@@ -16,20 +16,23 @@ import javax.persistence.*;
 /*
  * TODO : file type change required
  * */
+@Table(name = "share")
 public class Share extends BaseTimeEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
+
     private String file;
+
     private String content;
+
     private Category category;
+
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_id")
     private Business business;
-
 }
