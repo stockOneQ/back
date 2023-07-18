@@ -19,6 +19,7 @@ public class Business extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Convert(converter = Status.StatusConverter.class)
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)

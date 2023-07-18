@@ -16,8 +16,8 @@ public enum Category implements EnumStandard {
     private String value;
 
     @javax.persistence.Converter
-    public static class Converter extends EnumConverter<Category> {
-        public Converter() {
+    public static class CategoryConverter extends EnumConverter<Category> {
+        public CategoryConverter() {
             super(Category.class);
         }
     }

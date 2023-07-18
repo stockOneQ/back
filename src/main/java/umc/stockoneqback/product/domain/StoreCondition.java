@@ -15,8 +15,8 @@ public enum StoreCondition implements EnumStandard {
     private String value;
 
     @javax.persistence.Converter
-    public static class Converter extends EnumConverter<StoreCondition> {
-        public Converter() {
+    public static class StoreConditionConverter extends EnumConverter<StoreCondition> {
+        public StoreConditionConverter() {
             super(StoreCondition.class);
         }
     }

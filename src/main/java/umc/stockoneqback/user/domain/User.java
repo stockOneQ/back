@@ -43,12 +43,14 @@ public class User extends BaseTimeEntity {
 
     private String phoneNumber;
 
+    @Convert(converter = Role.RoleConverter.class)
     private Role role;
 
     @ManyToOne
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
 
+    @Convert(converter = Status.StatusConverter.class)
     private Status status;
 
     // 회원 탈퇴시 작성한 게시글 모두 삭제
