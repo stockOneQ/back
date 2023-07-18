@@ -3,10 +3,11 @@ package umc.stockoneqback.user.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.global.BaseTimeEntity;
-import umc.stockoneqback.global.exception.ApplicationException;
-import umc.stockoneqback.user.exception.UserErrorCode;
+import umc.stockoneqback.global.Status;
+import umc.stockoneqback.role.domain.company.Company;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -28,19 +29,25 @@ public class User extends BaseTimeEntity {
     @Embedded
     private Email email;
 
+    private String loginId;
+
     @Embedded
     private Password password;
 
-    private String username;
+    private String name;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birth;
 
     private String phoneNumber;
 
-    @Embedded
     private Role role;
 
-    private Boolean status;
+    @ManyToOne
+    @JoinColumn(name = "company_id", referencedColumnName = "id")
+    private Company company;
+
+    private Status status;
 
     // 회원 탈퇴시 작성한 게시글 모두 삭제
     @OneToMany(mappedBy = "writer", cascade = PERSIST, orphanRemoval = true)
@@ -48,22 +55,20 @@ public class User extends BaseTimeEntity {
 
     private User(Email email, Password password, String username, LocalDate birth, String phoneNumber, Role role) {
         this.email = email;
+        this.loginId = loginId;
         this.password = password;
-        this.username = username;
+        this.name = name;
         this.birth = birth;
         this.phoneNumber = phoneNumber;
         this.role = role;
-        this.status = true;
+        this.status = Status.NORMAL;
     }
 
-    public static User createUser(Email email, Password password, String username, LocalDate birth, String phoneNumber, String role) {
-        return new User(email, password, username, birth, phoneNumber, roleStringToEnum(role));
+    public static User createUser(Email email, String loginId, Password password, String username, LocalDate birth, String phoneNumber, Role role) {
+        return new User(email, loginId, password, username, birth, phoneNumber, role);
     }
 
-    private static Role roleStringToEnum(String roleString) {
-        return Arrays.stream(Role.values())
-                .filter(role -> role.getValue().equals(roleString))
-                .findFirst()
-                .orElseThrow(() -> new ApplicationException(UserErrorCode.ROLE_NOT_FOUND));
+    public void updateCompany(Company company) {
+        this.company = company;
     }
 }

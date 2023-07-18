@@ -3,12 +3,10 @@ package umc.stockoneqback.user.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import umc.stockoneqback.global.exception.ApplicationException;
-import umc.stockoneqback.user.exception.UserErrorCode;
+import umc.stockoneqback.global.Status;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static umc.stockoneqback.fixture.UserFixture.ANNE;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
@@ -18,26 +16,18 @@ class UserTest {
     @DisplayName("User를 생성한다")
     class createUser {
         @Test
-        @DisplayName("존재하지 않는 역할은 역할 Enum Class로 변환할 수 없다")
-        void throwExceptionByRoleNotFound() {
-            org.assertj.core.api.Assertions.assertThatThrownBy(() -> User.createUser(Email.from(ANNE.getEmail()), Password.encrypt(ANNE.getPassword(), ENCODER), ANNE.getUsername(), ANNE.getBirth(), ANNE.getPhoneNumber(), "시장님"))
-                    .isInstanceOf(ApplicationException.class)
-                    .hasMessage(UserErrorCode.ROLE_NOT_FOUND.getMessage());
-        }
-
-        @Test
-        @DisplayName("User를 생성에 성공한다")
+        @DisplayName("User 생성에 성공한다")
         void success() {
-            User user = SAEWOO.toUser();
+            User user = User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole());
 
             assertAll(
                     () -> assertThat(user.getEmail().getValue()).isEqualTo(SAEWOO.getEmail()),
                     () -> assertThat(user.getPassword().isSamePassword(SAEWOO.getPassword(), ENCODER)).isTrue(),
-                    () -> assertThat(user.getUsername()).isEqualTo(SAEWOO.getUsername()),
+                    () -> assertThat(user.getName()).isEqualTo(SAEWOO.getName()),
                     () -> assertThat(user.getBirth()).isEqualTo(SAEWOO.getBirth()),
                     () -> assertThat(user.getPhoneNumber()).isEqualTo(SAEWOO.getPhoneNumber()),
-                    () -> assertThat(user.getRole()).isEqualTo(Role.PART_TIME),
-                    () -> assertThat(user.getStatus()).isTrue()
+                    () -> assertThat(user.getRole()).isEqualTo(Role.PART_TIMER),
+                    () -> assertThat(user.getStatus()).isEqualTo(Status.NORMAL)
             );
         }
     }
