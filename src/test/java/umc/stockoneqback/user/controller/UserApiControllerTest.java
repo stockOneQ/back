@@ -7,7 +7,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import umc.stockoneqback.common.ControllerTest;
-import umc.stockoneqback.global.exception.ApplicationException;
+import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.role.exception.StoreErrorCode;
 import umc.stockoneqback.user.controller.dto.request.SignUpManagerRequest;
 import umc.stockoneqback.user.controller.dto.request.SignUpPartTimerRequest;
@@ -39,7 +39,7 @@ class UserApiControllerTest extends ControllerTest {
         @DisplayName("중복된 가게 이름이 존재한다면 가게 사장님 등록에 실패한다")
         void throwExceptionByAlreadyExistStore() throws Exception {
             // given
-            doThrow(ApplicationException.type(StoreErrorCode.ALREADY_EXIST_STORE))
+            doThrow(BaseException.type(StoreErrorCode.ALREADY_EXIST_STORE))
                     .when(storeService)
                     .save(any(), any(), any());
 
@@ -94,7 +94,7 @@ class UserApiControllerTest extends ControllerTest {
             doReturn(STORE_ID)
                     .when(storeService)
                     .save(anyString(), anyString(), anyString());
-            doThrow(ApplicationException.type(UserErrorCode.DUPLICATE_LOGIN_ID))
+            doThrow(BaseException.type(UserErrorCode.DUPLICATE_LOGIN_ID))
                     .when(userService)
                     .saveManager(any(), anyLong());
 
@@ -198,7 +198,7 @@ class UserApiControllerTest extends ControllerTest {
         @DisplayName("중복된 로그인 아이디가 있다면 아르바이트생 등록에 실패한다")
         void throwExceptionByDuplicateLoginId() throws Exception {
             // given
-            doThrow(ApplicationException.type(UserErrorCode.DUPLICATE_LOGIN_ID))
+            doThrow(BaseException.type(UserErrorCode.DUPLICATE_LOGIN_ID))
                     .when(userService)
                     .savePartTimer(any(), anyString(), anyString());
 
@@ -250,7 +250,7 @@ class UserApiControllerTest extends ControllerTest {
         @DisplayName("가게 코드가 일치하지 않으면 아르바이트생 등록에 실패한다")
         void throwExceptionByInvalidStoreCode() throws Exception {
             // given
-            doThrow(ApplicationException.type(UserErrorCode.INVALID_STORE_CODE))
+            doThrow(BaseException.type(UserErrorCode.INVALID_STORE_CODE))
                     .when(userService)
                     .savePartTimer(any(), anyString(), anyString());
 
@@ -349,7 +349,7 @@ class UserApiControllerTest extends ControllerTest {
         @DisplayName("중복된 로그인 아이디가 있다면 슈퍼바이저 등록에 실패한다")
         void throwExceptionByDuplicateLoginId() throws Exception {
             // given
-            doThrow(ApplicationException.type(UserErrorCode.DUPLICATE_LOGIN_ID))
+            doThrow(BaseException.type(UserErrorCode.DUPLICATE_LOGIN_ID))
                     .when(userService)
                     .saveSupervisor(any(), anyString(), anyString());
 
@@ -401,7 +401,7 @@ class UserApiControllerTest extends ControllerTest {
         @DisplayName("중복된 로그인 아이디가 있다면 슈퍼바이저 등록에 실패한다")
         void throwExceptionByInvalidCompanyCode() throws Exception {
             // given
-            doThrow(ApplicationException.type(UserErrorCode.INVALID_COMPANY_CODE))
+            doThrow(BaseException.type(UserErrorCode.INVALID_COMPANY_CODE))
                     .when(userService)
                     .saveSupervisor(any(), anyString(), anyString());
 

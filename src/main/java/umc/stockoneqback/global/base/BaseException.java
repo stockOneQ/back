@@ -1,5 +1,8 @@
 package umc.stockoneqback.global.base;
 
+import lombok.Getter;
+
+@Getter
 public class BaseException extends RuntimeException {
     private final ErrorCode code;
 

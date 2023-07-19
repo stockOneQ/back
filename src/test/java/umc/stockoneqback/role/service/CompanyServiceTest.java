@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.global.exception.ApplicationException;
+import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.role.domain.company.Company;
 import umc.stockoneqback.role.exception.CompanyErrorCode;
 
@@ -33,7 +33,7 @@ class CompanyServiceTest extends ServiceTest {
         // then
         assertThat(findCompany).isEqualTo(company);
         assertThatThrownBy(() -> companyService.findByName("가짜 납품업체"))
-                .isInstanceOf(ApplicationException.class)
+                .isInstanceOf(BaseException.class)
                 .hasMessage(CompanyErrorCode.COMPANY_NOT_FOUND.getMessage());
     }
 

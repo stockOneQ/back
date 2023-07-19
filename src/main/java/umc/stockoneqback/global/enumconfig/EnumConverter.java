@@ -1,10 +1,13 @@
 package umc.stockoneqback.global.enumconfig;
 
 import lombok.extern.slf4j.Slf4j;
+import umc.stockoneqback.global.base.BaseException;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.util.Objects;
+
+import static umc.stockoneqback.global.base.GlobalErrorCode.INVALID_ENUM;
 
 @Converter
 @Slf4j
@@ -30,9 +33,6 @@ public class EnumConverter<T extends EnumStandard> implements AttributeConverter
             if (Objects.equals(constant.getValue(), dbData))
                 return constant;
         }
-        /*
-        * enum 형식 오류
-         */
-        return null;
+        throw BaseException.type(INVALID_ENUM);
     }
 }

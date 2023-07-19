@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.global.exception.ApplicationException;
+import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.role.domain.company.Company;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.domain.User;
@@ -54,7 +54,7 @@ class UserServiceTest extends ServiceTest {
 
             // when - then
             assertThatThrownBy(() -> userService.savePartTimer(partTimer, "스타벅스 - 광화문점", "ABC456"))
-                    .isInstanceOf(ApplicationException.class)
+                    .isInstanceOf(BaseException.class)
                     .hasMessage(UserErrorCode.INVALID_STORE_CODE.getMessage());
         }
 
@@ -84,7 +84,7 @@ class UserServiceTest extends ServiceTest {
 
             // when - then
             assertThatThrownBy(() -> userService.saveSupervisor(supervisor, company.getName(), "ABC456"))
-                    .isInstanceOf(ApplicationException.class)
+                    .isInstanceOf(BaseException.class)
                     .hasMessage(UserErrorCode.INVALID_COMPANY_CODE.getMessage());
         }
 

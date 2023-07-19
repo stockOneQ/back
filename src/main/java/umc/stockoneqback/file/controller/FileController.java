@@ -7,7 +7,6 @@ import umc.stockoneqback.file.dto.UploadRequest;
 import umc.stockoneqback.file.service.FileService;
 
 import javax.validation.Valid;
-
 import java.io.IOException;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
