@@ -16,8 +16,8 @@ public enum Role implements EnumStandard {
     private final String value;
 
     @javax.persistence.Converter
-    public static class Converter extends EnumConverter<Role> {
-        public Converter() {
+    public static class RoleConverter extends EnumConverter<Role> {
+        public RoleConverter() {
             super(Role.class);
         }
     }

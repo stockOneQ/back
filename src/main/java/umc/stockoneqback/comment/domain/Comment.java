@@ -29,6 +29,7 @@ public class Comment extends BaseTimeEntity {
 
     private String content;
 
+    @Convert(converter = Status.StatusConverter.class)
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)

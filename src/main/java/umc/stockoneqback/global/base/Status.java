@@ -14,8 +14,8 @@ public enum Status implements EnumStandard {
     private String value;
 
     @javax.persistence.Converter
-    public static class Converter extends EnumConverter<Status> {
-        public Converter() {
+    public static class StatusConverter extends EnumConverter<Status> {
+        public StatusConverter() {
             super(Status.class);
         }
     }
