@@ -35,6 +35,7 @@ class UserRepositoryTest extends RepositoryTest {
         boolean actual6 = userRepository.existsByLoginId(ANNE.getLoginId() + "fake");
         boolean actual7 = userRepository.existsByLoginId(WIZ.getLoginId() + "fake");
         boolean actual8 = userRepository.existsByLoginId(WONI.getLoginId() + "fake");
+
         // then
         assertAll(
                 () -> Assertions.assertThat(actual1).isTrue(),
