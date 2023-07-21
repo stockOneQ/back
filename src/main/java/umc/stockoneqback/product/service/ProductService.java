@@ -9,6 +9,7 @@ import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.domain.ProductRepository;
 import umc.stockoneqback.product.domain.StoreCondition;
+import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.LoadProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductUrl;
@@ -17,6 +18,7 @@ import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.StoreService;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +45,7 @@ public class ProductService {
         Product product = findProductById(productId);
         byte[] image = fileService.downloadToResponseDto(product.getImageUrl());
         return LoadProductResponse.builder()
+                .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
                 .vendor(product.getVendor())
@@ -66,6 +69,7 @@ public class ProductService {
         for (SearchProductUrl searchProductUrl : searchProductUrlList) {
             byte[] image = fileService.downloadToResponseDto(searchProductUrl.imageUrl());
             SearchProductResponse searchProductResponse = SearchProductResponse.builder()
+                    .id(searchProductUrl.id())
                     .name(searchProductUrl.name())
                     .image(image)
                     .build();
@@ -87,6 +91,13 @@ public class ProductService {
         product.delete();
     }
 
+    @Transactional
+    public List<GetTotalProductResponse> getTotalProduct(Long storeId, String storeConditionValue) {
+        Store store = storeService.findById(storeId);
+        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
+        return countProduct(store, storeCondition);
+    }
+
     private void isExistProductByName(Store store, StoreCondition storeCondition, String name) {
         Integer isExist = productRepository.isExistProductByName(store, storeCondition, name);
         if (isExist != null)
@@ -101,7 +112,18 @@ public class ProductService {
     }
 
     private Product findProductById(Long productId) {
-        return productRepository.findById(productId)
+        return productRepository.findProductById(productId)
                 .orElseThrow(() -> BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT));
+    }
+
+    private List<GetTotalProductResponse> countProduct(Store store, StoreCondition storeCondition) {
+        List<GetTotalProductResponse> countList = new ArrayList<>(4);
+        LocalDate currentDate = LocalDate.now();
+        LocalDate standardDate = currentDate.plusDays(3);
+        countList.add(new GetTotalProductResponse("Total", productRepository.countProductAll(store, storeCondition)));
+        countList.add(new GetTotalProductResponse("Pass", productRepository.countProductPass(store, storeCondition, currentDate)));
+        countList.add(new GetTotalProductResponse("Close", productRepository.countProductClose(store, storeCondition, currentDate, standardDate)));
+        countList.add(new GetTotalProductResponse("Lack", productRepository.countProductLack(store, storeCondition)));
+        return countList;
     }
 }

@@ -7,6 +7,8 @@ import java.time.LocalDate;
 
 @Builder
 public record LoadProductResponse(
+        Long id,
+
         String name,
 
         Long price,

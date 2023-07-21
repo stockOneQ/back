@@ -1,10 +1,8 @@
 package umc.stockoneqback.product.dto.response;
 
-public record SearchProductUrl(
-        Long id,
-
+public record GetTotalProductResponse(
         String name,
 
-        String imageUrl
+        Integer total
 ) {
 }

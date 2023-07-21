@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import umc.stockoneqback.global.base.BaseResponse;
 import umc.stockoneqback.global.base.BaseResponseStatus;
 import umc.stockoneqback.product.dto.request.EditProductRequest;
+import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.LoadProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductResponse;
 import umc.stockoneqback.product.service.ProductService;
@@ -49,5 +50,11 @@ public class ProductController {
     public BaseResponse<BaseResponseStatus> deleteProduct(@PathVariable(value = "productId") Long productId) {
         productService.deleteProduct(productId);
         return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+    }
+
+    @GetMapping("/count")
+    public BaseResponse<List<GetTotalProductResponse>> getTotalProduct(@RequestParam(value = "store") Long storeId,
+                                                                       @RequestParam(value = "condition") String storeConditionValue) {
+        return new BaseResponse<>(productService.getTotalProduct(storeId, storeConditionValue));
     }
 }
