@@ -8,15 +8,22 @@ import umc.stockoneqback.role.domain.company.Company;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.CompanyService;
 import umc.stockoneqback.role.service.StoreService;
+import umc.stockoneqback.user.domain.Email;
+import umc.stockoneqback.user.domain.Password;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
 import umc.stockoneqback.user.exception.UserErrorCode;
+
+import java.time.LocalDate;
+
+import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final UserFindService userFindService;
     private final StoreService storeService;
     private final CompanyService companyService;
 
@@ -71,5 +78,11 @@ public class UserService {
         if (!userCode.equals(savedCode)) {
             throw BaseException.type(UserErrorCode.INVALID_COMPANY_CODE);
         }
+    }
+
+    @Transactional
+    public void updateInformation(Long userId, String name, LocalDate birth, String email, String loginId, String password, String phoneNumber) {
+        User user = userFindService.findById(userId);
+        user.updateInformation(Email.from(email), loginId, Password.encrypt(password, ENCODER), name, birth, phoneNumber);
     }
 }
