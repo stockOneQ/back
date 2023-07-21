@@ -46,13 +46,14 @@ public class BoardApiControllerTest extends ControllerTest {
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, WRITER_ID)
+                    .with(csrf())
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
             // then
             mockMvc.perform(requestBuilder)
                     .andExpectAll(
-                            status().isCreated()
+                            status().isOk()
                     )
                     .andDo(
                             document(
@@ -91,6 +92,7 @@ public class BoardApiControllerTest extends ControllerTest {
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, WRITER_ID, BOARD_ID)
+                    .with(csrf())
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -108,7 +110,7 @@ public class BoardApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "BoardApi/Update/Failure/Case2",
+                                    "BoardApi/Update/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
@@ -141,6 +143,7 @@ public class BoardApiControllerTest extends ControllerTest {
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, WRITER_ID, BOARD_ID)
+                    .with(csrf())
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -160,6 +163,7 @@ public class BoardApiControllerTest extends ControllerTest {
                                     ),
                                     requestFields(
                                             fieldWithPath("title").description("수정할 제목"),
+                                            fieldWithPath("file").description("수정할 파일"),
                                             fieldWithPath("content").description("수정할 내용")
                                     )
                             )
@@ -186,6 +190,7 @@ public class BoardApiControllerTest extends ControllerTest {
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, WRITER_ID, BOARD_ID)
+                    .with(csrf())
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -203,7 +208,7 @@ public class BoardApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "BoardApi/Delete/Failure/Case2",
+                                    "BoardApi/Delete/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
