@@ -83,6 +83,10 @@ public class UserService {
     @Transactional
     public void updateInformation(Long userId, String name, LocalDate birth, String email, String loginId, String password, String phoneNumber) {
         User user = userFindService.findById(userId);
+        if (!user.getLoginId().equals(loginId)) {
+            validateDuplicateLoginId(loginId);
+        }
+
         user.updateInformation(Email.from(email), loginId, Password.encrypt(password, ENCODER), name, birth, phoneNumber);
     }
 }

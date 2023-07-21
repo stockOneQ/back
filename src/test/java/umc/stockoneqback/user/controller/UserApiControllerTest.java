@@ -12,11 +12,11 @@ import umc.stockoneqback.role.exception.StoreErrorCode;
 import umc.stockoneqback.user.controller.dto.request.SignUpManagerRequest;
 import umc.stockoneqback.user.controller.dto.request.SignUpPartTimerRequest;
 import umc.stockoneqback.user.controller.dto.request.SignUpSupervisorRequest;
+import umc.stockoneqback.user.controller.dto.request.UserInfoRequest;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -490,6 +490,99 @@ class UserApiControllerTest extends ControllerTest {
         }
     }
 
+    @Nested
+    @DisplayName("회원 정보 수정 API [PUT /api/user/update/{userId}]")
+    class updateInformation {
+        private static final String BASE_URL = "/api/user/update/{userId}";
+        private static final Long USER_ID = 1L;
+
+        @Test
+        @DisplayName("중복된 로그인 아이디가 존재한다면 회원 정보 수정에 실패한다")
+        void throwExceptionByDuplicateLoginId() throws Exception {
+            // given
+            doThrow(BaseException.type(UserErrorCode.DUPLICATE_LOGIN_ID))
+                    .when(userService)
+                    .updateInformation(anyLong(), anyString(), any(), anyString(), anyString(), anyString(), anyString());
+
+            // when
+            final UserInfoRequest request = createUserInfoRequest();
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .put(BASE_URL, USER_ID)
+                    .with(csrf())
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request));
+
+            // then
+            final UserErrorCode expectedError = UserErrorCode.DUPLICATE_LOGIN_ID;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isConflict(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "UserApi/Update/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestFields(
+                                            fieldWithPath("name").description("이름"),
+                                            fieldWithPath("birth").description("생일"),
+                                            fieldWithPath("email").description("이메일"),
+                                            fieldWithPath("loginId").description("아이디"),
+                                            fieldWithPath("password").description("비밀번호"),
+                                            fieldWithPath("phoneNumber").description("전화번호")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("회원 정보 수정에 성공한다")
+        void success() throws Exception {
+            // given
+            doNothing()
+                    .when(userService)
+                    .updateInformation(anyLong(), anyString(), any(), anyString(), anyString(), anyString(), anyString());
+
+            // when
+            final UserInfoRequest request = createUserInfoRequest();
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .put(BASE_URL, USER_ID)
+                    .with(csrf())
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request));
+
+            // then
+            mockMvc.perform(requestBuilder)
+                    .andExpect(status().isOk())
+                    .andDo(
+                            document(
+                                    "UserApi/Update/Success",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestFields(
+                                            fieldWithPath("name").description("이름"),
+                                            fieldWithPath("birth").description("생일"),
+                                            fieldWithPath("email").description("이메일"),
+                                            fieldWithPath("loginId").description("아이디"),
+                                            fieldWithPath("password").description("비밀번호"),
+                                            fieldWithPath("phoneNumber").description("전화번호")
+                                    )
+                            )
+                    );
+        }
+    }
+
     private SignUpManagerRequest createSignUpManagerRequest() {
         return new SignUpManagerRequest(
                 SAEWOO.getName(),
@@ -530,4 +623,14 @@ class UserApiControllerTest extends ControllerTest {
         );
     }
 
+    private UserInfoRequest createUserInfoRequest() {
+        return new UserInfoRequest(
+                SAEWOO.getName(),
+                SAEWOO.getBirth(),
+                SAEWOO.getEmail(),
+                SAEWOO.getLoginId(),
+                SAEWOO.getPassword(),
+                SAEWOO.getPhoneNumber()
+        );
+    }
 }
