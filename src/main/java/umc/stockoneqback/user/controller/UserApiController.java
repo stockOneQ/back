@@ -16,12 +16,12 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserApiController {
     private final UserService userService;
     private final StoreService storeService;
 
-    @PostMapping("/user/manager")
+    @PostMapping("/manager")
     public ResponseEntity<Void> signUpManager(@RequestBody @Valid SignUpManagerRequest request) {
         Long savedStoreId = storeService.save(request.storeName(), request.storeSector(), request.storeAddress());
         Long savedUserId = userService.saveManager(request.toUser(), savedStoreId);
@@ -29,14 +29,14 @@ public class UserApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/user/part-timer")
+    @PostMapping("/part-timer")
     public ResponseEntity<Void> signUpPartTimer(@RequestBody @Valid SignUpPartTimerRequest request) {
         Long savedUserId = userService.savePartTimer(request.toUser(), request.storeName(), request.storeCode());
 
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/user/supervisor")
+    @PostMapping("/supervisor")
     public ResponseEntity<Void> signUpSupervisor(@RequestBody @Valid SignUpSupervisorRequest request) {
         Long savedUserId = userService.saveSupervisor(request.toUser(), request.companyName(), request.companyCode());
 

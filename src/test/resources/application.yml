@@ -21,3 +21,10 @@ spring:
   config:
     import:
       - classpath:secret.yml
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
