@@ -29,9 +29,9 @@ import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 @DisplayName("User [Controller Layer] -> UserApiController 테스트")
 class UserApiControllerTest extends ControllerTest {
     @Nested
-    @DisplayName("가게 사장님 등록 API [POST /api/user/manager]")
+    @DisplayName("가게 사장님 등록 API [POST /api/user/sign-up/manager]")
     class signUpManager {
-        private static final String BASE_URL = "/api/user/manager";
+        private static final String BASE_URL = "/api/user/sign-up/manager";
         private static final Long STORE_ID = 1L;
         private static final Long USER_ID = 1L;
 
@@ -189,9 +189,9 @@ class UserApiControllerTest extends ControllerTest {
     }
 
     @Nested
-    @DisplayName("아르바이트생 등록 API [POST /api/user/part-timer]")
+    @DisplayName("아르바이트생 등록 API [POST /api/user/sign-up/part-timer]")
     class signUpPartTimer {
-        private static final String BASE_URL = "/api/user/part-timer";
+        private static final String BASE_URL = "/api/user/sign-up/part-timer";
         private static final Long USER_ID = 1L;
 
         @Test
@@ -340,9 +340,9 @@ class UserApiControllerTest extends ControllerTest {
     }
 
     @Nested
-    @DisplayName("슈퍼바이저 등록 API [POST /api/user/supervisor]")
+    @DisplayName("슈퍼바이저 등록 API [POST /api/user/sign-up/supervisor]")
     class signUpSupervisor {
-        private static final String BASE_URL = "/api/user/supervisor";
+        private static final String BASE_URL = "/api/user/sign-up/supervisor";
         private static final Long USER_ID = 1L;
 
         @Test
