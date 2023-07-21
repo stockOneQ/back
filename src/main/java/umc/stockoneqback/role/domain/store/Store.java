@@ -3,7 +3,6 @@ package umc.stockoneqback.role.domain.store;
 import lombok.*;
 import umc.stockoneqback.global.base.BaseTimeEntity;
 import umc.stockoneqback.global.base.Status;
-import umc.stockoneqback.global.enumconfig.EnumConverter;
 import umc.stockoneqback.user.domain.User;
 
 import javax.persistence.*;
