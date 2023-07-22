@@ -15,6 +15,9 @@ import umc.stockoneqback.board.service.BoardService;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
 import umc.stockoneqback.business.controller.BusinessApiController;
 import umc.stockoneqback.business.service.BusinessService;
+import umc.stockoneqback.comment.controller.CommentApiController;
+import umc.stockoneqback.comment.service.CommentFindService;
+import umc.stockoneqback.comment.service.CommentService;
 import umc.stockoneqback.global.config.SecurityConfig;
 import umc.stockoneqback.role.service.CompanyService;
 import umc.stockoneqback.role.service.StoreService;
@@ -26,7 +29,8 @@ import umc.stockoneqback.user.service.UserService;
 @WebMvcTest({
         UserApiController.class,
         BoardApiController.class,
-        BusinessApiController.class
+        BusinessApiController.class,
+        CommentApiController.class
 })
 @AutoConfigureRestDocs
 @WithMockUser
@@ -50,7 +54,7 @@ public abstract class ControllerTest {
     protected BusinessService businessService;
 
     @MockBean
-    protected JwtTokenProvider jwtTokenProvider
+    protected JwtTokenProvider jwtTokenProvider;
     
     @MockBean
     protected UserFindService userFindService;
@@ -60,4 +64,10 @@ public abstract class ControllerTest {
 
     @MockBean
     protected BoardFindService boardFindService;
+
+    @MockBean
+    protected CommentFindService commentFindService;
+
+    @MockBean
+    protected CommentService commentService;
 }
