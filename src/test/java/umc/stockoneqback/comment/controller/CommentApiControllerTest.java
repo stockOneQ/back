@@ -82,7 +82,7 @@ public class CommentApiControllerTest extends ControllerTest {
 
         @Test
         @DisplayName("다른 사람의 댓글은 수정할 수 없다")
-        void throwExceptionByUserIsNotBoardWriter() throws Exception {
+        void throwExceptionByUserIsNotCommentWriter() throws Exception {
             // given
             doThrow(BaseException.type(CommentErrorCode.USER_IS_NOT_COMMENT_WRITER))
                     .when(commentService)
@@ -178,7 +178,7 @@ public class CommentApiControllerTest extends ControllerTest {
 
         @Test
         @DisplayName("다른 사람의 댓글은 삭제할 수 없다")
-        void throwExceptionByUserIsNotBoardWriter() throws Exception {
+        void throwExceptionByUserIsNotCommentWriter() throws Exception {
             // given
             doThrow(BaseException.type(CommentErrorCode.USER_IS_NOT_COMMENT_WRITER))
                     .when(commentService)
