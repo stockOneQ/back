@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.board.domain.BoardRepository;
+import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.role.domain.company.CompanyRepository;
 import umc.stockoneqback.role.domain.store.PartTimerRepository;
 import umc.stockoneqback.role.domain.store.StoreRepository;
@@ -28,6 +29,9 @@ public class ServiceTest {
     @Autowired
     protected PartTimerRepository partTimerRepository;
 
+    @Autowired
+    protected BusinessRepository businessRepository;
+  
     @Autowired
     protected BoardRepository boardRepository;
 

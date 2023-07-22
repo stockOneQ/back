@@ -14,8 +14,7 @@ import umc.stockoneqback.user.exception.UserErrorCode;
 public class UserFindService {
     private final UserRepository userRepository;
 
-    @Transactional
-    public User findById(Long userId){
+    public User findById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
     }
