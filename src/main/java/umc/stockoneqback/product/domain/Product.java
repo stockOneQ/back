@@ -103,4 +103,13 @@ public class Product extends BaseTimeEntity {
     public void delete() {
         this.status = Status.EXPIRED;
     }
+
+    public static Product createProduct(String name, Long price, String vendor, LocalDate receivingDate,
+                                        LocalDate expirationDate, String location, Long requireQuant, Long stockQuant,
+                                        String siteToOrder, Long orderFreq, StoreCondition storeCondition, Store store, String imageUrl) {
+        Product product = new Product(name, price, vendor, receivingDate, expirationDate,
+                                        location, requireQuant, stockQuant, siteToOrder, orderFreq);
+        product.saveStoreAndStoreConditionAndImageUrl(storeCondition, store, imageUrl);
+        return product;
+    }
 }

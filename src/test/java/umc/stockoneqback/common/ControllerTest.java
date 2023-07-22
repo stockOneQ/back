@@ -12,6 +12,8 @@ import umc.stockoneqback.auth.utils.JwtTokenProvider;
 import umc.stockoneqback.business.controller.BusinessApiController;
 import umc.stockoneqback.business.service.BusinessService;
 import umc.stockoneqback.global.config.SecurityConfig;
+import umc.stockoneqback.product.controller.ProductApiController;
+import umc.stockoneqback.product.service.ProductService;
 import umc.stockoneqback.role.service.CompanyService;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.controller.UserApiController;
@@ -20,7 +22,8 @@ import umc.stockoneqback.user.service.UserService;
 @ImportAutoConfiguration(SecurityConfig.class)
 @WebMvcTest({
         UserApiController.class,
-        BusinessApiController.class
+        BusinessApiController.class,
+        ProductApiController.class
 })
 @AutoConfigureRestDocs
 @WithMockUser
@@ -45,4 +48,7 @@ public abstract class ControllerTest {
 
     @MockBean
     protected JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    protected ProductService productService;
 }
