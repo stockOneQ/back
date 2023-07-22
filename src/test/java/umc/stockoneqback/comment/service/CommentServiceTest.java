@@ -67,6 +67,36 @@ public class CommentServiceTest extends ServiceTest {
     }
 
     @Nested
+    @DisplayName("댓글 수정")
+    class update {
+        @Test
+        @DisplayName("다른 사람의 댓글은 수정할 수 없다")
+        void throwExceptionByUserNotCommentWriter() {
+            // when - then
+            assertThatThrownBy(() -> commentService.update(not_writer.getId(),board.getId(), "이미지2", "내용2"))
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(CommentErrorCode.USER_IS_NOT_COMMENT_WRITER.getMessage());
+        }
+
+        @Test
+        @DisplayName("댓글 수정에 성공한다")
+        void success() {
+            // given
+            commentService.update(writer.getId(), board.getId(), "이미지2","내용2");
+
+            // when
+            Comment findComment = commentFindService.findById(comments[0].getId());
+
+            // then
+            assertAll(
+                    () -> assertThat(findComment.getImage()).isEqualTo("이미지2"),
+                    () -> assertThat(findComment.getContent()).isEqualTo("내용2"),
+                    () -> assertThat(findComment.getModifiedDate().format(formatter)).isEqualTo(LocalDateTime.now().format(formatter))
+            );
+        }
+    }
+
+    @Nested
     @DisplayName("댓글 삭제")
     class delete {
         @Test
