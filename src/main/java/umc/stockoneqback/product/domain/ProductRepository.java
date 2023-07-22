@@ -40,7 +40,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                               @Param("currentDate") LocalDate currentDate,
                               @Param("standardDate") LocalDate standardDate);
     @Query(value = "SELECT count(*) FROM Product p WHERE p.store = :store AND p.store_condition = :storeCondition " +
-            "AND p.require_quant > p.stock_quant AND p.status = '정상'", nativeQuery = true)
+            "AND p.require_quant >= p.stock_quant AND p.status = '정상'", nativeQuery = true)
     Integer countProductLack(@Param("store") Store store,
                              @Param("storeCondition") String storeCondition);
 
@@ -104,7 +104,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                                        @Param("standardDate") LocalDate standardDate);
 
     @Query(value = "SELECT p.* FROM Product p WHERE p.store = :store AND p.store_condition = :storeCondition " +
-            "AND p.status = '정상' AND p.require_quant > p.stock_quant " +
+            "AND p.status = '정상' AND p.require_quant >= p.stock_quant " +
             "AND (p.name > :name OR :name is null) ORDER BY p.name LIMIT :pageSize", nativeQuery = true)
     List<Product> findPageOfLackOrderByName(@Param("store") Store store,
                                                     @Param("storeCondition") String storeCondition,
@@ -112,7 +112,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                                     @Param("pageSize") Integer pageSize);
 
     @Query(value = "SELECT p.* FROM Product p WHERE p.store = :store AND p.store_condition = :storeCondition " +
-            "AND p.status = '정상' AND p.require_quant > p.stock_quant " +
+            "AND p.status = '정상' AND p.require_quant >= p.stock_quant " +
             "AND ((p.order_freq < :orderFreq OR p.order_freq = :orderFreq AND p.name > :name) " +
             "OR (:orderFreq is null AND :name is null)) ORDER BY p.order_freq DESC, p.name LIMIT :pageSize", nativeQuery = true)
     List<Product> findPageOfLackOrderByOrderFreq(@Param("store") Store store,
