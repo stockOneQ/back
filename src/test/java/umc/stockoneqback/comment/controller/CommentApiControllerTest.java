@@ -61,8 +61,8 @@ public class CommentApiControllerTest extends ControllerTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
-                                            parameterWithName("boardId").description("댓글 작성자 ID(PK)"),
-                                            parameterWithName("writerId").description("등록할 게시글 ID(PK)")
+                                            parameterWithName("writerId").description("댓글 작성자 ID(PK)"),
+                                            parameterWithName("boardId").description("등록할 게시글 ID(PK)")
                                     ),
                                     requestFields(
                                             fieldWithPath("image").description("등록할 이미지"),
