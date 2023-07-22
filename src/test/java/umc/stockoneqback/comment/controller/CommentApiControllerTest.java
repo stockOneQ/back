@@ -57,7 +57,7 @@ public class CommentApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "UserApi/Create/Success",
+                                    "CommentApi/Create/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
