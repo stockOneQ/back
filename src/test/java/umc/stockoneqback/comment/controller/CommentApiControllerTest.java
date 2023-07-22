@@ -153,7 +153,7 @@ public class CommentApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "BoardApi/Update/Success",
+                                    "CommentApi/Update/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
