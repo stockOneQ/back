@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class ProductService {
     public void saveProduct(Long storeId, String storeConditionValue, Product product, MultipartFile image) {
         Store store = storeService.findById(storeId);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
-        isExistProductByName(store, storeCondition, product.getName());
+        //isExistProductByName(store, storeCondition, product.getName());
         String imageUrl = fileService.uploadProductFiles(image);
         product.saveStoreAndStoreConditionAndImageUrl(storeCondition, store, imageUrl);
         productRepository.save(product);
@@ -56,7 +57,7 @@ public class ProductService {
                 .orderFreq(product.getOrderFreq())
                 .build();
     }
-
+/*
     @Transactional
     public List<SearchProductResponse> searchProduct(Long storeId, String storeConditionValue, String productName) throws IOException {
         Store store = storeService.findById(storeId);
@@ -73,7 +74,7 @@ public class ProductService {
         }
         return searchProductResponseList;
     }
-
+*/
     @Transactional
     public void editProduct(Long productId, Product newProduct, MultipartFile image) {
         Product product = findProductById(productId);
@@ -86,7 +87,7 @@ public class ProductService {
         Product product = findProductById(productId);
         product.delete();
     }
-
+/*
     private void isExistProductByName(Store store, StoreCondition storeCondition, String name) {
         Integer isExist = productRepository.isExistProductByName(store, storeCondition, name);
         if (isExist != null)
@@ -98,7 +99,7 @@ public class ProductService {
         if (searchProductUrlList.isEmpty())
             throw BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT);
         return searchProductUrlList;
-    }
+    }*/
 
     private Product findProductById(Long productId) {
         return productRepository.findById(productId)

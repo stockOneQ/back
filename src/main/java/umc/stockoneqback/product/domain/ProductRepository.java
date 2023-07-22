@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+    /*
     @Query("SELECT p.name, p.imageUrl FROM Product p WHERE p.status = 'NORMAL' AND p.store = :store" +
             "AND p.storeCondition = :storeCondition AND p.name LIKE %:name% ORDER BY p.name")
     List<SearchProductUrl> findProductByName(@Param("store") Store store,
@@ -26,4 +27,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findProductById(@Param("store") Store store,
                                       @Param("storeCondition") StoreCondition storeCondition,
                                       @Param("id") Long productId);
+    */
 }
+
+
