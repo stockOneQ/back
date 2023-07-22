@@ -19,6 +19,9 @@ import umc.stockoneqback.comment.controller.CommentApiController;
 import umc.stockoneqback.comment.service.CommentFindService;
 import umc.stockoneqback.comment.service.CommentService;
 import umc.stockoneqback.global.config.SecurityConfig;
+import umc.stockoneqback.reply.controller.ReplyApiController;
+import umc.stockoneqback.reply.service.ReplyFindService;
+import umc.stockoneqback.reply.service.ReplyService;
 import umc.stockoneqback.role.service.CompanyService;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.controller.UserApiController;
@@ -30,7 +33,8 @@ import umc.stockoneqback.user.service.UserService;
         UserApiController.class,
         BoardApiController.class,
         BusinessApiController.class,
-        CommentApiController.class
+        CommentApiController.class,
+        ReplyApiController.class
 })
 @AutoConfigureRestDocs
 @WithMockUser
@@ -70,4 +74,10 @@ public abstract class ControllerTest {
 
     @MockBean
     protected CommentService commentService;
+
+    @MockBean
+    protected ReplyFindService replyFindService;
+
+    @MockBean
+    protected ReplyService replyService;
 }
