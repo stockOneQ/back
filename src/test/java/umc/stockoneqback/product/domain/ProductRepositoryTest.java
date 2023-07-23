@@ -27,8 +27,7 @@ public class ProductRepositoryTest extends RepositoryTest {
 
     @BeforeEach
     void setup() {
-        Store zStore = Z_YEONGTONG.toStore();
-        storeRepository.save(zStore);
+        Store zStore = storeRepository.save(Z_YEONGTONG.toStore());
         for (ProductFixture productFixture : ProductFixture.values())
             productRepository.save(productFixture.toProduct(zStore));
     }
