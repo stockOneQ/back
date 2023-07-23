@@ -13,15 +13,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Getter
-@Table(
-        name="friend",
-        uniqueConstraints={
-                @UniqueConstraint(
-                        name = "friend_uk",
-                        columnNames={"res_user_id", "req_user_id"}
-                )
-        }
-)
+@Table(name="friend")
 public class Friend extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,10 +30,6 @@ public class Friend extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private FriendStatus status;
-
-    @ManyToOne
-    @JoinColumn(name = "friend_id")
-    private User friend;
 
     @Builder
     public Friend(User reqUser, User resUser, FriendStatus status) {

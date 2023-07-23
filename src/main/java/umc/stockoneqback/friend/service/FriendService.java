@@ -1,6 +1,8 @@
 package umc.stockoneqback.friend.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.friend.domain.Friend;
@@ -28,15 +30,15 @@ public class FriendService {
     private final UserRepository userRepository;
 
     @Transactional
-    public List<SearchUserResponse> searchFriends(Long userId, String searchName) throws IOException {
+    public List<SearchUserResponse> searchFriends(Long userId, String searchName, Pageable pageable) throws IOException {
         User reqUser = userFindService.findById(userId);
         validateSearchFriendsRole(reqUser);
 
-        List<User> users = userRepository.searchUserByName(searchName);
-        if (users.isEmpty())
+        Page<User> userPage = userRepository.searchUserByName(Role.MANAGER, searchName, pageable);
+        if (userPage.isEmpty())
             throw BaseException.type(UserErrorCode.USER_NOT_FOUND);
 
-        return listToResponse(users);
+        return listToResponse(userPage);
     }
 
     @Transactional
@@ -46,7 +48,7 @@ public class FriendService {
 
         Friend newFriend = new Friend();
         newFriend.setReqUser(requester);
-        newFriend.setFriend(friend);
+        newFriend.setResUser(friend);
         newFriend.setStatus(FriendStatus.REQUEST);
 
         return friendRepository.save(newFriend);
@@ -73,7 +75,7 @@ public class FriendService {
         }
     }
 
-    private List<SearchUserResponse> listToResponse(List<User> users) throws IOException{
+    private List<SearchUserResponse> listToResponse(Page<User> users) throws IOException{
         List<SearchUserResponse> userList = new ArrayList<>();
         for (User user : users) {
             SearchUserResponse searchUserResponse = SearchUserResponse.builder()

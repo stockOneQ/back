@@ -50,7 +50,7 @@ public abstract class ControllerTest {
     protected BusinessService businessService;
 
     @MockBean
-    protected JwtTokenProvider jwtTokenProvider
+    protected JwtTokenProvider jwtTokenProvider;
     
     @MockBean
     protected UserFindService userFindService;
