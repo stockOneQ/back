@@ -77,7 +77,7 @@ public class ProductService {
     public void editProduct(Long productId, Product newProduct, MultipartFile image) {
         Product product = findProductById(productId);
         String imageUrl = null;
-        if (!image.isEmpty())
+        if (image != null)
             imageUrl = fileService.uploadProductFiles(image);
         product.update(newProduct, imageUrl);
     }
