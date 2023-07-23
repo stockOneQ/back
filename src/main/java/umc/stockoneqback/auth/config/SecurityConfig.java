@@ -49,7 +49,6 @@ public class SecurityConfig {
                 .sameOrigin()
 
                 // 세션 사용 X
-                // 세션 사용 X
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
