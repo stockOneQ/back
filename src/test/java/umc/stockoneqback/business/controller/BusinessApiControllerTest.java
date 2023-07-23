@@ -8,6 +8,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import umc.stockoneqback.business.exception.BusinessErrorCode;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.user.domain.Email;
+import umc.stockoneqback.user.domain.Password;
+import umc.stockoneqback.user.domain.User;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -25,9 +28,12 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
+import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
 @DisplayName("Business [Controller Layer] -> BusinessApiController 테스트")
 class BusinessApiControllerTest extends ControllerTest {
+
     @Nested
     @DisplayName("슈퍼바이저 - 점주 관계 등록 API [POST /api/business/{managerId}]")
     class register {
@@ -41,6 +47,7 @@ class BusinessApiControllerTest extends ControllerTest {
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
             given(jwtTokenProvider.getId(anyString())).willReturn(SUPERVISOR_ID);
+            given(userFindService.findById(any())).willReturn(User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole()));
             doThrow(BaseException.type(BusinessErrorCode.ALREADY_EXIST_BUSINESS))
                     .when(businessService)
                     .register(any(), any());
@@ -48,7 +55,7 @@ class BusinessApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, MANAGER_ID)
-                    .header(AUTHORIZATION, "Bearer" + "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjc3OTM3MjI0LCJleHAiOjE2Nzg1NDIwMjR9.doqGa5Hcq6chjER1y5brJEv81z0njcJqeYxJb159ZX4")
+                    .header(AUTHORIZATION, "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjc3OTM3MjI0LCJleHAiOjE2Nzg1NDIwMjR9.doqGa5Hcq6chjER1y5brJEv81z0njcJqeYxJb159ZX4")
                     .contentType(APPLICATION_JSON)
                     .with(csrf());
 
@@ -87,6 +94,7 @@ class BusinessApiControllerTest extends ControllerTest {
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
             given(jwtTokenProvider.getId(anyString())).willReturn(SUPERVISOR_ID);
+            given(userFindService.findById(any())).willReturn(User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole()));
             doNothing()
                     .when(businessService)
                     .register(any(), any());
@@ -94,7 +102,7 @@ class BusinessApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, MANAGER_ID)
-                    .header(AUTHORIZATION, "Bearer" + "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjc3OTM3MjI0LCJleHAiOjE2Nzg1NDIwMjR9.doqGa5Hcq6chjER1y5brJEv81z0njcJqeYxJb159ZX4")
+                    .header(AUTHORIZATION, "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjc3OTM3MjI0LCJleHAiOjE2Nzg1NDIwMjR9.doqGa5Hcq6chjER1y5brJEv81z0njcJqeYxJb159ZX4")
                     .contentType(APPLICATION_JSON)
                     .with(csrf());
 
@@ -129,6 +137,7 @@ class BusinessApiControllerTest extends ControllerTest {
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
             given(jwtTokenProvider.getId(anyString())).willReturn(SUPERVISOR_ID);
+            given(userFindService.findById(any())).willReturn(User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole()));
             doThrow(BaseException.type(BusinessErrorCode.BUSINESS_NOT_FOUND))
                     .when(businessService)
                     .cancel(any(), any());
@@ -136,7 +145,7 @@ class BusinessApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, MANAGER_ID)
-                    .header(AUTHORIZATION, "Bearer" + "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjc3OTM3MjI0LCJleHAiOjE2Nzg1NDIwMjR9.doqGa5Hcq6chjER1y5brJEv81z0njcJqeYxJb159ZX4")
+                    .header(AUTHORIZATION, "Bearer " + createToken(MANAGER_ID))
                     .contentType(APPLICATION_JSON)
                     .with(csrf());
 
@@ -175,6 +184,7 @@ class BusinessApiControllerTest extends ControllerTest {
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
             given(jwtTokenProvider.getId(anyString())).willReturn(SUPERVISOR_ID);
+            given(userFindService.findById(any())).willReturn(User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole()));
             doNothing()
                     .when(businessService)
                     .register(any(), any());
@@ -182,7 +192,7 @@ class BusinessApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, MANAGER_ID)
-                    .header(AUTHORIZATION, "Bearer" + "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjc3OTM3MjI0LCJleHAiOjE2Nzg1NDIwMjR9.doqGa5Hcq6chjER1y5brJEv81z0njcJqeYxJb159ZX4")
+                    .header(AUTHORIZATION, "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjc3OTM3MjI0LCJleHAiOjE2Nzg1NDIwMjR9.doqGa5Hcq6chjER1y5brJEv81z0njcJqeYxJb159ZX4")
                     .contentType(APPLICATION_JSON)
                     .with(csrf());
 
@@ -202,5 +212,9 @@ class BusinessApiControllerTest extends ControllerTest {
                             )
                     );
         }
+    }
+
+    private String createToken(Long userId) {
+        return jwtTokenProvider.createToken(userId);
     }
 }

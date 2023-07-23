@@ -9,22 +9,27 @@ import umc.stockoneqback.board.controller.dto.BoardRequest;
 import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.user.domain.Email;
+import umc.stockoneqback.user.domain.Password;
+import umc.stockoneqback.user.domain.User;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
+import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
+import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
 @DisplayName("Board [Controller Layer] -> BoardApiController 테스트")
 public class BoardApiControllerTest extends ControllerTest {
@@ -38,6 +43,9 @@ public class BoardApiControllerTest extends ControllerTest {
         @DisplayName("게시글 등록에 성공한다")
         void success() throws Exception {
             // given
+            given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
+            given(jwtTokenProvider.getId(anyString())).willReturn(WRITER_ID);
+            given(userFindService.findById(any())).willReturn(User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole()));
             doReturn(1L)
                     .when(boardService)
                     .create(anyLong(), any(), any(), any());
@@ -47,6 +55,7 @@ public class BoardApiControllerTest extends ControllerTest {
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, WRITER_ID)
                     .with(csrf())
+                    .header(AUTHORIZATION, "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjc3OTM3MjI0LCJleHAiOjE2Nzg1NDIwMjR9.doqGa5Hcq6chjER1y5brJEv81z0njcJqeYxJb159ZX4")
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -84,6 +93,9 @@ public class BoardApiControllerTest extends ControllerTest {
         @DisplayName("다른 사람의 게시글은 수정할 수 없다")
         void throwExceptionByUserIsNotBoardWriter() throws Exception {
             // given
+            given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
+            given(jwtTokenProvider.getId(anyString())).willReturn(WRITER_ID);
+            given(userFindService.findById(any())).willReturn(User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole()));
             doThrow(BaseException.type(BoardErrorCode.USER_IS_NOT_BOARD_WRITER))
                     .when(boardService)
                     .update(anyLong(), anyLong(), any(), any(), any());
@@ -92,6 +104,7 @@ public class BoardApiControllerTest extends ControllerTest {
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, WRITER_ID, BOARD_ID)
+                    .header(AUTHORIZATION, "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjc3OTM3MjI0LCJleHAiOjE2Nzg1NDIwMjR9.doqGa5Hcq6chjER1y5brJEv81z0njcJqeYxJb159ZX4")
                     .with(csrf())
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
@@ -135,6 +148,9 @@ public class BoardApiControllerTest extends ControllerTest {
         @DisplayName("게시글 수정에 성공한다")
         void success() throws Exception {
             // given
+            given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
+            given(jwtTokenProvider.getId(anyString())).willReturn(WRITER_ID);
+            given(userFindService.findById(any())).willReturn(User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole()));
             doNothing()
                     .when(boardService)
                     .update(anyLong(), anyLong(), any(), any(), any());
@@ -143,6 +159,7 @@ public class BoardApiControllerTest extends ControllerTest {
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, WRITER_ID, BOARD_ID)
+                    .header(AUTHORIZATION, "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjc3OTM3MjI0LCJleHAiOjE2Nzg1NDIwMjR9.doqGa5Hcq6chjER1y5brJEv81z0njcJqeYxJb159ZX4")
                     .with(csrf())
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
@@ -182,6 +199,9 @@ public class BoardApiControllerTest extends ControllerTest {
         @DisplayName("다른 사람의 게시글은 삭제할 수 없다")
         void throwExceptionByUserIsNotBoardWriter() throws Exception {
             // given
+            given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
+            given(jwtTokenProvider.getId(anyString())).willReturn(WRITER_ID);
+            given(userFindService.findById(any())).willReturn(User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole()));
             doThrow(BaseException.type(BoardErrorCode.USER_IS_NOT_BOARD_WRITER))
                     .when(boardService)
                     .delete(anyLong(),anyLong());
@@ -190,6 +210,7 @@ public class BoardApiControllerTest extends ControllerTest {
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, WRITER_ID, BOARD_ID)
+                    .header(AUTHORIZATION, "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjc3OTM3MjI0LCJleHAiOjE2Nzg1NDIwMjR9.doqGa5Hcq6chjER1y5brJEv81z0njcJqeYxJb159ZX4")
                     .with(csrf())
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
@@ -228,6 +249,9 @@ public class BoardApiControllerTest extends ControllerTest {
         @DisplayName("게시글 삭제에 성공한다")
         void success() throws Exception {
             // given
+            given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
+            given(jwtTokenProvider.getId(anyString())).willReturn(WRITER_ID);
+            given(userFindService.findById(any())).willReturn(User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole()));
             doNothing()
                     .when(boardService)
                     .delete(anyLong(), anyLong());
@@ -236,6 +260,7 @@ public class BoardApiControllerTest extends ControllerTest {
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, WRITER_ID, BOARD_ID)
+                    .header(AUTHORIZATION, "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjc3OTM3MjI0LCJleHAiOjE2Nzg1NDIwMjR9.doqGa5Hcq6chjER1y5brJEv81z0njcJqeYxJb159ZX4")
                     .with(csrf())
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));

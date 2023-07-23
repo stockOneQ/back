@@ -7,13 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-import static umc.stockoneqback.global.base.BaseResponseStatus.SUCCESS;
+import static umc.stockoneqback.global.base.GlobalErrorCode.SUCCESS;
 
 @Getter
 @AllArgsConstructor
 @JsonPropertyOrder({"status", "errorCode", "message", "result"})
-public class BaseResponse<T> implements ErrorCode {//BaseResponse 객체를 사용할때 성공, 실패 경우
-
+public class BaseResponse<T> { // BaseResponse 객체를 사용할때 성공, 실패 경우
     private final HttpStatus status;
     private final String errorCode;
     private final String message;
@@ -29,7 +28,7 @@ public class BaseResponse<T> implements ErrorCode {//BaseResponse 객체를 사�
     }
 
     // 요청에 성공한 경우 (status를 추가로 받는 경우)
-    public BaseResponse(BaseResponseStatus status, T result) {
+    public BaseResponse(ErrorCode status, T result) {
         this.status = status.getStatus();
         this.errorCode = status.getErrorCode();
         this.message = status.getMessage();
@@ -37,7 +36,7 @@ public class BaseResponse<T> implements ErrorCode {//BaseResponse 객체를 사�
     }
 
     // 요청에 성공했지만 result가 주어지지 않았거나 요청에 실패한 경우
-    public BaseResponse(BaseResponseStatus status) {
+    public BaseResponse(ErrorCode status) {
         this.status = status.getStatus();
         this.errorCode = status.getErrorCode();
         this.message = status.getMessage();
