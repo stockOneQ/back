@@ -72,9 +72,4 @@ public class UserService {
             throw BaseException.type(UserErrorCode.INVALID_COMPANY_CODE);
         }
     }
-
-    public User findById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
-    }
 }

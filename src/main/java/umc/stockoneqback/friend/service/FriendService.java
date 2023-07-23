@@ -5,12 +5,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.friend.domain.Friend;
 import umc.stockoneqback.friend.domain.FriendStatus;
+import umc.stockoneqback.friend.dto.SearchUserResponse;
 import umc.stockoneqback.friend.exception.FriendErrorCode;
 import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.User;
+import umc.stockoneqback.user.domain.UserRepository;
+import umc.stockoneqback.user.exception.UserErrorCode;
+import umc.stockoneqback.user.service.UserFindService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,23 +24,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FriendService {
     private final FriendRepository friendRepository;
+    private final UserFindService userFindService;
+    private final UserRepository userRepository;
 
-    public List<Friend> searchFriends(User user) {
-        validateSearchFriendsRole(user);
+    @Transactional
+    public List<SearchUserResponse> searchFriends(Long userId, String searchName) throws IOException {
+        User reqUser = userFindService.findById(userId);
+        validateSearchFriendsRole(reqUser);
 
-        List<Friend> byUser = friendRepository.findByUser(user);
-        List<Friend> resUser = new ArrayList<>();
-        byUser.forEach(res -> {
-            if(res.getReqUser().getRole() == Role.MANAGER){
-                resUser.add(res);
-            }
-        });
+        List<User> users = userRepository.searchUserByName(searchName);
+        if (users.isEmpty())
+            throw BaseException.type(UserErrorCode.USER_NOT_FOUND);
 
-        return friendRepository.findByUser(user);
+        return listToResponse(users);
     }
 
     @Transactional
-    public Friend sendFriendRequest(User requester, User friend) {
+    public Friend sendFriendRequest(Long reqUserId, User friend) {
+        User requester = userFindService.findById(reqUserId);
         validateFriendRequestUserRole(requester, friend);
 
         Friend newFriend = new Friend();
@@ -65,5 +71,18 @@ public class FriendService {
         if (requester.getRole() != Role.MANAGER || friend.getRole() != Role.MANAGER) {
             throw BaseException.type(FriendErrorCode.NOT_A_MANAGER);
         }
+    }
+
+    private List<SearchUserResponse> listToResponse(List<User> users) throws IOException{
+        List<SearchUserResponse> userList = new ArrayList<>();
+        for (User user : users) {
+            SearchUserResponse searchUserResponse = SearchUserResponse.builder()
+                    .name(user.getName())
+                    .phoneNumber(user.getPhoneNumber())
+                    .company(user.getCompany())
+                    .build();
+            userList.add(searchUserResponse);
+        }
+        return userList;
     }
 }
