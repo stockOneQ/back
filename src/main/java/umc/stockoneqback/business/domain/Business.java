@@ -1,12 +1,12 @@
 package umc.stockoneqback.business.domain;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import umc.stockoneqback.global.base.BaseTimeEntity;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.user.domain.User;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -19,19 +19,21 @@ public class Business extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Status status;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id")
     private User manager;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supervisor_id")
     private User supervisor;
 
+    @Convert(converter = Status.StatusConverter.class)
+    private Status status;
+
     @Builder
-    public Business(Status status, User manager, User supervisor) {
-        this.status = status;
+    public Business(User manager, User supervisor) {
         this.manager = manager;
         this.supervisor = supervisor;
+        this.status = Status.NORMAL;
     }
 }

@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.ServiceTest;
+import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.Status;
-import umc.stockoneqback.global.exception.ApplicationException;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.exception.StoreErrorCode;
 
@@ -30,7 +30,7 @@ class StoreServiceTest extends ServiceTest {
 
             // when - then
             assertThatThrownBy(() -> storeService.save("스타벅스 - 광화문점", "카페", "서울시 종로구"))
-                    .isInstanceOf(ApplicationException.class)
+                    .isInstanceOf(BaseException.class)
                     .hasMessage(StoreErrorCode.ALREADY_EXIST_STORE.getMessage());
         }
 
@@ -82,13 +82,13 @@ class StoreServiceTest extends ServiceTest {
         );
 
         assertThatThrownBy(() -> storeService.findById(storeId1+100L))
-                .isInstanceOf(ApplicationException.class)
+                .isInstanceOf(BaseException.class)
                 .hasMessage(StoreErrorCode.STORE_NOT_FOUND.getMessage());
         assertThatThrownBy(() -> storeService.findById(storeId2+100L))
-                .isInstanceOf(ApplicationException.class)
+                .isInstanceOf(BaseException.class)
                 .hasMessage(StoreErrorCode.STORE_NOT_FOUND.getMessage());
         assertThatThrownBy(() -> storeService.findById(storeId3+100L))
-                .isInstanceOf(ApplicationException.class)
+                .isInstanceOf(BaseException.class)
                 .hasMessage(StoreErrorCode.STORE_NOT_FOUND.getMessage());
     }
 
@@ -117,13 +117,13 @@ class StoreServiceTest extends ServiceTest {
         );
 
         assertThatThrownBy(() -> storeService.findByName("투썸플레이스 - 광화문점"))
-                .isInstanceOf(ApplicationException.class)
+                .isInstanceOf(BaseException.class)
                 .hasMessage(StoreErrorCode.STORE_NOT_FOUND.getMessage());
         assertThatThrownBy(() -> storeService.findByName("투썸플레이스 - 을지로점"))
-                .isInstanceOf(ApplicationException.class)
+                .isInstanceOf(BaseException.class)
                 .hasMessage(StoreErrorCode.STORE_NOT_FOUND.getMessage());
         assertThatThrownBy(() -> storeService.findByName("투썸플레이스 - 신촌점"))
-                .isInstanceOf(ApplicationException.class)
+                .isInstanceOf(BaseException.class)
                 .hasMessage(StoreErrorCode.STORE_NOT_FOUND.getMessage());
     }
 

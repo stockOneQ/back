@@ -10,14 +10,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import umc.stockoneqback.global.exception.ApplicationException;
 
 import java.util.List;
 
 @RestControllerAdvice
 public class ApiGlobalExceptionHandler {
-    @ExceptionHandler(ApplicationException.class)
-    public ResponseEntity<ErrorResponse> applicationException(ApplicationException exception) {
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<ErrorResponse> applicationException(BaseException exception) {
         ErrorCode code = exception.getCode();
         return ResponseEntity
                 .status(code.getStatus())

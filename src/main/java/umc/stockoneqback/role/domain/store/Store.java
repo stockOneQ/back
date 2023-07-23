@@ -34,6 +34,7 @@ public class Store extends BaseTimeEntity {
     @Embedded
     private PartTimers partTimers;
 
+    @Convert(converter = Status.StatusConverter.class)
     private Status status;
 
     @Builder

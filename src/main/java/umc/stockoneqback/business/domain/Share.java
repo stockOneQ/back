@@ -28,8 +28,10 @@ public class Share extends BaseTimeEntity {
 
     private String content;
 
+    @Convert(converter = Category.CategoryConverter.class)
     private Category category;
 
+    @Convert(converter = Status.StatusConverter.class)
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -3,18 +3,15 @@ package umc.stockoneqback.user.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import umc.stockoneqback.global.base.BaseTimeEntity;
-import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.global.base.Status;
-import umc.stockoneqback.user.exception.UserErrorCode;
 import org.springframework.format.annotation.DateTimeFormat;
 import umc.stockoneqback.board.domain.Board;
+import umc.stockoneqback.global.base.BaseTimeEntity;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.role.domain.company.Company;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static javax.persistence.CascadeType.PERSIST;
@@ -43,12 +40,14 @@ public class User extends BaseTimeEntity {
 
     private String phoneNumber;
 
+    @Convert(converter = Role.RoleConverter.class)
     private Role role;
 
     @ManyToOne
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
 
+    @Convert(converter = Status.StatusConverter.class)
     private Status status;
 
     // 회원 탈퇴시 작성한 게시글 모두 삭제
@@ -60,9 +59,9 @@ public class User extends BaseTimeEntity {
         this.loginId = loginId;
         this.password = password;
         this.name = username;
-        this.birth = birth;
         this.phoneNumber = phoneNumber;
         this.role = role;
+        this.birth = birth;
         this.status = Status.NORMAL;
     }
 
@@ -70,12 +69,6 @@ public class User extends BaseTimeEntity {
         return new User(email, loginId, password, username, birth, phoneNumber, role);
     }
 
-    private static Role roleStringToEnum(String roleString) {
-        return Arrays.stream(Role.values())
-                .filter(role -> role.getValue().equals(roleString))
-                .findFirst()
-                .orElseThrow(() -> new BaseException(UserErrorCode.ROLE_NOT_FOUND));
-    }
     public void updateCompany(Company company) {
         this.company = company;
     }

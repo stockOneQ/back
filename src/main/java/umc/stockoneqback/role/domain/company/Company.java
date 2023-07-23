@@ -30,6 +30,7 @@ public class Company extends BaseTimeEntity {
     @OneToMany(mappedBy = "company", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<User> employees = new ArrayList<>();
 
+    @Convert(converter = Status.StatusConverter.class)
     private Status status;
 
     @Builder

@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.file.utils.exception.FileErrorCode;
-import umc.stockoneqback.global.exception.ApplicationException;
+import umc.stockoneqback.global.base.BaseException;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -25,6 +25,7 @@ import java.util.UUID;
 public class FileService {
     private static final String BOARD = "board";
     private static final String SHARE = "share";
+    private static final String PRODUCT = "product";
 
     private final AmazonS3 amazonS3; // aws s3 client
 
@@ -43,10 +44,16 @@ public class FileService {
         return uploadFile(SHARE, file);
     }
 
+    // 제품 사진 업로드
+    public String uploadProductFiles(MultipartFile file) {
+        validateFileExists(file);
+        return uploadFile(PRODUCT, file);
+    }
+
     // 파일 존재 여부 검증
     private void validateFileExists(MultipartFile file) {
         if (file == null) {
-            throw ApplicationException.type(FileErrorCode.EMPTY_FILE);
+            throw BaseException.type(FileErrorCode.EMPTY_FILE);
         }
     }
 
@@ -65,7 +72,7 @@ public class FileService {
             );
         } catch (IOException e) {
             log.error("S3 파일 업로드 실패: {}", e.getMessage());
-            throw ApplicationException.type(FileErrorCode.S3_UPLOAD_FAILED);
+            throw BaseException.type(FileErrorCode.S3_UPLOAD_FAILED);
         }
 
         return amazonS3.getUrl(bucket, filePath).toString();
@@ -78,7 +85,8 @@ public class FileService {
         return switch (dir) {
             case BOARD -> String.format("board/%s", fileKey);
             case SHARE -> String.format("share/%s", fileKey);
-            default -> throw ApplicationException.type(FileErrorCode.INVALID_DIR);
+            case PRODUCT -> String.format("product/%s", fileKey);
+            default -> throw BaseException.type(FileErrorCode.INVALID_DIR);
         };
     }
 
@@ -97,6 +105,12 @@ public class FileService {
         httpHeaders.setContentDispositionFormData("attachment", fileName); // 파일 이름 지정
 
         return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+    }
+
+    public byte[] downloadToResponseDto(String fileUrl) throws IOException {
+        S3Object s3object = amazonS3.getObject(new GetObjectRequest(bucket, fileUrl));
+        S3ObjectInputStream objectInputStream = s3object.getObjectContent();
+        return IOUtils.toByteArray(objectInputStream);
     }
 
     private MediaType contentType(String fileUrl) {
