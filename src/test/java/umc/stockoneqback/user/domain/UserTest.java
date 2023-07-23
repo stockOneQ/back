@@ -21,7 +21,7 @@ class UserTest {
         @Test
         @DisplayName("존재하지 않는 역할은 역할 Enum Class로 변환할 수 없다")
         void throwExceptionByRoleNotFound() {
-            org.assertj.core.api.Assertions.assertThatThrownBy(() -> User.createUser(Email.from(ANNE.getEmail()), ANNE.getLoginId(), Password.encrypt(ANNE.getPassword(), ENCODER), ANNE.getName(), ANNE.getBirth(), ANNE.getPhoneNumber(), Role.valueOf("시장님")))
+            org.assertj.core.api.Assertions.assertThatThrownBy(() -> User.createUser(Email.from(ANNE.getEmail()), ANNE.getLoginId(), Password.encrypt(ANNE.getPassword(), ENCODER), ANNE.getName(), ANNE.getBirth(), ANNE.getPhoneNumber(), Role.valueOf("사장님")))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(UserErrorCode.ROLE_NOT_FOUND.getMessage());
         }
