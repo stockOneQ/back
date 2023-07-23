@@ -8,7 +8,6 @@ import umc.stockoneqback.global.base.GlobalErrorCode;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.Serializable;
 
 @Component
@@ -17,6 +16,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
-        throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
+        throw BaseException.type(GlobalErrorCode.UNAUTHORIZED); // 자격증명 없이 접근시, 401 응답
     }
 }

@@ -28,7 +28,7 @@ public enum GlobalErrorCode implements ErrorCode {
     EMPTY_JWT(HttpStatus.UNAUTHORIZED, "REQUEST_002", "JWT를 입력해주세요."),
     INVALID_JWT(HttpStatus.UNAUTHORIZED, "REQUEST_003", "유효하지 않은 JWT입니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "REQUEST_004", "JWT 토큰이 일치하지 않습니다"),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "REQUEST_005", "로그인이 필요합니다."),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "REQUEST_005", "자격 증명이 이루어지지 않았습니다."),
     INVALID_USER_JWT(HttpStatus.FORBIDDEN,"REQUEST_006","권한이 없는 유저의 접근입니다."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "REQUEST_007", "잘못된 접근입니다."),
     REQUEST_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "REQUEST_008", "만료된 접근입니다."),
@@ -36,6 +36,8 @@ public enum GlobalErrorCode implements ErrorCode {
     NOT_SUPPORTED_METHOD_ERROR(HttpStatus.METHOD_NOT_ALLOWED, "REQUEST_010", "지원하지 않는 HTTP Method 요청입니다."),
     NOT_SUPPORTED_MEDIA_TYPE_ERROR(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "REQUEST_011", "잘못된 미디어 타입입니다."),
     INVALID_ENUM(HttpStatus.BAD_REQUEST, "REQUEST_012", "Enum 타입으로 변경할 수 없습니다."),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "REQUEST_013", "토큰의 유효기간이 만료되었습니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "REQUEST_014", "토큰이 유효하지 않습니다."),
 
     /**
      * 500 : 응답 실패

@@ -215,6 +215,6 @@ class BusinessApiControllerTest extends ControllerTest {
     }
 
     private String createToken(Long userId) {
-        return jwtTokenProvider.createToken(userId);
+        return jwtTokenProvider.createAccessToken(userId);
     }
 }

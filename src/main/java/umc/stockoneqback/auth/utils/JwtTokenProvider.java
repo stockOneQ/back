@@ -6,6 +6,8 @@ import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.GlobalErrorCode;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -16,21 +18,30 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
     private final SecretKey secretKey;
-    private final long tokenValidityInSeconds;
+    private final long accessTokenValidityInMilliseconds;
+    private final long refreshTokenValidityInMilliseconds;
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secret,
-                            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.tokenValidityInSeconds = tokenValidityInSeconds;
+    public JwtTokenProvider(@Value("${jwt.secret}") final String secretKey,
+                            @Value("${jwt.access-token-validity}") final long accessTokenValidityInMilliseconds,
+                            @Value("${jwt.refresh-token-validity}") final long refreshTokenValidityInMilliseconds) {
+        this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+        this.accessTokenValidityInMilliseconds = accessTokenValidityInMilliseconds;
+        this.refreshTokenValidityInMilliseconds = refreshTokenValidityInMilliseconds;
     }
 
-    public String createToken(Long userId) {
-        return createToken(userId, tokenValidityInSeconds);
+
+    public String createAccessToken(Long memberId) {
+        return createToken(memberId, accessTokenValidityInMilliseconds);
     }
 
-    private String createToken(Long userId, long validityInMilliseconds) {
+    public String createRefreshToken(Long memberId) {
+        return createToken(memberId, refreshTokenValidityInMilliseconds);
+    }
+
+    private String createToken(Long memberId, long validityInMilliseconds) {
         Claims claims = Jwts.claims();
-        claims.put("id", userId);
+        claims.put("id", memberId);
+
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime tokenValidity = now.plusSeconds(validityInMilliseconds);
 
@@ -41,6 +52,7 @@ public class JwtTokenProvider {
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
+
 
     public Long getId(String token) {
         return getClaims(token)
@@ -55,11 +67,9 @@ public class JwtTokenProvider {
             Date now = new Date();
             return expiredDate.after(now);
         } catch (ExpiredJwtException e) {
-            log.info("만료된 토큰");
-            return false;
+            throw BaseException.type(GlobalErrorCode.EXPIRED_TOKEN);
         } catch (SecurityException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
-            log.info("유효하지 않은 토큰");
-            return false;
+            throw BaseException.type(GlobalErrorCode.INVALID_TOKEN);
         }
     }
 
