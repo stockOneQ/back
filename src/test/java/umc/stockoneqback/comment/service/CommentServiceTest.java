@@ -10,6 +10,7 @@ import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.comment.exception.CommentErrorCode;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.reply.service.ReplyService;
 import umc.stockoneqback.user.domain.User;
 
 import java.time.LocalDateTime;
@@ -30,6 +31,9 @@ public class CommentServiceTest extends ServiceTest {
 
     @Autowired
     private CommentFindService commentFindService;
+
+    @Autowired
+    private ReplyService replyService;
 
     private User writer;
     private User not_writer;
@@ -121,6 +125,22 @@ public class CommentServiceTest extends ServiceTest {
                     () -> assertThat(commentRepository.existsById(comments[0].getId())).isFalse(),
                     () -> assertThat(commentRepository.existsById(comments[1].getId())).isFalse()
             );
+        }
+
+        @Test
+        @DisplayName("댓글이 삭제되면 달린 대댓글도 삭제되어야 한다")
+        void successDeleteAllReply() {
+            // given
+            for(int i=1; i<=5; i++) {
+                replyService.create(writer.getId(), comments[0].getId(), "이미지" + i, "댓글" + i);
+            }
+            flushAndClear();
+
+            // when
+            commentService.delete(writer.getId(), board.getId());
+
+            // then
+            assertThat(replyRepository.count()).isEqualTo(0);
         }
 
         @Test
