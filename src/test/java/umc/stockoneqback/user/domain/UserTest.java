@@ -11,8 +11,7 @@ import umc.stockoneqback.global.enumconfig.EnumConverter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static umc.stockoneqback.fixture.UserFixture.ANNE;
-import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
+import static umc.stockoneqback.fixture.UserFixture.*;
 import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
 @DisplayName("User 도메인 테스트")
@@ -43,5 +42,22 @@ class UserTest {
                     () -> assertThat(user.getStatus()).isEqualTo(Status.NORMAL)
             );
         }
+    }
+
+    @Test
+    @DisplayName("회원 정보를 수정한다")
+    void updateInformation() {
+        User user = User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole());
+        user.updateInformation(Email.from(WIZ.getEmail()), WIZ.getLoginId(), Password.encrypt(WIZ.getPassword(), ENCODER), WIZ.getName(), WIZ.getBirth(), WIZ.getPhoneNumber());
+
+        assertAll(
+                () -> assertThat(user.getEmail().getValue()).isEqualTo(WIZ.getEmail()),
+                () -> assertThat(user.getPassword().isSamePassword(WIZ.getPassword(), ENCODER)).isTrue(),
+                () -> assertThat(user.getName()).isEqualTo(WIZ.getName()),
+                () -> assertThat(user.getBirth()).isEqualTo(WIZ.getBirth()),
+                () -> assertThat(user.getPhoneNumber()).isEqualTo(WIZ.getPhoneNumber()),
+                () -> assertThat(user.getRole()).isEqualTo(SAEWOO.getRole()),
+                () -> assertThat(user.getStatus()).isEqualTo(Status.NORMAL)
+        );
     }
 }
