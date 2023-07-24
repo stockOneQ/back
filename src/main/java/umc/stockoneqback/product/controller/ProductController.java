@@ -8,6 +8,7 @@ import umc.stockoneqback.product.dto.request.EditProductRequest;
 import umc.stockoneqback.product.dto.response.LoadProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductResponse;
 import umc.stockoneqback.product.service.ProductService;
+import umc.stockoneqback.product.service.ProductService;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,13 +31,15 @@ public class ProductController {
     public BaseResponse<LoadProductResponse> loadProduct(@PathVariable(value = "productId") Long productId) throws IOException {
         return new BaseResponse<>(productService.loadProduct(productId));
     }
-
+/*
     @GetMapping("")
     public BaseResponse<List<SearchProductResponse>> searchProduct(@RequestParam(value = "store") Long storeId,
                                                                    @RequestParam(value = "condition") String storeConditionValue,
                                                                    @RequestParam(value = "name") String productName) throws IOException {
         return new BaseResponse<>(productService.searchProduct(storeId, storeConditionValue, productName));
     }
+
+ */
 
     @PatchMapping("/edit/{productId}")
     public BaseResponse<BaseResponseStatus> editProduct(@PathVariable(value = "productId") Long productId,
