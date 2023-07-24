@@ -12,7 +12,6 @@ public enum AuthErrorCode implements ErrorCode {
     AUTH_INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_002", "토큰이 유효하지 않습니다."),
     INVALID_PERMISSION(HttpStatus.FORBIDDEN, "AUTH_003", "권한이 없습니다."),
     WRONG_PASSWORD(HttpStatus.UNAUTHORIZED, "AUTH_004", "비밀번호가 일치하지 않습니다."),
-    EMAIL_AUTH_NOT_DONE(HttpStatus.BAD_REQUEST, "AUTH_005", "이메일 인증이 완료되지 않은 회원입니다."),
     ;
 
     private final HttpStatus status;

@@ -62,7 +62,6 @@ public class SecurityConfig {
                     .antMatchers("/api/user/sign-up/manager").permitAll()
                     .antMatchers("/api/user/sign-up/part-timer").permitAll()
                     .antMatchers("/api/user/sign-up/supervisor").permitAll()
-                    .antMatchers("/api/**").permitAll() // 추후 주석 처리
                 .anyRequest().authenticated()
 
                 // filter

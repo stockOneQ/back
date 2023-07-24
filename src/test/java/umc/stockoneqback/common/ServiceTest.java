@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import umc.stockoneqback.auth.domain.TokenRepository;
 import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.role.domain.company.CompanyRepository;
@@ -34,6 +35,9 @@ public class ServiceTest {
   
     @Autowired
     protected BoardRepository boardRepository;
+
+    @Autowired
+    protected TokenRepository tokenRepository;
 
     @BeforeEach
     void setUp() {
