@@ -10,10 +10,13 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.fixture.ProductFixture;
+import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.product.dto.request.EditProductRequest;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.LoadProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductResponse;
+import umc.stockoneqback.product.exception.ProductErrorCode;
+import umc.stockoneqback.role.exception.StoreErrorCode;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -22,8 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -36,12 +38,159 @@ import static umc.stockoneqback.fixture.ProductFixture.*;
 
 @DisplayName("Product [Controller Layer] -> ProductApiController 테스트")
 public class ProductApiControllerTest extends ControllerTest {
+    private static final Long ERROR_STORE_ID = Long.MAX_VALUE;
+    private static final Long ERROR_PRODUCT_ID = Long.MAX_VALUE;
+    private static final String ERROR_STORE_CONDITION = "고온";
+    private static final String ERROR_SORT = "제품 위치";
+
     @Nested
     @DisplayName("제품 등록 API [POST /api/product/add]")
     class addProduct {
         private static final String BASE_URL = "/api/product/add";
         private static final String STORE_CONDITION = "상온";
         private static final Long STORE_ID = 1L;
+
+        @Test
+        @DisplayName("유효하지 않은 가게 ID를 입력받으면 제품 등록에 실패한다")
+        void throwExceptionByInvalidStore() throws Exception {
+            // given
+            doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
+                    .when(productService)
+                    .saveProduct(anyLong(), anyString(), any(), any());
+
+            // when
+            final EditProductRequest request = createEditProductRequest();
+            MockMultipartFile file = new MockMultipartFile("image", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("editProductRequest", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .multipart(BASE_URL)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
+                    .param("store", String.valueOf(ERROR_STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .with(csrf().asHeader());
+
+            // then
+            final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/Add/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParts(
+                                            partWithName("image").description("파일 이미지"),
+                                            partWithName("editProductRequest").description("생성할 제품 정보 DTO")
+                                    ),
+                                    requestPartFields(
+                                            "editProductRequest",
+                                            fieldWithPath("name").description("제품명"),
+                                            fieldWithPath("price").description("가격"),
+                                            fieldWithPath("vendor").description("판매업체"),
+                                            fieldWithPath("receivingDate").description("입고일"),
+                                            fieldWithPath("expirationDate").description("유통기한"),
+                                            fieldWithPath("location").description("재료위치"),
+                                            fieldWithPath("requireQuant").description("필수 수량"),
+                                            fieldWithPath("stockQuant").description("재고 수량"),
+                                            fieldWithPath("siteToOrder").description("발주사이트"),
+                                            fieldWithPath("orderFreq").description("발주 빈도")
+                                    ),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 보관 방법을 입력받으면 제품 등록에 실패한다")
+        void throwExceptionByInvalidCondition() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
+                    .when(productService)
+                    .saveProduct(anyLong(), anyString(), any(), any());
+
+            // when
+            final EditProductRequest request = createEditProductRequest();
+            MockMultipartFile file = new MockMultipartFile("image", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("editProductRequest", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .multipart(BASE_URL)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", ERROR_STORE_CONDITION)
+                    .with(csrf().asHeader());
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/Add/Failure/Case2",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParts(
+                                            partWithName("image").description("파일 이미지"),
+                                            partWithName("editProductRequest").description("생성할 제품 정보 DTO")
+                                    ),
+                                    requestPartFields(
+                                            "editProductRequest",
+                                            fieldWithPath("name").description("제품명"),
+                                            fieldWithPath("price").description("가격"),
+                                            fieldWithPath("vendor").description("판매업체"),
+                                            fieldWithPath("receivingDate").description("입고일"),
+                                            fieldWithPath("expirationDate").description("유통기한"),
+                                            fieldWithPath("location").description("재료위치"),
+                                            fieldWithPath("requireQuant").description("필수 수량"),
+                                            fieldWithPath("stockQuant").description("재고 수량"),
+                                            fieldWithPath("siteToOrder").description("발주사이트"),
+                                            fieldWithPath("orderFreq").description("발주 빈도")
+                                    ),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
 
         @Test
         @DisplayName("제품 등록에 성공한다")
@@ -110,6 +259,48 @@ public class ProductApiControllerTest extends ControllerTest {
         private static final Long PRODUCT_ID = 1L;
 
         @Test
+        @DisplayName("유효하지 않은 제품 ID를 입력받으면 제품 상세조회에 실패한다")
+        void throwExceptionByInvalidProductId() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT))
+                    .when(productService)
+                    .loadProduct(anyLong());
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL, ERROR_PRODUCT_ID)
+                    .with(csrf().asHeader());
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_PRODUCT;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetDetail/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    pathParameters(
+                                            parameterWithName("productId").description("상세조회할 제품 ID")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
         @DisplayName("제품 상세조회에 성공한다")
         void success() throws Exception {
             // given
@@ -170,6 +361,100 @@ public class ProductApiControllerTest extends ControllerTest {
         private static final String NAME = "리";
 
         @Test
+        @DisplayName("유효하지 않은 가게 ID를 입력받으면 입력된 이름을 포함하는 모든 제품 목록 조회에 실패한다")
+        void throwExceptionByInvalidStore() throws Exception {
+            // given
+            doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
+                    .when(productService)
+                    .searchProduct(anyLong(), anyString(), anyString());
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(ERROR_STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .param("name", NAME)
+                    .with(csrf().asHeader());
+
+            // then
+            final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetProductByName/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("name").description("검색할 제품명")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 보관 방법을 입력받으면 입력된 이름을 포함하는 모든 제품 목록 조회에 실패한다")
+        void throwExceptionByInvalidCondition() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
+                    .when(productService)
+                    .searchProduct(anyLong(), anyString(), anyString());
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", ERROR_STORE_CONDITION)
+                    .param("name", NAME)
+                    .with(csrf().asHeader());
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetProductByName/Failure/Case2",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("name").description("검색할 제품명")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
         @DisplayName("입력된 이름을 포함하는 모든 제품 목록 조회에 성공한다")
         void success() throws Exception {
             // given
@@ -225,6 +510,81 @@ public class ProductApiControllerTest extends ControllerTest {
     class modifyProduct {
         private static final String BASE_URL = "/api/product/edit/{productId}";
         private static final Long PRODUCT_ID = 1L;
+
+        @Test
+        @DisplayName("유효하지 않은 제품 ID를 입력받으면 제품 변경에 실패한다")
+        void throwExceptionByInvalidProductId() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT))
+                    .when(productService)
+                    .editProduct(anyLong(), any(), any());
+
+            // when
+            final EditProductRequest request = createEditProductRequest();
+            MockMultipartFile file = new MockMultipartFile("image", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("editProductRequest", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .multipart(BASE_URL, ERROR_PRODUCT_ID)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
+                    .with(csrf().asHeader())
+                    .with(new RequestPostProcessor() {
+                        @Override
+                        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                            request.setMethod("PATCH");
+                            return request;
+                        }
+                    });
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_PRODUCT;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/Modify/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    pathParameters(
+                                            parameterWithName("productId").description("변경할 제품명")
+                                    ),
+                                    requestParts(
+                                            partWithName("image").description("파일 이미지"),
+                                            partWithName("editProductRequest").description("생성할 제품 정보 DTO")
+                                    ),
+                                    requestPartFields(
+                                            "editProductRequest",
+                                            fieldWithPath("name").description("제품명"),
+                                            fieldWithPath("price").description("가격"),
+                                            fieldWithPath("vendor").description("판매업체"),
+                                            fieldWithPath("receivingDate").description("입고일"),
+                                            fieldWithPath("expirationDate").description("유통기한"),
+                                            fieldWithPath("location").description("재료위치"),
+                                            fieldWithPath("requireQuant").description("필수 수량"),
+                                            fieldWithPath("stockQuant").description("재고 수량"),
+                                            fieldWithPath("siteToOrder").description("발주사이트"),
+                                            fieldWithPath("orderFreq").description("발주 빈도")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
 
         @Test
         @DisplayName("제품 변경에 성공한다")
@@ -297,6 +657,48 @@ public class ProductApiControllerTest extends ControllerTest {
         private static final Long PRODUCT_ID = 1L;
 
         @Test
+        @DisplayName("유효하지 않은 제품 ID를 입력받으면 제품 삭제에 실패한다")
+        void throwExceptionByInvalidProductId() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT))
+                    .when(productService)
+                    .deleteProduct(anyLong());
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .delete(BASE_URL, ERROR_PRODUCT_ID)
+                    .with(csrf().asHeader());
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_PRODUCT;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/Erase/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    pathParameters(
+                                            parameterWithName("productId").description("상세조회할 제품 ID")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
         @DisplayName("제품 삭제에 성공한다")
         void success() throws Exception {
             // given
@@ -338,6 +740,96 @@ public class ProductApiControllerTest extends ControllerTest {
         private static final String BASE_URL = "/api/product/count";
         private static final String STORE_CONDITION = "상온";
         private static final Long STORE_ID = 1L;
+
+        @Test
+        @DisplayName("유효하지 않은 가게 ID를 입력받으면 분류 기준별 제품 개수 조회에 실패한다")
+        void throwExceptionByInvalidStore() throws Exception {
+            // given
+            doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
+                    .when(productService)
+                    .getTotalProduct(anyLong(), anyString());
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(ERROR_STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .with(csrf().asHeader());
+
+            // then
+            final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetTotal/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 보관 방법을 입력받으면 분류 기준별 제품 개수 조회에 실패한다")
+        void throwExceptionByInvalidCondition() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
+                    .when(productService)
+                    .getTotalProduct(anyLong(), anyString());
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", ERROR_STORE_CONDITION)
+                    .with(csrf().asHeader());
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetTotal/Failure/Case2",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
 
         @Test
         @DisplayName("분류 기준별 제품 개수 조회에 성공한다")
@@ -404,6 +896,153 @@ public class ProductApiControllerTest extends ControllerTest {
                 Stream.of(PERSIMMON, TANGERINE, DURIAN, MANGO, MELON,
                         BANANA, PEAR, PEACH, BLUEBERRY, APPLE, WATERMELON, ORANGE).collect(Collectors.toList())
         );
+
+        @Test
+        @DisplayName("유효하지 않은 가게 ID를 입력받으면 특정 정렬 기준을 만족하는 전체 제품 조회에 실패한다")
+        void throwExceptionByInvalidStore() throws Exception {
+            // given
+            doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
+                    .when(productService)
+                    .getListOfAllProduct(eq(ERROR_STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(ERROR_STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .param("last", (String) null)
+                    .param("sort", SORT)
+                    .with(csrf().asHeader());
+
+            // then
+            final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetAll/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)"),
+                                            parameterWithName("sort").description("정렬 기준")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 보관 방법을 입력받으면 특정 정렬 기준을 만족하는 전체 제품 조회에 실패한다")
+        void throwExceptionByInvalidCondition() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
+                    .when(productService)
+                    .getListOfAllProduct(eq(STORE_ID), eq(ERROR_STORE_CONDITION), isNull(), eq(SORT));
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", ERROR_STORE_CONDITION)
+                    .param("last", (String) null)
+                    .param("sort", SORT)
+                    .with(csrf().asHeader());
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetAll/Failure/Case2",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)"),
+                                            parameterWithName("sort").description("정렬 기준")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 정렬 방식을 입력받으면 특정 정렬 기준을 만족하는 전체 제품 조회에 실패한다")
+        void throwExceptionByInvalidSort() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_SORT_CONDITION))
+                    .when(productService)
+                    .getListOfAllProduct(eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(ERROR_SORT));
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .param("last", (String) null)
+                    .param("sort", ERROR_SORT)
+                    .with(csrf().asHeader());
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_SORT_CONDITION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetAll/Failure/Case3",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)"),
+                                            parameterWithName("sort").description("정렬 기준")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
 
         @Test
         @DisplayName("특정 정렬 기준을 만족하는 전체 제품 조회에 성공한다")
@@ -488,6 +1127,153 @@ public class ProductApiControllerTest extends ControllerTest {
         );
 
         @Test
+        @DisplayName("유효하지 않은 가게 ID를 입력받으면 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 실패한다")
+        void throwExceptionByInvalidStore() throws Exception {
+            // given
+            doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
+                    .when(productService)
+                    .getListOfPassProduct(eq(ERROR_STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(ERROR_STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .param("last", (String) null)
+                    .param("sort", SORT)
+                    .with(csrf().asHeader());
+
+            // then
+            final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetPass/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)"),
+                                            parameterWithName("sort").description("정렬 기준")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 보관 방법을 입력받으면 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 실패한다")
+        void throwExceptionByInvalidCondition() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
+                    .when(productService)
+                    .getListOfPassProduct(eq(STORE_ID), eq(ERROR_STORE_CONDITION), isNull(), eq(SORT));
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", ERROR_STORE_CONDITION)
+                    .param("last", (String) null)
+                    .param("sort", SORT)
+                    .with(csrf().asHeader());
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetPass/Failure/Case2",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)"),
+                                            parameterWithName("sort").description("정렬 기준")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 정렬 방식을 입력받으면 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 실패한다")
+        void throwExceptionByInvalidSort() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_SORT_CONDITION))
+                    .when(productService)
+                    .getListOfPassProduct(eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(ERROR_SORT));
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .param("last", (String) null)
+                    .param("sort", ERROR_SORT)
+                    .with(csrf().asHeader());
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_SORT_CONDITION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetPass/Failure/Case3",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)"),
+                                            parameterWithName("sort").description("정렬 기준")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
         @DisplayName("특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 성공한다")
         void success() throws Exception{
             // given
@@ -548,6 +1334,153 @@ public class ProductApiControllerTest extends ControllerTest {
         private static final List<ProductFixture> productFixtureList = new ArrayList<>(
                 Stream.of(DURIAN, MELON, APPLE, PLUM, CHERRY).collect(Collectors.toList())
         );
+
+        @Test
+        @DisplayName("유효하지 않은 가게 ID를 입력받으면 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 실패한다")
+        void throwExceptionByInvalidStore() throws Exception {
+            // given
+            doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
+                    .when(productService)
+                    .getListOfCloseProduct(eq(ERROR_STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(ERROR_STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .param("last", (String) null)
+                    .param("sort", SORT)
+                    .with(csrf().asHeader());
+
+            // then
+            final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetClose/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)"),
+                                            parameterWithName("sort").description("정렬 기준")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 보관 방법을 입력받으면 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 실패한다")
+        void throwExceptionByInvalidCondition() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
+                    .when(productService)
+                    .getListOfCloseProduct(eq(STORE_ID), eq(ERROR_STORE_CONDITION), isNull(), eq(SORT));
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", ERROR_STORE_CONDITION)
+                    .param("last", (String) null)
+                    .param("sort", SORT)
+                    .with(csrf().asHeader());
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetClose/Failure/Case2",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)"),
+                                            parameterWithName("sort").description("정렬 기준")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 정렬 방식을 입력받으면 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 실패한다")
+        void throwExceptionByInvalidSort() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_SORT_CONDITION))
+                    .when(productService)
+                    .getListOfCloseProduct(eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(ERROR_SORT));
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .param("last", (String) null)
+                    .param("sort", ERROR_SORT)
+                    .with(csrf().asHeader());
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_SORT_CONDITION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetClose/Failure/Case3",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)"),
+                                            parameterWithName("sort").description("정렬 기준")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
 
         @Test
         @DisplayName("특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 성공한다")
@@ -616,6 +1549,153 @@ public class ProductApiControllerTest extends ControllerTest {
         private static final List<ProductFixture> productFixtureList = new ArrayList<>(
                 Stream.of(PEAR, PEACH, APPLE, CHERRY, PINEAPPLE).collect(Collectors.toList())
         );
+
+        @Test
+        @DisplayName("유효하지 않은 가게 ID를 입력받으면 특정 정렬 기준을 만족하는 재고 부족 제품 조회에 실패한다")
+        void throwExceptionByInvalidStore() throws Exception {
+            // given
+            doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
+                    .when(productService)
+                    .getListOfLackProduct(eq(ERROR_STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(ERROR_STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .param("last", (String) null)
+                    .param("sort", SORT)
+                    .with(csrf().asHeader());
+
+            // then
+            final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetLack/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)"),
+                                            parameterWithName("sort").description("정렬 기준")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 보관 방법을 입력받으면 특정 정렬 기준을 만족하는 재고 부족 제품 조회에 실패한다")
+        void throwExceptionByInvalidCondition() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
+                    .when(productService)
+                    .getListOfLackProduct(eq(STORE_ID), eq(ERROR_STORE_CONDITION), isNull(), eq(SORT));
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", ERROR_STORE_CONDITION)
+                    .param("last", (String) null)
+                    .param("sort", SORT)
+                    .with(csrf().asHeader());
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetLack/Failure/Case2",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)"),
+                                            parameterWithName("sort").description("정렬 기준")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 정렬 방식을 입력받으면 특정 정렬 기준을 만족하는 재고 부족 제품 조회에 실패한다")
+        void throwExceptionByInvalidSort() throws Exception {
+            // given
+            doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_SORT_CONDITION))
+                    .when(productService)
+                    .getListOfLackProduct(eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(ERROR_SORT));
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .param("last", (String) null)
+                    .param("sort", ERROR_SORT)
+                    .with(csrf().asHeader());
+
+            // then
+            final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_SORT_CONDITION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetLack/Failure/Case3",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법"),
+                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)"),
+                                            parameterWithName("sort").description("정렬 기준")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
 
         @Test
         @DisplayName("특정 정렬 기준을 만족하는 재고 부족 제품 조회에 성공한다")
