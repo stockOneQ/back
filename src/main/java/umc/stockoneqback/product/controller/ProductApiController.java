@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.global.base.BaseResponse;
-import umc.stockoneqback.global.base.BaseResponseStatus;
+import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.product.dto.request.EditProductRequest;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.LoadProductResponse;
@@ -21,12 +21,12 @@ public class ProductApiController {
     private final ProductService productService;
 
     @PostMapping("/add")
-    public BaseResponse<BaseResponseStatus> saveProduct(@RequestParam(value = "store") Long storeId,
+    public BaseResponse<GlobalErrorCode> saveProduct(@RequestParam(value = "store") Long storeId,
                                                         @RequestParam(value = "condition") String storeConditionValue,
                                                         @RequestPart(value = "image", required = false) MultipartFile multipartFile,
                                                         @RequestPart(value = "editProductRequest") EditProductRequest editProductRequest) {
         productService.saveProduct(storeId, storeConditionValue, editProductRequest.toProduct(), multipartFile);
-        return new BaseResponse<>(BaseResponseStatus.CREATED);
+        return new BaseResponse<>(GlobalErrorCode.CREATED);
     }
 
     @GetMapping("/{productId}")
@@ -42,17 +42,17 @@ public class ProductApiController {
     }
 
     @PatchMapping("/edit/{productId}")
-    public BaseResponse<BaseResponseStatus> editProduct(@PathVariable(value = "productId") Long productId,
+    public BaseResponse<GlobalErrorCode> editProduct(@PathVariable(value = "productId") Long productId,
                                                         @RequestPart(value = "image", required = false) MultipartFile multipartFile,
                                                         @RequestPart(value = "editProductRequest") EditProductRequest editProductRequest) {
         productService.editProduct(productId, editProductRequest.toProduct(), multipartFile);
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+        return new BaseResponse<>(GlobalErrorCode.SUCCESS);
     }
 
     @DeleteMapping("/delete/{productId}")
-    public BaseResponse<BaseResponseStatus> deleteProduct(@PathVariable(value = "productId") Long productId) {
+    public BaseResponse<GlobalErrorCode> deleteProduct(@PathVariable(value = "productId") Long productId) {
         productService.deleteProduct(productId);
-        return new BaseResponse<>(BaseResponseStatus.SUCCESS);
+        return new BaseResponse<>(GlobalErrorCode.SUCCESS);
     }
 
     @GetMapping("/count")
