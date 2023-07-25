@@ -8,12 +8,18 @@ import umc.stockoneqback.global.enumconfig.EnumStandard;
 @Getter
 @RequiredArgsConstructor
 public enum Role implements EnumStandard {
-    MANAGER("사장님"),
-    PART_TIMER("아르바이트생"),
-    SUPERVISOR("슈퍼바이저")
+    MANAGER("ROLE_MANAGER", "사장님"),
+    PART_TIMER("ROLE_PART_TIMER", "아르바이트생"),
+    SUPERVISOR("ROLE_SUPERVISOR", "슈퍼바이저")
     ;
 
-    private final String value;
+    private final String authority;
+    private final String description;
+
+    @Override
+    public String getValue() {
+        return authority;
+    }
 
     @javax.persistence.Converter
     public static class RoleConverter extends EnumConverter<Role> {

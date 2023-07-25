@@ -18,4 +18,9 @@ public class UserFindService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
     }
+
+    public User findByLoginId(String loginId) {
+        return userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
+    }
 }

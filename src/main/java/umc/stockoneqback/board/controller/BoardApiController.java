@@ -7,7 +7,6 @@ import umc.stockoneqback.board.controller.dto.BoardRequest;
 import umc.stockoneqback.board.service.BoardService;
 
 import javax.validation.Valid;
-import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
