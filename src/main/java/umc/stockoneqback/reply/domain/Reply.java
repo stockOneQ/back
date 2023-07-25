@@ -47,4 +47,13 @@ public class Reply extends BaseTimeEntity {
     public static Reply createReply (User writer, Comment comment, String image, String content) {
         return new Reply(writer, comment, image, content);
     }
+
+    public void updateImage(String updateImage){
+        this.image = updateImage;
+    }
+
+    public void updateContent(String updateContent){
+        this.content = updateContent;
+    }
+
 }

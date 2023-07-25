@@ -18,6 +18,15 @@ import umc.stockoneqback.board.service.BoardFindService;
 import umc.stockoneqback.board.service.BoardService;
 import umc.stockoneqback.business.controller.BusinessApiController;
 import umc.stockoneqback.business.service.BusinessService;
+import umc.stockoneqback.comment.controller.CommentApiController;
+import umc.stockoneqback.comment.service.CommentFindService;
+import umc.stockoneqback.comment.service.CommentService;
+import umc.stockoneqback.global.config.SecurityConfig;
+import umc.stockoneqback.product.controller.ProductApiController;
+import umc.stockoneqback.product.service.ProductService;
+import umc.stockoneqback.reply.controller.ReplyApiController;
+import umc.stockoneqback.reply.service.ReplyFindService;
+import umc.stockoneqback.reply.service.ReplyService;
 import umc.stockoneqback.role.service.CompanyService;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.controller.UserApiController;
@@ -26,9 +35,13 @@ import umc.stockoneqback.user.service.UserService;
 
 @WebMvcTest(value = {
         UserApiController.class,
+        BusinessApiController.class,
         BoardApiController.class,
         BusinessApiController.class,
-        AuthApiController.class
+        AuthApiController.class,
+        CommentApiController.class,
+        ReplyApiController.class,
+        ProductApiController.class
 })
 @AutoConfigureRestDocs
 @WithMockUser
@@ -53,6 +66,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    protected ProductService productService;
     
     @MockBean
     protected UserFindService userFindService;
@@ -74,4 +90,16 @@ public abstract class ControllerTest {
 
     @MockBean
     protected JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
+    @MockBean
+    protected CommentFindService commentFindService;
+
+    @MockBean
+    protected CommentService commentService;
+
+    @MockBean
+    protected ReplyFindService replyFindService;
+
+    @MockBean
+    protected ReplyService replyService;
 }

@@ -25,34 +25,43 @@ public class Product extends BaseTimeEntity {
 
     private String vendor;
 
+    @Nullable
+    @Column(name = "image_url")
     private String imageUrl;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "receiving_date")
     private LocalDate receivingDate;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "expiration_date")
     private LocalDate expirationDate;
 
     @Nullable
     private String location;
 
+    @Column(name = "require_quant")
     private Long requireQuant;
 
+    @Column(name = "stock_quant")
     private Long stockQuant;
 
     @Nullable
+    @Column(name = "site_to_order")
     private String siteToOrder;
 
+    @Column(name = "order_freq")
     private Long orderFreq;
 
     @Convert(converter = StoreCondition.StoreConditionConverter.class)
+    @Column(name = "store_condition")
     private StoreCondition storeCondition;
 
     @Convert(converter = Status.StatusConverter.class)
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
+    @JoinColumn(name = "store")
     private Store store;
 
     @Builder
@@ -93,5 +102,14 @@ public class Product extends BaseTimeEntity {
 
     public void delete() {
         this.status = Status.EXPIRED;
+    }
+
+    public static Product createProduct(String name, Long price, String vendor, LocalDate receivingDate,
+                                        LocalDate expirationDate, String location, Long requireQuant, Long stockQuant,
+                                        String siteToOrder, Long orderFreq, StoreCondition storeCondition, Store store, String imageUrl) {
+        Product product = new Product(name, price, vendor, receivingDate, expirationDate,
+                                        location, requireQuant, stockQuant, siteToOrder, orderFreq);
+        product.saveStoreAndStoreConditionAndImageUrl(storeCondition, store, imageUrl);
+        return product;
     }
 }

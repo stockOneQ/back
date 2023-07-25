@@ -7,6 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.auth.domain.TokenRepository;
 import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.business.domain.BusinessRepository;
+import umc.stockoneqback.product.domain.ProductRepository;
+import umc.stockoneqback.comment.domain.CommentRepository;
+import umc.stockoneqback.reply.domain.ReplyRepository;
 import umc.stockoneqback.role.domain.company.CompanyRepository;
 import umc.stockoneqback.role.domain.store.PartTimerRepository;
 import umc.stockoneqback.role.domain.store.StoreRepository;
@@ -38,6 +41,19 @@ public class ServiceTest {
 
     @Autowired
     protected TokenRepository tokenRepository;
+
+    @Autowired
+    protected CommentRepository commentRepository;
+
+    @Autowired
+    protected ReplyRepository replyRepository;
+  
+    @Autowired
+    protected ProductRepository productRepository;
+
+    public void flushAndClear() {
+        databaseCleaner.flushAndClear();
+    }
 
     @BeforeEach
     void setUp() {
