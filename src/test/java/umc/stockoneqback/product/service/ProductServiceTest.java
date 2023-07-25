@@ -25,7 +25,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
 
 @DisplayName("Product [Service Layer] -> ProductService 테스트")

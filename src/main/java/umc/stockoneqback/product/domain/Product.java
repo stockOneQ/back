@@ -1,6 +1,8 @@
 package umc.stockoneqback.product.domain;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 import umc.stockoneqback.global.base.BaseTimeEntity;

@@ -21,7 +21,6 @@ import umc.stockoneqback.business.service.BusinessService;
 import umc.stockoneqback.comment.controller.CommentApiController;
 import umc.stockoneqback.comment.service.CommentFindService;
 import umc.stockoneqback.comment.service.CommentService;
-import umc.stockoneqback.global.config.SecurityConfig;
 import umc.stockoneqback.product.controller.ProductApiController;
 import umc.stockoneqback.product.service.ProductService;
 import umc.stockoneqback.reply.controller.ReplyApiController;
