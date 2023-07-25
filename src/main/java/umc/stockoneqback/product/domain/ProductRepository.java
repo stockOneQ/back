@@ -13,8 +13,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "SELECT p.* FROM Product p WHERE p.status = '정상' AND p.store = :store " +
             "AND p.store_condition = :storeCondition AND p.name LIKE %:name% ORDER BY p.name", nativeQuery = true)
     List<Product> findProductByName(@Param("store") Store store,
-                                             @Param("storeCondition") String storeCondition,
-                                             @Param("name") String productName);
+                                    @Param("storeCondition") String storeCondition,
+                                    @Param("name") String productName);
+
     @Query(value = "SELECT p.* FROM Product p WHERE p.status = '정상' AND p.store = :store " +
             "AND p.store_condition = :storeCondition AND p.name = :name", nativeQuery = true)
     Optional<Product> isExistProductByName(@Param("store") Store store,
@@ -121,3 +122,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                                          @Param("orderFreq") Long orderFreq,
                                                          @Param("pageSize") Integer pageSize);
 }
+
+

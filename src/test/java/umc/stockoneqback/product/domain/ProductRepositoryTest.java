@@ -64,7 +64,6 @@ public class ProductRepositoryTest extends RepositoryTest {
     @DisplayName("입력된 productId를 가지는 제품이 있다면 반환한다")
     void findProductById() {
         Product findProduct = productRepository.findProductById(1L).orElseThrow();
-
         assertThat(findProduct.getName()).isEqualTo("사과");
     }
 

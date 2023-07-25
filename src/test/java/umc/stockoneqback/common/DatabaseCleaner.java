@@ -36,4 +36,10 @@ public class DatabaseCleaner {
 
         entityManager.createNativeQuery("SET foreign_key_checks = 1").executeUpdate();
     }
+
+    @Transactional
+    public void flushAndClear() {
+        entityManager.flush();
+        entityManager.clear();
+    }
 }

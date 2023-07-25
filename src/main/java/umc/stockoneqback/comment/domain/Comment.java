@@ -61,4 +61,12 @@ public class Comment extends BaseTimeEntity {
     public void addReply(User writer, Comment comment, String image, String content) {
         replyList.add(Reply.createReply(writer, comment, image, content));
     }
+
+    public void updateImage(String updateImage){
+        this.image = updateImage;
+    }
+
+    public void updateContent(String updateContent){
+        this.content = updateContent;
+    }
 }
