@@ -15,7 +15,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static umc.stockoneqback.fixture.StoreFixture.*;
+import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
 
 @DisplayName("Product [Repository Layer] -> ProductRepository 테스트")
 public class ProductRepositoryTest extends RepositoryTest {
@@ -63,7 +63,10 @@ public class ProductRepositoryTest extends RepositoryTest {
     @Test
     @DisplayName("입력된 productId를 가지는 제품이 있다면 반환한다")
     void findProductById() {
-        Product findProduct = productRepository.findProductById(1L).orElseThrow();
+        Store zStore = storeRepository.save(Z_YEONGTONG.toStore());
+        Long savedProductId = productRepository.save(ProductFixture.APPLE.toProduct(zStore)).getId();
+
+        Product findProduct = productRepository.findProductById(savedProductId).orElseThrow();
         assertThat(findProduct.getName()).isEqualTo("사과");
     }
 
