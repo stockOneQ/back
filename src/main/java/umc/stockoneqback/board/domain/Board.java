@@ -41,7 +41,6 @@ public class Board extends BaseTimeEntity {
     @JoinColumn(name = "writer_id", referencedColumnName = "id")
     private User writer;
 
-    // 게시글 삭제시 달려있는 댓글 모두 삭제
     @OneToMany(mappedBy = "board", cascade = PERSIST, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>();
 
