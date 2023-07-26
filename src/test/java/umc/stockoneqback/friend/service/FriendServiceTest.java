@@ -49,6 +49,15 @@ class FriendServiceTest extends ServiceTest {
     @DisplayName("점주님 - 점주님 Friend 신청")
     class requestFriend {
         @Test
+        @DisplayName("본인과는 친구 신청에 실패한다")
+        void throwExceptionBySelfFriendRequestNotAllowed() {
+            // when - then
+            assertThatThrownBy(() -> friendService.requestFriend(senderId, senderId))
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(FriendErrorCode.SELF_FRIEND_REQUEST_NOT_ALLOWED.getMessage());
+        }
+
+        @Test
         @DisplayName("점주가 아니면 친구 신청에 실패한다")
         void throwExceptionByUserIsNotAManager() {
             // given
@@ -110,6 +119,21 @@ class FriendServiceTest extends ServiceTest {
         }
 
         @Test
+        @DisplayName("이미 수락된 상태라면 취소에 실패한다")
+        void throwExceptionByStatusIsAccept() {
+            // given
+            friendService.requestFriend(senderId, receiverId);
+
+            // when
+            friendService.acceptFriend(senderId, receiverId);
+
+            // when - then
+            assertThatThrownBy(() -> friendService.cancelFriend(senderId, receiverId))
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(FriendErrorCode.STATUS_IS_ACCEPT.getMessage());
+        }
+
+        @Test
         @DisplayName("점주님 - 점주님 Friend 취소에 성공한다")
         void success() {
             // given
@@ -135,6 +159,21 @@ class FriendServiceTest extends ServiceTest {
             assertThatThrownBy(() -> friendService.acceptFriend(senderId, receiverId))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(FriendErrorCode.FRIEND_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("이미 수락된 상태라면 요청에 실패한다")
+        void throwExceptionByStatusIsAccept() {
+            // given
+            friendService.requestFriend(senderId, receiverId);
+
+            // when
+            friendService.acceptFriend(senderId, receiverId);
+
+            // when - then
+            assertThatThrownBy(() -> friendService.acceptFriend(senderId, receiverId))
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(FriendErrorCode.STATUS_IS_ACCEPT.getMessage());
         }
 
         @Test
@@ -171,6 +210,21 @@ class FriendServiceTest extends ServiceTest {
         }
 
         @Test
+        @DisplayName("이미 수락된 상태라면 거절에 실패한다")
+        void throwExceptionByStatusIsAccept() {
+            // given
+            friendService.requestFriend(senderId, receiverId);
+
+            // when
+            friendService.acceptFriend(senderId, receiverId);
+
+            // when - then
+            assertThatThrownBy(() -> friendService.rejectFriend(senderId, receiverId))
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(FriendErrorCode.STATUS_IS_ACCEPT.getMessage());
+        }
+
+        @Test
         @DisplayName("점주님 - 점주님 Friend 거절에 성공한다")
         void success() {
             // given
@@ -202,10 +256,23 @@ class FriendServiceTest extends ServiceTest {
         }
 
         @Test
+        @DisplayName("아직 친구 요청 중인 상태라면 삭제에 실패한다")
+        void throwExceptionByStatusIsRequest() {
+            // given
+            friendService.requestFriend(senderId, receiverId);
+
+            // when - then
+            assertThatThrownBy(() -> friendService.deleteFriend(senderId, receiverId))
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(FriendErrorCode.STATUS_IS_REQUEST.getMessage());
+        }
+
+        @Test
         @DisplayName("점주님 - 점주님 Friend 삭제에 성공한다")
         void success() {
             // given
             friendService.requestFriend(senderId, receiverId);
+            friendService.acceptFriend(senderId, receiverId);
 
             // when
             friendService.deleteFriend(receiverId, senderId);

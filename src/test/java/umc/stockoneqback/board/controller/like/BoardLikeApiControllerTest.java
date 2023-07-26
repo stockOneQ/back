@@ -1,4 +1,4 @@
-package umc.stockoneqback.business.controller;
+package umc.stockoneqback.board.controller.like;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -6,15 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
-import umc.stockoneqback.business.exception.BusinessErrorCode;
+import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -26,25 +25,24 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 
-@DisplayName("Business [Controller Layer] -> BusinessApiController 테스트")
-class BusinessApiControllerTest extends ControllerTest {
-
+@DisplayName("Board [Controller Layer] -> BoardLikeApiController 테스트")
+public class BoardLikeApiControllerTest extends ControllerTest {
     @Nested
-    @DisplayName("슈퍼바이저 - 점주 관계 등록 API [POST /api/business/{managerId}]")
+    @DisplayName("게시글좋아요 등록 API [POST /api/boards/{boardId}/likes]")
     class register {
-        private static final String BASE_URL = "/api/business/{managerId}";
-        private static final Long SUPERVISOR_ID = 1L;
-        private static final Long MANAGER_ID = 1L;
+        private static final String BASE_URL = "/api/boards/{boardId}/likes";
+        private static final Long USER_ID = 1L;
+        private static final Long BOARD_ID = 2L;
 
         @Test
-        @DisplayName("Authorization Header에 AccessToken이 없으면 슈퍼바이저 - 점주 관계 등록에 실패한다")
+        @DisplayName("Authorization Header에 AccessToken이 없으면 게시글좋아요 등록에 실패한다")
         void withoutAccessToken() throws Exception {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .post(BASE_URL, MANAGER_ID);
+                    .post(BASE_URL, BOARD_ID);
 
             // then
             final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
@@ -60,11 +58,11 @@ class BusinessApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "BusinessApi/Register/Failure/Case1",
+                                    "BoardApi/Like/Register/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
-                                            parameterWithName("managerId").description("슈퍼바이저가 연결 신청한 사장님 ID(PK)")
+                                            parameterWithName("boardId").description("좋아요를 누를 게시글 ID(PK)")
                                     ),
                                     responseFields(
                                             fieldWithPath("status").description("HTTP 상태 코드"),
@@ -76,22 +74,22 @@ class BusinessApiControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("이미 존재하는 관계라면 등록에 실패한다")
-        void throwExceptionByAlreadyExistBusiness() throws Exception {
+        @DisplayName("본인의 게시글에는 좋아요를 누를 수 없다")
+        void throwExceptionBySelfFollowNotAllowed() throws Exception {
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
-            given(jwtTokenProvider.getId(anyString())).willReturn(SUPERVISOR_ID);
-            doThrow(BaseException.type(BusinessErrorCode.ALREADY_EXIST_BUSINESS))
-                    .when(businessService)
-                    .register(any(), any());
+            given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
+            doThrow(BaseException.type(BoardErrorCode.SELF_BOARD_LIKE_NOT_ALLOWED))
+                    .when(boardLikeService)
+                    .register(anyLong(), anyLong());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .post(BASE_URL, MANAGER_ID)
+                    .post(BASE_URL, BOARD_ID)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
-            final BusinessErrorCode expectedError = BusinessErrorCode.ALREADY_EXIST_BUSINESS;
+            final BoardErrorCode expectedError = BoardErrorCode.SELF_BOARD_LIKE_NOT_ALLOWED;
             mockMvc.perform(requestBuilder)
                     .andExpectAll(
                             status().isConflict(),
@@ -104,14 +102,14 @@ class BusinessApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "BusinessApi/Register/Failure/Case2",
+                                    "BoardApi/Like/Register/Failure/Case2",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestHeaders(
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     pathParameters(
-                                            parameterWithName("managerId").description("슈퍼바이저가 연결 신청한 사장님 ID(PK)")
+                                            parameterWithName("boardId").description("좋아요를 누를 게시글 ID(PK)")
                                     ),
                                     responseFields(
                                             fieldWithPath("status").description("HTTP 상태 코드"),
@@ -123,33 +121,82 @@ class BusinessApiControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("슈퍼바이저 - 점주 관계 등록에 성공한다")
-        void success() throws Exception {
+        @DisplayName("한 게시글에 두 번 이상 좋아요를 누를 수 없다")
+        void throwExceptionByAlreadyBoardLike() throws Exception {
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
-            given(jwtTokenProvider.getId(anyString())).willReturn(SUPERVISOR_ID);
-            doNothing()
-                    .when(businessService)
-                    .register(any(), any());
+            given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
+            doThrow(BaseException.type(BoardErrorCode.ALREADY_BOARD_LIKE))
+                    .when(boardLikeService)
+                    .register(anyLong(), anyLong());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .post(BASE_URL, MANAGER_ID)
+                    .post(BASE_URL, BOARD_ID)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
+            final BoardErrorCode expectedError = BoardErrorCode.ALREADY_BOARD_LIKE;
             mockMvc.perform(requestBuilder)
-                    .andExpect(status().isOk())
+                    .andExpectAll(
+                            status().isConflict(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
                     .andDo(
                             document(
-                                    "BusinessApi/Register/Success",
+                                    "BoardApi/Like/Register/Failure/Case3",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestHeaders(
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     pathParameters(
-                                            parameterWithName("managerId").description("슈퍼바이저가 연결 신청한 사장님 ID(PK)")
+                                            parameterWithName("boardId").description("좋아요를 누를 게시글 ID(PK)")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("게시글좋아요 등록에 성공한다")
+        void success() throws Exception {
+            // given
+            given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
+            given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
+            doReturn(1L)
+                    .when(boardLikeService)
+                    .register(anyLong(), anyLong());
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .post(BASE_URL, BOARD_ID)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
+
+            // then
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNoContent()
+                    )
+                    .andDo(
+                            document(
+                                    "BoardApi/Like/Register/Success",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
+                                    pathParameters(
+                                            parameterWithName("boardId").description("좋아요를 누를 게시글 ID(PK)")
                                     )
                             )
                     );
@@ -157,25 +204,18 @@ class BusinessApiControllerTest extends ControllerTest {
     }
 
     @Nested
-    @DisplayName("슈퍼바이저 - 점주 관계 취소 API [DELETE /api/business/{managerId}]")
+    @DisplayName("게시글좋아요 취소 API [DELETE /api/boards/{boardId}/likes]")
     class cancel {
-        private static final String BASE_URL = "/api/business/{managerId}";
-        private static final Long SUPERVISOR_ID = 1L;
-        private static final Long MANAGER_ID = 1L;
+        private static final String BASE_URL = "/api/boards/{boardId}/likes";
+        private static final Long USER_ID = 1L;
+        private static final Long BOARD_ID = 2L;
 
         @Test
-        @DisplayName("Authorization Header에 AccessToken이 없으면 슈퍼바이저 - 점주 관계 취소에 실패한다")
+        @DisplayName("Authorization Header에 AccessToken이 없으면 게시글좋아요 취소에 실패한다")
         void withoutAccessToken() throws Exception {
-            // given
-            given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
-            given(jwtTokenProvider.getId(anyString())).willReturn(SUPERVISOR_ID);
-            doThrow(BaseException.type(BusinessErrorCode.BUSINESS_NOT_FOUND))
-                    .when(businessService)
-                    .cancel(any(), any());
-
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .delete(BASE_URL, MANAGER_ID);
+                    .delete(BASE_URL, BOARD_ID);
 
             // then
             final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
@@ -191,11 +231,11 @@ class BusinessApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "BusinessApi/Cancel/Failure/Case1",
+                                    "BoardApi/Cancel/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
-                                            parameterWithName("managerId").description("슈퍼바이저가 연결 취소할 사장님 ID(PK)")
+                                            parameterWithName("boardId").description("좋아요를 취소할 게시글 ID(PK)")
                                     ),
                                     responseFields(
                                             fieldWithPath("status").description("HTTP 상태 코드"),
@@ -207,22 +247,22 @@ class BusinessApiControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("존재하지 않는 관계라면 취소에 실패한다")
-        void throwExceptionByAlreadyExistBusiness() throws Exception {
+        @DisplayName("좋아요를 누르지 않은 게시글의 좋아요는 취소할 수 없다")
+        void throwExceptionByBoardLikeNotFound() throws Exception {
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
-            given(jwtTokenProvider.getId(anyString())).willReturn(SUPERVISOR_ID);
-            doThrow(BaseException.type(BusinessErrorCode.BUSINESS_NOT_FOUND))
-                    .when(businessService)
-                    .cancel(any(), any());
+            given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
+            doThrow(BaseException.type(BoardErrorCode.BOARD_LIKE_NOT_FOUND))
+                    .when(boardLikeService)
+                    .cancel(anyLong(), anyLong());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .delete(BASE_URL, MANAGER_ID)
+                    .delete(BASE_URL, BOARD_ID)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
-            final BusinessErrorCode expectedError = BusinessErrorCode.BUSINESS_NOT_FOUND;
+            final BoardErrorCode expectedError = BoardErrorCode.BOARD_LIKE_NOT_FOUND;
             mockMvc.perform(requestBuilder)
                     .andExpectAll(
                             status().isNotFound(),
@@ -235,14 +275,14 @@ class BusinessApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "BusinessApi/Cancel/Failure/Case2",
+                                    "BoardApi/Like/Cancel/Failure/Case2",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestHeaders(
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     pathParameters(
-                                            parameterWithName("managerId").description("슈퍼바이저가 연결 취소할 사장님 ID(PK)")
+                                            parameterWithName("boardId").description("좋아요를 취소할 게시글 ID(PK)")
                                     ),
                                     responseFields(
                                             fieldWithPath("status").description("HTTP 상태 코드"),
@@ -254,33 +294,35 @@ class BusinessApiControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("슈퍼바이저 - 점주 관계 등록에 성공한다")
+        @DisplayName("게시글좋아요 취소에 성공한다")
         void success() throws Exception {
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
-            given(jwtTokenProvider.getId(anyString())).willReturn(SUPERVISOR_ID);
+            given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
             doNothing()
-                    .when(businessService)
-                    .register(any(), any());
+                    .when(boardLikeService)
+                    .cancel(anyLong(), anyLong());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .delete(BASE_URL, MANAGER_ID)
+                    .delete(BASE_URL, BOARD_ID)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
-                    .andExpect(status().isOk())
+                    .andExpectAll(
+                            status().isOk()
+                    )
                     .andDo(
                             document(
-                                    "BusinessApi/Register/Success",
+                                    "BoardApi/Register/Cancel/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestHeaders(
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     pathParameters(
-                                            parameterWithName("managerId").description("슈퍼바이저가 연결 취소할 사장님 ID(PK)")
+                                            parameterWithName("boardId").description("좋아요를 취소할 게시글 ID(PK)")
                                     )
                             )
                     );

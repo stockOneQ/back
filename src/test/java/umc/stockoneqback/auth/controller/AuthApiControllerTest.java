@@ -169,7 +169,7 @@ class AuthApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
