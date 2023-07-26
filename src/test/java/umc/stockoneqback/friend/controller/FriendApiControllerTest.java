@@ -804,12 +804,12 @@ class FriendApiControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("아직 승인되지 않은 관계라면 친구 관계를 삭제할 수 없다")
+        @DisplayName("아직 요청된 친구 관계라면 친구 관계를 삭제할 수 없다")
         void throwExceptionByStatusIsAccept() throws Exception {
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
             given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
-            doThrow(BaseException.type(FriendErrorCode.STATUS_IS_ACCEPT))
+            doThrow(BaseException.type(FriendErrorCode.STATUS_IS_REQUEST))
                     .when(friendService)
                     .deleteFriend(USER_ID, FRIEND_USER_ID);
 
@@ -819,7 +819,7 @@ class FriendApiControllerTest extends ControllerTest {
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
-            final FriendErrorCode expectedError = FriendErrorCode.STATUS_IS_ACCEPT;
+            final FriendErrorCode expectedError = FriendErrorCode.STATUS_IS_REQUEST;
             mockMvc.perform(requestBuilder)
                     .andExpectAll(
                             status().isConflict(),
