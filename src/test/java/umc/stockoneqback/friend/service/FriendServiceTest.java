@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static umc.stockoneqback.fixture.UserFixture.*;
 
-@DisplayName("Friend [Service Layer] -> BusinessService 테스트")
+@DisplayName("Friend [Service Layer] -> FriendService 테스트")
 class FriendServiceTest extends ServiceTest {
     @Autowired
     protected FriendService friendService;
