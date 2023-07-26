@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.auth.domain.Token;
+import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.auth.service.dto.response.TokenResponse;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
 import umc.stockoneqback.common.ServiceTest;
@@ -41,7 +42,7 @@ class TokenReissueServiceTest extends ServiceTest {
             // when - then
             assertThatThrownBy(() -> tokenReissueService.reissueTokens(USER_ID, REFRESH_TOKEN))
                     .isInstanceOf(BaseException.class)
-                    .hasMessage(GlobalErrorCode.INVALID_TOKEN.getMessage());
+                    .hasMessage(AuthErrorCode.AUTH_INVALID_TOKEN.getMessage());
         }
 
         @Test

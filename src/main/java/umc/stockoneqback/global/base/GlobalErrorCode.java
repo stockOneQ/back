@@ -36,8 +36,6 @@ public enum GlobalErrorCode implements ErrorCode {
     NOT_SUPPORTED_METHOD_ERROR(HttpStatus.METHOD_NOT_ALLOWED, "REQUEST_010", "지원하지 않는 HTTP Method 요청입니다."),
     NOT_SUPPORTED_MEDIA_TYPE_ERROR(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "REQUEST_011", "잘못된 미디어 타입입니다."),
     INVALID_ENUM(HttpStatus.BAD_REQUEST, "REQUEST_012", "Enum 타입으로 변경할 수 없습니다."),
-    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "REQUEST_013", "토큰의 유효기간이 만료되었습니다."),
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "REQUEST_014", "토큰이 유효하지 않습니다."),
 
     /**
      * 500 : 응답 실패

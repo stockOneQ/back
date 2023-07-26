@@ -15,6 +15,7 @@ public enum UserErrorCode implements ErrorCode {
     INVALID_COMPANY_CODE(HttpStatus.BAD_REQUEST, "USER_005", "회사 코드가 맞지 않습니다."),
     DUPLICATE_LOGIN_ID(HttpStatus.CONFLICT, "USER_006", "중복된 로그인 아이디가 존재합니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_007", "해당 회원을 찾을 수 없습니다."),
+    USER_IS_NOT_MANAGER(HttpStatus.BAD_REQUEST, "USER_008", "해당 유저는 사장님이 아닙니다."),
     ;
 
     private final HttpStatus status;

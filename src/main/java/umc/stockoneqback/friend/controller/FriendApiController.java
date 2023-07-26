@@ -1,47 +1,49 @@
 package umc.stockoneqback.friend.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import umc.stockoneqback.friend.domain.Friend;
 import umc.stockoneqback.friend.domain.FriendStatus;
-import umc.stockoneqback.friend.dto.SearchUserResponse;
 import umc.stockoneqback.friend.service.FriendService;
 import umc.stockoneqback.global.annotation.ExtractPayload;
 import umc.stockoneqback.global.base.BaseResponse;
-import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.service.UserFindService;
-
-import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/friend")
 public class FriendApiController {
     private final FriendService friendService;
-    private final UserFindService userService;
 
-    @GetMapping("/search/friend")
-    public BaseResponse<List<SearchUserResponse>> searchFriends(@PathVariable Long userId,
-                                                                @RequestParam(value = "name") String searchName,
-                                                                Pageable pageable) throws IOException {
-        return new BaseResponse<>(friendService.searchFriends(userId, searchName, pageable));
+    @PostMapping("/request/{receiverId}")
+    public ResponseEntity<Void> requestFriend(@ExtractPayload Long senderId, @PathVariable Long receiverId) {
+        Long friendId = friendService.requestFriend(senderId, receiverId);
+        return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/request/{friendId}")
-    public ResponseEntity<Friend> sendFriendRequest(@ExtractPayload Long reqUserId, @PathVariable Long friendId) {
-        User friend = userService.findById(friendId);
-        Friend newRequest = friendService.sendFriendRequest(reqUserId, friend);
-        return new ResponseEntity<>(newRequest, HttpStatus.CREATED);
+    @DeleteMapping("/request/{receiverId}")
+    public ResponseEntity<Void> cancelFriend(@ExtractPayload Long senderId, @PathVariable Long receiverId) {
+        friendService.cancelFriend(senderId, receiverId);
+        return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/{friendId}")
-    public ResponseEntity<Friend> updateFriendRequest(@ExtractPayload Long reqUserId, @PathVariable Long friendId,
-                                                      @RequestParam("status") FriendStatus status) {
-        Friend updatedRequest = friendService.updateFriendRequest(friendId, status);
-        return ResponseEntity.ok(updatedRequest);
+    @PatchMapping("/accept/{senderId}")
+    public ResponseEntity<Void> acceptFriend(@ExtractPayload Long receiverId, @PathVariable Long senderId) {
+        Long friendId = friendService.acceptFriend(senderId, receiverId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/reject/{senderId}")
+    public ResponseEntity<Void> rejectFriend(@ExtractPayload Long receiverId, @PathVariable Long senderId) {
+        friendService.rejectFriend(senderId, receiverId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{friendUserId}")
+    public ResponseEntity<Void> deleteFriend(@ExtractPayload Long userId, @PathVariable Long friendUserId) {
+        friendService.deleteFriend(userId, friendUserId);
+        return ResponseEntity.ok().build();
     }
 }

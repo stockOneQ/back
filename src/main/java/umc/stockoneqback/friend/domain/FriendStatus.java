@@ -9,10 +9,7 @@ import umc.stockoneqback.global.utils.EnumStandard;
 @AllArgsConstructor
 public enum FriendStatus implements EnumStandard {
     REQUEST("친구 요청"),
-    ACCEPT("친구 요청 수락"),
-    REJECT("친구 요청 거절"),
-    CANCEL("친구 요청 취소"),
-    DELETE("친구 삭제")
+    ACCEPT("친구 수락"),
     ;
 
     private final String value;
@@ -24,4 +21,3 @@ public enum FriendStatus implements EnumStandard {
         }
     }
 }
-
