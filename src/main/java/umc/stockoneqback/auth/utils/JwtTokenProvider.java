@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.global.base.GlobalErrorCode;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;

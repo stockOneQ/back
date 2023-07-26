@@ -15,8 +15,8 @@ public enum FriendStatus implements EnumStandard {
     private final String value;
 
     @javax.persistence.Converter
-    public static class Converter extends EnumConverter<FriendStatus> {
-        public Converter() {
+    public static class FriendConverter extends EnumConverter<FriendStatus> {
+        public FriendConverter() {
             super(FriendStatus.class);
         }
     }

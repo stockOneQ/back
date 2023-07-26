@@ -3,7 +3,6 @@ package umc.stockoneqback.global.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
 import umc.stockoneqback.global.annotation.ExtractPayloadArgumentResolver;

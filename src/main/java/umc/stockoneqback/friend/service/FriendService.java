@@ -10,11 +10,8 @@ import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.User;
-import umc.stockoneqback.user.domain.UserRepository;
 import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.service.UserFindService;
-
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)

@@ -3,8 +3,8 @@ package umc.stockoneqback.friend.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import umc.stockoneqback.friend.service.dto.SearchUserResponse;
 import umc.stockoneqback.friend.service.FriendFindService;
+import umc.stockoneqback.friend.service.dto.SearchUserResponse;
 import umc.stockoneqback.global.base.BaseResponse;
 
 import java.io.IOException;

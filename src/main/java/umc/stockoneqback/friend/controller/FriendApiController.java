@@ -1,15 +1,10 @@
 package umc.stockoneqback.friend.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import umc.stockoneqback.friend.domain.Friend;
-import umc.stockoneqback.friend.domain.FriendStatus;
 import umc.stockoneqback.friend.service.FriendService;
 import umc.stockoneqback.global.annotation.ExtractPayload;
-import umc.stockoneqback.global.base.BaseResponse;
-import umc.stockoneqback.user.service.UserFindService;
 
 @RestController
 @RequiredArgsConstructor

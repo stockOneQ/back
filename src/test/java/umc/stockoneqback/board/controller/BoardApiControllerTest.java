@@ -10,13 +10,9 @@ import umc.stockoneqback.board.controller.dto.BoardRequest;
 import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.user.domain.Email;
-import umc.stockoneqback.user.domain.Password;
-import umc.stockoneqback.user.domain.User;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -27,14 +23,11 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 import static umc.stockoneqback.fixture.TokenFixture.REFRESH_TOKEN;
-import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
-import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
 @DisplayName("Board [Controller Layer] -> BoardApiController 테스트")
 public class BoardApiControllerTest extends ControllerTest {
@@ -44,7 +37,7 @@ public class BoardApiControllerTest extends ControllerTest {
         private static final String BASE_URL = "/api/boards";
 
         @Test
-        @DisplayName("Authorization Header에 AccessToken이 없으면 로그아웃에 실패한다")
+        @DisplayName("Authorization Header에 AccessToken이 없으면 게시글 등록에 실패한다")
         void withoutAccessToken() throws Exception {
             // when
             final BoardRequest request = createBoardRequest();
