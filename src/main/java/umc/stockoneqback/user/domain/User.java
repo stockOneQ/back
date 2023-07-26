@@ -72,4 +72,13 @@ public class User extends BaseTimeEntity {
     public void updateCompany(Company company) {
         this.company = company;
     }
+
+    public void updateInformation(Email email, String loginId, Password password, String username, LocalDate birth, String phoneNumber) {
+        this.email = email;
+        this.loginId = loginId;
+        this.password = password;
+        this.name = username;
+        this.phoneNumber = phoneNumber;
+        this.birth = birth;
+    }
 }

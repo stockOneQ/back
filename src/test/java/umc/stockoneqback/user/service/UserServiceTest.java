@@ -16,6 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
+import static umc.stockoneqback.fixture.UserFixture.WIZ;
+import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
 @DisplayName("User [Service Layer] -> UserService 테스트")
 class UserServiceTest extends ServiceTest {
@@ -104,6 +106,44 @@ class UserServiceTest extends ServiceTest {
                     () -> assertThat(findCompany.getEmployees().size()).isEqualTo(1),
                     () -> assertThat(findCompany.getEmployees()).contains(findSupervisor),
                     () -> assertThat(findSupervisor.getCompany()).isEqualTo(findCompany)
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("회원 정보 수정")
+    class updateInformation {
+        @Test
+        @DisplayName("중복된 로그인 아이디가 존재한다면 회원 정보 수정에 실패한다")
+        void throwExceptionByDuplicateLoginId() {
+            // given
+            Long userId = userRepository.save(SAEWOO.toUser()).getId();
+            userRepository.save(WIZ.toUser());
+
+            // when - then
+            assertThatThrownBy(() -> userService.updateInformation(userId, WIZ.getName(), WIZ.getBirth(), WIZ.getEmail(), WIZ.getLoginId(), WIZ.getPassword(), WIZ.getPhoneNumber()))
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(UserErrorCode.DUPLICATE_LOGIN_ID.getMessage());
+        }
+
+        @Test
+        @DisplayName("회원 정보 수정에 성공한다")
+        void success() {
+            // given
+            Long userId = userRepository.save(SAEWOO.toUser()).getId();
+
+            // when
+            userService.updateInformation(userId, WIZ.getName(), WIZ.getBirth(), WIZ.getEmail(), WIZ.getLoginId(), WIZ.getPassword(), WIZ.getPhoneNumber());
+
+            // then
+            User findUser = userRepository.findById(userId).orElseThrow();
+            assertAll(
+                    () -> assertThat(findUser.getName()).isEqualTo(WIZ.getName()),
+                    () -> assertThat(findUser.getBirth()).isEqualTo(WIZ.getBirth()),
+                    () -> assertThat(findUser.getEmail().getValue()).isEqualTo(WIZ.getEmail()),
+                    () -> assertThat(findUser.getLoginId()).isEqualTo(WIZ.getLoginId()),
+                    () -> assertThat(findUser.getPassword().isSamePassword(WIZ.getPassword(), ENCODER)).isTrue(),
+                    () -> assertThat(findUser.getPhoneNumber()).isEqualTo(WIZ.getPhoneNumber())
             );
         }
     }

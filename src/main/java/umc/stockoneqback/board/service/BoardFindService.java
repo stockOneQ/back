@@ -14,7 +14,6 @@ import umc.stockoneqback.global.base.BaseException;
 public class BoardFindService {
     private final BoardRepository boardRepository;
 
-    @Transactional
     public Board findById(Long boardId){
         return boardRepository.findById(boardId)
                 .orElseThrow(() -> BaseException.type(BoardErrorCode.BOARD_NOT_FOUND));

@@ -1,8 +1,8 @@
 package umc.stockoneqback.product.dto.response;
 
-public record SearchProductUrl(
+public record GetTotalProductResponse(
         String name,
 
-        String imageUrl
+        Integer total
 ) {
 }
