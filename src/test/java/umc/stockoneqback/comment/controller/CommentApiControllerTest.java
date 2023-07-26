@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import umc.stockoneqback.auth.exception.AuthErrorCode;
+import umc.stockoneqback.board.controller.dto.BoardRequest;
+import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.comment.controller.dto.CommentRequest;
 import umc.stockoneqback.comment.exception.CommentErrorCode;
 import umc.stockoneqback.common.ControllerTest;
@@ -14,25 +17,72 @@ import umc.stockoneqback.global.base.BaseException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.CommentFixture.COMMENT_0;
+import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.REFRESH_TOKEN;
 
 @DisplayName("Comment [Controller Layer] -> CommentApiController 테스트")
 public class CommentApiControllerTest extends ControllerTest {
     @Nested
-    @DisplayName("댓글 등록 API [POST /api/comments/{writerId}/{boardId}]")
+    @DisplayName("댓글 등록 API [POST /api/comments/{boardId}]")
     class createBoard {
-        private static final String BASE_URL = "/api/comments/{writerId}/{boardId}";
+        private static final String BASE_URL = "/api/comments/{boardId}";
         private static final Long WRITER_ID = 1L;
         private static final Long BOARD_ID = 2L;
+
+        @Test
+        @DisplayName("Authorization Header에 AccessToken이 없으면 댓글 등록에 실패한다")
+        void withoutAccessToken() throws Exception {
+            // when
+            final CommentRequest request = createCommentRequest();
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .post(BASE_URL, BOARD_ID)
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request));
+
+            // then
+            final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isForbidden(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "CommentApi/Create/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    pathParameters(
+                                            parameterWithName("boardId").description("등록할 게시글 ID(PK)")
+                                    ),
+                                    requestFields(
+                                            fieldWithPath("image").description("등록할 이미지"),
+                                            fieldWithPath("content").description("등록할 내용")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
 
         @Test
         @DisplayName("댓글 등록에 성공한다")
@@ -45,8 +95,8 @@ public class CommentApiControllerTest extends ControllerTest {
             // when
             final CommentRequest request = createCommentRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .post(BASE_URL, WRITER_ID, BOARD_ID)
-                    .with(csrf())
+                    .post(BASE_URL, BOARD_ID)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -60,8 +110,10 @@ public class CommentApiControllerTest extends ControllerTest {
                                     "CommentApi/Create/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
-                                            parameterWithName("writerId").description("댓글 작성자 ID(PK)"),
                                             parameterWithName("boardId").description("등록할 게시글 ID(PK)")
                                     ),
                                     requestFields(
@@ -74,11 +126,53 @@ public class CommentApiControllerTest extends ControllerTest {
     }
 
     @Nested
-    @DisplayName("댓글 수정 API [PATCH /api/comments/{writerId}/{commentId}]")
+    @DisplayName("댓글 수정 API [PATCH /api/comments/{commentId}]")
     class updateBoard {
-        private static final String BASE_URL = "/api/comments/{writerId}/{commentId}";
+        private static final String BASE_URL = "/api/comments/{commentId}";
         private static final Long WRITER_ID = 1L;
         private static final Long COMMENT_ID = 2L;
+
+        @Test
+        @DisplayName("Authorization Header에 AccessToken이 없으면 댓글 수정에 실패한다")
+        void withoutAccessToken() throws Exception {
+            // given
+            final CommentRequest request = createCommentRequest();
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .patch(BASE_URL, COMMENT_ID)
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request));
+            // then
+            final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isForbidden(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "CommentApi/Update/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    pathParameters(
+                                            parameterWithName("commentId").description("수정할 댓글 ID(PK)")
+                                    ),
+                                    requestFields(
+                                            fieldWithPath("image").description("수정할 이미지"),
+                                            fieldWithPath("content").description("수정할 내용")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
 
         @Test
         @DisplayName("다른 사람의 댓글은 수정할 수 없다")
@@ -91,8 +185,8 @@ public class CommentApiControllerTest extends ControllerTest {
             // when
             final CommentRequest request = createCommentRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .patch(BASE_URL, WRITER_ID, COMMENT_ID)
-                    .with(csrf())
+                    .patch(BASE_URL, COMMENT_ID)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -110,11 +204,13 @@ public class CommentApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "CommentApi/Update/Failure/Case1",
+                                    "CommentApi/Update/Failure/Case2",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
-                                            parameterWithName("writerId").description("댓글 작성자 ID(PK)"),
                                             parameterWithName("commentId").description("수정할 댓글 ID(PK)")
                                     ),
                                     requestFields(
@@ -141,8 +237,8 @@ public class CommentApiControllerTest extends ControllerTest {
             // when
             final CommentRequest request = createCommentRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .patch(BASE_URL, WRITER_ID, COMMENT_ID)
-                    .with(csrf())
+                    .patch(BASE_URL, COMMENT_ID)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -156,8 +252,10 @@ public class CommentApiControllerTest extends ControllerTest {
                                     "CommentApi/Update/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
-                                            parameterWithName("writerId").description("댓글 작성자 ID(PK)"),
                                             parameterWithName("commentId").description("수정할 댓글 ID(PK)")
                                     ),
                                     requestFields(
@@ -170,11 +268,50 @@ public class CommentApiControllerTest extends ControllerTest {
     }
 
     @Nested
-    @DisplayName("댓글 삭제 API [DELETE /api/comments/{writerId}/{commentId}]")
+    @DisplayName("댓글 삭제 API [DELETE /api/comments/{commentId}]")
     class deleteBoard {
-        private static final String BASE_URL = "/api/comments/{writerId}/{commentId}";
+        private static final String BASE_URL = "/api/comments/{commentId}";
         private static final Long WRITER_ID = 1L;
         private static final Long COMMENT_ID = 2L;
+
+        @Test
+        @DisplayName("Authorization Header에 AccessToken이 없으면 댓글 삭제에 실패한다")
+        void withoutAccessToken() throws Exception {
+            // when
+            final CommentRequest request = createCommentRequest();
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .delete(BASE_URL, COMMENT_ID)
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request));
+
+            // then
+            final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isForbidden(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "CommentApi/Delete/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    pathParameters(
+                                            parameterWithName("commentId").description("삭제할 댓글 ID(PK)")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
 
         @Test
         @DisplayName("다른 사람의 댓글은 삭제할 수 없다")
@@ -188,7 +325,7 @@ public class CommentApiControllerTest extends ControllerTest {
             final CommentRequest request = createCommentRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, WRITER_ID, COMMENT_ID)
-                    .with(csrf())
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -206,11 +343,13 @@ public class CommentApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "CommentApi/Delete/Failure/Case1",
+                                    "CommentApi/Delete/Failure/Case2",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
-                                            parameterWithName("writerId").description("댓글 작성자 ID(PK)"),
                                             parameterWithName("commentId").description("삭제할 댓글 ID(PK)")
                                     ),
                                     responseFields(
@@ -233,8 +372,8 @@ public class CommentApiControllerTest extends ControllerTest {
             // when
             final CommentRequest request = createCommentRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .delete(BASE_URL, WRITER_ID, COMMENT_ID)
-                    .with(csrf())
+                    .delete(BASE_URL, COMMENT_ID)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -249,7 +388,6 @@ public class CommentApiControllerTest extends ControllerTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
-                                            parameterWithName("writerId").description("댓글 작성자 ID(PK)"),
                                             parameterWithName("commentId").description("삭제할 댓글 ID(PK)")
                                     )
                             )

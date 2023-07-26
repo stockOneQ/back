@@ -124,18 +124,12 @@ public class BoardApiControllerTest extends ControllerTest {
         @Test
         @DisplayName("Authorization Header에 AccessToken이 없으면 게시글 수정에 실패한다")
         void withoutAccessToken() throws Exception {
-            // given
-            doThrow(BaseException.type(BoardErrorCode.USER_IS_NOT_BOARD_WRITER))
-                    .when(boardService)
-                    .update(anyLong(), anyLong(), any(), any(), any());
-
             // when
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, BOARD_ID)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
-
             // then
             final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
             mockMvc.perform(requestBuilder)
