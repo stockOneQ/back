@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import umc.stockoneqback.auth.exception.AuthErrorCode;
+import umc.stockoneqback.board.exception.BoardErrorCode;
+import umc.stockoneqback.comment.controller.dto.CommentRequest;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.reply.controller.dto.ReplyRequest;
@@ -13,7 +16,10 @@ import umc.stockoneqback.reply.exception.ReplyErrorCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -23,15 +29,60 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.ReplyFixture.REPLY_0;
+import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.REFRESH_TOKEN;
 
 @DisplayName("Reply [Controller Layer] -> ReplyApiController 테스트")
 public class ReplyApiControllerTest extends ControllerTest {
     @Nested
-    @DisplayName("대댓글 등록 API [POST /api/replies/{writerId}/{commentId}]")
+    @DisplayName("대댓글 등록 API [POST /api/replies/{commentId}]")
     class createBoard {
-        private static final String BASE_URL = "/api/replies/{writerId}/{commentId}";
+        private static final String BASE_URL = "/api/replies/{commentId}";
         private static final Long WRITER_ID = 1L;
         private static final Long COMMENT_ID = 2L;
+
+        @Test
+        @DisplayName("Authorization Header에 AccessToken이 없으면 대댓글 등록에 실패한다")
+        void withoutAccessToken() throws Exception {
+            // when
+            final ReplyRequest request = createReplyRequest();
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .post(BASE_URL, COMMENT_ID)
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request));
+
+            // then
+            final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isForbidden(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ReplyApi/Create/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    pathParameters(
+                                            parameterWithName("commentId").description("등록할 댓글 ID(PK)")
+                                    ),
+                                    requestFields(
+                                            fieldWithPath("image").description("등록할 이미지"),
+                                            fieldWithPath("content").description("등록할 내용")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
 
         @Test
         @DisplayName("대댓글 등록에 성공한다")
@@ -44,8 +95,8 @@ public class ReplyApiControllerTest extends ControllerTest {
             // when
             final ReplyRequest request = createReplyRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .post(BASE_URL, WRITER_ID, COMMENT_ID)
-                    .with(csrf())
+                    .post(BASE_URL, COMMENT_ID)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -59,8 +110,10 @@ public class ReplyApiControllerTest extends ControllerTest {
                                     "ReplyApi/Create/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
-                                            parameterWithName("writerId").description("대댓글 작성자 ID(PK)"),
                                             parameterWithName("commentId").description("등록할 댓글 ID(PK)")
                                     ),
                                     requestFields(
@@ -73,12 +126,54 @@ public class ReplyApiControllerTest extends ControllerTest {
     }
 
     @Nested
-    @DisplayName("대댓글 수정 API [PATCH /api/replies/{writerId}/{replyId}]")
+    @DisplayName("대댓글 수정 API [PATCH /api/replies/{replyId}]")
     class updateBoard {
-        private static final String BASE_URL = "/api/replies/{writerId}/{replyId}";
+        private static final String BASE_URL = "/api/replies/{replyId}";
         private static final Long WRITER_ID = 1L;
         private static final Long REPLY_ID = 2L;
 
+        @Test
+        @DisplayName("Authorization Header에 AccessToken이 없으면 대댓글 수정에 실패한다")
+        void withoutAccessToken() throws Exception {
+            // given
+            final ReplyRequest request = createReplyRequest();
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .post(BASE_URL, REPLY_ID)
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request));
+
+            // then
+            final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isForbidden(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ReplyApi/Update/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    pathParameters(
+                                            parameterWithName("replyId").description("수정할 대댓글 ID(PK)")
+                                    ),
+                                    requestFields(
+                                            fieldWithPath("image").description("수정할 이미지"),
+                                            fieldWithPath("content").description("수정할 내용")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
         @Test
         @DisplayName("다른 사람의 대댓글은 수정할 수 없다")
         void throwExceptionByUserIsNotReplyWriter() throws Exception {
@@ -90,8 +185,8 @@ public class ReplyApiControllerTest extends ControllerTest {
             // when
             final ReplyRequest request = createReplyRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .patch(BASE_URL, WRITER_ID, REPLY_ID)
-                    .with(csrf())
+                    .patch(BASE_URL, REPLY_ID)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -109,11 +204,13 @@ public class ReplyApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "ReplyApi/Update/Failure/Case1",
+                                    "ReplyApi/Update/Failure/Case2",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
-                                            parameterWithName("writerId").description("댓글 작성자 ID(PK)"),
                                             parameterWithName("replyId").description("수정할 대댓글 ID(PK)")
                                     ),
                                     requestFields(
@@ -140,8 +237,8 @@ public class ReplyApiControllerTest extends ControllerTest {
             // when
             final ReplyRequest request = createReplyRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .patch(BASE_URL, WRITER_ID, REPLY_ID)
-                    .with(csrf())
+                    .patch(BASE_URL, REPLY_ID)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -155,8 +252,10 @@ public class ReplyApiControllerTest extends ControllerTest {
                                     "ReplyApi/Update/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
-                                            parameterWithName("writerId").description("대댓글 작성자 ID(PK)"),
                                             parameterWithName("replyId").description("수정할 대댓글 ID(PK)")
                                     ),
                                     requestFields(
@@ -169,11 +268,50 @@ public class ReplyApiControllerTest extends ControllerTest {
     }
 
     @Nested
-    @DisplayName("대댓글 삭제 API [DELETE /api/replies/{writerId}/{replyId}]")
+    @DisplayName("대댓글 삭제 API [DELETE /api/replies/{replyId}]")
     class deleteBoard {
-        private static final String BASE_URL = "/api/replies/{writerId}/{replyId}";
+        private static final String BASE_URL = "/api/replies/{replyId}";
         private static final Long WRITER_ID = 1L;
         private static final Long REPLY_ID = 2L;
+
+        @Test
+        @DisplayName("Authorization Header에 AccessToken이 없으면 대댓글 삭제에 실패한다")
+        void withoutAccessToken() throws Exception {
+            // when
+            final ReplyRequest request = createReplyRequest();
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .delete(BASE_URL, REPLY_ID)
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request));
+
+            // then
+            final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isForbidden(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ReplyApi/Delete/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    pathParameters(
+                                            parameterWithName("replyId").description("삭제할 대댓글 ID(PK)")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
 
         @Test
         @DisplayName("다른 사람의 대댓글은 삭제할 수 없다")
@@ -187,7 +325,7 @@ public class ReplyApiControllerTest extends ControllerTest {
             final ReplyRequest request = createReplyRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, WRITER_ID, REPLY_ID)
-                    .with(csrf())
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -205,11 +343,13 @@ public class ReplyApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "ReplyApi/Delete/Failure/Case1",
+                                    "ReplyApi/Delete/Failure/Case2",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
-                                            parameterWithName("writerId").description("대댓글 작성자 ID(PK)"),
                                             parameterWithName("replyId").description("삭제할 대댓글 ID(PK)")
                                     ),
                                     responseFields(
@@ -232,8 +372,8 @@ public class ReplyApiControllerTest extends ControllerTest {
             // when
             final ReplyRequest request = createReplyRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .delete(BASE_URL, WRITER_ID, REPLY_ID)
-                    .with(csrf())
+                    .delete(BASE_URL, REPLY_ID)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -247,8 +387,10 @@ public class ReplyApiControllerTest extends ControllerTest {
                                     "ReplyApi/Delete/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
-                                            parameterWithName("writerId").description("대댓글 작성자 ID(PK)"),
                                             parameterWithName("replyId").description("삭제할 대댓글 ID(PK)")
                                     )
                             )
