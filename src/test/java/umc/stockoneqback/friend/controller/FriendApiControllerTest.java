@@ -27,7 +27,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
-import static umc.stockoneqback.fixture.TokenFixture.REFRESH_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 
 @DisplayName("Friend [Controller Layer] -> FriendApiController 테스트")
 class FriendApiControllerTest extends ControllerTest {
@@ -87,7 +87,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, RECEIVER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final FriendErrorCode expectedError = FriendErrorCode.SELF_FRIEND_REQUEST_NOT_ALLOWED;
@@ -134,7 +134,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, RECEIVER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final UserErrorCode expectedError = UserErrorCode.USER_IS_NOT_MANAGER;
@@ -181,7 +181,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, RECEIVER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final FriendErrorCode expectedError = FriendErrorCode.ALREADY_EXIST_FRIEND;
@@ -226,7 +226,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, RECEIVER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -303,7 +303,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, RECEIVER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final FriendErrorCode expectedError = FriendErrorCode.FRIEND_NOT_FOUND;
@@ -350,7 +350,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, RECEIVER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final FriendErrorCode expectedError = FriendErrorCode.STATUS_IS_ACCEPT;
@@ -397,7 +397,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, RECEIVER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -474,7 +474,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, SENDER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final FriendErrorCode expectedError = FriendErrorCode.FRIEND_NOT_FOUND;
@@ -521,7 +521,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, SENDER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final FriendErrorCode expectedError = FriendErrorCode.STATUS_IS_ACCEPT;
@@ -568,7 +568,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, SENDER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -645,7 +645,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, SENDER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final FriendErrorCode expectedError = FriendErrorCode.FRIEND_NOT_FOUND;
@@ -692,7 +692,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, SENDER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final FriendErrorCode expectedError = FriendErrorCode.STATUS_IS_ACCEPT;
@@ -739,7 +739,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, SENDER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -816,7 +816,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, FRIEND_USER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final FriendErrorCode expectedError = FriendErrorCode.STATUS_IS_ACCEPT;
@@ -863,7 +863,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, FRIEND_USER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final FriendErrorCode expectedError = FriendErrorCode.FRIEND_NOT_FOUND;
@@ -910,7 +910,7 @@ class FriendApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, FRIEND_USER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)

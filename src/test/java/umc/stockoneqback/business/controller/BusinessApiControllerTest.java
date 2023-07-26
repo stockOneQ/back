@@ -27,7 +27,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
-import static umc.stockoneqback.fixture.TokenFixture.REFRESH_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 
 @DisplayName("Business [Controller Layer] -> BusinessApiController 테스트")
 class BusinessApiControllerTest extends ControllerTest {
@@ -88,7 +88,7 @@ class BusinessApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, MANAGER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final BusinessErrorCode expectedError = BusinessErrorCode.ALREADY_EXIST_BUSINESS;
@@ -135,7 +135,7 @@ class BusinessApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, MANAGER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -219,7 +219,7 @@ class BusinessApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, MANAGER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final BusinessErrorCode expectedError = BusinessErrorCode.BUSINESS_NOT_FOUND;
@@ -266,7 +266,7 @@ class BusinessApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, MANAGER_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
