@@ -13,7 +13,7 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
     @Query("UPDATE Token t" +
             " SET t.refreshToken = :refreshToken" +
             " WHERE t.userId = :userId")
-    void reissueRefreshTokenByRtrPolicy(@Param("userId") Long userId, @Param("refreshToken") String newRefreshToken); // Changed "memberId" to "userId" in the method signature
+    void reissueRefreshTokenByRtrPolicy(@Param("userId") Long userId, @Param("refreshToken") String newRefreshToken);
 
     // Query Method
     Optional<Token> findByUserId(Long userId);

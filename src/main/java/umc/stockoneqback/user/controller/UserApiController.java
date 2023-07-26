@@ -3,6 +3,7 @@ package umc.stockoneqback.user.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import umc.stockoneqback.global.annotation.ExtractPayload;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.controller.dto.request.SignUpManagerRequest;
 import umc.stockoneqback.user.controller.dto.request.SignUpPartTimerRequest;
@@ -41,12 +42,8 @@ public class UserApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/update/{userId}")
-    /*
-        - 원래 토큰으로 받아야 하지만, 일단 pathvariable로 했습니다.
-        - 인증, 인가가 완료되면 고치면 될 것 같아요!
-     */
-    public ResponseEntity<Void> updateInformation(@PathVariable Long userId, @RequestBody @Valid UserInfoRequest request) {
+    @PutMapping("/update")
+    public ResponseEntity<Void> updateInformation(@ExtractPayload Long userId, @RequestBody @Valid UserInfoRequest request) {
         userService.updateInformation(userId, request.name(), request.birth(), request.email(), request.loginId(), request.password(), request.phoneNumber());
         return ResponseEntity.ok().build();
     }

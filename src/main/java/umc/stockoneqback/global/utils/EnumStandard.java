@@ -1,4 +1,4 @@
-package umc.stockoneqback.global.enumconfig;
+package umc.stockoneqback.global.utils;
 
 public interface EnumStandard {
     String getValue();

@@ -1,4 +1,4 @@
-package umc.stockoneqback.auth.config;
+package umc.stockoneqback.global.security.handler;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

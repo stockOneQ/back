@@ -26,8 +26,8 @@ public class Token {
         this.refreshToken = refreshToken;
     }
 
-    public static Token createToken(Long memberId, String refreshToken) {
-        return new Token(memberId, refreshToken);
+    public static Token createToken(Long userId, String refreshToken) {
+        return new Token(userId, refreshToken);
     }
 
     public void updateRefreshToken(String refreshToken) {

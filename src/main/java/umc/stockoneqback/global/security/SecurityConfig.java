@@ -1,4 +1,4 @@
-package umc.stockoneqback.auth.config;
+package umc.stockoneqback.global.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import umc.stockoneqback.auth.filters.JwtRequestFilter;
+import umc.stockoneqback.global.security.filters.JwtRequestFilter;
+import umc.stockoneqback.global.security.handler.JwtAccessDeniedHandler;
+import umc.stockoneqback.global.security.handler.JwtAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
@@ -32,41 +34,29 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                // REST API, CSRF 보안 disable
-                .csrf().disable()
-                .formLogin().disable()
-                // rest api, 로그인 폼 화면 disable
-                .httpBasic().disable()
+        http.cors().disable();
+        http.csrf().disable();
 
-                // 예외 처리
-                .exceptionHandling()
+        http.formLogin().disable();
+        http.httpBasic().disable();
+
+        http.exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .accessDeniedHandler(jwtAccessDeniedHandler)
+                .accessDeniedHandler(jwtAccessDeniedHandler);
 
-                // h2-console을 위한 설정
-                .and()
-                .headers()
-                .frameOptions()
-                .sameOrigin()
+        http.headers().frameOptions().sameOrigin();
 
-                // 세션 사용 X
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-                // 토큰이 없어도 접근 가능한 URI
-                .and()
-                .authorizeRequests()
+        http.authorizeRequests()
                     .antMatchers("/api/auth/login").permitAll()
                     .antMatchers("/api/user/sign-up/manager").permitAll()
                     .antMatchers("/api/user/sign-up/part-timer").permitAll()
                     .antMatchers("/api/user/sign-up/supervisor").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().authenticated();
 
-                // filter
-                .and()
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

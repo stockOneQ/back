@@ -1,4 +1,4 @@
-package umc.stockoneqback.security.roles;
+package umc.stockoneqback.security.annotation;
 
 import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.test.context.transaction.BeforeTransaction;

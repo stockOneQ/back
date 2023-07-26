@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.global.base.Status;
-import umc.stockoneqback.global.enumconfig.EnumConverter;
+import umc.stockoneqback.global.utils.EnumConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -22,6 +22,7 @@ class UserTest {
         @Test
         @DisplayName("존재하지 않는 역할은 역할 Enum Class로 변환할 수 없다")
         void throwExceptionByRoleNotFound() {
+            org.assertj.core.api.Assertions.assertThatThrownBy(() -> User.createUser(Email.from(ANNE.getEmail()), ANNE.getLoginId(), Password.encrypt(ANNE.getPassword(), ENCODER), ANNE.getName(), ANNE.getBirth(), ANNE.getPhoneNumber(), Role.valueOf("사장님")));
             assertThatThrownBy(() -> User.createUser(Email.from(ANNE.getEmail()), ANNE.getLoginId(), Password.encrypt(ANNE.getPassword(), ENCODER), ANNE.getName(), ANNE.getBirth(), ANNE.getPhoneNumber(), new EnumConverter<>(Role.class).convertToEntityAttribute("시장님")))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(GlobalErrorCode.INVALID_ENUM.getMessage());

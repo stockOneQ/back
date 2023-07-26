@@ -1,4 +1,4 @@
-package umc.stockoneqback.auth.service;
+package umc.stockoneqback.global.security.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import umc.stockoneqback.auth.domain.CustomUserDetails;
-import umc.stockoneqback.auth.domain.UserDetailsDto;
+import umc.stockoneqback.global.security.domain.CustomUserDetails;
+import umc.stockoneqback.global.security.service.dto.UserDetailsDto;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
 import umc.stockoneqback.user.exception.UserErrorCode;

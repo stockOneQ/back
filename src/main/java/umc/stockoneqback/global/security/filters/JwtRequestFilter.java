@@ -1,4 +1,4 @@
-package umc.stockoneqback.auth.filters;
+package umc.stockoneqback.global.security.filters;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -6,11 +6,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import umc.stockoneqback.auth.domain.CustomUserDetails;
-import umc.stockoneqback.auth.domain.UserDetailsDto;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.GlobalErrorCode;
+import umc.stockoneqback.global.security.domain.CustomUserDetails;
+import umc.stockoneqback.global.security.service.dto.UserDetailsDto;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.service.UserFindService;

@@ -2,8 +2,8 @@ package umc.stockoneqback.user.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import umc.stockoneqback.global.enumconfig.EnumConverter;
-import umc.stockoneqback.global.enumconfig.EnumStandard;
+import umc.stockoneqback.global.utils.EnumConverter;
+import umc.stockoneqback.global.utils.EnumStandard;
 
 @Getter
 @RequiredArgsConstructor

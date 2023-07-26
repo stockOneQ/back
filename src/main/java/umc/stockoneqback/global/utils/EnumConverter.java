@@ -1,4 +1,4 @@
-package umc.stockoneqback.global.enumconfig;
+package umc.stockoneqback.global.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import umc.stockoneqback.global.base.BaseException;
