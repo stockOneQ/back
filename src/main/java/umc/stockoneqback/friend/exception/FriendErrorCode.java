@@ -10,6 +10,8 @@ import umc.stockoneqback.global.base.ErrorCode;
 public enum FriendErrorCode implements ErrorCode {
     ALREADY_EXIST_FRIEND(HttpStatus.CONFLICT, "FRIEND_001", "이미 존재하는 친구 관계입니다."),
     FRIEND_NOT_FOUND(HttpStatus.NOT_FOUND, "FRIEND_002", "친구 관계를 찾을 수 없습니다."),
+    SELF_FRIEND_REQUEST_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "FRIEND_003", "본인과 친구 관계를 맺을 수 없습니다."),
+    STATUS_IS_ACCEPT(HttpStatus.CONFLICT, "FRIEND_004", "친구 관계 상태가 요청이 아닙니다."),
     ;
 
     private final HttpStatus status;

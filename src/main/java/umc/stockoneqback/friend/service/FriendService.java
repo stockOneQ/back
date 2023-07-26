@@ -26,6 +26,7 @@ public class FriendService {
         User sender = userFindService.findById(senderId);
         User receiver = userFindService.findById(receiverId);
 
+        validateSameUser(senderId, receiverId);
         validateManager(sender);
         validateManager(receiver);
         validateAlreadyFriend(sender, receiver);
@@ -33,33 +34,10 @@ public class FriendService {
         return friendRepository.save(Friend.createFriend(sender, receiver, FriendStatus.REQUEST)).getId();
     }
 
-    @Transactional
-    public void cancelFriend(Long senderId, Long receiverId) {
-        Friend friend = friendFindService.findBySenderIdAndReceiverId(senderId, receiverId);
-        friendRepository.delete(friend);
-    }
-
-    @Transactional
-    public Long acceptFriend(Long senderId, Long receiverId) {
-        Friend friend = friendFindService.findBySenderIdAndReceiverId(senderId, receiverId);
-        friend.acceptFriend();
-
-        return friend.getId();
-    }
-
-    @Transactional
-    public void rejectFriend(Long senderId, Long receiverId) {
-        Friend friend = friendFindService.findBySenderIdAndReceiverId(senderId, receiverId);
-        friendRepository.delete(friend);
-    }
-
-    @Transactional
-    public void deleteFriend(Long userId, Long friendUserId) {
-        Friend friend = friendRepository.findBySenderIdAndReceiverId(userId, friendUserId)
-                .or(() -> friendRepository.findBySenderIdAndReceiverId(friendUserId, userId))
-                .orElseThrow(() -> BaseException.type(FriendErrorCode.ALREADY_EXIST_FRIEND));
-
-        friendRepository.delete(friend);
+    private void validateSameUser(Long senderId, Long receiverId) {
+        if (senderId.equals(receiverId)) {
+            throw BaseException.type(FriendErrorCode.SELF_FRIEND_REQUEST_NOT_ALLOWED);
+        }
     }
 
     private void validateManager(User user) {
@@ -71,6 +49,52 @@ public class FriendService {
     private void validateAlreadyFriend(User sender, User receiver) {
         if (friendRepository.existsBySenderAndReceiver(sender, receiver) || friendRepository.existsBySenderAndReceiver(receiver, sender)) {
             throw BaseException.type(FriendErrorCode.ALREADY_EXIST_FRIEND);
+        }
+    }
+
+    @Transactional
+    public void cancelFriend(Long senderId, Long receiverId) {
+        Friend friend = friendFindService.findBySenderIdAndReceiverId(senderId, receiverId);
+        validateAcceptStatus(friend);
+        friendRepository.delete(friend);
+    }
+
+    @Transactional
+    public Long acceptFriend(Long senderId, Long receiverId) {
+        Friend friend = friendFindService.findBySenderIdAndReceiverId(senderId, receiverId);
+        validateAcceptStatus(friend);
+
+        friend.acceptFriend();
+        return friend.getId();
+    }
+
+    @Transactional
+    public void rejectFriend(Long senderId, Long receiverId) {
+        Friend friend = friendFindService.findBySenderIdAndReceiverId(senderId, receiverId);
+        validateAcceptStatus(friend);
+
+        friendRepository.delete(friend);
+    }
+
+    private void validateAcceptStatus(Friend friend) {
+        if (friend.getStatus().equals(FriendStatus.ACCEPT)) {
+            throw BaseException.type(FriendErrorCode.STATUS_IS_ACCEPT);
+        }
+    }
+
+    @Transactional
+    public void deleteFriend(Long userId, Long friendUserId) {
+        Friend friend = friendRepository.findBySenderIdAndReceiverId(userId, friendUserId)
+                .or(() -> friendRepository.findBySenderIdAndReceiverId(friendUserId, userId))
+                .orElseThrow(() -> BaseException.type(FriendErrorCode.FRIEND_NOT_FOUND));
+        validateRequestStatus(friend);
+
+        friendRepository.delete(friend);
+    }
+
+    private void validateRequestStatus(Friend friend) {
+        if (friend.getStatus().equals(FriendStatus.REQUEST)) {
+            throw BaseException.type(FriendErrorCode.STATUS_IS_ACCEPT);
         }
     }
 }
