@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
-import static umc.stockoneqback.fixture.TokenFixture.REFRESH_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 
 @DisplayName("Board [Controller Layer] -> BoardApiController 테스트")
 public class BoardApiControllerTest extends ControllerTest {
@@ -89,7 +89,7 @@ public class BoardApiControllerTest extends ControllerTest {
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -176,7 +176,7 @@ public class BoardApiControllerTest extends ControllerTest {
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, BOARD_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -229,7 +229,7 @@ public class BoardApiControllerTest extends ControllerTest {
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, BOARD_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -315,7 +315,7 @@ public class BoardApiControllerTest extends ControllerTest {
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, BOARD_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -363,7 +363,7 @@ public class BoardApiControllerTest extends ControllerTest {
             final BoardRequest request = createBoardRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, WRITER_ID, BOARD_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 

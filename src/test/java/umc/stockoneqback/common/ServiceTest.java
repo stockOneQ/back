@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.auth.domain.TokenRepository;
 import umc.stockoneqback.board.domain.BoardRepository;
+import umc.stockoneqback.board.domain.like.BoardLikeRepository;
 import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.comment.domain.CommentRepository;
 import umc.stockoneqback.product.domain.ProductRepository;
@@ -50,6 +51,9 @@ public class ServiceTest {
   
     @Autowired
     protected ProductRepository productRepository;
+
+    @Autowired
+    protected BoardLikeRepository boardLikeRepository;
 
     public void flushAndClear() {
         databaseCleaner.flushAndClear();
