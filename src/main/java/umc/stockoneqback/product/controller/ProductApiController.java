@@ -106,7 +106,7 @@ public class ProductApiController {
     }
 
     @GetMapping("/pass/routine")
-    public List<GetListOfPassProductByOnlineUsersResponse> getListOfPassProductByOnlineUsers(@ExtractPayload Long userId) {
-        return productService.getListOfPassProductByOnlineUsers();
+    public BaseResponse<List<GetListOfPassProductByOnlineUsersResponse>> getListOfPassProductByOnlineUsers(@ExtractPayload Long userId) {
+        return new BaseResponse<>(productService.getListOfPassProductByOnlineUsers());
     }
 }
