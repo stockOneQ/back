@@ -29,7 +29,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
-import static umc.stockoneqback.fixture.TokenFixture.REFRESH_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 
 @DisplayName("User [Controller Layer] -> UserApiController 테스트")
@@ -564,7 +564,7 @@ class UserApiControllerTest extends ControllerTest {
             final UserInfoRequest request = createUserInfoRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .put(BASE_URL)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -617,7 +617,7 @@ class UserApiControllerTest extends ControllerTest {
             final UserInfoRequest request = createUserInfoRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .put(BASE_URL)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 

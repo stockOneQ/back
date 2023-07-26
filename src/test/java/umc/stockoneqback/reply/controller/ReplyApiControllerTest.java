@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
-import umc.stockoneqback.board.exception.BoardErrorCode;
-import umc.stockoneqback.comment.controller.dto.CommentRequest;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.reply.controller.dto.ReplyRequest;
@@ -25,12 +23,11 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.ReplyFixture.REPLY_0;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
-import static umc.stockoneqback.fixture.TokenFixture.REFRESH_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 
 @DisplayName("Reply [Controller Layer] -> ReplyApiController 테스트")
 public class ReplyApiControllerTest extends ControllerTest {
@@ -96,7 +93,7 @@ public class ReplyApiControllerTest extends ControllerTest {
             final ReplyRequest request = createReplyRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, COMMENT_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -186,7 +183,7 @@ public class ReplyApiControllerTest extends ControllerTest {
             final ReplyRequest request = createReplyRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, REPLY_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -238,7 +235,7 @@ public class ReplyApiControllerTest extends ControllerTest {
             final ReplyRequest request = createReplyRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, REPLY_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -325,7 +322,7 @@ public class ReplyApiControllerTest extends ControllerTest {
             final ReplyRequest request = createReplyRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, WRITER_ID, REPLY_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -373,7 +370,7 @@ public class ReplyApiControllerTest extends ControllerTest {
             final ReplyRequest request = createReplyRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, REPLY_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 

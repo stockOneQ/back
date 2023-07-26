@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
-import umc.stockoneqback.board.controller.dto.BoardRequest;
-import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.comment.controller.dto.CommentRequest;
 import umc.stockoneqback.comment.exception.CommentErrorCode;
 import umc.stockoneqback.common.ControllerTest;
@@ -30,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.CommentFixture.COMMENT_0;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
-import static umc.stockoneqback.fixture.TokenFixture.REFRESH_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 
 @DisplayName("Comment [Controller Layer] -> CommentApiController 테스트")
 public class CommentApiControllerTest extends ControllerTest {
@@ -96,7 +94,7 @@ public class CommentApiControllerTest extends ControllerTest {
             final CommentRequest request = createCommentRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, BOARD_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -186,7 +184,7 @@ public class CommentApiControllerTest extends ControllerTest {
             final CommentRequest request = createCommentRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, COMMENT_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -238,7 +236,7 @@ public class CommentApiControllerTest extends ControllerTest {
             final CommentRequest request = createCommentRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .patch(BASE_URL, COMMENT_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -325,7 +323,7 @@ public class CommentApiControllerTest extends ControllerTest {
             final CommentRequest request = createCommentRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, WRITER_ID, COMMENT_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
@@ -373,7 +371,7 @@ public class CommentApiControllerTest extends ControllerTest {
             final CommentRequest request = createCommentRequest();
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, COMMENT_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
