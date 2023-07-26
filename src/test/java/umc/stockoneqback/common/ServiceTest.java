@@ -8,6 +8,7 @@ import umc.stockoneqback.auth.domain.TokenRepository;
 import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.comment.domain.CommentRepository;
+import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.product.domain.ProductRepository;
 import umc.stockoneqback.reply.domain.ReplyRepository;
 import umc.stockoneqback.role.domain.company.CompanyRepository;
@@ -50,6 +51,9 @@ public class ServiceTest {
   
     @Autowired
     protected ProductRepository productRepository;
+
+    @Autowired
+    protected FriendRepository friendRepository;
 
     public void flushAndClear() {
         databaseCleaner.flushAndClear();

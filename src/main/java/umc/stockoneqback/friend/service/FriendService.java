@@ -57,7 +57,7 @@ public class FriendService {
     public void deleteFriend(Long userId, Long friendUserId) {
         Friend friend = friendRepository.findBySenderIdAndReceiverId(userId, friendUserId)
                 .or(() -> friendRepository.findBySenderIdAndReceiverId(friendUserId, userId))
-                .orElseThrow(() -> BaseException.type(FriendErrorCode.ALREADY_EXIST_FRIEND));
+                .orElseThrow(() -> BaseException.type(FriendErrorCode.FRIEND_NOT_FOUND));
 
         friendRepository.delete(friend);
     }
