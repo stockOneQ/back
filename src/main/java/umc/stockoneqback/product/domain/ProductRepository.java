@@ -124,12 +124,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                                          @Param("pageSize") Integer pageSize);
 
     @Query(value = "SELECT p.name FROM Product p WHERE p.status = '정상' AND p.expiration_date < :currentDate AND " +
-            "p.store = (SELECT s.id FROM Store s WHERE s.manager = :manager)", nativeQuery = true)
+            "p.store = (SELECT s.id FROM Store s WHERE s.manager_id = :manager)", nativeQuery = true)
     List<String> findPassByManager(@Param("manager") User user,
                                    @Param("currentDate") LocalDate currentDate);
 
     @Query(value = "SELECT p.name FROM Product p WHERE p.status = '정상' AND p.expiration_date < :currentDate AND " +
-            "p.store = (SELECT t.store_id FROM PartTimer t WHERE t.part_timer_id = :partTimer)", nativeQuery = true)
+            "p.store = (SELECT t.store_id FROM Part_Timer t WHERE t.part_timer_id = :partTimer)", nativeQuery = true)
     List<String> findPassByPartTimer(@Param("partTimer") User user,
                                      @Param("currentDate") LocalDate currentDate);
 }

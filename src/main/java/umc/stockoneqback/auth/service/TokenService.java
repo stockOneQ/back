@@ -39,6 +39,6 @@ public class TokenService {
     }
 
     public List<Token> findAllOnlineUsers() {
-        return tokenRepository.findAll(Sort.by(Sort.Direction.ASC, "user_id"));
+        return tokenRepository.findAll(Sort.by(Sort.Direction.ASC, "userId"));
     }
 }
