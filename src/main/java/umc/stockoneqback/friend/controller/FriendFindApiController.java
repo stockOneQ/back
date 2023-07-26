@@ -2,7 +2,10 @@ package umc.stockoneqback.friend.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import umc.stockoneqback.friend.service.FriendFindService;
 import umc.stockoneqback.friend.service.dto.SearchUserResponse;
 import umc.stockoneqback.global.annotation.ExtractPayload;

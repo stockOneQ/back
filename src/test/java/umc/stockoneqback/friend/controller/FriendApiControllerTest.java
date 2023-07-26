@@ -26,8 +26,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 
 @DisplayName("Friend [Controller Layer] -> FriendApiController 테스트")
 class FriendApiControllerTest extends ControllerTest {
