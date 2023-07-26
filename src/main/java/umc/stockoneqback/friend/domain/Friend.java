@@ -1,7 +1,7 @@
 package umc.stockoneqback.friend.domain;
 
+import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.stockoneqback.global.base.BaseTimeEntity;
@@ -9,10 +9,9 @@ import umc.stockoneqback.user.domain.User;
 
 import javax.persistence.*;
 
-@NoArgsConstructor
-@Data
-@Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
 @Table(name="friend")
 public class Friend extends BaseTimeEntity {
     @Id
@@ -20,21 +19,28 @@ public class Friend extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "res_user_id")
-    private User resUser; // 요청 받은 사람
+    @JoinColumn(name = "sender_id")
+    private User sender;
 
-    @ManyToOne
-    @JoinColumn(name = "req_user_id")
-    private User reqUser; // 요청 한 사람
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id")
+    private User receiver;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Convert(converter = FriendStatus.FriendConverter.class)
     private FriendStatus status;
 
     @Builder
-    public Friend(User reqUser, User resUser, FriendStatus status) {
-        this.reqUser = reqUser;
-        this.resUser = resUser;
+    public Friend(User sender, User receiver, FriendStatus status) {
+        this.sender = sender;
+        this.receiver = receiver;
         this.status = status;
+    }
+
+    public static Friend createFriend(User sender, User receiver, FriendStatus status) {
+        return new Friend(sender, receiver, status);
+    }
+
+    public void acceptFriend() {
+        this.status = FriendStatus.ACCEPT;
     }
 }

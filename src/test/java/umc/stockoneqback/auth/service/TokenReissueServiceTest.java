@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.auth.domain.Token;
+import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.auth.service.dto.response.TokenResponse;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.global.base.GlobalErrorCode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -25,11 +25,11 @@ class TokenReissueServiceTest extends ServiceTest {
     private JwtTokenProvider jwtTokenProvider;
 
     private final Long USER_ID = 1L;
-    private String REFRESHTOKEN;
+    private String REFRESH_TOKEN;
 
     @BeforeEach
     void setup() {
-        REFRESHTOKEN = jwtTokenProvider.createRefreshToken(USER_ID);
+        REFRESH_TOKEN = jwtTokenProvider.createRefreshToken(USER_ID);
     }
 
     @Nested
@@ -39,19 +39,19 @@ class TokenReissueServiceTest extends ServiceTest {
         @DisplayName("RefreshToken이 유효하지 않으면 예외가 발생한다")
         void throwExceptionByAuthInvalidToken() {
             // when - then
-            assertThatThrownBy(() -> tokenReissueService.reissueTokens(USER_ID, REFRESHTOKEN))
+            assertThatThrownBy(() -> tokenReissueService.reissueTokens(USER_ID, REFRESH_TOKEN))
                     .isInstanceOf(BaseException.class)
-                    .hasMessage(GlobalErrorCode.INVALID_TOKEN.getMessage());
+                    .hasMessage(AuthErrorCode.AUTH_INVALID_TOKEN.getMessage());
         }
 
         @Test
         @DisplayName("RefreshToken을 통해서 AccessToken과 RefreshToken을 재발급받는데 성공한다")
         void success() {
             // given
-            tokenRepository.save(Token.createToken(USER_ID, REFRESHTOKEN));
+            tokenRepository.save(Token.createToken(USER_ID, REFRESH_TOKEN));
 
             // when
-            TokenResponse response = tokenReissueService.reissueTokens(USER_ID, REFRESHTOKEN);
+            TokenResponse response = tokenReissueService.reissueTokens(USER_ID, REFRESH_TOKEN);
 
             // then
             assertAll(

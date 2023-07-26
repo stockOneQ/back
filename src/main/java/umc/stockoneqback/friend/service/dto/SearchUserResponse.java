@@ -1,4 +1,4 @@
-package umc.stockoneqback.friend.dto;
+package umc.stockoneqback.friend.service.dto;
 
 import lombok.Builder;
 import umc.stockoneqback.role.domain.company.Company;

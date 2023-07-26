@@ -6,8 +6,8 @@ import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.global.base.GlobalErrorCode;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -67,9 +67,9 @@ public class JwtTokenProvider {
             Date now = new Date();
             return expiredDate.after(now);
         } catch (ExpiredJwtException e) {
-            throw BaseException.type(GlobalErrorCode.EXPIRED_TOKEN);
+            throw BaseException.type(AuthErrorCode.AUTH_EXPIRED_TOKEN);
         } catch (SecurityException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
-            throw BaseException.type(GlobalErrorCode.INVALID_TOKEN);
+            throw BaseException.type(AuthErrorCode.AUTH_INVALID_TOKEN);
         }
     }
 
