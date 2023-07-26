@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.global.base.Status;
-import umc.stockoneqback.global.enumconfig.EnumConverter;
+import umc.stockoneqback.global.utils.EnumConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

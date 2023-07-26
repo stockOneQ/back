@@ -4,15 +4,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import umc.stockoneqback.auth.controller.dto.request.LoginRequest;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.auth.service.dto.response.LoginResponse;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.user.domain.Email;
-import umc.stockoneqback.user.domain.Password;
-import umc.stockoneqback.user.domain.User;
+import umc.stockoneqback.security.annotation.WithMockCustomUser;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -25,12 +25,10 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.TokenFixture.*;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
-import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
 @DisplayName("Auth [Controller Layer] -> AuthApiController 테스트")
 class AuthApiControllerTest extends ControllerTest {
@@ -52,8 +50,7 @@ class AuthApiControllerTest extends ControllerTest {
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL)
                     .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request))
-                    .with(csrf());
+                    .content(objectMapper.writeValueAsString(request));
 
             // then
             final AuthErrorCode expectedError = AuthErrorCode.WRONG_PASSWORD;
@@ -87,6 +84,7 @@ class AuthApiControllerTest extends ControllerTest {
 
         @Test
         @DisplayName("로그인에 성공한다")
+        @WithAnonymousUser
         void success() throws Exception {
             // given
             LoginResponse loginResponse = createLoginResponse();
@@ -97,8 +95,7 @@ class AuthApiControllerTest extends ControllerTest {
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL)
                     .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request))
-                    .with(csrf());
+                    .content(objectMapper.writeValueAsString(request));
 
             // then
             mockMvc.perform(requestBuilder)
@@ -132,18 +129,49 @@ class AuthApiControllerTest extends ControllerTest {
         private static final Long USER_ID = 1L;
 
         @Test
+        @DisplayName("Authorization Header에 AccessToken이 없으면 로그아웃에 실패한다")
+        void withoutAccessToken() throws Exception {
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .post(BASE_URL);
+
+            // then
+            final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isForbidden(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "AuthApi/Logout/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
         @DisplayName("로그아웃에 성공한다")
         void success() throws Exception {
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
             given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
-            given(userFindService.findById(any())).willReturn(User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole()));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN)
-                    .with(csrf());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)

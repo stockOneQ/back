@@ -1,10 +1,11 @@
-package umc.stockoneqback.auth.domain;
+package umc.stockoneqback.global.security.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import umc.stockoneqback.global.security.service.dto.UserDetailsDto;
 
 import java.util.ArrayList;
 import java.util.Collection;

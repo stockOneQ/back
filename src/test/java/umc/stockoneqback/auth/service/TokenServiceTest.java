@@ -16,7 +16,7 @@ class TokenServiceTest extends ServiceTest {
     private TokenService tokenService;
 
     final Long USER_ID = 1L;
-    final String REFRESHTOKEN = "example_refresh_token";
+    final String REFRESH_TOKEN = "example_refresh_token";
 
     @Nested
     @DisplayName("Refresh Token 발급 혹은 재발급")
@@ -25,21 +25,21 @@ class TokenServiceTest extends ServiceTest {
         @DisplayName("RefreshToken을 보유하지 않은 사용자에게 새로운 RefreshToken을 발급한다")
         void newUser() {
             // when
-            tokenService.synchronizeRefreshToken(USER_ID, REFRESHTOKEN);
+            tokenService.synchronizeRefreshToken(USER_ID, REFRESH_TOKEN);
 
             // then
             Token findToken = tokenRepository.findByUserId(USER_ID).orElseThrow();
-            assertThat(findToken.getRefreshToken()).isEqualTo(REFRESHTOKEN);
+            assertThat(findToken.getRefreshToken()).isEqualTo(REFRESH_TOKEN);
         }
 
         @Test
         @DisplayName("RefreshToken을 보유하고 있는 사용자에게 RefreshToken을 업데이트한다")
         void oldUser() {
             // given
-            tokenRepository.save(Token.createToken(USER_ID, REFRESHTOKEN));
+            tokenRepository.save(Token.createToken(USER_ID, REFRESH_TOKEN));
 
             // when
-            String newRefreshToken = REFRESHTOKEN + "new";
+            String newRefreshToken = REFRESH_TOKEN + "new";
             tokenService.synchronizeRefreshToken(USER_ID, newRefreshToken);
 
             // then
@@ -52,10 +52,10 @@ class TokenServiceTest extends ServiceTest {
     @DisplayName("RTR정책에 의해서 RefreshToken을 재발급한다")
     void reissueRefreshTokenByRtrPolicy() {
         // given
-        tokenRepository.save(Token.createToken(USER_ID, REFRESHTOKEN));
+        tokenRepository.save(Token.createToken(USER_ID, REFRESH_TOKEN));
 
         // when
-        final String newRefreshToken = REFRESHTOKEN + "_new";
+        final String newRefreshToken = REFRESH_TOKEN + "_new";
         tokenService.reissueRefreshTokenByRtrPolicy(USER_ID, newRefreshToken);
 
         // then
@@ -67,7 +67,7 @@ class TokenServiceTest extends ServiceTest {
     @DisplayName("사용자가 보유하고 있는 RefreshToken을 삭제한다")
     void deleteRefreshTokenByMemberId() {
         // given
-        tokenRepository.save(Token.createToken(USER_ID, REFRESHTOKEN));
+        tokenRepository.save(Token.createToken(USER_ID, REFRESH_TOKEN));
 
         // when
         tokenService.deleteRefreshTokenByMemberId(USER_ID);
@@ -80,11 +80,11 @@ class TokenServiceTest extends ServiceTest {
     @DisplayName("해당 RefreshToken을 사용자가 보유하고 있는지 확인한다")
     void isRefreshTokenExists() {
         // given
-        tokenRepository.save(Token.createToken(USER_ID, REFRESHTOKEN));
+        tokenRepository.save(Token.createToken(USER_ID, REFRESH_TOKEN));
 
         // when
-        final String fakeRefreshToken = REFRESHTOKEN + "_fake";
-        boolean actual1 = tokenService.isRefreshTokenExists(USER_ID, REFRESHTOKEN);
+        final String fakeRefreshToken = REFRESH_TOKEN + "_fake";
+        boolean actual1 = tokenService.isRefreshTokenExists(USER_ID, REFRESH_TOKEN);
         boolean actual2 = tokenService.isRefreshTokenExists(USER_ID, fakeRefreshToken);
 
         // then

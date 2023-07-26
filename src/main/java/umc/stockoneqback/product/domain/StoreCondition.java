@@ -3,8 +3,8 @@ package umc.stockoneqback.product.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.global.enumconfig.EnumConverter;
-import umc.stockoneqback.global.enumconfig.EnumStandard;
+import umc.stockoneqback.global.utils.EnumConverter;
+import umc.stockoneqback.global.utils.EnumStandard;
 import umc.stockoneqback.product.exception.ProductErrorCode;
 
 import java.util.HashMap;

@@ -1,17 +1,21 @@
 package umc.stockoneqback.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
-import umc.stockoneqback.auth.config.JwtAccessDeniedHandler;
-import umc.stockoneqback.auth.config.JwtAuthenticationEntryPoint;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import umc.stockoneqback.auth.controller.AuthApiController;
 import umc.stockoneqback.auth.service.AuthService;
-import umc.stockoneqback.auth.service.CustomUserDetailsService;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
 import umc.stockoneqback.board.controller.BoardApiController;
 import umc.stockoneqback.board.service.BoardFindService;
@@ -21,6 +25,9 @@ import umc.stockoneqback.business.service.BusinessService;
 import umc.stockoneqback.comment.controller.CommentApiController;
 import umc.stockoneqback.comment.service.CommentFindService;
 import umc.stockoneqback.comment.service.CommentService;
+import umc.stockoneqback.global.security.handler.JwtAccessDeniedHandler;
+import umc.stockoneqback.global.security.handler.JwtAuthenticationEntryPoint;
+import umc.stockoneqback.global.security.service.CustomUserDetailsService;
 import umc.stockoneqback.product.controller.ProductApiController;
 import umc.stockoneqback.product.service.ProductService;
 import umc.stockoneqback.reply.controller.ReplyApiController;
@@ -32,6 +39,9 @@ import umc.stockoneqback.user.controller.UserApiController;
 import umc.stockoneqback.user.service.UserFindService;
 import umc.stockoneqback.user.service.UserService;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
 @WebMvcTest(value = {
         UserApiController.class,
         BusinessApiController.class,
@@ -42,8 +52,8 @@ import umc.stockoneqback.user.service.UserService;
         ReplyApiController.class,
         ProductApiController.class
 })
+@ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs
-@WithMockUser
 public abstract class ControllerTest {
     @Autowired
     protected MockMvc mockMvc;
@@ -101,4 +111,14 @@ public abstract class ControllerTest {
 
     @MockBean
     protected ReplyService replyService;
+
+    @BeforeEach
+    void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
+                .apply(MockMvcRestDocumentation.documentationConfiguration(provider))
+                .alwaysDo(print())
+                .alwaysDo(log())
+                .addFilter(new CharacterEncodingFilter("UTF-8", true))
+                .build();
+    }
 }

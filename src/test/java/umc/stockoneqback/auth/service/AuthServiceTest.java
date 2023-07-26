@@ -9,8 +9,6 @@ import umc.stockoneqback.auth.utils.JwtTokenProvider;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.role.domain.store.Store;
-import umc.stockoneqback.user.service.UserFindService;
-import umc.stockoneqback.user.service.UserService;
 
 import java.util.Optional;
 
@@ -22,12 +20,6 @@ import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 class AuthServiceTest extends ServiceTest {
     @Autowired
     private AuthService authService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserFindService userFindService;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;

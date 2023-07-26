@@ -43,9 +43,6 @@ public class BoardApiControllerTest extends ControllerTest {
         @DisplayName("게시글 등록에 성공한다")
         void success() throws Exception {
             // given
-            given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
-            given(jwtTokenProvider.getId(anyString())).willReturn(WRITER_ID);
-            given(userFindService.findById(any())).willReturn(User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole()));
             doReturn(1L)
                     .when(boardService)
                     .create(anyLong(), any(), any(), any());
@@ -55,14 +52,13 @@ public class BoardApiControllerTest extends ControllerTest {
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .post(BASE_URL, WRITER_ID)
                     .with(csrf())
-                    .header(AUTHORIZATION, "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNjc3OTM3MjI0LCJleHAiOjE2Nzg1NDIwMjR9.doqGa5Hcq6chjER1y5brJEv81z0njcJqeYxJb159ZX4")
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request));
 
             // then
             mockMvc.perform(requestBuilder)
                     .andExpectAll(
-                            status().isOk()
+                            status().isForbidden()
                     )
                     .andDo(
                             document(

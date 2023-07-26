@@ -21,6 +21,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenService tokenService;
 
+    @Transactional
     public LoginResponse login(String loginId, String password) {
         User user = userFindService.findByLoginId(loginId);
         validatePassword(password, user.getPassword());
@@ -33,7 +34,8 @@ public class AuthService {
                 user.getId(),
                 user.getLoginId(),
                 accessToken,
-                refreshToken);
+                refreshToken
+        );
     }
 
     private void validatePassword(String comparePassword, Password saved) {

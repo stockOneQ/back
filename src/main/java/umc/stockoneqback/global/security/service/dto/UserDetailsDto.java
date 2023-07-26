@@ -1,4 +1,4 @@
-package umc.stockoneqback.auth.domain;
+package umc.stockoneqback.global.security.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
