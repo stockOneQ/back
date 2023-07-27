@@ -518,13 +518,13 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("result.name").type(JsonFieldType.STRING).description("제품명"),
                                             fieldWithPath("result.price").type(JsonFieldType.NUMBER).description("가격"),
                                             fieldWithPath("result.vendor").type(JsonFieldType.STRING).description("판매업체"),
-                                            fieldWithPath("result.image").type(JsonFieldType.ARRAY).type(JsonFieldType.NULL).description("제품 이미지"),
+                                            fieldWithPath("result.image").type(JsonFieldType.ARRAY).description("제품 이미지").optional(),
                                             fieldWithPath("result.receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
                                             fieldWithPath("result.expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
-                                            fieldWithPath("result.location").type(JsonFieldType.STRING).type(JsonFieldType.NULL).description("제품 위치"),
+                                            fieldWithPath("result.location").type(JsonFieldType.STRING).description("제품 위치").optional(),
                                             fieldWithPath("result.requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
                                             fieldWithPath("result.stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
-                                            fieldWithPath("result.siteToOrder").type(JsonFieldType.STRING).type(JsonFieldType.NULL).description("발주사이트"),
+                                            fieldWithPath("result.siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
                                             fieldWithPath("result.orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     )
                             )
@@ -687,7 +687,7 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
                                             fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
                                             fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
-                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).type(JsonFieldType.NULL).description("제품 이미지")
+                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).description("제품 이미지").optional()
                                     )
                             )
                     );
@@ -1335,7 +1335,7 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
                                             fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
                                             fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
-                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).type(JsonFieldType.NULL).description("제품 이미지")
+                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).description("제품 이미지").optional()
                                     )
                             )
                     );
@@ -1556,7 +1556,7 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
                                             fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
                                             fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
-                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).type(JsonFieldType.NULL).description("제품 이미지")
+                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).description("제품 이미지").optional()
                                     )
                             )
                     );
@@ -1783,7 +1783,7 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
                                             fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
                                             fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
-                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).type(JsonFieldType.NULL).description("제품 이미지")
+                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).description("제품 이미지").optional()
                                     )
                             )
                     );
@@ -2010,7 +2010,7 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
                                             fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
                                             fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
-                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).type(JsonFieldType.NULL).description("제품 이미지")
+                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).description("제품 이미지").optional()
                                     )
                             )
                     );
