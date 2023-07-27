@@ -8,6 +8,7 @@ import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.global.base.BaseTimeEntity;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.role.domain.company.Company;
+import umc.stockoneqback.role.domain.store.Store;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -44,6 +45,10 @@ public class User extends BaseTimeEntity {
     private Role role;
 
     @ManyToOne
+    @JoinColumn(name = "manager_store_id", referencedColumnName = "id")
+    private Store managerStore;
+
+    @ManyToOne
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
 
@@ -69,7 +74,11 @@ public class User extends BaseTimeEntity {
         return new User(email, loginId, password, username, birth, phoneNumber, role);
     }
 
-    public void updateCompany(Company company) {
+    public void registerManagerStore(Store store) {
+        this.managerStore = store;
+    }
+
+    public void registerCompany(Company company) {
         this.company = company;
     }
 
