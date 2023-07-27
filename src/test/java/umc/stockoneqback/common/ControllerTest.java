@@ -30,6 +30,7 @@ import umc.stockoneqback.comment.service.CommentService;
 import umc.stockoneqback.friend.controller.FriendApiController;
 import umc.stockoneqback.friend.controller.FriendFindApiController;
 import umc.stockoneqback.friend.service.FriendFindService;
+import umc.stockoneqback.friend.service.FriendInformationService;
 import umc.stockoneqback.friend.service.FriendService;
 import umc.stockoneqback.global.security.handler.JwtAccessDeniedHandler;
 import umc.stockoneqback.global.security.handler.JwtAuthenticationEntryPoint;
@@ -59,7 +60,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         ProductApiController.class,
         FriendApiController.class,
         FriendFindApiController.class,
-        BoardLikeApiController.class
+        BoardLikeApiController.class,
 })
 @ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs
@@ -129,6 +130,9 @@ public abstract class ControllerTest {
   
     @MockBean
     protected BoardLikeService boardLikeService;
+
+    @MockBean
+    protected FriendInformationService friendInformationService;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {
