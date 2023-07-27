@@ -15,7 +15,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import umc.stockoneqback.auth.controller.AuthApiController;
+import umc.stockoneqback.auth.controller.TokenReissueApiController;
 import umc.stockoneqback.auth.service.AuthService;
+import umc.stockoneqback.auth.service.TokenReissueService;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
 import umc.stockoneqback.board.controller.BoardApiController;
 import umc.stockoneqback.board.controller.like.BoardLikeApiController;
@@ -59,7 +61,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         ProductApiController.class,
         FriendApiController.class,
         FriendFindApiController.class,
-        BoardLikeApiController.class
+        BoardLikeApiController.class,
+        TokenReissueApiController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs
@@ -129,6 +132,9 @@ public abstract class ControllerTest {
   
     @MockBean
     protected BoardLikeService boardLikeService;
+
+    @MockBean
+    protected TokenReissueService tokenReissueService;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {
