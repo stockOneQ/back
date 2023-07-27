@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.product.dto.request.EditProductRequest;
 import umc.stockoneqback.product.dto.response.GetListOfPassProductByOnlineUsersResponse;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
@@ -39,7 +40,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static umc.stockoneqback.common.DocumentFormatGenerator.getDateFormat;
+import static umc.stockoneqback.common.DocumentFormatGenerator.*;
 import static umc.stockoneqback.fixture.ProductFixture.*;
 import static umc.stockoneqback.fixture.TokenFixture.*;
 
@@ -49,6 +50,158 @@ public class ProductApiControllerTest extends ControllerTest {
     private static final Long ERROR_PRODUCT_ID = Long.MAX_VALUE;
     private static final String ERROR_STORE_CONDITION = "고온";
     private static final String ERROR_SORT = "제품 위치";
+
+    @Nested
+    @DisplayName("공통 예외")
+    class commonError {
+        private static final String BASE_URL = "/api/product/count";
+        private static final String STORE_CONDITION = "상온";
+        private static final Long STORE_ID = 1L;
+
+        @Test
+        @DisplayName("권한이 없는 사용자가 Product API를 호출한 경우 API 호출에 실패한다")
+        void throwExceptionByUnauthorizedUser() throws Exception {
+            // given
+            doThrow(BaseException.type(GlobalErrorCode.INVALID_USER_JWT))
+                    .when(productService)
+                    .getTotalProduct(anyLong(), anyLong(), anyString());
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
+
+            // then
+            final GlobalErrorCode expectedError = GlobalErrorCode.INVALID_USER_JWT;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isForbidden(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/CommonError/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("입력된 사용자가 입력된 가게 소속이 아닌 경우 API 호출에 실패한다")
+        void throwExceptionByConflictUserAndStore() throws Exception {
+            // given
+            doThrow(BaseException.type(UserErrorCode.USER_STORE_MATCH_FAIL))
+                    .when(productService)
+                    .getTotalProduct(anyLong(), anyLong(), anyString());
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
+
+            // then
+            final UserErrorCode expectedError = UserErrorCode.USER_STORE_MATCH_FAIL;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isBadRequest(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/CommonError/Case2",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("입력된 사용자가 유효하지 않은 역할을 가지고 있는 경우 API 호출에 실패한다")
+        void throwExceptionByInvalidUser() throws Exception {
+            // given
+            doThrow(BaseException.type(UserErrorCode.ROLE_NOT_FOUND))
+                    .when(productService)
+                    .getTotalProduct(anyLong(), anyLong(), anyString());
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("store", String.valueOf(STORE_ID))
+                    .param("condition", STORE_CONDITION)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
+
+            // then
+            final UserErrorCode expectedError = UserErrorCode.ROLE_NOT_FOUND;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/CommonError/Case3",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
+                                    requestParameters(
+                                            parameterWithName("store").description("현재 가게 ID"),
+                                            parameterWithName("condition").description("현재 설정된 보관방법")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+    }
 
     @Nested
     @DisplayName("제품 등록 API [POST /api/product/add]")
@@ -102,8 +255,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParts(
-                                            partWithName("image").description("파일 이미지"),
-                                            partWithName("editProductRequest").description("생성할 제품 정보 DTO")
+                                            partWithName("image").attributes(getInputImageFormat()).description("파일 이미지"),
+                                            partWithName("editProductRequest").attributes(getInputDTOFormat()).description("생성할 제품 정보 DTO")
                                     ),
                                     requestPartFields(
                                             "editProductRequest",
@@ -176,8 +329,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParts(
-                                            partWithName("image").description("파일 이미지"),
-                                            partWithName("editProductRequest").description("생성할 제품 정보 DTO")
+                                            partWithName("image").attributes(getInputImageFormat()).description("파일 이미지"),
+                                            partWithName("editProductRequest").attributes(getInputDTOFormat()).description("생성할 제품 정보 DTO")
                                     ),
                                     requestPartFields(
                                             "editProductRequest",
@@ -243,8 +396,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParts(
-                                            partWithName("image").description("파일 이미지"),
-                                            partWithName("editProductRequest").description("생성할 제품 정보 DTO")
+                                            partWithName("image").attributes(getInputImageFormat()).description("파일 이미지"),
+                                            partWithName("editProductRequest").attributes(getInputDTOFormat()).description("생성할 제품 정보 DTO")
                                     ),
                                     requestPartFields(
                                             "editProductRequest",
@@ -597,11 +750,11 @@ public class ProductApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     pathParameters(
-                                            parameterWithName("productId").description("변경할 제품명")
+                                            parameterWithName("productId").description("변경할 제품 ID")
                                     ),
                                     requestParts(
-                                            partWithName("image").description("파일 이미지"),
-                                            partWithName("editProductRequest").description("생성할 제품 정보 DTO")
+                                            partWithName("image").attributes(getInputImageFormat()).description("파일 이미지"),
+                                            partWithName("editProductRequest").attributes(getInputDTOFormat()).description("생성할 제품 정보 DTO")
                                     ),
                                     requestPartFields(
                                             "editProductRequest",
@@ -668,11 +821,11 @@ public class ProductApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     pathParameters(
-                                            parameterWithName("productId").description("변경할 제품명")
+                                            parameterWithName("productId").description("변경할 제품 ID")
                                     ),
                                     requestParts(
-                                            partWithName("image").description("파일 이미지"),
-                                            partWithName("editProductRequest").description("생성할 제품 정보 DTO")
+                                            partWithName("image").attributes(getInputImageFormat()).description("파일 이미지"),
+                                            partWithName("editProductRequest").attributes(getInputDTOFormat()).description("생성할 제품 정보 DTO")
                                     ),
                                     requestPartFields(
                                             "editProductRequest",
@@ -737,7 +890,7 @@ public class ProductApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     pathParameters(
-                                            parameterWithName("productId").description("상세조회할 제품 ID")
+                                            parameterWithName("productId").description("삭제할 제품 ID")
                                     ),
                                     responseFields(
                                             fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
@@ -775,7 +928,7 @@ public class ProductApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     pathParameters(
-                                            parameterWithName("productId").description("상세조회할 제품 ID")
+                                            parameterWithName("productId").description("삭제할 제품 ID")
                                     ),
                                     responseFields(
                                             fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
