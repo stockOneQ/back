@@ -26,6 +26,7 @@ public class FileService {
     private static final String BOARD = "board";
     private static final String SHARE = "share";
     private static final String PRODUCT = "product";
+    private static final String COMMENT = "comment";
 
     private final AmazonS3 amazonS3; // aws s3 client
 
@@ -48,6 +49,11 @@ public class FileService {
     public String uploadProductFiles(MultipartFile file) {
         validateFileExists(file);
         return uploadFile(PRODUCT, file);
+    }
+
+    public String uploadCommentFiles(MultipartFile file) {
+        validateFileExists(file);
+        return uploadFile(COMMENT, file);
     }
 
     // 파일 존재 여부 검증
@@ -86,6 +92,7 @@ public class FileService {
             case BOARD -> String.format("board/%s", fileKey);
             case SHARE -> String.format("share/%s", fileKey);
             case PRODUCT -> String.format("product/%s", fileKey);
+            case COMMENT -> String.format("comment/%s", fileKey);
             default -> throw BaseException.type(FileErrorCode.INVALID_DIR);
         };
     }
