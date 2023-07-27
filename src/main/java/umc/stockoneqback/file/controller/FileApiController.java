@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import umc.stockoneqback.file.dto.UploadRequest;
 import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.file.utils.exception.FileErrorCode;
+import umc.stockoneqback.global.annotation.ExtractPayload;
 import umc.stockoneqback.global.base.BaseException;
 
 import javax.validation.Valid;
@@ -21,7 +22,7 @@ public class FileApiController {
 
     // upload
     @PostMapping(value = "/upload", consumes = MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> upload(@ModelAttribute @Valid UploadRequest request) {
+    public ResponseEntity<String> upload(@ExtractPayload Long userId, @ModelAttribute @Valid UploadRequest request) {
         String dir = request.dir();
         switch (dir) {
             case "board" -> {
@@ -46,7 +47,7 @@ public class FileApiController {
 
     // download
     @GetMapping(value = "/download")
-    public ResponseEntity<byte[]> download(String fileUrl) throws IOException {
-        return fileService.download(fileUrl);
+    public ResponseEntity<byte[]> download(@ExtractPayload Long userId, String fileKey) throws IOException {
+        return fileService.download(fileKey);
     }
 }

@@ -66,6 +66,7 @@ dependencies {
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'io.findify:s3mock_2.13:0.2.6'
 
     // validation (add)
     implementation 'org.springframework.boot:spring-boot-starter-validation'

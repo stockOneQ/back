@@ -58,14 +58,14 @@ public class FileService {
 
     // 파일 존재 여부 검증
     private void validateFileExists(MultipartFile file) {
-        if (file == null) {
+        if (file == null || file.isEmpty()) {
             throw BaseException.type(FileErrorCode.EMPTY_FILE);
         }
     }
 
     // upload to S3
     private String uploadFile(String dir, MultipartFile file) {
-        String filePath = createFilePath(dir, file.getOriginalFilename());
+        String fileKey = createFilePath(dir, file.getOriginalFilename());
 
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
@@ -73,7 +73,7 @@ public class FileService {
 
         try {
             amazonS3.putObject(
-                    new PutObjectRequest(bucket, filePath, file.getInputStream(), objectMetadata)
+                    new PutObjectRequest(bucket, fileKey, file.getInputStream(), objectMetadata)
                             .withCannedAcl(CannedAccessControlList.PublicRead)
             );
         } catch (IOException e) {
@@ -81,32 +81,35 @@ public class FileService {
             throw BaseException.type(FileErrorCode.S3_UPLOAD_FAILED);
         }
 
-        return amazonS3.getUrl(bucket, filePath).toString();
+        // if it has to be used
+        String fullFileUrl = amazonS3.getUrl(bucket, fileKey).toString();
+
+        return fileKey;
     }
 
     // uuid 사용하여 fileKey(파일명) 생성
     private String createFilePath(String dir, String originalFileName) {
-        String fileKey = UUID.randomUUID() + "_" + originalFileName;
+        String uuidName = UUID.randomUUID() + "_" + originalFileName;
 
         return switch (dir) {
-            case BOARD -> String.format("board/%s", fileKey);
-            case SHARE -> String.format("share/%s", fileKey);
-            case PRODUCT -> String.format("product/%s", fileKey);
-            case COMMENT -> String.format("comment/%s", fileKey);
+            case BOARD -> String.format("board/%s", uuidName);
+            case SHARE -> String.format("share/%s", uuidName);
+            case PRODUCT -> String.format("product/%s", uuidName);
+            case COMMENT -> String.format("comment/%s", uuidName);
             default -> throw BaseException.type(FileErrorCode.INVALID_DIR);
         };
     }
 
     // download
-    public ResponseEntity<byte[]> download(String fileUrl) throws IOException {
-        S3Object s3object = amazonS3.getObject(new GetObjectRequest(bucket, fileUrl));
+    public ResponseEntity<byte[]> download(String fileKey) throws IOException {
+        S3Object s3object = amazonS3.getObject(new GetObjectRequest(bucket, fileKey));
         S3ObjectInputStream objectInputStream = s3object.getObjectContent();
         byte[] bytes = IOUtils.toByteArray(objectInputStream);
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(contentType(fileUrl));
+        httpHeaders.setContentType(contentType(fileKey));
         httpHeaders.setContentLength(bytes.length);
-        String[] arr = fileUrl.split("/");
+        String[] arr = fileKey.split("/");
         String type = arr[arr.length - 1];
         String fileName = URLEncoder.encode(type, "UTF-8").replaceAll("\\+", "%20");
         httpHeaders.setContentDispositionFormData("attachment", fileName); // 파일 이름 지정
@@ -114,14 +117,14 @@ public class FileService {
         return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
     }
 
-    public byte[] downloadToResponseDto(String fileUrl) throws IOException {
-        S3Object s3object = amazonS3.getObject(new GetObjectRequest(bucket, fileUrl));
+    public byte[] downloadToResponseDto(String fileKey) throws IOException {
+        S3Object s3object = amazonS3.getObject(new GetObjectRequest(bucket, fileKey));
         S3ObjectInputStream objectInputStream = s3object.getObjectContent();
         return IOUtils.toByteArray(objectInputStream);
     }
 
-    private MediaType contentType(String fileUrl) {
-        String[] arr = fileUrl.split("\\.");
+    private MediaType contentType(String fileKey) {
+        String[] arr = fileKey.split("\\.");
         String type = arr[arr.length - 1];
 
         switch (type) {
