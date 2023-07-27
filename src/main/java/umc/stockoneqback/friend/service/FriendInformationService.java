@@ -57,6 +57,9 @@ public class FriendInformationService {
     }
 
     private FriendAssembler getFriendAssembler(List<FriendInformation> friends, int lastIndex, int size) {
+        if (lastIndex + 1 + size >= friends.size()) {
+            return new FriendAssembler(friends.subList(lastIndex + 1, friends.size()));
+        }
         return new FriendAssembler(friends.subList(lastIndex + 1, lastIndex + 1 + size));
     }
 }
