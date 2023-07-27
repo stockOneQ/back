@@ -27,6 +27,7 @@ public class FileService {
     private static final String SHARE = "share";
     private static final String PRODUCT = "product";
     private static final String COMMENT = "comment";
+    private static final String REPLY = "reply";
 
     private final AmazonS3 amazonS3; // aws s3 client
 
@@ -48,12 +49,25 @@ public class FileService {
     // 제품 사진 업로드
     public String uploadProductFiles(MultipartFile file) {
         validateFileExists(file);
+        validateContentType(file);
         return uploadFile(PRODUCT, file);
+    }
+
+    private void validateContentType(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (!(contentType.equals("image/jpeg") || contentType.equals("image/png"))) {
+            throw BaseException.type(FileErrorCode.NOT_AN_IMAGE);
+        }
     }
 
     public String uploadCommentFiles(MultipartFile file) {
         validateFileExists(file);
         return uploadFile(COMMENT, file);
+    }
+
+    public String uploadReplyFiles(MultipartFile file) {
+        validateFileExists(file);
+        return uploadFile(REPLY, file);
     }
 
     // 파일 존재 여부 검증
@@ -96,6 +110,7 @@ public class FileService {
             case SHARE -> String.format("share/%s", uuidName);
             case PRODUCT -> String.format("product/%s", uuidName);
             case COMMENT -> String.format("comment/%s", uuidName);
+            case REPLY -> String.format("reply/%s", uuidName);
             default -> throw BaseException.type(FileErrorCode.INVALID_DIR);
         };
     }

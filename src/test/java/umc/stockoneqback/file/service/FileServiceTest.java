@@ -144,6 +144,21 @@ class FileServiceTest extends ServiceTest {
         }
 
         @Test
+        @DisplayName("이미지 파일이 아니면 업로드에 실패한다")
+        void throwExceptionByNotAnImage() throws IOException {
+            // given
+            String fileName = "test.txt";
+            String contentType = "text/plain";
+            String dir = "product";
+            MultipartFile file = createMockMultipartFile(dir, fileName, contentType);
+
+            // when - then
+            assertThatThrownBy(() -> fileService.uploadProductFiles(file))
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(FileErrorCode.NOT_AN_IMAGE.getMessage());
+        }
+
+        @Test
         @DisplayName("파일 업로드에 성공한다")
         void success() throws Exception {
             // given
@@ -154,7 +169,6 @@ class FileServiceTest extends ServiceTest {
 
             // when
             String fileKey = fileService.uploadProductFiles(file);
-            System.out.println(fileKey);
 
             // then
             assertThat(fileKey).contains("test.png");

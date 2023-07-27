@@ -41,6 +41,10 @@ public class FileApiController {
                 String uploadFileLink = fileService.uploadCommentFiles(request.file());
                 return ResponseEntity.ok(uploadFileLink);
             }
+            case "reply" -> {
+                String uploadFileLink = fileService.uploadReplyFiles(request.file());
+                return ResponseEntity.ok(uploadFileLink);
+            }
             default -> throw new BaseException(FileErrorCode.INVALID_DIR);
         }
     }
