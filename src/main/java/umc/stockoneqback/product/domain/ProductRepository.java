@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import umc.stockoneqback.role.domain.store.Store;
+import umc.stockoneqback.user.domain.User;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -121,6 +122,16 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                                          @Param("name") String productName,
                                                          @Param("orderFreq") Long orderFreq,
                                                          @Param("pageSize") Integer pageSize);
+
+    @Query(value = "SELECT p.name FROM Product p WHERE p.status = '정상' AND p.expiration_date < :currentDate AND " +
+            "p.store = (SELECT s.id FROM Store s WHERE s.manager_id = :manager)", nativeQuery = true)
+    List<String> findPassByManager(@Param("manager") User user,
+                                   @Param("currentDate") LocalDate currentDate);
+
+    @Query(value = "SELECT p.name FROM Product p WHERE p.status = '정상' AND p.expiration_date < :currentDate AND " +
+            "p.store = (SELECT t.store_id FROM Part_Timer t WHERE t.part_timer_id = :partTimer)", nativeQuery = true)
+    List<String> findPassByPartTimer(@Param("partTimer") User user,
+                                     @Param("currentDate") LocalDate currentDate);
 }
 
 

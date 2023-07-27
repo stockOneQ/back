@@ -43,6 +43,7 @@ public class ProductServiceTest extends ServiceTest {
     private final ProductFixture[] productFixtures = ProductFixture.values();
     private final Product[] products = new Product[17];
     private static final Integer PAGE_SIZE = 12;
+    private static final Long USER_ID = 1L;
 
     @BeforeEach
     void setup() {
@@ -59,9 +60,9 @@ public class ProductServiceTest extends ServiceTest {
         void throwExceptionByAlreadyExistProduct() {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             products[16] = productFixtures[16].toProduct(zStore);
-            productService.saveProduct(zStore.getId(), "상온", products[16], null);
+            productService.saveProduct(USER_ID, zStore.getId(), "상온", products[16], null);
 
-            assertThatThrownBy(() -> productService.saveProduct(zStore.getId(), "상온", products[16], null))
+            assertThatThrownBy(() -> productService.saveProduct(USER_ID, zStore.getId(), "상온", products[16], null))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ProductErrorCode.DUPLICATE_PRODUCT.getMessage());
         }
@@ -71,7 +72,7 @@ public class ProductServiceTest extends ServiceTest {
         void success() {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             products[16] = productFixtures[16].toProduct(zStore);
-            productService.saveProduct(zStore.getId(), "상온", products[16], null);
+            productService.saveProduct(USER_ID, zStore.getId(), "상온", products[16], null);
             Product findProduct = productRepository.findProductById(products[16].getId()).orElseThrow();
 
             assertAll(
@@ -89,7 +90,7 @@ public class ProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("제품 상세정보 조회에 성공한다")
         void success() throws IOException {
-            LoadProductResponse loadProductResponse = productService.loadProduct(products[0].getId());
+            LoadProductResponse loadProductResponse = productService.loadProduct(USER_ID, products[0].getId());
 
             assertAll(
                     () -> assertThat(loadProductResponse.name()).isEqualTo(products[0].getName()),
@@ -114,7 +115,7 @@ public class ProductServiceTest extends ServiceTest {
         void success() throws IOException {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             List<SearchProductResponse> responseList =
-                    productService.searchProduct(zStore.getId(), products[0].getStoreCondition().getValue(), products[0].getName());
+                    productService.searchProduct(USER_ID, zStore.getId(), products[0].getStoreCondition().getValue(), products[0].getName());
 
             assertAll(
                     () -> assertThat(responseList.get(0).id()).isEqualTo(products[0].getId()),
@@ -133,7 +134,7 @@ public class ProductServiceTest extends ServiceTest {
             products[16] = productFixtures[16].toProduct(zStore);
             Long productId = products[0].getId();
             Product changeProduct = productRepository.findProductById(productId).orElseThrow();
-            productService.editProduct(changeProduct.getId(), products[16], null);
+            productService.editProduct(USER_ID, changeProduct.getId(), products[16], null);
             Product findProduct = productRepository.findProductById(productId).orElseThrow();
 
             assertAll(
@@ -153,7 +154,7 @@ public class ProductServiceTest extends ServiceTest {
         void success() {
             Long productId = products[0].getId();
             Product eraseProduct = productRepository.findProductById(productId).orElseThrow();
-            productService.deleteProduct(eraseProduct.getId());
+            productService.deleteProduct(USER_ID, eraseProduct.getId());
             Product findProduct = productRepository.findById(productId).orElseThrow();
 
             assertAll(
@@ -168,9 +169,9 @@ public class ProductServiceTest extends ServiceTest {
         @DisplayName("삭제된 제품은 검색할 수 없다")
         void throwExceptionByRemovedProduct() {
             Long productId = products[0].getId();
-            productService.deleteProduct(productId);
+            productService.deleteProduct(USER_ID, productId);
 
-            assertThatThrownBy(() -> productService.loadProduct(productId))
+            assertThatThrownBy(() -> productService.loadProduct(USER_ID, productId))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ProductErrorCode.NOT_FOUND_PRODUCT.getMessage());
         }
@@ -184,7 +185,7 @@ public class ProductServiceTest extends ServiceTest {
         void success() {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             List<GetTotalProductResponse> totalProductResponseList =
-                    productService.getTotalProduct(zStore.getId(), products[0].getStoreCondition().getValue());
+                    productService.getTotalProduct(USER_ID, zStore.getId(), products[0].getStoreCondition().getValue());
 
             assertAll(
                     () -> assertThat(totalProductResponseList.get(0).name()).isEqualTo("Total"),
@@ -207,9 +208,9 @@ public class ProductServiceTest extends ServiceTest {
         void success() throws IOException {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             List<SearchProductResponse> productResponseOrderByNameList = productService.getListOfAllProduct
-                    (zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.NAME.getValue());
+                    (USER_ID, zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.NAME.getValue());
             List<SearchProductResponse> productResponseOrderByOrderFreqList = productService.getListOfAllProduct
-                    (zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.ORDER_FREQUENCY.getValue());
+                    (USER_ID, zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.ORDER_FREQUENCY.getValue());
 
             assertAll(
                     () -> assertThat(productResponseOrderByNameList.get(0).name()).isEqualTo("감"),
@@ -228,9 +229,9 @@ public class ProductServiceTest extends ServiceTest {
         void success() throws IOException {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             List<SearchProductResponse> productResponseOrderByNameList = productService.getListOfPassProduct
-                    (zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.NAME.getValue());
+                    (USER_ID, zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.NAME.getValue());
             List<SearchProductResponse> productResponseOrderByOrderFreqList = productService.getListOfPassProduct
-                    (zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.ORDER_FREQUENCY.getValue());
+                    (USER_ID, zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.ORDER_FREQUENCY.getValue());
 
             Product firstOrderFreq = productRepository.findById(productResponseOrderByOrderFreqList.get(0).id()).orElseThrow();
             Product secondOrderFreq = productRepository.findById(productResponseOrderByOrderFreqList.get(1).id()).orElseThrow();
@@ -253,9 +254,9 @@ public class ProductServiceTest extends ServiceTest {
         void success() throws IOException {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             List<SearchProductResponse> productResponseOrderByNameList = productService.getListOfCloseProduct
-                    (zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.NAME.getValue());
+                    (USER_ID, zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.NAME.getValue());
             List<SearchProductResponse> productResponseOrderByOrderFreqList = productService.getListOfCloseProduct
-                    (zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.ORDER_FREQUENCY.getValue());
+                    (USER_ID, zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.ORDER_FREQUENCY.getValue());
 
             assertAll(
                     () -> assertThat(productResponseOrderByNameList.get(1).name()).isEqualTo("메론"),
@@ -274,9 +275,9 @@ public class ProductServiceTest extends ServiceTest {
         void success() throws IOException {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             List<SearchProductResponse> productResponseOrderByNameList = productService.getListOfLackProduct
-                    (zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.NAME.getValue());
+                    (USER_ID, zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.NAME.getValue());
             List<SearchProductResponse> productResponseOrderByOrderFreqList = productService.getListOfLackProduct
-                    (zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.ORDER_FREQUENCY.getValue());
+                    (USER_ID, zStore.getId(), products[0].getStoreCondition().getValue(), null, SortCondition.ORDER_FREQUENCY.getValue());
 
             assertAll(
                     () -> assertThat(productResponseOrderByNameList.get(0).name()).isEqualTo("복숭아"),

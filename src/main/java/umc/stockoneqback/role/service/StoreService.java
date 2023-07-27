@@ -7,6 +7,7 @@ import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.domain.store.StoreRepository;
 import umc.stockoneqback.role.exception.StoreErrorCode;
+import umc.stockoneqback.user.domain.User;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,6 +36,11 @@ public class StoreService {
 
     public Store findByName(String storeName) {
         return storeRepository.findByName(storeName)
+                .orElseThrow(() -> BaseException.type(StoreErrorCode.STORE_NOT_FOUND));
+    }
+
+    public Store findByUser(User user) {
+        return storeRepository.findByManager(user)
                 .orElseThrow(() -> BaseException.type(StoreErrorCode.STORE_NOT_FOUND));
     }
 }
