@@ -35,13 +35,12 @@ public class BoardListService {
     private static final Integer PAGE_SIZE = 7;
 
     @Transactional
-    public List<BoardListResponse> getBoardList(Long userId, Long lastBoardId, String sortBy) throws IOException {
+    public List<BoardListResponse> getBoardList(Long userId, Long boardId, String sortBy) throws IOException {
         User user = userFindService.findById(userId);
         validateManager(user);
 
-        Board board = configPaging(lastBoardId);
+        Board board = configPaging(boardId);
         SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
-
         List<Board> boardList = new ArrayList<>();
         switch (sortCondition) {
             case TIME -> boardList = boardRepository.getBoardListOrderByTime(board.getId(), board.getCreatedDate(), PAGE_SIZE);

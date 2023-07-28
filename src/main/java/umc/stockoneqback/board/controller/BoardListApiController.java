@@ -18,8 +18,8 @@ public class BoardListApiController {
 
     @GetMapping
     public BaseResponse<List<BoardListResponse>> boardList(@ExtractPayload Long userId,
-                                                           @RequestParam(value = "last", required = false) Long lastBoardId,
+                                                           @RequestParam(value = "last", required = false) Long boardId,
                                                            @RequestParam(value = "sort") String sortBy) throws IOException {
-        return new BaseResponse<>(boardListService.getBoardList(userId, lastBoardId, sortBy));
+        return new BaseResponse<>(boardListService.getBoardList(userId, boardId, sortBy));
     }
 }
