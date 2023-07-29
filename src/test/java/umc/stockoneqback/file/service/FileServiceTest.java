@@ -1,14 +1,11 @@
 package umc.stockoneqback.file.service;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
 import io.findify.s3mock.S3Mock;
-import org.junit.jupiter.api.*;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,21 +15,13 @@ import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.file.config.S3MockConfig;
 import umc.stockoneqback.file.utils.exception.FileErrorCode;
 import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.global.base.Status;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Import(S3MockConfig.class)
 @DisplayName("File [Service Layer] -> FileService 테스트")

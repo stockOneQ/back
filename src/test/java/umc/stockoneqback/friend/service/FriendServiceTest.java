@@ -19,7 +19,7 @@ import umc.stockoneqback.user.service.UserService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.UserFixture.*;
 
 @DisplayName("Friend [Service Layer] -> FriendService 테스트")
@@ -61,7 +61,7 @@ class FriendServiceTest extends ServiceTest {
         @DisplayName("점주가 아니면 친구 신청에 실패한다")
         void throwExceptionByUserIsNotAManager() {
             // given
-            companyRepository.save(createCompany("A 납품업체", "과일", "ABC123")).getId();
+            companyRepository.save(createCompany("A 납품업체", "과일", "ABC123"));
 
             Long supervisorId = userService.saveSupervisor(WIZ.toUser(), "A 납품업체", "ABC123");
 
@@ -101,7 +101,7 @@ class FriendServiceTest extends ServiceTest {
             assertAll(
                     () -> assertThat(findFriend.getSender()).isEqualTo(sender),
                     () -> assertThat(findFriend.getReceiver()).isEqualTo(receiver),
-                    () -> assertThat(findFriend.getStatus()).isEqualTo(FriendStatus.REQUEST)
+                    () -> assertThat(findFriend.getFriendStatus()).isEqualTo(FriendStatus.REQUEST)
             );
         }
     }
@@ -192,7 +192,7 @@ class FriendServiceTest extends ServiceTest {
             assertAll(
                     () -> assertThat(findFriend.getSender()).isEqualTo(sender),
                     () -> assertThat(findFriend.getReceiver()).isEqualTo(receiver),
-                    () -> assertThat(findFriend.getStatus()).isEqualTo(FriendStatus.ACCEPT)
+                    () -> assertThat(findFriend.getFriendStatus()).isEqualTo(FriendStatus.ACCEPT)
             );
         }
     }
