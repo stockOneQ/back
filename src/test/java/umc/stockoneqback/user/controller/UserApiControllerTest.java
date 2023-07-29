@@ -405,7 +405,7 @@ class UserApiControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("중복된 로그인 아이디가 있다면 슈퍼바이저 등록에 실패한다")
+        @DisplayName("회사 코드가 일치하지 않으면 슈퍼바이저 등록에 실패한다")
         void throwExceptionByInvalidCompanyCode() throws Exception {
             // given
             doThrow(BaseException.type(UserErrorCode.INVALID_COMPANY_CODE))

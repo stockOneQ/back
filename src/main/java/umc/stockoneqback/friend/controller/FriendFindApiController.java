@@ -1,7 +1,6 @@
 package umc.stockoneqback.friend.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,8 +21,8 @@ public class FriendFindApiController {
 
     @GetMapping("/search")
     public BaseResponse<List<SearchUserResponse>> searchFriends(@ExtractPayload Long userId,
-                                                                @RequestParam(value = "name", required = false, defaultValue = "") String searchName,
-                                                                Pageable pageable) throws IOException {
-        return new BaseResponse<>(friendFindService.searchFriends(userId, searchName, pageable));
+                                                                @RequestParam(value = "name", required = false, defaultValue = "") String searchName)
+            throws IOException {
+        return new BaseResponse<>(friendFindService.searchFriends(userId, searchName));
     }
 }

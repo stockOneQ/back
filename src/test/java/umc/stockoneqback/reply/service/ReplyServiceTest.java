@@ -78,7 +78,7 @@ public class ReplyServiceTest extends ServiceTest {
         @DisplayName("다른 사람의 대댓글은 수정할 수 없다")
         void throwExceptionByUserNotReplyWriter() {
             // when - then
-            assertThatThrownBy(() -> replyService.update(not_writer.getId(),comment.getId(), "이미지2", "내용2"))
+            assertThatThrownBy(() -> replyService.update(not_writer.getId(),comment.getId(), null, "내용2"))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ReplyErrorCode.USER_IS_NOT_REPLY_WRITER.getMessage());
         }
@@ -87,14 +87,14 @@ public class ReplyServiceTest extends ServiceTest {
         @DisplayName("대댓글 수정에 성공한다")
         void success() {
             // given
-            replyService.update(writer.getId(), board.getId(), "이미지2","내용2");
+            replyService.update(writer.getId(), board.getId(), null,"내용2");
 
             // when
             Reply reply = replyFindService.findById(replies[0].getId());
 
             // then
             assertAll(
-                    () -> assertThat(reply.getImage()).isEqualTo("이미지2"),
+                    () -> assertThat(reply.getImage()).isEqualTo(null),
                     () -> assertThat(reply.getContent()).isEqualTo("내용2"),
                     () -> assertThat(reply.getModifiedDate().format(formatter)).isEqualTo(LocalDateTime.now().format(formatter))
             );

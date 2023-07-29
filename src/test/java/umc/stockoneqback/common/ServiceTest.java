@@ -54,6 +54,8 @@ public class ServiceTest {
     protected ProductRepository productRepository;
 
     @Autowired
+    protected FriendRepository friendRepository;
+
     protected BoardLikeRepository boardLikeRepository;
 
     @Autowired

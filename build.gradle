@@ -41,8 +41,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // Lombok
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
-    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
+    compileOnly("org.projectlombok:lombok")
+    testCompileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
+    testAnnotationProcessor("org.projectlombok:lombok")
 
     // Spring Security
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.4.5'
@@ -66,6 +68,7 @@ dependencies {
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'io.findify:s3mock_2.13:0.2.6'
 
     // validation (add)
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -74,7 +77,6 @@ dependencies {
 ext {
     snippetsDir = file('build/generated-snippets')
 }
-
 
 test {
     outputs.dir snippetsDir
