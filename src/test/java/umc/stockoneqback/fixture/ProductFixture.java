@@ -63,28 +63,18 @@ public enum ProductFixture {
             LocalDate.now().plusDays(8), null, 3L, 3L, null,
             80L, StoreCondition.ROOM)
     ;
+
     private final String name;
-
     private final Long price;
-
     private final String vendor;
-
     private final String imageUrl;
-
     private final LocalDate receivingDate;
-
     private final LocalDate expirationDate;
-
     private final String location;
-
     private final Long requireQuant;
-
     private final Long stockQuant;
-
     private final String siteToOrder;
-
     private final Long orderFreq;
-
     private final StoreCondition storeCondition;
 
     public Product toProduct(Store store) {

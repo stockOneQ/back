@@ -77,7 +77,7 @@ public class FriendService {
     }
 
     private void validateAcceptStatus(Friend friend) {
-        if (friend.getStatus().equals(FriendStatus.ACCEPT)) {
+        if (friend.getFriendStatus().equals(FriendStatus.ACCEPT)) {
             throw BaseException.type(FriendErrorCode.STATUS_IS_ACCEPT);
         }
     }
@@ -93,7 +93,7 @@ public class FriendService {
     }
 
     private void validateRequestStatus(Friend friend) {
-        if (friend.getStatus().equals(FriendStatus.REQUEST)) {
+        if (friend.getFriendStatus().equals(FriendStatus.REQUEST)) {
             throw BaseException.type(FriendErrorCode.STATUS_IS_REQUEST);
         }
     }

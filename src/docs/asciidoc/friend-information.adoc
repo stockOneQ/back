@@ -1,0 +1,65 @@
+= 친구 리스트 조회 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 연결된 친구 리스트 조회
+=== 1. Authorization Header에 AccessToken이 없으면 친구 리스트 조회에 실패한다
+HTTP Request
+include::{snippets}/FriendApi/Information/Friends/Failure/Case1/http-request.adoc[]
+include::{snippets}/FriendApi/Information/Friends/Failure/Case1/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/FriendApi/Information/Friends/Failure/Case1/http-response.adoc[]
+
+=== 2. 친구 리스트 조회에 성공한다
+HTTP Request
+include::{snippets}/FriendApi/Information/Friends/Success/http-request.adoc[]
+include::{snippets}/FriendApi/Information/Friends/Success/request-headers.adoc[]
+include::{snippets}/FriendApi/Information/Friends/Success/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/FriendApi/Information/Friends/Success/http-response.adoc[]
+include::{snippets}/FriendApi/Information/Friends/Success/response-fields.adoc[]
+
+== 수락 대기중인 친구 리스트 조회
+=== 1. Authorization Header에 AccessToken이 없으면 수락 대기중인 친구 리스트 조회에 실패한다
+HTTP Request
+include::{snippets}/FriendApi/Information/WaitingFriends/Failure/Case1/http-request.adoc[]
+include::{snippets}/FriendApi/Information/WaitingFriends/Failure/Case1/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/FriendApi/Information/WaitingFriends/Failure/Case1/http-response.adoc[]
+
+=== 2. 수락 대기중인 친구 리스트 조회에 성공한다
+HTTP Request
+include::{snippets}/FriendApi/Information/WaitingFriends/Success/http-request.adoc[]
+include::{snippets}/FriendApi/Information/WaitingFriends/Success/request-headers.adoc[]
+include::{snippets}/FriendApi/Information/WaitingFriends/Success/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/FriendApi/Information/WaitingFriends/Success/http-response.adoc[]
+include::{snippets}/FriendApi/Information/WaitingFriends/Success/response-fields.adoc[]
+
+== 요청이 들어온 친구 리스트 조회
+=== 1. Authorization Header에 AccessToken이 없으면 요청이 들어온 친구 리스트 조회에 실패한다
+HTTP Request
+include::{snippets}/FriendApi/Information/RequestedFriends/Failure/Case1/http-request.adoc[]
+include::{snippets}/FriendApi/Information/RequestedFriends/Failure/Case1/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/FriendApi/Information/RequestedFriends/Failure/Case1/http-response.adoc[]
+
+=== 2. 요청이 들어온 친구 리스트 조회에 성공한다
+HTTP Request
+include::{snippets}/FriendApi/Information/RequestedFriends/Success/http-request.adoc[]
+include::{snippets}/FriendApi/Information/RequestedFriends/Success/request-headers.adoc[]
+include::{snippets}/FriendApi/Information/RequestedFriends/Success/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/FriendApi/Information/RequestedFriends/Success/http-response.adoc[]
+include::{snippets}/FriendApi/Information/RequestedFriends/Success/response-fields.adoc[]
+
+
