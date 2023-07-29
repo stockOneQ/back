@@ -9,6 +9,7 @@ import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.board.domain.like.BoardLikeRepository;
 import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.comment.domain.CommentRepository;
+import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.product.domain.ProductRepository;
 import umc.stockoneqback.reply.domain.ReplyRepository;
 import umc.stockoneqback.role.domain.company.CompanyRepository;
@@ -53,6 +54,8 @@ public class ServiceTest {
     protected ProductRepository productRepository;
 
     @Autowired
+    protected FriendRepository friendRepository;
+
     protected BoardLikeRepository boardLikeRepository;
 
     public void flushAndClear() {

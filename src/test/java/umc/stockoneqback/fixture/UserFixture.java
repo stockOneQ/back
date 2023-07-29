@@ -17,7 +17,8 @@ public enum UserFixture {
     SAEWOO("saewoo@naver.com", "saewoo123", "NewPass-2023", "새우", LocalDate.of(2001, 4, 22), "01012345678", Role.PART_TIMER),
     ANNE("anne@gmail.com", "anne123", "Strong123!", "앤", LocalDate.of(1995, 5, 12), "01098765432", Role.MANAGER),
     WIZ("wiz@yahoo.com", "wiz123", "Secure456!", "위즈", LocalDate.of(1988, 9, 25), "01056781234", Role.SUPERVISOR),
-    WONI("woni@hanmail.com", "woni123", "Pass1234$", "워니", LocalDate.of(2000, 12, 31), "01024681357", Role.PART_TIMER)
+    WONI("woni@hanmail.com", "woni123", "Pass1234$", "워니", LocalDate.of(2000, 12, 31), "01024681357", Role.PART_TIMER),
+    UNKNOWN("unknown@hanmail.com", "unknown123", "Pwd78910*", "언노운", LocalDate.of(2000, 10, 31), "01024681398", Role.MANAGER)
     ;
 
     private final String email;

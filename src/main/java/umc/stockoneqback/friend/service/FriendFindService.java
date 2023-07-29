@@ -1,8 +1,6 @@
 package umc.stockoneqback.friend.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.friend.domain.Friend;
@@ -34,25 +32,24 @@ public class FriendFindService {
     }
 
     @Transactional
-    public List<SearchUserResponse> searchFriends(Long userId, String searchName, Pageable pageable) throws IOException {
-        User reqUser = userFindService.findById(userId);
-        validateSearchFriendsRole(reqUser);
+    public List<SearchUserResponse> searchFriends(Long userId, String searchName) throws IOException {
+        User user = userFindService.findById(userId);
+        validateSearchFriendsRole(user);
 
-        Page<User> userPage = userRepository.searchUserByName(Role.MANAGER, searchName, pageable);
-        if (userPage.isEmpty())
-            throw BaseException.type(UserErrorCode.USER_NOT_FOUND);
+        List<User> userResult = userRepository.searchUserByName(searchName);
 
-        return listToResponse(userPage);
+        return listToResponse(userResult);
     }
 
     private void validateSearchFriendsRole(User user) {
         if (user.getRole() != Role.MANAGER && user.getRole() != Role.SUPERVISOR) {
-            throw BaseException.type(UserErrorCode.USER_IS_NOT_MANAGER);
+            throw BaseException.type(UserErrorCode.USER_IS_NOT_ALLOWED_TO_SEARCH);
         }
     }
 
-    private List<SearchUserResponse> listToResponse(Page<User> users) throws IOException{
+    private List<SearchUserResponse> listToResponse(List<User> users) throws IOException{
         List<SearchUserResponse> userList = new ArrayList<>();
+
         for (User user : users) {
             SearchUserResponse searchUserResponse = SearchUserResponse.builder()
                     .name(user.getName())
@@ -61,6 +58,7 @@ public class FriendFindService {
                     .build();
             userList.add(searchUserResponse);
         }
+
         return userList;
     }
 }
