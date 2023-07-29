@@ -307,11 +307,11 @@ public class ProductService {
         else if (user.getRole() == Role.MANAGER) {
             if (storeService.findByUser(user) == product.getStore())
                 return;
-            throw BaseException.type(UserErrorCode.USER_PRODUCT_MATCH_FAIL);
+            throw BaseException.type(UserErrorCode.USER_STORE_MATCH_FAIL);
         } else if (user.getRole() == Role.PART_TIMER) {
             if (partTimerService.findByUser(user).getStore() == product.getStore())
                 return;
-            throw BaseException.type(UserErrorCode.USER_PRODUCT_MATCH_FAIL);
+            throw BaseException.type(UserErrorCode.USER_STORE_MATCH_FAIL);
         } else throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
     }
 }

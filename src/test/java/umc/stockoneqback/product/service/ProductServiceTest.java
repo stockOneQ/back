@@ -19,6 +19,7 @@ import umc.stockoneqback.product.dto.response.SearchProductResponse;
 import umc.stockoneqback.product.exception.ProductErrorCode;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.StoreService;
+import umc.stockoneqback.user.service.UserService;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,11 +29,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
+import static umc.stockoneqback.fixture.UserFixture.ANNE;
 
 @DisplayName("Product [Service Layer] -> ProductService 테스트")
 public class ProductServiceTest extends ServiceTest {
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private StoreService storeService;
@@ -43,11 +48,12 @@ public class ProductServiceTest extends ServiceTest {
     private final ProductFixture[] productFixtures = ProductFixture.values();
     private final Product[] products = new Product[17];
     private static final Integer PAGE_SIZE = 12;
-    private static final Long USER_ID = 1L;
+    private static Long USER_ID;
 
     @BeforeEach
     void setup() {
         Store zStore = storeRepository.save(Z_YEONGTONG.toStore());
+        USER_ID = userService.saveManager(ANNE.toUser(), zStore.getId());
         for (int i = 0; i < products.length-1; i++)
             products[i] = productRepository.save(productFixtures[i].toProduct(zStore));
     }
