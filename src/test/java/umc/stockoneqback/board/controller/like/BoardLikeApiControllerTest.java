@@ -185,7 +185,7 @@ public class BoardLikeApiControllerTest extends ControllerTest {
             // then
             mockMvc.perform(requestBuilder)
                     .andExpectAll(
-                            status().isNoContent()
+                            status().isOk()
                     )
                     .andDo(
                             document(
@@ -231,7 +231,7 @@ public class BoardLikeApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "BoardApi/Cancel/Failure/Case1",
+                                    "BoardApi/Like/Cancel/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     pathParameters(
@@ -315,7 +315,7 @@ public class BoardLikeApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "BoardApi/Register/Cancel/Success",
+                                    "BoardApi/Like/Cancel/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestHeaders(
