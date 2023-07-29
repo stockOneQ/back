@@ -39,7 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.common.DocumentFormatGenerator.*;
 import static umc.stockoneqback.fixture.ProductFixture.*;
-import static umc.stockoneqback.fixture.TokenFixture.*;
+import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 
 @DisplayName("Product [Controller Layer] -> ProductApiController 테스트")
 public class ProductApiControllerTest extends ControllerTest {
