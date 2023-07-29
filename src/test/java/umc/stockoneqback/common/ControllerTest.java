@@ -31,7 +31,9 @@ import umc.stockoneqback.comment.service.CommentFindService;
 import umc.stockoneqback.comment.service.CommentService;
 import umc.stockoneqback.friend.controller.FriendApiController;
 import umc.stockoneqback.friend.controller.FriendFindApiController;
+import umc.stockoneqback.friend.controller.FriendInformationController;
 import umc.stockoneqback.friend.service.FriendFindService;
+import umc.stockoneqback.friend.service.FriendInformationService;
 import umc.stockoneqback.friend.service.FriendService;
 import umc.stockoneqback.global.security.handler.JwtAccessDeniedHandler;
 import umc.stockoneqback.global.security.handler.JwtAuthenticationEntryPoint;
@@ -62,6 +64,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         FriendApiController.class,
         FriendFindApiController.class,
         BoardLikeApiController.class,
+        FriendInformationController.class,
         TokenReissueApiController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
@@ -132,6 +135,9 @@ public abstract class ControllerTest {
   
     @MockBean
     protected BoardLikeService boardLikeService;
+
+    @MockBean
+    protected FriendInformationService friendInformationService;
 
     @MockBean
     protected TokenReissueService tokenReissueService;
