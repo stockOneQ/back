@@ -14,10 +14,7 @@ import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.product.dto.request.EditProductRequest;
-import umc.stockoneqback.product.dto.response.GetListOfPassProductByOnlineUsersResponse;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.LoadProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductResponse;
+import umc.stockoneqback.product.dto.response.*;
 import umc.stockoneqback.product.exception.ProductErrorCode;
 import umc.stockoneqback.role.exception.StoreErrorCode;
 import umc.stockoneqback.user.exception.UserErrorCode;
@@ -197,6 +194,53 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                             fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
                                             fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("메인 호출 시 사용자의 가게 정보 조회 API [GET /api/product]")
+    class getStoreInfoById {
+        private static final String BASE_URL = "/api/product";
+        private static final Long USER_ID = 1L;
+        private static final Long STORE_ID = 5L;
+
+        @Test
+        @DisplayName("메인 호출 시 사용자의 가게 정보 조회에 성공한다")
+        void success() throws Exception {
+            // given
+            doReturn(getRequiredInfoResponse())
+                    .when(productService)
+                    .getRequiredInfo(anyLong());
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
+
+            // then
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isOk(),
+                            jsonPath("$.result.userId").value(USER_ID),
+                            jsonPath("$.result.storeId").value(STORE_ID)
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetStoreById/Success",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
+                                            fieldWithPath("result.userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
+                                            fieldWithPath("result.storeId").type(JsonFieldType.NUMBER).description("가게 ID")
                                     )
                             )
                     );
@@ -533,9 +577,9 @@ public class ProductApiControllerTest extends ControllerTest {
     }
 
     @Nested
-    @DisplayName("입력된 이름을 포함하는 모든 제품 목록 조회 API [GET /api/product]")
+    @DisplayName("입력된 이름을 포함하는 모든 제품 목록 조회 API [GET /api/product/search]")
     class getProductByNameIncludeInput {
-        private static final String BASE_URL = "/api/product";
+        private static final String BASE_URL = "/api/product/search";
         private static final String STORE_CONDITION = "상온";
         private static final Long STORE_ID = 1L;
         private static final String NAME = "리";
@@ -2262,5 +2306,9 @@ public class ProductApiControllerTest extends ControllerTest {
         getListOfPassProductByOnlineUsersResponseList.add(new GetListOfPassProductByOnlineUsersResponse(5L, List.of("우유")));
         getListOfPassProductByOnlineUsersResponseList.add(new GetListOfPassProductByOnlineUsersResponse(7L, List.of("블루베리", "딸기", "메론")));
         return getListOfPassProductByOnlineUsersResponseList;
+    }
+
+    private GetRequiredInfoResponse getRequiredInfoResponse() {
+        return new GetRequiredInfoResponse(1L, 5L);
     }
 }

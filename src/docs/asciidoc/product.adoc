@@ -59,6 +59,17 @@ include::{snippets}/ProductApi/CommonError/Case3/request-parameters.adoc[]
 include::{snippets}/ProductApi/CommonError/Case3/http-response.adoc[]
 include::{snippets}/ProductApi/CommonError/Case3/response-fields.adoc[]
 
+== 메인 호출 (x.0)
+=== 1. 메인 호출 시 사용자의 가게 정보 조회에 성공한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetStoreById/Success/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetStoreById/Success/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetStoreById/Success/http-response.adoc[]
+include::{snippets}/ProductApi/GetStoreById/Success/response-fields.adoc[]
+
 == 제품 등록 (x.1.1)
 === 1. 유효하지 않은 가게 ID를 입력받으면 제품 등록에 실패한다
 ==== HTTP Request

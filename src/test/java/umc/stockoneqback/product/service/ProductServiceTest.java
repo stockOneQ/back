@@ -31,6 +31,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
 import static umc.stockoneqback.fixture.UserFixture.ANNE;
 
+/*
+    TODO : 공통 예외, 메인 호출, 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회 Service Test 추가
+ */
 @DisplayName("Product [Service Layer] -> ProductService 테스트")
 public class ProductServiceTest extends ServiceTest {
     @Autowired
