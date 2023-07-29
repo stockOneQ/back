@@ -243,7 +243,7 @@ public class ProductService {
             throw BaseException.type(ProductErrorCode.DUPLICATE_PRODUCT);
     }
 
-    private List<Product> findProductAllByName(Store store, StoreCondition storeCondition, String productName) {
+    List<Product> findProductAllByName(Store store, StoreCondition storeCondition, String productName) {
         List<Product> searchProductUrlList = productRepository.findProductByName(store, storeCondition.getValue(), productName);
         if (searchProductUrlList.isEmpty())
             throw BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT);
@@ -255,7 +255,7 @@ public class ProductService {
                 .orElseThrow(() -> BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT));
     }
 
-    private List<GetTotalProductResponse> countProduct(Store store, StoreCondition storeCondition) {
+    List<GetTotalProductResponse> countProduct(Store store, StoreCondition storeCondition) {
         List<GetTotalProductResponse> countList = new ArrayList<>(4);
         LocalDate currentDate = LocalDate.now();
         LocalDate standardDate = currentDate.plusDays(3);
@@ -270,7 +270,7 @@ public class ProductService {
         return countList;
     }
 
-    private Product configPaging(Long productId) {
+    Product configPaging(Long productId) {
         if (productId == null)
             return new Product();
         return findProductById(productId);
@@ -290,7 +290,7 @@ public class ProductService {
         return searchProductResponseList;
     }
 
-    private byte[] getImageOrElseNull(String imageUrl) throws IOException {
+    byte[] getImageOrElseNull(String imageUrl) throws IOException {
         if (imageUrl == null)
             return null;
         return fileService.downloadToResponseDto(imageUrl);
