@@ -3,8 +3,10 @@ package umc.stockoneqback.reply.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.comment.service.CommentFindService;
+import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.reply.domain.Reply;
 import umc.stockoneqback.reply.domain.ReplyRepository;
@@ -20,22 +22,30 @@ public class ReplyService {
     private final CommentFindService commentFindService;
     private final ReplyFindService replyFindService;
     private final ReplyRepository replyRepository;
+    private final FileService fileService;
 
     @Transactional
-    public Long create(Long writerId, Long commentId, String image, String content) {
+    public Long create(Long writerId, Long commentId, MultipartFile image, String content) {
         User writer = userFindService.findById(writerId);
         Comment comment = commentFindService.findById(commentId);
-        Reply reply = Reply.createReply(writer, comment, image, content);
+        String imageUrl = null;
+        if (image != null)
+            imageUrl = fileService.uploadBoardFiles(image);
+
+        Reply reply = Reply.createReply(writer, comment, imageUrl, content);
 
         return replyRepository.save(reply).getId();
     }
 
     @Transactional
-    public void update(Long writerId, Long replyId, String image, String content) {
+    public void update(Long writerId, Long replyId, MultipartFile image, String content) {
         validateWriter(replyId, writerId);
         Reply reply = replyFindService.findById(replyId);
+        String imageUrl = null;
+        if (image != null)
+            imageUrl = fileService.uploadBoardFiles(image);
 
-        reply.updateImage(image);
+        reply.updateImage(imageUrl);
         reply.updateContent(content);
     }
 
