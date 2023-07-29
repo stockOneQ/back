@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import umc.stockoneqback.auth.controller.dto.request.LoginRequest;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
@@ -82,7 +81,6 @@ class AuthApiControllerTest extends ControllerTest {
 
         @Test
         @DisplayName("로그인에 성공한다")
-        @WithAnonymousUser
         void success() throws Exception {
             // given
             LoginResponse loginResponse = createLoginResponse();

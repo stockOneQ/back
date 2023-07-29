@@ -27,8 +27,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.CommentFixture.COMMENT_0;
-import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 
 @DisplayName("Comment [Controller Layer] -> CommentApiController 테스트")
 public class CommentApiControllerTest extends ControllerTest {

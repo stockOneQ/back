@@ -6,17 +6,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.product.dto.request.EditProductRequest;
+import umc.stockoneqback.product.dto.response.GetListOfPassProductByOnlineUsersResponse;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.LoadProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductResponse;
 import umc.stockoneqback.product.exception.ProductErrorCode;
 import umc.stockoneqback.role.exception.StoreErrorCode;
+import umc.stockoneqback.user.exception.UserErrorCode;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -26,15 +29,19 @@ import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static umc.stockoneqback.common.DocumentFormatGenerator.getDateFormat;
 import static umc.stockoneqback.fixture.ProductFixture.*;
+import static umc.stockoneqback.fixture.TokenFixture.*;
 
 @DisplayName("Product [Controller Layer] -> ProductApiController 테스트")
 public class ProductApiControllerTest extends ControllerTest {
@@ -56,7 +63,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
                     .when(productService)
-                    .saveProduct(anyLong(), anyString(), any(), any());
+                    .saveProduct(anyLong(), anyLong(), anyString(), any(), any());
 
             // when
             final EditProductRequest request = createEditProductRequest();
@@ -72,7 +79,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .accept(APPLICATION_JSON)
                     .param("store", String.valueOf(ERROR_STORE_ID))
                     .param("condition", STORE_CONDITION)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
@@ -91,31 +98,34 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/Add/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParts(
                                             partWithName("image").description("파일 이미지"),
                                             partWithName("editProductRequest").description("생성할 제품 정보 DTO")
                                     ),
                                     requestPartFields(
                                             "editProductRequest",
-                                            fieldWithPath("name").description("제품명"),
-                                            fieldWithPath("price").description("가격"),
-                                            fieldWithPath("vendor").description("판매업체"),
-                                            fieldWithPath("receivingDate").description("입고일"),
-                                            fieldWithPath("expirationDate").description("유통기한"),
-                                            fieldWithPath("location").description("재료위치"),
-                                            fieldWithPath("requireQuant").description("필수 수량"),
-                                            fieldWithPath("stockQuant").description("재고 수량"),
-                                            fieldWithPath("siteToOrder").description("발주사이트"),
-                                            fieldWithPath("orderFreq").description("발주 빈도")
+                                            fieldWithPath("name").type(JsonFieldType.STRING).description("제품명"),
+                                            fieldWithPath("price").type(JsonFieldType.NUMBER).description("가격"),
+                                            fieldWithPath("vendor").type(JsonFieldType.STRING).description("판매업체"),
+                                            fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
+                                            fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
+                                            fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
+                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
+                                            fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -127,7 +137,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
                     .when(productService)
-                    .saveProduct(anyLong(), anyString(), any(), any());
+                    .saveProduct(anyLong(), anyLong(), anyString(), any(), any());
 
             // when
             final EditProductRequest request = createEditProductRequest();
@@ -143,7 +153,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .accept(APPLICATION_JSON)
                     .param("store", String.valueOf(STORE_ID))
                     .param("condition", ERROR_STORE_CONDITION)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
@@ -162,31 +172,34 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/Add/Failure/Case2",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParts(
                                             partWithName("image").description("파일 이미지"),
                                             partWithName("editProductRequest").description("생성할 제품 정보 DTO")
                                     ),
                                     requestPartFields(
                                             "editProductRequest",
-                                            fieldWithPath("name").description("제품명"),
-                                            fieldWithPath("price").description("가격"),
-                                            fieldWithPath("vendor").description("판매업체"),
-                                            fieldWithPath("receivingDate").description("입고일"),
-                                            fieldWithPath("expirationDate").description("유통기한"),
-                                            fieldWithPath("location").description("재료위치"),
-                                            fieldWithPath("requireQuant").description("필수 수량"),
-                                            fieldWithPath("stockQuant").description("재고 수량"),
-                                            fieldWithPath("siteToOrder").description("발주사이트"),
-                                            fieldWithPath("orderFreq").description("발주 빈도")
+                                            fieldWithPath("name").type(JsonFieldType.STRING).description("제품명"),
+                                            fieldWithPath("price").type(JsonFieldType.NUMBER).description("가격"),
+                                            fieldWithPath("vendor").type(JsonFieldType.STRING).description("판매업체"),
+                                            fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
+                                            fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
+                                            fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
+                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
+                                            fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -198,7 +211,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doNothing()
                     .when(productService)
-                    .saveProduct(anyLong(), anyString(), any(), any());
+                    .saveProduct(anyLong(), anyLong(), anyString(), any(), any());
 
             // when
             final EditProductRequest request = createEditProductRequest();
@@ -214,7 +227,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .accept(APPLICATION_JSON)
                     .param("store", String.valueOf(STORE_ID))
                     .param("condition", STORE_CONDITION)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -226,26 +239,34 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/Add/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParts(
                                             partWithName("image").description("파일 이미지"),
                                             partWithName("editProductRequest").description("생성할 제품 정보 DTO")
                                     ),
                                     requestPartFields(
                                             "editProductRequest",
-                                            fieldWithPath("name").description("제품명"),
-                                            fieldWithPath("price").description("가격"),
-                                            fieldWithPath("vendor").description("판매업체"),
-                                            fieldWithPath("receivingDate").description("입고일"),
-                                            fieldWithPath("expirationDate").description("유통기한"),
-                                            fieldWithPath("location").description("재료위치"),
-                                            fieldWithPath("requireQuant").description("필수 수량"),
-                                            fieldWithPath("stockQuant").description("재고 수량"),
-                                            fieldWithPath("siteToOrder").description("발주사이트"),
-                                            fieldWithPath("orderFreq").description("발주 빈도")
+                                            fieldWithPath("name").type(JsonFieldType.STRING).description("제품명"),
+                                            fieldWithPath("price").type(JsonFieldType.NUMBER).description("가격"),
+                                            fieldWithPath("vendor").type(JsonFieldType.STRING).description("판매업체"),
+                                            fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
+                                            fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
+                                            fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
+                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
+                                            fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -264,12 +285,12 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT))
                     .when(productService)
-                    .loadProduct(anyLong());
+                    .loadProduct(anyLong(), anyLong());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL, ERROR_PRODUCT_ID)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_PRODUCT;
@@ -288,13 +309,16 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetDetail/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
                                             parameterWithName("productId").description("상세조회할 제품 ID")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -306,12 +330,12 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doReturn(loadProductResponse())
                     .when(productService)
-                    .loadProduct(anyLong());
+                    .loadProduct(anyLong(), anyLong());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL, PRODUCT_ID)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -327,25 +351,28 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetDetail/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
                                             parameterWithName("productId").description("상세조회할 제품 ID")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("요청 상태"),
-                                            fieldWithPath("errorCode").description("에러 코드"),
-                                            fieldWithPath("message").description("요청 결과 메시지"),
-                                            fieldWithPath("result.id").description("제품 ID"),
-                                            fieldWithPath("result.name").description("제품명"),
-                                            fieldWithPath("result.price").description("가격"),
-                                            fieldWithPath("result.vendor").description("판매업체"),
-                                            fieldWithPath("result.image").description("제품 이미지"),
-                                            fieldWithPath("result.receivingDate").description("입고일"),
-                                            fieldWithPath("result.expirationDate").description("유통기한"),
-                                            fieldWithPath("result.location").description("제품 위치"),
-                                            fieldWithPath("result.requireQuant").description("필수 수량"),
-                                            fieldWithPath("result.stockQuant").description("재고 수량"),
-                                            fieldWithPath("result.siteToOrder").description("발주사이트"),
-                                            fieldWithPath("result.orderFreq").description("발주 빈도")
+                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
+                                            fieldWithPath("result.id").type(JsonFieldType.NUMBER).description("제품 ID"),
+                                            fieldWithPath("result.name").type(JsonFieldType.STRING).description("제품명"),
+                                            fieldWithPath("result.price").type(JsonFieldType.NUMBER).description("가격"),
+                                            fieldWithPath("result.vendor").type(JsonFieldType.STRING).description("판매업체"),
+                                            fieldWithPath("result.image").type(JsonFieldType.ARRAY).type(JsonFieldType.NULL).description("제품 이미지"),
+                                            fieldWithPath("result.receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
+                                            fieldWithPath("result.expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
+                                            fieldWithPath("result.location").type(JsonFieldType.STRING).type(JsonFieldType.NULL).description("제품 위치"),
+                                            fieldWithPath("result.requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("result.stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("result.siteToOrder").type(JsonFieldType.STRING).type(JsonFieldType.NULL).description("발주사이트"),
+                                            fieldWithPath("result.orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     )
                             )
                     );
@@ -366,7 +393,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
                     .when(productService)
-                    .searchProduct(anyLong(), anyString(), anyString());
+                    .searchProduct(anyLong(), anyLong(), anyString(), anyString());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -374,7 +401,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("store", String.valueOf(ERROR_STORE_ID))
                     .param("condition", STORE_CONDITION)
                     .param("name", NAME)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
@@ -393,15 +420,18 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetProductByName/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
                                             parameterWithName("name").description("검색할 제품명")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -413,7 +443,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
                     .when(productService)
-                    .searchProduct(anyLong(), anyString(), anyString());
+                    .searchProduct(anyLong(), anyLong(), anyString(), anyString());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -421,7 +451,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("store", String.valueOf(STORE_ID))
                     .param("condition", ERROR_STORE_CONDITION)
                     .param("name", NAME)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
@@ -440,15 +470,18 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetProductByName/Failure/Case2",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
                                             parameterWithName("name").description("검색할 제품명")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -460,7 +493,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doReturn(searchProductResponse())
                     .when(productService)
-                    .searchProduct(anyLong(), anyString(), anyString());
+                    .searchProduct(anyLong(), anyLong(), anyString(), anyString());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -468,7 +501,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("store", String.valueOf(STORE_ID))
                     .param("condition", STORE_CONDITION)
                     .param("name", NAME)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -487,18 +520,21 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetProductByName/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
                                             parameterWithName("name").description("검색할 제품명")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("요청 상태"),
-                                            fieldWithPath("errorCode").description("에러 코드"),
-                                            fieldWithPath("message").description("요청 결과 메시지"),
-                                            fieldWithPath("result[].id").description("제품 ID"),
-                                            fieldWithPath("result[].name").description("제품명"),
-                                            fieldWithPath("result[].image").description("제품 이미지")
+                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
+                                            fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
+                                            fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
+                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).type(JsonFieldType.NULL).description("제품 이미지")
                                     )
                             )
                     );
@@ -517,7 +553,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT))
                     .when(productService)
-                    .editProduct(anyLong(), any(), any());
+                    .editProduct(anyLong(), anyLong(), any(), any());
 
             // when
             final EditProductRequest request = createEditProductRequest();
@@ -531,14 +567,14 @@ public class ProductApiControllerTest extends ControllerTest {
                     .file(file)
                     .file(mockRequest)
                     .accept(APPLICATION_JSON)
-                    .with(csrf().asHeader())
                     .with(new RequestPostProcessor() {
                         @Override
                         public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
                             request.setMethod("PATCH");
                             return request;
                         }
-                    });
+                    })
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_PRODUCT;
@@ -557,6 +593,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/Modify/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
                                             parameterWithName("productId").description("변경할 제품명")
                                     ),
@@ -566,21 +605,21 @@ public class ProductApiControllerTest extends ControllerTest {
                                     ),
                                     requestPartFields(
                                             "editProductRequest",
-                                            fieldWithPath("name").description("제품명"),
-                                            fieldWithPath("price").description("가격"),
-                                            fieldWithPath("vendor").description("판매업체"),
-                                            fieldWithPath("receivingDate").description("입고일"),
-                                            fieldWithPath("expirationDate").description("유통기한"),
-                                            fieldWithPath("location").description("재료위치"),
-                                            fieldWithPath("requireQuant").description("필수 수량"),
-                                            fieldWithPath("stockQuant").description("재고 수량"),
-                                            fieldWithPath("siteToOrder").description("발주사이트"),
-                                            fieldWithPath("orderFreq").description("발주 빈도")
+                                            fieldWithPath("name").type(JsonFieldType.STRING).description("제품명"),
+                                            fieldWithPath("price").type(JsonFieldType.NUMBER).description("가격"),
+                                            fieldWithPath("vendor").type(JsonFieldType.STRING).description("판매업체"),
+                                            fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
+                                            fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
+                                            fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
+                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
+                                            fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -592,7 +631,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doNothing()
                     .when(productService)
-                    .editProduct(anyLong(), any(), any());
+                    .editProduct(anyLong(), anyLong(), any(), any());
 
             // when
             final EditProductRequest request = createEditProductRequest();
@@ -606,14 +645,14 @@ public class ProductApiControllerTest extends ControllerTest {
                     .file(file)
                     .file(mockRequest)
                     .accept(APPLICATION_JSON)
-                    .with(csrf().asHeader())
                     .with(new RequestPostProcessor() {
                         @Override
                         public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
                             request.setMethod("PATCH");
                             return request;
                         }
-                    });
+                    })
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -625,6 +664,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/Modify/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
                                             parameterWithName("productId").description("변경할 제품명")
                                     ),
@@ -634,16 +676,21 @@ public class ProductApiControllerTest extends ControllerTest {
                                     ),
                                     requestPartFields(
                                             "editProductRequest",
-                                            fieldWithPath("name").description("제품명"),
-                                            fieldWithPath("price").description("가격"),
-                                            fieldWithPath("vendor").description("판매업체"),
-                                            fieldWithPath("receivingDate").description("입고일"),
-                                            fieldWithPath("expirationDate").description("유통기한"),
-                                            fieldWithPath("location").description("재료위치"),
-                                            fieldWithPath("requireQuant").description("필수 수량"),
-                                            fieldWithPath("stockQuant").description("재고 수량"),
-                                            fieldWithPath("siteToOrder").description("발주사이트"),
-                                            fieldWithPath("orderFreq").description("발주 빈도")
+                                            fieldWithPath("name").type(JsonFieldType.STRING).description("제품명"),
+                                            fieldWithPath("price").type(JsonFieldType.NUMBER).description("가격"),
+                                            fieldWithPath("vendor").type(JsonFieldType.STRING).description("판매업체"),
+                                            fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
+                                            fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
+                                            fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
+                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
+                                            fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -662,12 +709,12 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT))
                     .when(productService)
-                    .deleteProduct(anyLong());
+                    .deleteProduct(anyLong(), anyLong());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, ERROR_PRODUCT_ID)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_PRODUCT;
@@ -686,13 +733,16 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/Erase/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
                                             parameterWithName("productId").description("상세조회할 제품 ID")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -704,12 +754,12 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doNothing()
                     .when(productService)
-                    .deleteProduct(anyLong());
+                    .deleteProduct(anyLong(), anyLong());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL, PRODUCT_ID)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -721,13 +771,16 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/Erase/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     pathParameters(
                                             parameterWithName("productId").description("상세조회할 제품 ID")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("요청 상태"),
-                                            fieldWithPath("errorCode").description("에러 코드"),
-                                            fieldWithPath("message").description("요청 결과 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -747,14 +800,14 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
                     .when(productService)
-                    .getTotalProduct(anyLong(), anyString());
+                    .getTotalProduct(anyLong(), anyLong(), anyString());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
                     .param("store", String.valueOf(ERROR_STORE_ID))
                     .param("condition", STORE_CONDITION)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
@@ -773,14 +826,17 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetTotal/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -792,14 +848,14 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
                     .when(productService)
-                    .getTotalProduct(anyLong(), anyString());
+                    .getTotalProduct(anyLong(), anyLong(), anyString());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
                     .param("store", String.valueOf(STORE_ID))
                     .param("condition", ERROR_STORE_CONDITION)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
@@ -818,14 +874,17 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetTotal/Failure/Case2",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -837,14 +896,14 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doReturn(getTotalProductResponse())
                     .when(productService)
-                    .getTotalProduct(anyLong(), anyString());
+                    .getTotalProduct(anyLong(), anyLong(), anyString());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
                     .param("store", String.valueOf(STORE_ID))
                     .param("condition", STORE_CONDITION)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -869,16 +928,19 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetTotal/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("요청 상태"),
-                                            fieldWithPath("errorCode").description("에러 코드"),
-                                            fieldWithPath("message").description("요청 결과 메시지"),
-                                            fieldWithPath("result[].name").description("분류 기준"),
-                                            fieldWithPath("result[].total").description("제품의 총 개수")
+                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
+                                            fieldWithPath("result[].name").type(JsonFieldType.STRING).description("분류 기준"),
+                                            fieldWithPath("result[].total").type(JsonFieldType.NUMBER).description("제품의 총 개수")
                                     )
                             )
                     );
@@ -903,7 +965,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
                     .when(productService)
-                    .getListOfAllProduct(eq(ERROR_STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
+                    .getListOfAllProduct(anyLong(), eq(ERROR_STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -912,7 +974,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
@@ -931,6 +993,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetAll/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -938,9 +1003,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -952,7 +1017,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
                     .when(productService)
-                    .getListOfAllProduct(eq(STORE_ID), eq(ERROR_STORE_CONDITION), isNull(), eq(SORT));
+                    .getListOfAllProduct(anyLong(), eq(STORE_ID), eq(ERROR_STORE_CONDITION), isNull(), eq(SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -961,7 +1026,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", ERROR_STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
@@ -980,6 +1045,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetAll/Failure/Case2",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -987,9 +1055,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -1001,7 +1069,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_SORT_CONDITION))
                     .when(productService)
-                    .getListOfAllProduct(eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(ERROR_SORT));
+                    .getListOfAllProduct(anyLong(), eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(ERROR_SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1010,7 +1078,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", ERROR_SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_SORT_CONDITION;
@@ -1029,6 +1097,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetAll/Failure/Case3",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1036,9 +1107,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -1050,7 +1121,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doReturn(searchAllProductResponse())
                     .when(productService)
-                    .getListOfAllProduct(eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
+                    .getListOfAllProduct(anyLong(), eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1059,7 +1130,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -1096,6 +1167,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetAll/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1103,12 +1177,12 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("요청 상태"),
-                                            fieldWithPath("errorCode").description("에러 코드"),
-                                            fieldWithPath("message").description("요청 결과 메시지"),
-                                            fieldWithPath("result[].id").description("제품 ID"),
-                                            fieldWithPath("result[].name").description("제품명"),
-                                            fieldWithPath("result[].image").description("제품 이미지")
+                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
+                                            fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
+                                            fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
+                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).type(JsonFieldType.NULL).description("제품 이미지")
                                     )
                             )
                     );
@@ -1132,7 +1206,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
                     .when(productService)
-                    .getListOfPassProduct(eq(ERROR_STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
+                    .getListOfPassProduct(anyLong(), eq(ERROR_STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1141,7 +1215,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
@@ -1160,6 +1234,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetPass/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1167,9 +1244,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -1181,7 +1258,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
                     .when(productService)
-                    .getListOfPassProduct(eq(STORE_ID), eq(ERROR_STORE_CONDITION), isNull(), eq(SORT));
+                    .getListOfPassProduct(anyLong(), eq(STORE_ID), eq(ERROR_STORE_CONDITION), isNull(), eq(SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1190,7 +1267,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", ERROR_STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
@@ -1209,6 +1286,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetPass/Failure/Case2",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1216,9 +1296,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -1230,7 +1310,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_SORT_CONDITION))
                     .when(productService)
-                    .getListOfPassProduct(eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(ERROR_SORT));
+                    .getListOfPassProduct(anyLong(), eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(ERROR_SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1239,7 +1319,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", ERROR_SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_SORT_CONDITION;
@@ -1258,6 +1338,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetPass/Failure/Case3",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1265,9 +1348,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -1279,7 +1362,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doReturn(searchPassProductResponse())
                     .when(productService)
-                    .getListOfPassProduct(eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
+                    .getListOfPassProduct(anyLong(), eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1288,7 +1371,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -1305,6 +1388,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetPass/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1312,12 +1398,12 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("요청 상태"),
-                                            fieldWithPath("errorCode").description("에러 코드"),
-                                            fieldWithPath("message").description("요청 결과 메시지"),
-                                            fieldWithPath("result[].id").description("제품 ID"),
-                                            fieldWithPath("result[].name").description("제품명"),
-                                            fieldWithPath("result[].image").description("제품 이미지")
+                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
+                                            fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
+                                            fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
+                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).type(JsonFieldType.NULL).description("제품 이미지")
                                     )
                             )
                     );
@@ -1341,7 +1427,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
                     .when(productService)
-                    .getListOfCloseProduct(eq(ERROR_STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
+                    .getListOfCloseProduct(anyLong(), eq(ERROR_STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1350,7 +1436,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
@@ -1369,6 +1455,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetClose/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1376,9 +1465,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -1390,7 +1479,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
                     .when(productService)
-                    .getListOfCloseProduct(eq(STORE_ID), eq(ERROR_STORE_CONDITION), isNull(), eq(SORT));
+                    .getListOfCloseProduct(anyLong(), eq(STORE_ID), eq(ERROR_STORE_CONDITION), isNull(), eq(SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1399,7 +1488,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", ERROR_STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
@@ -1418,6 +1507,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetClose/Failure/Case2",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1425,9 +1517,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -1439,7 +1531,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_SORT_CONDITION))
                     .when(productService)
-                    .getListOfCloseProduct(eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(ERROR_SORT));
+                    .getListOfCloseProduct(anyLong(), eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(ERROR_SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1448,7 +1540,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", ERROR_SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_SORT_CONDITION;
@@ -1467,6 +1559,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetClose/Failure/Case3",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1474,9 +1569,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -1488,7 +1583,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doReturn(searchCloseProductResponse())
                     .when(productService)
-                    .getListOfCloseProduct(eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
+                    .getListOfCloseProduct(anyLong(), eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1497,7 +1592,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -1520,6 +1615,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetClose/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1527,12 +1625,12 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("요청 상태"),
-                                            fieldWithPath("errorCode").description("에러 코드"),
-                                            fieldWithPath("message").description("요청 결과 메시지"),
-                                            fieldWithPath("result[].id").description("제품 ID"),
-                                            fieldWithPath("result[].name").description("제품명"),
-                                            fieldWithPath("result[].image").description("제품 이미지")
+                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
+                                            fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
+                                            fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
+                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).type(JsonFieldType.NULL).description("제품 이미지")
                                     )
                             )
                     );
@@ -1556,7 +1654,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(StoreErrorCode.STORE_NOT_FOUND))
                     .when(productService)
-                    .getListOfLackProduct(eq(ERROR_STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
+                    .getListOfLackProduct(anyLong(), eq(ERROR_STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1565,7 +1663,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final StoreErrorCode expectedError = StoreErrorCode.STORE_NOT_FOUND;
@@ -1584,6 +1682,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetLack/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1591,9 +1692,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -1605,7 +1706,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION))
                     .when(productService)
-                    .getListOfLackProduct(eq(STORE_ID), eq(ERROR_STORE_CONDITION), isNull(), eq(SORT));
+                    .getListOfLackProduct(anyLong(), eq(STORE_ID), eq(ERROR_STORE_CONDITION), isNull(), eq(SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1614,7 +1715,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", ERROR_STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_STORE_CONDITION;
@@ -1633,6 +1734,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetLack/Failure/Case2",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1640,9 +1744,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -1654,7 +1758,7 @@ public class ProductApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ProductErrorCode.NOT_FOUND_SORT_CONDITION))
                     .when(productService)
-                    .getListOfLackProduct(eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(ERROR_SORT));
+                    .getListOfLackProduct(anyLong(), eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(ERROR_SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1663,7 +1767,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", ERROR_SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             final ProductErrorCode expectedError = ProductErrorCode.NOT_FOUND_SORT_CONDITION;
@@ -1682,6 +1786,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetLack/Failure/Case3",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1689,9 +1796,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
                                     )
                             )
                     );
@@ -1699,11 +1806,11 @@ public class ProductApiControllerTest extends ControllerTest {
 
         @Test
         @DisplayName("특정 정렬 기준을 만족하는 재고 부족 제품 조회에 성공한다")
-        void success() throws Exception{
+        void success() throws Exception {
             // given
             doReturn(searchLackProductResponse())
                     .when(productService)
-                    .getListOfLackProduct(eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
+                    .getListOfLackProduct(anyLong(), eq(STORE_ID), eq(STORE_CONDITION), isNull(), eq(SORT));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1712,7 +1819,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .param("condition", STORE_CONDITION)
                     .param("last", (String) null)
                     .param("sort", SORT)
-                    .with(csrf().asHeader());
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -1735,6 +1842,9 @@ public class ProductApiControllerTest extends ControllerTest {
                                     "ProductApi/GetLack/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("store").description("현재 가게 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
@@ -1742,12 +1852,158 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("sort").description("정렬 기준")
                                     ),
                                     responseFields(
-                                            fieldWithPath("status").description("요청 상태"),
-                                            fieldWithPath("errorCode").description("에러 코드"),
-                                            fieldWithPath("message").description("요청 결과 메시지"),
-                                            fieldWithPath("result[].id").description("제품 ID"),
-                                            fieldWithPath("result[].name").description("제품명"),
-                                            fieldWithPath("result[].image").description("제품 이미지")
+                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
+                                            fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
+                                            fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
+                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).type(JsonFieldType.NULL).description("제품 이미지")
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("현재 접속중인 사용자별 유통기한 경과 제품 목록 조회 API [GET /api/product/pass/routine]")
+    class getPassProductByOnlineUsers {
+        private static final String BASE_URL = "/api/product/pass/routine";
+        private static final List<Long> onlineUserList = new ArrayList<>(List.of(1L, 5L, 7L));
+        private static final List<List<String>> passProductByOnlineUserList =
+                new ArrayList<>(List.of(List.of("사과", "배"), List.of("우유"), List.of("블루베리", "딸기", "메론")));
+
+        @Test
+        @DisplayName("refreshToken이 유효한 사용자가 DB에 없는 사용자인 case가 발생할 경우 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 실패한다")
+        void throwExceptionByInvalidUser() throws Exception {
+            // given
+            doThrow(BaseException.type(UserErrorCode.USER_NOT_FOUND))
+                    .when(productService)
+                    .getListOfPassProductByOnlineUsers();
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
+
+            // then
+            final UserErrorCode expectedError = UserErrorCode.USER_NOT_FOUND;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetPassByOnline/Failure/Case1",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 역할을 가진 사용자가 존재할 경우 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 실패한다")
+        void throwExceptionByInvalidRole() throws Exception {
+            // given
+            doThrow(BaseException.type(UserErrorCode.ROLE_NOT_FOUND))
+                    .when(productService)
+                    .getListOfPassProductByOnlineUsers();
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
+
+            // then
+            final UserErrorCode expectedError = UserErrorCode.ROLE_NOT_FOUND;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetPassByOnline/Failure/Case2",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 성공한다")
+        void success() throws Exception {
+            // given
+            doReturn(getListOfPassProductByOnlineUsersResponse())
+                    .when(productService)
+                    .getListOfPassProductByOnlineUsers();
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
+
+            // then
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isOk(),
+                            jsonPath("$.result[0]").exists(),
+                            jsonPath("$.result[0].userId").value(onlineUserList.get(0)),
+                            jsonPath("$.result[0].productNameList").isArray(),
+                            jsonPath("$.result[0].productNameList[0]").value(passProductByOnlineUserList.get(0).get(0)),
+                            jsonPath("$.result[0].productNameList[1]").value(passProductByOnlineUserList.get(0).get(1)),
+                            jsonPath("$.result[1]").exists(),
+                            jsonPath("$.result[1].userId").value(onlineUserList.get(1)),
+                            jsonPath("$.result[1].productNameList").isArray(),
+                            jsonPath("$.result[1].productNameList[0]").value(passProductByOnlineUserList.get(1).get(0)),
+                            jsonPath("$.result[2]").exists(),
+                            jsonPath("$.result[2].userId").value(onlineUserList.get(2)),
+                            jsonPath("$.result[2].productNameList").isArray(),
+                            jsonPath("$.result[2].productNameList[0]").value(passProductByOnlineUserList.get(2).get(0)),
+                            jsonPath("$.result[2].productNameList[1]").value(passProductByOnlineUserList.get(2).get(1)),
+                            jsonPath("$.result[2].productNameList[2]").value(passProductByOnlineUserList.get(2).get(2)),
+                            jsonPath("$.result[3]").doesNotExist()
+                    )
+                    .andDo(
+                            document(
+                                    "ProductApi/GetPassByOnline/Success",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
+                                            fieldWithPath("result[].userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
+                                            fieldWithPath("result[].productNameList").type(JsonFieldType.ARRAY).description("해당 사용자의 유통기간 경과 제품명 목록")
                                     )
                             )
                     );
@@ -1845,5 +2101,13 @@ public class ProductApiControllerTest extends ControllerTest {
         searchProductResponseList.add(new SearchProductResponse(8L, CHERRY.getName(), null));
         searchProductResponseList.add(new SearchProductResponse(6L, PINEAPPLE.getName(), null));
         return searchProductResponseList;
+    }
+
+    private List<GetListOfPassProductByOnlineUsersResponse> getListOfPassProductByOnlineUsersResponse() {
+        List<GetListOfPassProductByOnlineUsersResponse> getListOfPassProductByOnlineUsersResponseList = new ArrayList<>();
+        getListOfPassProductByOnlineUsersResponseList.add(new GetListOfPassProductByOnlineUsersResponse(1L, List.of("사과", "배")));
+        getListOfPassProductByOnlineUsersResponseList.add(new GetListOfPassProductByOnlineUsersResponse(5L, List.of("우유")));
+        getListOfPassProductByOnlineUsersResponseList.add(new GetListOfPassProductByOnlineUsersResponse(7L, List.of("블루베리", "딸기", "메론")));
+        return getListOfPassProductByOnlineUsersResponseList;
     }
 }

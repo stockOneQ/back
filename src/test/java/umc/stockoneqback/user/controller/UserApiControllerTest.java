@@ -28,8 +28,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 
 @DisplayName("User [Controller Layer] -> UserApiController 테스트")
@@ -405,7 +405,7 @@ class UserApiControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("중복된 로그인 아이디가 있다면 슈퍼바이저 등록에 실패한다")
+        @DisplayName("회사 코드가 일치하지 않으면 슈퍼바이저 등록에 실패한다")
         void throwExceptionByInvalidCompanyCode() throws Exception {
             // given
             doThrow(BaseException.type(UserErrorCode.INVALID_COMPANY_CODE))

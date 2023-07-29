@@ -4,18 +4,27 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import umc.stockoneqback.auth.domain.Token;
+import umc.stockoneqback.auth.service.TokenService;
 import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.domain.ProductRepository;
 import umc.stockoneqback.product.domain.SortCondition;
 import umc.stockoneqback.product.domain.StoreCondition;
+import umc.stockoneqback.product.dto.response.GetListOfPassProductByOnlineUsersResponse;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.LoadProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductResponse;
 import umc.stockoneqback.product.exception.ProductErrorCode;
 import umc.stockoneqback.role.domain.store.Store;
+import umc.stockoneqback.role.service.PartTimerService;
 import umc.stockoneqback.role.service.StoreService;
+import umc.stockoneqback.user.domain.Role;
+import umc.stockoneqback.user.domain.User;
+import umc.stockoneqback.user.exception.UserErrorCode;
+import umc.stockoneqback.user.service.UserFindService;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -30,11 +39,15 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final StoreService storeService;
     private final FileService fileService;
+    private final TokenService tokenService;
+    private final UserFindService userFindService;
+    private final PartTimerService partTimerService;
     private static final Integer PAGE_SIZE = 12;
 
     @Transactional
-    public void saveProduct(Long storeId, String storeConditionValue, Product product, MultipartFile image) {
+    public void saveProduct(Long userId, Long storeId, String storeConditionValue, Product product, MultipartFile image) {
         Store store = storeService.findById(storeId);
+        checkRequestIdHasRequestStore(userId, store);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
         isExistProductByName(store, storeCondition, product.getName());
         String imageUrl = null;
@@ -45,8 +58,9 @@ public class ProductService {
     }
 
     @Transactional
-    public LoadProductResponse loadProduct(Long productId) throws IOException {
+    public LoadProductResponse loadProduct(Long userId, Long productId) throws IOException {
         Product product = findProductById(productId);
+        checkRequestIdHasRequestProduct(userId, product);
         byte[] image = getImageOrElseNull(product.getImageUrl());
         return LoadProductResponse.builder()
                 .id(product.getId())
@@ -66,16 +80,18 @@ public class ProductService {
 
     @Transactional
     public List<SearchProductResponse> searchProduct
-            (Long storeId, String storeConditionValue, String productName) throws IOException {
+            (Long userId, Long storeId, String storeConditionValue, String productName) throws IOException {
         Store store = storeService.findById(storeId);
+        checkRequestIdHasRequestStore(userId, store);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
         List<Product> searchProductUrlList = findProductAllByName(store, storeCondition, productName);
         return convertUrlToResponse(searchProductUrlList);
     }
 
     @Transactional
-    public void editProduct(Long productId, Product newProduct, MultipartFile image) {
+    public void editProduct(Long userId, Long productId, Product newProduct, MultipartFile image) {
         Product product = findProductById(productId);
+        checkRequestIdHasRequestProduct(userId, product);
         String imageUrl = null;
         if (image != null)
             imageUrl = fileService.uploadProductFiles(image);
@@ -83,24 +99,27 @@ public class ProductService {
     }
 
     @Transactional
-    public void deleteProduct(Long productId) {
+    public void deleteProduct(Long userId, Long productId) {
         Product product = findProductById(productId);
+        checkRequestIdHasRequestProduct(userId, product);
         product.delete();
     }
 
     @Transactional
-    public List<GetTotalProductResponse> getTotalProduct(Long storeId, String storeConditionValue) {
+    public List<GetTotalProductResponse> getTotalProduct(Long userId, Long storeId, String storeConditionValue) {
         Store store = storeService.findById(storeId);
+        checkRequestIdHasRequestStore(userId, store);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
         return countProduct(store, storeCondition);
     }
 
     @Transactional
     public List<SearchProductResponse> getListOfAllProduct
-            (Long storeId, String storeConditionValue, Long productId, String sortBy) throws IOException {
+            (Long userId, Long storeId, String storeConditionValue, Long productId, String sortBy) throws IOException {
         Product product = configPaging(productId);
         SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
         Store store = storeService.findById(storeId);
+        checkRequestIdHasRequestStore(userId, store);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
         List<Product> searchProductUrlList = new ArrayList<>();
         switch (sortCondition) {
@@ -118,10 +137,11 @@ public class ProductService {
 
     @Transactional
     public List<SearchProductResponse> getListOfPassProduct
-            (Long storeId, String storeConditionValue, Long productId, String sortBy) throws IOException {
+            (Long userId, Long storeId, String storeConditionValue, Long productId, String sortBy) throws IOException {
         Product product = configPaging(productId);
         SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
         Store store = storeService.findById(storeId);
+        checkRequestIdHasRequestStore(userId, store);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
         LocalDate currentDate = LocalDate.now();
         List<Product> searchProductUrlList = new ArrayList<>();
@@ -140,10 +160,11 @@ public class ProductService {
 
     @Transactional
     public List<SearchProductResponse> getListOfCloseProduct
-            (Long storeId, String storeConditionValue, Long productId, String sortBy) throws IOException {
+            (Long userId, Long storeId, String storeConditionValue, Long productId, String sortBy) throws IOException {
         Product product = configPaging(productId);
         SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
         Store store = storeService.findById(storeId);
+        checkRequestIdHasRequestStore(userId, store);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
         LocalDate currentDate = LocalDate.now();
         LocalDate standardDate = currentDate.plusDays(3);
@@ -163,10 +184,11 @@ public class ProductService {
 
     @Transactional
     public List<SearchProductResponse> getListOfLackProduct
-            (Long storeId, String storeConditionValue, Long productId, String sortBy) throws IOException {
+            (Long userId, Long storeId, String storeConditionValue, Long productId, String sortBy) throws IOException {
         Product product = configPaging(productId);
         SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
         Store store = storeService.findById(storeId);
+        checkRequestIdHasRequestStore(userId, store);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
         List<Product> searchProductUrlList = new ArrayList<>();
         switch (sortCondition) {
@@ -180,6 +202,28 @@ public class ProductService {
             }
         }
         return convertUrlToResponse(searchProductUrlList);
+    }
+
+    @Transactional
+    public List<GetListOfPassProductByOnlineUsersResponse> getListOfPassProductByOnlineUsers() {
+        List<Token> tokenList = tokenService.findAllOnlineUsers();
+        List<GetListOfPassProductByOnlineUsersResponse> getListOfPassProductByOnlineUsersResponseList = new ArrayList<>();
+        LocalDate currentDate = LocalDate.now();
+        for (Token token: tokenList) {
+            User user = userFindService.findById(token.getUserId());
+            GetListOfPassProductByOnlineUsersResponse getListOfPassProductByOnlineUsersResponse;
+            if (user.getRole() == Role.SUPERVISOR)
+                continue;
+            if (user.getRole() == Role.MANAGER) {
+                getListOfPassProductByOnlineUsersResponse =
+                        new GetListOfPassProductByOnlineUsersResponse(user.getId(), productRepository.findPassByManager(user, currentDate));
+            } else if (user.getRole() == Role.PART_TIMER) {
+                getListOfPassProductByOnlineUsersResponse =
+                        new GetListOfPassProductByOnlineUsersResponse(user.getId(), productRepository.findPassByPartTimer(user, currentDate));
+            } else throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
+            getListOfPassProductByOnlineUsersResponseList.add(getListOfPassProductByOnlineUsersResponse);
+        }
+        return getListOfPassProductByOnlineUsersResponseList;
     }
 
     private void isExistProductByName(Store store, StoreCondition storeCondition, String name) {
@@ -239,5 +283,35 @@ public class ProductService {
         if (imageUrl == null)
             return null;
         return fileService.downloadToResponseDto(imageUrl);
+    }
+
+    private void checkRequestIdHasRequestStore(Long userId, Store store) {
+        User user = userFindService.findById(userId);
+        if (user.getRole() == Role.SUPERVISOR)
+            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
+        else if (user.getRole() == Role.MANAGER) {
+            if (storeService.findByUser(user) == store)
+                return;
+            throw BaseException.type(UserErrorCode.USER_STORE_MATCH_FAIL);
+        } else if (user.getRole() == Role.PART_TIMER) {
+            if (partTimerService.findByUser(user).getStore() == store)
+                return;
+            throw BaseException.type(UserErrorCode.USER_STORE_MATCH_FAIL);
+        } else throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
+    }
+
+    private void checkRequestIdHasRequestProduct(Long userId, Product product) {
+        User user = userFindService.findById(userId);
+        if (user.getRole() == Role.SUPERVISOR)
+            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
+        else if (user.getRole() == Role.MANAGER) {
+            if (storeService.findByUser(user) == product.getStore())
+                return;
+            throw BaseException.type(UserErrorCode.USER_PRODUCT_MATCH_FAIL);
+        } else if (user.getRole() == Role.PART_TIMER) {
+            if (partTimerService.findByUser(user).getStore() == product.getStore())
+                return;
+            throw BaseException.type(UserErrorCode.USER_PRODUCT_MATCH_FAIL);
+        } else throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
     }
 }
