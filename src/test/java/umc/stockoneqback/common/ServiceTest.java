@@ -58,6 +58,9 @@ public class ServiceTest {
 
     protected BoardLikeRepository boardLikeRepository;
 
+    @Autowired
+    protected FriendRepository friendRepository;
+
     public void flushAndClear() {
         databaseCleaner.flushAndClear();
     }

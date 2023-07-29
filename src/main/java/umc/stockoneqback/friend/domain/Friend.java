@@ -27,20 +27,20 @@ public class Friend extends BaseTimeEntity {
     private User receiver;
 
     @Convert(converter = FriendStatus.FriendConverter.class)
-    private FriendStatus status;
+    private FriendStatus friendStatus;
 
     @Builder
-    public Friend(User sender, User receiver, FriendStatus status) {
+    public Friend(User sender, User receiver, FriendStatus friendStatus) {
         this.sender = sender;
         this.receiver = receiver;
-        this.status = status;
+        this.friendStatus = friendStatus;
     }
 
-    public static Friend createFriend(User sender, User receiver, FriendStatus status) {
-        return new Friend(sender, receiver, status);
+    public static Friend createFriend(User sender, User receiver, FriendStatus friendStatus) {
+        return new Friend(sender, receiver, friendStatus);
     }
 
     public void acceptFriend() {
-        this.status = FriendStatus.ACCEPT;
+        this.friendStatus = FriendStatus.ACCEPT;
     }
 }
