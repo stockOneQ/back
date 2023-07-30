@@ -45,6 +45,7 @@ import umc.stockoneqback.reply.service.ReplyService;
 import umc.stockoneqback.role.service.CompanyService;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.controller.UserApiController;
+import umc.stockoneqback.user.controller.UserFindApiController;
 import umc.stockoneqback.user.service.UserFindService;
 import umc.stockoneqback.user.service.UserService;
 
@@ -63,7 +64,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         FriendApiController.class,
         BoardLikeApiController.class,
         FriendInformationController.class,
-        TokenReissueApiController.class
+        TokenReissueApiController.class,
+        UserFindApiController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs

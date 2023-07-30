@@ -20,7 +20,6 @@ import javax.validation.Valid;
 @RequestMapping("/api/user")
 public class UserApiController {
     private final UserService userService;
-    private final UserFindService userFindService;
     private final StoreService storeService;
 
     @PostMapping("/sign-up/manager")
@@ -49,13 +48,5 @@ public class UserApiController {
     public ResponseEntity<Void> updateInformation(@ExtractPayload Long userId, @RequestBody @Valid UserInfoRequest request) {
         userService.updateInformation(userId, request.name(), request.birth(), request.email(), request.loginId(), request.password(), request.phoneNumber());
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/search/manager")
-    public ResponseEntity<FindManagerResponse> findManager(@ExtractPayload Long userId,
-                                                           @RequestParam(value = "condition") String searchCondition,
-                                                           @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastUserId,
-                                                           @RequestParam(value = "name", required = false, defaultValue = "") String searchWord) {
-        return ResponseEntity.ok(userFindService.findManager(userId, searchCondition, lastUserId, searchWord));
     }
 }
