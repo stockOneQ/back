@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/friend/product")
 public class FriendProductApiController {
-    private FriendProductService friendProductService;
+    private final FriendProductService friendProductService;
 
     @GetMapping("/search")
     public BaseResponse<List<SearchProductOthersResponse>> searchProductOthers(@ExtractPayload Long userId,

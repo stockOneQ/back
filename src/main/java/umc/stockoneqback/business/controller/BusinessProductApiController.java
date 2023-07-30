@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/business/product")
 public class BusinessProductApiController {
-    private BusinessProductService businessProductService;
+    private final BusinessProductService businessProductService;
 
     @GetMapping("/search")
     public BaseResponse<List<SearchProductOthersResponse>> searchProductOthers(@ExtractPayload Long supervisorId,
