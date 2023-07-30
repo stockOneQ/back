@@ -1,4 +1,4 @@
-package umc.stockoneqback.user.service.dto;
+package umc.stockoneqback.user.infra.query.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;

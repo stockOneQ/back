@@ -5,15 +5,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.friend.domain.FriendStatus;
 import umc.stockoneqback.friend.repository.FriendRepository;
-import umc.stockoneqback.user.service.dto.FindManager;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.user.controller.dto.response.FindManagerResponse;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
+import umc.stockoneqback.user.domain.search.SearchCondition;
 import umc.stockoneqback.user.exception.UserErrorCode;
-import umc.stockoneqback.user.service.dto.FindManagerResponse;
+import umc.stockoneqback.user.infra.query.dto.FindManager;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static umc.stockoneqback.user.domain.search.SearchCondition.getSearchConditionByValue;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,17 +36,30 @@ public class UserFindService {
                 .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
     }
 
-    public FindManagerResponse findManager(Long userId, Long lastUserId, String name) {
-        List<FindManager> friends = friendRepository.findReceiversByUserIdAndName(userId, name, FriendStatus.ACCEPT);
-        List<FindManager> users = userRepository.findUsersByName(name);
+    public FindManagerResponse findManager(Long userId, String searchConditionValue, Long lastUserId, String searchWord) {
+        List<FindManager> user = userRepository.findUserByUserId(userId);
+        List<FindManager> friendUsers = friendRepository.findReceiversByUserId(userId, FriendStatus.ACCEPT);
+        friendUsers.addAll(user);
 
-        List<FindManager> searchedUsers = users.stream()
-                .filter(user ->
-                        friends.stream().noneMatch(target -> user.getPhoneNumber().equals(target.getPhoneNumber())))
-                .collect(Collectors.toList());
+        SearchCondition searchCondition = getSearchConditionByValue(searchConditionValue);
+        List<FindManager> findUsers = null;
+        switch (searchCondition) {
+            case NAME -> findUsers = userRepository.findManagersByName(searchWord);
+            case STORE -> findUsers = userRepository.findManagersByStoreName(searchWord);
+            case ADDRESS -> findUsers = userRepository.findManagersByAddress(searchWord);
+        }
+        List<FindManager> searchedUsers = filterFindUsers(friendUsers, findUsers);
 
         int lastIndex = getLastIndex(searchedUsers, lastUserId);
         return configPaging(searchedUsers, lastIndex, PAGE_SIZE);
+    }
+
+    private List<FindManager> filterFindUsers(List<FindManager> friendUsers, List<FindManager> findUsers) {
+        List<FindManager> searchedUsers = findUsers.stream()
+                .filter(result ->
+                        friendUsers.stream().noneMatch(target -> result.getPhoneNumber().equals(target.getPhoneNumber())))
+                .collect(Collectors.toList());
+        return searchedUsers;
     }
 
     private int getLastIndex(List<FindManager> searchedUsers, Long lastUserId) {
