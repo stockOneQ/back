@@ -9,7 +9,6 @@ import umc.stockoneqback.product.domain.StoreCondition;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
 import umc.stockoneqback.role.domain.store.Store;
-import umc.stockoneqback.role.service.StoreService;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -22,7 +21,6 @@ import java.util.List;
 public class ProductOthersService {
     private final ProductRepository productRepository;
     private final ProductService productService;
-    private final StoreService storeService;
     private static final Integer PAGE_SIZE = 9;
 
     @Transactional
