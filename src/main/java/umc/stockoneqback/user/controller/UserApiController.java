@@ -9,7 +9,9 @@ import umc.stockoneqback.user.controller.dto.request.SignUpManagerRequest;
 import umc.stockoneqback.user.controller.dto.request.SignUpPartTimerRequest;
 import umc.stockoneqback.user.controller.dto.request.SignUpSupervisorRequest;
 import umc.stockoneqback.user.controller.dto.request.UserInfoRequest;
+import umc.stockoneqback.user.service.UserFindService;
 import umc.stockoneqback.user.service.UserService;
+import umc.stockoneqback.user.service.dto.FindManagerResponse;
 
 import javax.validation.Valid;
 
@@ -18,6 +20,7 @@ import javax.validation.Valid;
 @RequestMapping("/api/user")
 public class UserApiController {
     private final UserService userService;
+    private final UserFindService userFindService;
     private final StoreService storeService;
 
     @PostMapping("/sign-up/manager")
@@ -46,5 +49,12 @@ public class UserApiController {
     public ResponseEntity<Void> updateInformation(@ExtractPayload Long userId, @RequestBody @Valid UserInfoRequest request) {
         userService.updateInformation(userId, request.name(), request.birth(), request.email(), request.loginId(), request.password(), request.phoneNumber());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/search/manager")
+    public ResponseEntity<FindManagerResponse> findManager(@ExtractPayload Long userId,
+                                                             @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastUserId,
+                                                             @RequestParam(value = "name", required = false, defaultValue = "") String searchName) {
+        return ResponseEntity.ok(userFindService.findManager(userId, lastUserId, searchName));
     }
 }
