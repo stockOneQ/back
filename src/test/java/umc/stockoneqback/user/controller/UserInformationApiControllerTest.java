@@ -60,7 +60,7 @@ class UserInformationApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "UserApi/FindLoginId/Failure/Case1",
+                                    "UserApi/Information/FindLoginId/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestFields(
@@ -97,7 +97,7 @@ class UserInformationApiControllerTest extends ControllerTest {
                     .andExpectAll(status().isOk())
                     .andDo(
                             document(
-                                    "UserApi/FindLoginId/Success",
+                                    "UserApi/Information/FindLoginId/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestFields(
