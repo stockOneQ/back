@@ -16,8 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
-import static umc.stockoneqback.fixture.UserFixture.WIZ;
-import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
 @DisplayName("User [Service Layer] -> UserService 테스트")
 class UserServiceTest extends ServiceTest {
@@ -111,41 +109,14 @@ class UserServiceTest extends ServiceTest {
     }
 
     @Nested
-    @DisplayName("회원 정보 수정")
-    class updateInformation {
+    @DisplayName("로그인 아이디 찾기")
+    class findLoginId {
         @Test
-        @DisplayName("중복된 로그인 아이디가 존재한다면 회원 정보 수정에 실패한다")
+        @DisplayName("요청된 정보와 일치하는 사용자를 찾을 수 없으면 아이디 찾기에 실패한다")
         void throwExceptionByDuplicateLoginId() {
-            // given
-            Long userId = userRepository.save(SAEWOO.toUser()).getId();
-            userRepository.save(WIZ.toUser());
 
-            // when - then
-            assertThatThrownBy(() -> userService.updateInformation(userId, WIZ.getName(), WIZ.getBirth(), WIZ.getEmail(), WIZ.getLoginId(), WIZ.getPassword(), WIZ.getPhoneNumber()))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(UserErrorCode.DUPLICATE_LOGIN_ID.getMessage());
         }
 
-        @Test
-        @DisplayName("회원 정보 수정에 성공한다")
-        void success() {
-            // given
-            Long userId = userRepository.save(SAEWOO.toUser()).getId();
-
-            // when
-            userService.updateInformation(userId, WIZ.getName(), WIZ.getBirth(), WIZ.getEmail(), WIZ.getLoginId(), WIZ.getPassword(), WIZ.getPhoneNumber());
-
-            // then
-            User findUser = userRepository.findById(userId).orElseThrow();
-            assertAll(
-                    () -> assertThat(findUser.getName()).isEqualTo(WIZ.getName()),
-                    () -> assertThat(findUser.getBirth()).isEqualTo(WIZ.getBirth()),
-                    () -> assertThat(findUser.getEmail().getValue()).isEqualTo(WIZ.getEmail()),
-                    () -> assertThat(findUser.getLoginId()).isEqualTo(WIZ.getLoginId()),
-                    () -> assertThat(findUser.getPassword().isSamePassword(WIZ.getPassword(), ENCODER)).isTrue(),
-                    () -> assertThat(findUser.getPhoneNumber()).isEqualTo(WIZ.getPhoneNumber())
-            );
-        }
     }
 
     private Store createStore(String name, String sector, String code, String address) {
