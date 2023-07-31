@@ -46,7 +46,7 @@ public class Company extends BaseTimeEntity {
     }
 
     public void addEmployees(User user) {
-        user.updateCompany(this);
+        user.registerCompany(this);
         this.employees.add(user);
     }
 }

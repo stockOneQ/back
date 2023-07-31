@@ -77,7 +77,7 @@ public class CommentServiceTest extends ServiceTest {
         @DisplayName("다른 사람의 댓글은 수정할 수 없다")
         void throwExceptionByUserNotCommentWriter() {
             // when - then
-            assertThatThrownBy(() -> commentService.update(not_writer.getId(),board.getId(), "이미지2", "내용2"))
+            assertThatThrownBy(() -> commentService.update(not_writer.getId(),board.getId(), null, "내용2"))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(CommentErrorCode.USER_IS_NOT_COMMENT_WRITER.getMessage());
         }
@@ -86,14 +86,14 @@ public class CommentServiceTest extends ServiceTest {
         @DisplayName("댓글 수정에 성공한다")
         void success() {
             // given
-            commentService.update(writer.getId(), board.getId(), "이미지2","내용2");
+            commentService.update(writer.getId(), board.getId(), null,"내용2");
 
             // when
             Comment findComment = commentFindService.findById(comments[0].getId());
 
             // then
             assertAll(
-                    () -> assertThat(findComment.getImage()).isEqualTo("이미지2"),
+                    () -> assertThat(findComment.getImage()).isEqualTo(null),
                     () -> assertThat(findComment.getContent()).isEqualTo("내용2"),
                     () -> assertThat(findComment.getModifiedDate().format(formatter)).isEqualTo(LocalDateTime.now().format(formatter))
             );
@@ -132,7 +132,7 @@ public class CommentServiceTest extends ServiceTest {
         void successDeleteAllReply() {
             // given
             for(int i=1; i<=5; i++) {
-                replyService.create(writer.getId(), comments[0].getId(), "이미지" + i, "댓글" + i);
+                replyService.create(writer.getId(), comments[0].getId(), null, "댓글" + i);
             }
             flushAndClear();
 

@@ -1,0 +1,504 @@
+= PRODUCT 제품 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+
+== ! API 호출 전 참고해야 할 쿼리스트링 입력값 !
+=== 1. condition
+|===
+|입력값
+
+|냉장
+|냉동
+|상온
+|===
+=== 2. sort
+|===
+|입력값
+
+|가나다
+|빈도
+|===
+
+== 공통 예외
+=== 1. 권한이 없는 사용자가 Product API를 호출한 경우 API 호출에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/CommonError/Case1/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/CommonError/Case1/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/CommonError/Case1/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/CommonError/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/CommonError/Case1/response-fields.adoc[]
+
+=== 2. 입력된 사용자가 입력된 가게 소속이 아닌 경우 API 호출에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/CommonError/Case2/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/CommonError/Case2/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/CommonError/Case2/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/CommonError/Case2/http-response.adoc[]
+include::{snippets}/ProductApi/CommonError/Case2/response-fields.adoc[]
+
+=== 3. 입력된 사용자가 유효하지 않은 역할을 가지고 있는 경우 API 호출에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/CommonError/Case3/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/CommonError/Case3/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/CommonError/Case3/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/CommonError/Case3/http-response.adoc[]
+include::{snippets}/ProductApi/CommonError/Case3/response-fields.adoc[]
+
+== 메인 호출 (x.0)
+=== 1. 메인 호출 시 사용자의 가게 정보 조회에 성공한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetStoreById/Success/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetStoreById/Success/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetStoreById/Success/http-response.adoc[]
+include::{snippets}/ProductApi/GetStoreById/Success/response-fields.adoc[]
+
+== 제품 등록 (x.1.1)
+=== 1. 유효하지 않은 가게 ID를 입력받으면 제품 등록에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/Add/Failure/Case1/httpie-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/Add/Failure/Case1/request-headers.adoc[]
+Request Part
+include::{snippets}/ProductApi/Add/Failure/Case1/request-parts.adoc[]
+Request Part (editProductRequest)
+include::{snippets}/ProductApi/Add/Failure/Case1/request-part-editProductRequest-fields.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/Add/Failure/Case1/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/Add/Failure/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/Add/Failure/Case1/response-fields.adoc[]
+
+=== 2. 유효하지 않은 보관 방법을 입력받으면 제품 등록에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/Add/Failure/Case2/httpie-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/Add/Failure/Case2/request-headers.adoc[]
+Request Part
+include::{snippets}/ProductApi/Add/Failure/Case2/request-parts.adoc[]
+Request Part (editProductRequest)
+include::{snippets}/ProductApi/Add/Failure/Case2/request-part-editProductRequest-fields.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/Add/Failure/Case2/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/Add/Failure/Case2/http-response.adoc[]
+include::{snippets}/ProductApi/Add/Failure/Case2/response-fields.adoc[]
+
+=== 3. 제품 등록에 성공한다
+==== HTTP Request
+include::{snippets}/ProductApi/Add/Success/httpie-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/Add/Success/request-headers.adoc[]
+Request Part
+include::{snippets}/ProductApi/Add/Success/request-parts.adoc[]
+Request Part (editProductRequest)
+include::{snippets}/ProductApi/Add/Success/request-part-editProductRequest-fields.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/Add/Success/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/Add/Success/http-response.adoc[]
+include::{snippets}/ProductApi/Add/Success/response-fields.adoc[]
+
+== 제품 상세조회 (x.2.2)
+=== 1. 유효하지 않은 제품 ID를 입력받으면 제품 상세조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetDetail/Failure/Case1/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetDetail/Failure/Case1/request-headers.adoc[]
+Path Parameter
+include::{snippets}/ProductApi/GetDetail/Failure/Case1/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetDetail/Failure/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/GetDetail/Failure/Case1/response-fields.adoc[]
+
+=== 2. 제품 상세조회에 성공한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetDetail/Failure/Case1/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetDetail/Failure/Case1/request-headers.adoc[]
+Path Parameter
+include::{snippets}/ProductApi/GetDetail/Failure/Case1/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetDetail/Success/http-response.adoc[]
+include::{snippets}/ProductApi/GetDetail/Success/response-fields.adoc[]
+
+== 입력된 이름을 포함하는 모든 제품 목록 조회 (x.4)
+=== 1. 유효하지 않은 가게 ID를 입력받으면 입력된 이름을 포함하는 모든 제품 목록 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetProductByName/Failure/Case1/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetProductByName/Failure/Case1/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetProductByName/Failure/Case1/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetProductByName/Failure/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/GetProductByName/Failure/Case1/response-fields.adoc[]
+
+=== 2. 유효하지 않은 보관 방법을 입력받으면 입력된 이름을 포함하는 모든 제품 목록 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetProductByName/Failure/Case2/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetProductByName/Failure/Case2/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetProductByName/Failure/Case2/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetProductByName/Failure/Case2/http-response.adoc[]
+include::{snippets}/ProductApi/GetProductByName/Failure/Case2/response-fields.adoc[]
+
+=== 3. 입력된 이름을 포함하는 모든 제품 목록 조회에 성공한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetProductByName/Success/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetProductByName/Success/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetProductByName/Success/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetProductByName/Success/http-response.adoc[]
+include::{snippets}/ProductApi/GetProductByName/Success/response-fields.adoc[]
+
+== 제품 변경 (x.5)
+=== 1. 유효하지 않은 가게 ID를 입력받으면 제품 변경에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/Modify/Failure/Case1/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/Modify/Failure/Case1/request-headers.adoc[]
+Request Part
+include::{snippets}/ProductApi/Modify/Failure/Case1/request-parts.adoc[]
+Request Part (editProductRequest)
+include::{snippets}/ProductApi/Modify/Failure/Case1/request-part-editProductRequest-fields.adoc[]
+Path Parameter
+include::{snippets}/ProductApi/Modify/Failure/Case1/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/Modify/Failure/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/Modify/Failure/Case1/response-fields.adoc[]
+
+=== 2. 제품 변경에 성공한다
+==== HTTP Request
+include::{snippets}/ProductApi/Modify/Failure/Case1/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/Modify/Failure/Case1/request-headers.adoc[]
+Request Part
+include::{snippets}/ProductApi/Modify/Failure/Case1/request-parts.adoc[]
+Request Part (editProductRequest)
+include::{snippets}/ProductApi/Modify/Failure/Case1/request-part-editProductRequest-fields.adoc[]
+Path Parameter
+include::{snippets}/ProductApi/Modify/Failure/Case1/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/Modify/Failure/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/Modify/Failure/Case1/response-fields.adoc[]
+
+== 제품 삭제 (x.6)
+=== 1. 유효하지 않은 제품 ID를 입력받으면 제품 삭제에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/Erase/Failure/Case1/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/Erase/Failure/Case1/request-headers.adoc[]
+Path Parameter
+include::{snippets}/ProductApi/Erase/Failure/Case1/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/Erase/Failure/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/Erase/Failure/Case1/response-fields.adoc[]
+
+=== 2. 제품 삭제에 성공한다
+==== HTTP Request
+include::{snippets}/ProductApi/Erase/Success/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/Erase/Success/request-headers.adoc[]
+Path Parameter
+include::{snippets}/ProductApi/Erase/Success/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/Erase/Success/http-response.adoc[]
+include::{snippets}/ProductApi/Erase/Success/response-fields.adoc[]
+
+== 분류 기준별 제품 개수 조회 (x.2)
+=== 1. 유효하지 않은 가게 ID를 입력받으면 분류 기준별 제품 개수 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetTotal/Failure/Case1/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetTotal/Failure/Case1/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetTotal/Failure/Case1/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetTotal/Failure/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/GetTotal/Failure/Case1/response-fields.adoc[]
+
+=== 2. 유효하지 않은 보관 방법을 입력받으면 분류 기준별 제품 개수 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetTotal/Failure/Case2/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetTotal/Failure/Case2/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetTotal/Failure/Case2/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetTotal/Failure/Case2/http-response.adoc[]
+include::{snippets}/ProductApi/GetTotal/Failure/Case2/response-fields.adoc[]
+
+=== 3. 분류 기준별 제품 개수 조회에 성공한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetTotal/Success/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetTotal/Success/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetTotal/Success/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetTotal/Success/http-response.adoc[]
+include::{snippets}/ProductApi/GetTotal/Success/response-fields.adoc[]
+
+== 특정 정렬 기준을 만족하는 전체 제품 조회 (x.2.1)
+=== 1. 유효하지 않은 가게 ID를 입력받으면 특정 정렬 기준을 만족하는 전체 제품 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetAll/Failure/Case1/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetAll/Failure/Case1/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetAll/Failure/Case1/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetAll/Failure/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/GetAll/Failure/Case1/response-fields.adoc[]
+
+=== 2. 유효하지 않은 보관 방법을 입력받으면 특정 정렬 기준을 만족하는 전체 제품 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetAll/Failure/Case2/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetAll/Failure/Case2/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetAll/Failure/Case2/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetAll/Failure/Case2/http-response.adoc[]
+include::{snippets}/ProductApi/GetAll/Failure/Case2/response-fields.adoc[]
+
+=== 3. 유효하지 않은 정렬 방식을 입력받으면 특정 정렬 기준을 만족하는 전체 제품 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetAll/Failure/Case3/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetAll/Failure/Case3/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetAll/Failure/Case3/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetAll/Failure/Case3/http-response.adoc[]
+include::{snippets}/ProductApi/GetAll/Failure/Case3/response-fields.adoc[]
+
+=== 4. 특정 정렬 기준을 만족하는 전체 제품 조회에 성공한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetAll/Success/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetAll/Success/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetAll/Success/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetAll/Success/http-response.adoc[]
+include::{snippets}/ProductApi/GetAll/Success/response-fields.adoc[]
+
+== 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회 (x.2.3)
+=== 1. 유효하지 않은 가게 ID를 입력받으면 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetPass/Failure/Case1/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetPass/Failure/Case1/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetPass/Failure/Case1/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetPass/Failure/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/GetPass/Failure/Case1/response-fields.adoc[]
+
+=== 2. 유효하지 않은 보관 방법을 입력받으면 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetPass/Failure/Case2/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetPass/Failure/Case2/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetPass/Failure/Case2/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetPass/Failure/Case2/http-response.adoc[]
+include::{snippets}/ProductApi/GetPass/Failure/Case2/response-fields.adoc[]
+
+=== 3. 유효하지 않은 정렬 방식을 입력받으면 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetPass/Failure/Case3/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetPass/Failure/Case3/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetPass/Failure/Case3/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetPass/Failure/Case3/http-response.adoc[]
+include::{snippets}/ProductApi/GetPass/Failure/Case3/response-fields.adoc[]
+
+=== 4. 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 성공한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetPass/Success/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetPass/Success/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetPass/Success/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetPass/Success/http-response.adoc[]
+include::{snippets}/ProductApi/GetPass/Success/response-fields.adoc[]
+
+== 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회 (x.2.4)
+=== 1. 유효하지 않은 가게 ID를 입력받으면 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetClose/Failure/Case1/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetClose/Failure/Case1/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetClose/Failure/Case1/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetClose/Failure/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/GetClose/Failure/Case1/response-fields.adoc[]
+
+=== 2. 유효하지 않은 보관 방법을 입력받으면 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetClose/Failure/Case2/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetClose/Failure/Case2/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetClose/Failure/Case2/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetClose/Failure/Case2/http-response.adoc[]
+include::{snippets}/ProductApi/GetClose/Failure/Case2/response-fields.adoc[]
+
+=== 3. 유효하지 않은 정렬 방식을 입력받으면 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetClose/Failure/Case3/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetClose/Failure/Case3/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetClose/Failure/Case3/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetClose/Failure/Case3/http-response.adoc[]
+include::{snippets}/ProductApi/GetClose/Failure/Case3/response-fields.adoc[]
+
+=== 4. 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 성공한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetClose/Success/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetClose/Success/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetClose/Success/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetClose/Success/http-response.adoc[]
+include::{snippets}/ProductApi/GetClose/Success/response-fields.adoc[]
+
+== 특정 정렬 기준을 만족하는 재고 부족 제품 조회 (x.2.5)
+=== 1. 유효하지 않은 가게 ID를 입력받으면 특정 정렬 기준을 만족하는 재고 부족 제품 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetLack/Failure/Case1/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetLack/Failure/Case1/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetLack/Failure/Case1/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetLack/Failure/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/GetLack/Failure/Case1/response-fields.adoc[]
+
+=== 2. 유효하지 않은 보관 방법을 입력받으면 특정 정렬 기준을 만족하는 재고 부족 제품 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetLack/Failure/Case2/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetLack/Failure/Case2/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetLack/Failure/Case2/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetLack/Failure/Case2/http-response.adoc[]
+include::{snippets}/ProductApi/GetLack/Failure/Case2/response-fields.adoc[]
+
+=== 3. 유효하지 않은 정렬 방식을 입력받으면 특정 정렬 기준을 만족하는 재고 부족 제품 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetLack/Failure/Case3/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetLack/Failure/Case3/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetLack/Failure/Case3/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetLack/Failure/Case3/http-response.adoc[]
+include::{snippets}/ProductApi/GetLack/Failure/Case3/response-fields.adoc[]
+
+=== 4. 특정 정렬 기준을 만족하는 재고 부족 제품 조회에 성공한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetLack/Success/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetLack/Success/request-headers.adoc[]
+Request Parameter
+include::{snippets}/ProductApi/GetLack/Success/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetLack/Success/http-response.adoc[]
+include::{snippets}/ProductApi/GetLack/Success/response-fields.adoc[]
+
+== 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회 (x.3)
+=== 1. refreshToken이 유효한 사용자가 DB에 없는 사용자인 case가 발생할 경우 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetPassByOnline/Failure/Case1/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetPassByOnline/Failure/Case1/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetPassByOnline/Failure/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/GetPassByOnline/Failure/Case1/response-fields.adoc[]
+
+=== 2. 유효하지 않은 역할을 가진 사용자가 존재할 경우 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 실패한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetPassByOnline/Failure/Case2/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetPassByOnline/Failure/Case2/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetPassByOnline/Failure/Case2/http-response.adoc[]
+include::{snippets}/ProductApi/GetPassByOnline/Failure/Case2/response-fields.adoc[]
+
+=== 3. 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 성공한다
+==== HTTP Request
+include::{snippets}/ProductApi/GetPassByOnline/Success/http-request.adoc[]
+Request Header
+include::{snippets}/ProductApi/GetPassByOnline/Success/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/ProductApi/GetPassByOnline/Success/http-response.adoc[]
+include::{snippets}/ProductApi/GetPassByOnline/Success/response-fields.adoc[]

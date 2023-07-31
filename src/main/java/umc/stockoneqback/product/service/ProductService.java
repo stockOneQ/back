@@ -13,10 +13,7 @@ import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.domain.ProductRepository;
 import umc.stockoneqback.product.domain.SortCondition;
 import umc.stockoneqback.product.domain.StoreCondition;
-import umc.stockoneqback.product.dto.response.GetListOfPassProductByOnlineUsersResponse;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.LoadProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductResponse;
+import umc.stockoneqback.product.dto.response.*;
 import umc.stockoneqback.product.exception.ProductErrorCode;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.PartTimerService;
@@ -43,6 +40,20 @@ public class ProductService {
     private final UserFindService userFindService;
     private final PartTimerService partTimerService;
     private static final Integer PAGE_SIZE = 12;
+
+    @Transactional
+    public GetRequiredInfoResponse getRequiredInfo(Long userId) {
+        User user = userFindService.findById(userId);
+        Store store;
+        if (user.getRole() == Role.SUPERVISOR)
+            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
+        else if (user.getRole() == Role.MANAGER) {
+            store = storeService.findByUser(user);
+        } else if (user.getRole() == Role.PART_TIMER) {
+            store = partTimerService.findByUser(user).getStore();
+        } else throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
+        return new GetRequiredInfoResponse(userId, store.getId());
+    }
 
     @Transactional
     public void saveProduct(Long userId, Long storeId, String storeConditionValue, Product product, MultipartFile image) {
@@ -307,11 +318,11 @@ public class ProductService {
         else if (user.getRole() == Role.MANAGER) {
             if (storeService.findByUser(user) == product.getStore())
                 return;
-            throw BaseException.type(UserErrorCode.USER_PRODUCT_MATCH_FAIL);
+            throw BaseException.type(UserErrorCode.USER_STORE_MATCH_FAIL);
         } else if (user.getRole() == Role.PART_TIMER) {
             if (partTimerService.findByUser(user).getStore() == product.getStore())
                 return;
-            throw BaseException.type(UserErrorCode.USER_PRODUCT_MATCH_FAIL);
+            throw BaseException.type(UserErrorCode.USER_STORE_MATCH_FAIL);
         } else throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
     }
 }

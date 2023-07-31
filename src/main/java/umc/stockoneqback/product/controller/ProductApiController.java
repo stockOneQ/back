@@ -7,10 +7,7 @@ import umc.stockoneqback.global.annotation.ExtractPayload;
 import umc.stockoneqback.global.base.BaseResponse;
 import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.product.dto.request.EditProductRequest;
-import umc.stockoneqback.product.dto.response.GetListOfPassProductByOnlineUsersResponse;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.LoadProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductResponse;
+import umc.stockoneqback.product.dto.response.*;
 import umc.stockoneqback.product.service.ProductService;
 
 import java.io.IOException;
@@ -21,6 +18,11 @@ import java.util.List;
 @RequestMapping("/api/product")
 public class ProductApiController {
     private final ProductService productService;
+
+    @GetMapping("")
+    public BaseResponse<GetRequiredInfoResponse> getRequiredInfo(@ExtractPayload Long userId) {
+        return new BaseResponse<>(productService.getRequiredInfo(userId));
+    }
 
     @PostMapping("/add")
     public BaseResponse<GlobalErrorCode> saveProduct(@ExtractPayload Long userId,
@@ -38,7 +40,7 @@ public class ProductApiController {
         return new BaseResponse<>(productService.loadProduct(userId, productId));
     }
 
-    @GetMapping("")
+    @GetMapping("/search")
     public BaseResponse<List<SearchProductResponse>> searchProduct(@ExtractPayload Long userId,
                                                                    @RequestParam(value = "store") Long storeId,
                                                                    @RequestParam(value = "condition") String storeConditionValue,
