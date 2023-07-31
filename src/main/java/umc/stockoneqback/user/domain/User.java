@@ -90,4 +90,8 @@ public class User extends BaseTimeEntity {
         this.phoneNumber = phoneNumber;
         this.birth = birth;
     }
+
+    public void updatePassword(Password password) {
+        this.password = password;
+    }
 }

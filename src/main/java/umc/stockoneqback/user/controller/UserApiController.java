@@ -2,13 +2,14 @@ package umc.stockoneqback.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import umc.stockoneqback.global.annotation.ExtractPayload;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.controller.dto.request.SignUpManagerRequest;
 import umc.stockoneqback.user.controller.dto.request.SignUpPartTimerRequest;
 import umc.stockoneqback.user.controller.dto.request.SignUpSupervisorRequest;
-import umc.stockoneqback.user.controller.dto.request.UserInfoRequest;
 import umc.stockoneqback.user.service.UserService;
 
 import javax.validation.Valid;
@@ -39,12 +40,6 @@ public class UserApiController {
     public ResponseEntity<Void> signUpSupervisor(@RequestBody @Valid SignUpSupervisorRequest request) {
         Long savedUserId = userService.saveSupervisor(request.toUser(), request.companyName(), request.companyCode());
 
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/update")
-    public ResponseEntity<Void> updateInformation(@ExtractPayload Long userId, @RequestBody @Valid UserInfoRequest request) {
-        userService.updateInformation(userId, request.name(), request.birth(), request.email(), request.loginId(), request.password(), request.phoneNumber());
         return ResponseEntity.ok().build();
     }
 }

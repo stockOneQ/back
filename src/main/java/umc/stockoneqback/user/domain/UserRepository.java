@@ -8,11 +8,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    boolean existsByLoginId(String loginId);
-
-    @Query(value = "SELECT * FROM Users u WHERE u.role = 'ROLE_MANAGER' AND u.name LIKE %:search% " +
+    // @Query
+    @Query(value = "SELECT * FROM users u WHERE u.role = 'ROLE_MANAGER' AND u.name LIKE %:search% " +
             "ORDER BY u.name", nativeQuery = true)
     List<User> searchUserByName(@Param("search") String search);
 
+    // query method
+    boolean existsByLoginId(String loginId);
+    boolean existsByEmail(Email email);
     Optional<User> findByLoginId(String loginId);
+    Optional<User> findByEmail(Email email);
 }
