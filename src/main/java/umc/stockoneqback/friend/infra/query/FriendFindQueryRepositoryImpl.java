@@ -26,7 +26,7 @@ public class FriendFindQueryRepositoryImpl implements FriendFindQueryRepository{
                 .innerJoin(user).on(friend.receiver.id.eq(user.id))
                 .innerJoin(store).on(friend.receiver.managerStore.id.eq(store.id))
                 .where(friend.sender.id.eq(userId), friend.friendStatus.eq(friendStatus))
-                .orderBy(friend.receiver.managerStore.id.desc())
+                .orderBy(friend.receiver.id.asc())
                 .fetch();
     }
 }

@@ -24,7 +24,7 @@ public class UserFindQueryRepositoryImpl implements UserFindQueryRepository {
                 .from(user)
                 .innerJoin(store).on(user.managerStore.id.eq(store.id))
                 .where(user.name.contains(name), user.role.eq(Role.MANAGER))
-                .orderBy(user.managerStore.id.desc())
+                .orderBy(user.id.asc())
                 .fetch();
     }
 
@@ -35,7 +35,7 @@ public class UserFindQueryRepositoryImpl implements UserFindQueryRepository {
                 .from(user)
                 .innerJoin(store).on(user.managerStore.id.eq(store.id))
                 .where(store.name.contains(storeName), user.role.eq(Role.MANAGER))
-                .orderBy(user.managerStore.id.desc())
+                .orderBy(user.id.asc())
                 .fetch();
     }
 
@@ -46,7 +46,7 @@ public class UserFindQueryRepositoryImpl implements UserFindQueryRepository {
                 .from(user)
                 .innerJoin(store).on(user.managerStore.id.eq(store.id))
                 .where(store.address.contains(address), user.role.eq(Role.MANAGER))
-                .orderBy(user.managerStore.id.desc())
+                .orderBy(user.id.asc())
                 .fetch();
     }
 
