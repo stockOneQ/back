@@ -5,6 +5,6 @@ import umc.stockoneqback.board.infra.query.dto.BoardList;
 import java.util.List;
 
 public record BoardListResponse(
-        List<BoardList> boardListResponses
+        List<BoardList> boardListResponse
 ){
 }

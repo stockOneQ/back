@@ -36,7 +36,7 @@ public class BoardListService {
     private static final Integer PAGE_SIZE = 7;
 
     @Transactional
-    public BoardListResponse getBoardList(Long userId, Long boardId, String sortBy) throws IOException {
+    public BoardListResponse getBoardList(Long userId, Long lastBoardId, String sortBy) throws IOException {
         User user = userFindService.findById(userId);
         validateManager(user);
 
@@ -49,7 +49,7 @@ public class BoardListService {
 
         List<BoardList> boardLists = getSortedBoardList(boardList);
 
-        int lastIndex = getLastIndex(boardLists, boardId);
+        int lastIndex = getLastIndex(boardLists, lastBoardId);
         return configPaging(boardLists, lastIndex, PAGE_SIZE);
     }
 
@@ -63,6 +63,7 @@ public class BoardListService {
                     .title(board.getTitle())
                     .content(checkContentLength(board))
                     .hit(board.getHit())
+                    .createdDate(board.getCreatedDate())
                     .comment(countCommentAndReply(board))
                     .like(countLike(board))
                     .build();
