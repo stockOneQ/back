@@ -25,9 +25,9 @@ public enum SortCondition implements EnumStandard {
     }
 
     public static SortCondition findSortConditionByValue(String sortConditionValue) {
-        try {
+        if (map.containsKey(sortConditionValue)) {
             return map.get(sortConditionValue);
-        } catch (NullPointerException exception) {
+        } else {
             throw BaseException.type(BoardErrorCode.NOT_FOUND_SORT_CONDITION);
         }
     }

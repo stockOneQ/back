@@ -8,6 +8,7 @@ import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.board.domain.SortCondition;
 import umc.stockoneqback.board.domain.like.BoardLikeRepository;
+import umc.stockoneqback.board.infra.query.dto.BoardList;
 import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.comment.domain.CommentRepository;
 import umc.stockoneqback.global.base.BaseException;
@@ -35,29 +36,29 @@ public class BoardListService {
     private static final Integer PAGE_SIZE = 7;
 
     @Transactional
-    public List<BoardListResponse> getBoardList(Long userId, Long boardId, String sortBy) throws IOException {
+    public BoardListResponse getBoardList(Long userId, Long boardId, String sortBy) throws IOException {
         User user = userFindService.findById(userId);
         validateManager(user);
 
-        Board board = configPaging(boardId);
         SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
-        List<Board> boardList = new ArrayList<>();
+        List<BoardList> boardList = new ArrayList<>();
         switch (sortCondition) {
-            case TIME -> boardList = boardRepository.getBoardListOrderByTime(board.getId(), board.getCreatedDate(), PAGE_SIZE);
-            case HIT -> boardList = boardRepository.getBoardListOrderByHit(board.getId(), board.getHit(), PAGE_SIZE);
+            case TIME -> boardList = boardRepository.getBoardListOrderByTime();
+            case HIT -> boardList = boardRepository.getBoardListOrderByHit();
         }
-        return boardListResponse(boardList);
+
+        List<BoardList> boardLists = getSortedBoardList(boardList);
+
+        int lastIndex = getLastIndex(boardLists, boardId);
+        return configPaging(boardLists, lastIndex, PAGE_SIZE);
     }
 
-    private Board configPaging(Long boardId) {
-        if (boardId == null) return Board.builder().build();
-        return boardFindService.findById(boardId);
-    }
+    private List<BoardList> getSortedBoardList(List<BoardList> boardLists) throws IOException {
+        List<BoardList> boardListResponseList = new ArrayList<>();
 
-    private List<BoardListResponse> boardListResponse(List<Board> boardList) throws IOException {
-        List<BoardListResponse> boardListResponseList = new ArrayList<>();
-        for (Board board : boardList) {
-            BoardListResponse boardListResponse = BoardListResponse.builder()
+        for (BoardList boardList : boardLists) {
+            Board board = boardFindService.findById(boardList.getId());
+            BoardList boardListResponse = BoardList.builder()
                     .id(board.getId())
                     .title(board.getTitle())
                     .content(checkContentLength(board))
@@ -68,6 +69,22 @@ public class BoardListService {
             boardListResponseList.add(boardListResponse);
         }
         return boardListResponseList;
+    }
+
+    private int getLastIndex(List<BoardList> boardLists, Long lastBoardId) {
+        return boardLists.indexOf(
+                boardLists.stream()
+                        .filter(boardList -> boardList.getId().equals(lastBoardId))
+                        .findFirst()
+                        .orElse(null)
+        );
+    }
+
+    private BoardListResponse configPaging(List<BoardList> boardLists, int lastIndex, int size) {
+        if (lastIndex + 1 + size >= boardLists.size()) {
+            return new BoardListResponse(boardLists.subList(lastIndex + 1, boardLists.size()));
+        }
+        return new BoardListResponse(boardLists.subList(lastIndex + 1, lastIndex + 1 + size));
     }
 
     private int countLike(Board board) {

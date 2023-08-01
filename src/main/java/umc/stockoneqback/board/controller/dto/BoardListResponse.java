@@ -1,14 +1,10 @@
 package umc.stockoneqback.board.controller.dto;
 
-import lombok.Builder;
+import umc.stockoneqback.board.infra.query.dto.BoardList;
 
-@Builder
-public record BoardListResponse (
-        Long id,
-        String title,
-        String content,
-        int hit,
-        int comment,
-        int like
+import java.util.List;
+
+public record BoardListResponse(
+        List<BoardList> boardListResponses
 ){
 }

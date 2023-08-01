@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import umc.stockoneqback.board.controller.dto.BoardListResponse;
 import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.fixture.BoardListFixture;
@@ -63,7 +62,7 @@ class BoardListApiControllerTest extends ControllerTest {
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
                     .param("last", (String) null)
-                    .param("sort", INVALID_SORT)
+                    .param("sort", "방구멍아")
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
@@ -160,22 +159,22 @@ class BoardListApiControllerTest extends ControllerTest {
                     );
         }
     }
-    private List<BoardListResponse> getBoardListResponse() {
-        List<BoardListResponse> boardListResponse = new ArrayList<>();
+    private List<BoardListResponseD> getBoardListResponse() {
+        List<BoardListResponseD> boardListResponse = new ArrayList<>();
         boardListResponse.add(
-                new BoardListResponse(9L, BOARD_9.getTitle(), BOARD_9.getContent(), BOARD_9.getHit(), 0,0));
+                new BoardListResponseD(9L, BOARD_9.getTitle(), BOARD_9.getContent(), BOARD_9.getHit(), 0,0));
         boardListResponse.add(
-                new BoardListResponse(8L, BOARD_8.getTitle(), BOARD_8.getContent(), BOARD_8.getHit(), 0,0));
+                new BoardListResponseD(8L, BOARD_8.getTitle(), BOARD_8.getContent(), BOARD_8.getHit(), 0,0));
         boardListResponse.add(
-                new BoardListResponse(7L, BOARD_7.getTitle(), BOARD_7.getContent(), BOARD_7.getHit(), 0,0));
+                new BoardListResponseD(7L, BOARD_7.getTitle(), BOARD_7.getContent(), BOARD_7.getHit(), 0,0));
         boardListResponse.add(
-                new BoardListResponse(6L, BOARD_6.getTitle(), BOARD_6.getContent(), BOARD_6.getHit(), 0,0));
+                new BoardListResponseD(6L, BOARD_6.getTitle(), BOARD_6.getContent(), BOARD_6.getHit(), 0,0));
         boardListResponse.add(
-                new BoardListResponse(5L, BOARD_5.getTitle(), BOARD_5.getContent(), BOARD_5.getHit(), 0,0));
+                new BoardListResponseD(5L, BOARD_5.getTitle(), BOARD_5.getContent(), BOARD_5.getHit(), 0,0));
         boardListResponse.add(
-                new BoardListResponse(4L, BOARD_4.getTitle(), BOARD_4.getContent(), BOARD_4.getHit(), 0,0));
+                new BoardListResponseD(4L, BOARD_4.getTitle(), BOARD_4.getContent(), BOARD_4.getHit(), 0,0));
         boardListResponse.add(
-                new BoardListResponse(3L, BOARD_3.getTitle(), BOARD_3.getContent(), BOARD_3.getHit(), 0,0));
+                new BoardListResponseD(3L, BOARD_3.getTitle(), BOARD_3.getContent(), BOARD_3.getHit(), 0,0));
         return boardListResponse;
     }
 }

@@ -1,14 +1,16 @@
 package umc.stockoneqback.board.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import umc.stockoneqback.board.controller.dto.BoardListResponse;
 import umc.stockoneqback.board.service.BoardListService;
 import umc.stockoneqback.global.annotation.ExtractPayload;
-import umc.stockoneqback.global.base.BaseResponse;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,9 +19,9 @@ public class BoardListApiController {
     private final BoardListService boardListService;
 
     @GetMapping
-    public BaseResponse<List<BoardListResponse>> boardList(@ExtractPayload Long userId,
-                                                           @RequestParam(value = "last", required = false) Long boardId,
-                                                           @RequestParam(value = "sort") String sortBy) throws IOException {
-        return new BaseResponse<>(boardListService.getBoardList(userId, boardId, sortBy));
+    public ResponseEntity<BoardListResponse> boardList(@ExtractPayload Long userId,
+                                                       @RequestParam(value = "last", required = false, defaultValue = "-1") Long boardId,
+                                                       @RequestParam(value = "sort", defaultValue = "최신순") String sortBy) throws IOException {
+        return ResponseEntity.ok(boardListService.getBoardList(userId, boardId, sortBy));
     }
 }
