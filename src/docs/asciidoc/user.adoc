@@ -85,32 +85,3 @@ include::{snippets}/UserApi/SignUp/Supervisor/Success/request-body.adoc[]
 
 HTTP Response
 include::{snippets}/UserApi/SignUp/Supervisor/Success/http-response.adoc[]
-
-== 회원 정보 수정
-=== 1. Authorization Header에 AccessToken이 없으면 회원정보 수정에 실패한다
-HTTP Request
-include::{snippets}/UserApi/Update/Failure/Case1/http-request.adoc[]
-include::{snippets}/UserApi/Update/Failure/Case1/request-fields.adoc[]
-
-HTTP Response
-include::{snippets}/UserApi/Update/Failure/Case1/http-response.adoc[]
-include::{snippets}/UserApi/Update/Failure/Case1/response-fields.adoc[]
-
-=== 2. 중복된 로그인 아이디가 존재한다면 회원 정보 수정에 실패한다
-HTTP Request
-include::{snippets}/UserApi/Update/Failure/Case2/http-request.adoc[]
-include::{snippets}/UserApi/Update/Failure/Case2/request-headers.adoc[]
-include::{snippets}/UserApi/Update/Failure/Case2/request-fields.adoc[]
-
-HTTP Response
-include::{snippets}/UserApi/Update/Failure/Case2/http-response.adoc[]
-include::{snippets}/UserApi/Update/Failure/Case2/response-fields.adoc[]
-
-=== 3. 회원 정보 수정에 성공한다
-HTTP Request
-include::{snippets}/UserApi/Update/Success/http-request.adoc[]
-include::{snippets}/UserApi/Update/Success/request-headers.adoc[]
-include::{snippets}/UserApi/Update/Success/request-fields.adoc[]
-
-HTTP Response
-include::{snippets}/UserApi/Update/Success/http-response.adoc[]

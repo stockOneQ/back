@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.friend.domain.FriendStatus;
 import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.user.domain.Email;
 import umc.stockoneqback.user.controller.dto.response.FindManagerResponse;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
@@ -36,6 +37,11 @@ public class UserFindService {
                 .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
     }
 
+    public User findByEmail(Email email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
+    }
+  
     public FindManagerResponse findManager(Long userId, String searchConditionValue, Long lastUserId, String searchWord) {
         List<FindManager> user = userRepository.findUserByUserId(userId);
         List<FindManager> friendUsers = friendRepository.findReceiversByUserId(userId, FriendStatus.ACCEPT);

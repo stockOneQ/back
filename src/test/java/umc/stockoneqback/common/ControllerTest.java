@@ -20,8 +20,10 @@ import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.auth.service.TokenReissueService;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
 import umc.stockoneqback.board.controller.BoardApiController;
+import umc.stockoneqback.board.controller.BoardListApiController;
 import umc.stockoneqback.board.controller.like.BoardLikeApiController;
 import umc.stockoneqback.board.service.BoardFindService;
+import umc.stockoneqback.board.service.BoardListService;
 import umc.stockoneqback.board.service.BoardService;
 import umc.stockoneqback.board.service.like.BoardLikeService;
 import umc.stockoneqback.business.controller.BusinessApiController;
@@ -50,15 +52,21 @@ import umc.stockoneqback.reply.service.ReplyService;
 import umc.stockoneqback.role.service.CompanyService;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.controller.UserApiController;
+import umc.stockoneqback.user.controller.UserInformationApiController;
+import umc.stockoneqback.user.controller.UserUpdateApiController;
 import umc.stockoneqback.user.controller.UserFindApiController;
 import umc.stockoneqback.user.service.UserFindService;
+import umc.stockoneqback.user.service.UserInformationService;
 import umc.stockoneqback.user.service.UserService;
+import umc.stockoneqback.user.service.UserUpdateService;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest(value = {
         UserApiController.class,
+        UserUpdateApiController.class,
+        UserInformationApiController.class,
         BusinessApiController.class,
         BoardApiController.class,
         BusinessApiController.class,
@@ -70,6 +78,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         BoardLikeApiController.class,
         FriendInformationController.class,
         TokenReissueApiController.class,
+        BoardListApiController.class,
         UserFindApiController.class,
         FriendProductApiController.class,
         BusinessProductApiController.class
@@ -87,11 +96,17 @@ public abstract class ControllerTest {
     protected UserService userService;
 
     @MockBean
+    protected UserUpdateService userUpdateService;
+
+    @MockBean
+    protected UserInformationService userInformationService;
+
+    @MockBean
     protected StoreService storeService;
 
     @MockBean
     protected CompanyService companyService;
-    
+
     @MockBean
     protected BusinessService businessService;
 
@@ -100,7 +115,7 @@ public abstract class ControllerTest {
 
     @MockBean
     protected ProductService productService;
-    
+
     @MockBean
     protected UserFindService userFindService;
 
@@ -133,13 +148,13 @@ public abstract class ControllerTest {
 
     @MockBean
     protected ReplyService replyService;
-     
+
     @MockBean
     protected FriendService friendService;
 
     @MockBean
     protected FriendFindService friendFindService;
-  
+
     @MockBean
     protected BoardLikeService boardLikeService;
 
@@ -148,6 +163,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected TokenReissueService tokenReissueService;
+
+    @MockBean
+    protected BoardListService boardListService;
 
     @MockBean
     protected FriendProductService friendProductService;
