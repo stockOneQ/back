@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.board.controller.dto.BoardListResponse;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.domain.BoardRepository;
+import umc.stockoneqback.board.domain.SearchType;
 import umc.stockoneqback.board.domain.SortCondition;
 import umc.stockoneqback.board.domain.like.BoardLikeRepository;
 import umc.stockoneqback.board.infra.query.dto.BoardList;
@@ -36,15 +37,17 @@ public class BoardListService {
     private static final Integer PAGE_SIZE = 7;
 
     @Transactional
-    public BoardListResponse getBoardList(Long userId, Long lastBoardId, String sortBy) throws IOException {
+    public BoardListResponse getBoardList(Long userId, Long lastBoardId, String sortBy, String searchBy, String searchWord) throws IOException {
         User user = userFindService.findById(userId);
         validateManager(user);
 
         SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
+        SearchType searchType = SearchType.findSearchTypeByValue(searchBy);
+
         List<BoardList> boardList = new ArrayList<>();
         switch (sortCondition) {
-            case TIME -> boardList = boardRepository.getBoardListOrderByTime();
-            case HIT -> boardList = boardRepository.getBoardListOrderByHit();
+            case TIME -> boardList = boardRepository.getBoardListOrderByTime(searchType, searchWord);
+            case HIT -> boardList = boardRepository.getBoardListOrderByHit(searchType, searchWord);
         }
 
         List<BoardList> boardLists = getSortedBoardList(boardList);

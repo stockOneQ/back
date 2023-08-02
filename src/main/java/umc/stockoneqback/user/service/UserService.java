@@ -23,7 +23,7 @@ public class UserService {
 
     @Transactional
     public Long saveManager(User user, Long storeId) {
-        validateDuplicate(user.getLoginId(), user.getEmail());
+//        validateDuplicate(user.getLoginId(), user.getEmail());
 
         Store store = storeService.findById(storeId);
         userRepository.save(user);
@@ -34,7 +34,7 @@ public class UserService {
 
     @Transactional
     public Long savePartTimer(User user, String storeName, String storeCode) {
-        validateDuplicate(user.getLoginId(), user.getEmail());
+//        validateDuplicate(user.getLoginId(), user.getEmail());
         Store store = storeService.findByName(storeName);
         validateStoreCode(storeCode, store.getCode());
 
@@ -52,7 +52,7 @@ public class UserService {
 
     @Transactional
     public Long saveSupervisor(User user, String companyName, String companyCode) {
-        validateDuplicate(user.getLoginId(), user.getEmail());
+//        validateDuplicate(user.getLoginId(), user.getEmail());
         Company company = companyService.findByName(companyName);
         validateCompanyCode(companyCode, company.getCode());
 
@@ -68,10 +68,10 @@ public class UserService {
         }
     }
 
-    private void validateDuplicate(String loginId, Email email) {
-        validateDuplicateLoginId(loginId);
-        validateDuplicateEmail(email);
-    }
+//    private void validateDuplicate(String loginId, Email email) {
+//        validateDuplicateLoginId(loginId);
+//        validateDuplicateEmail(email);
+//    }
 
     private void validateDuplicateLoginId(String loginId) {
         if (userRepository.existsByLoginId(loginId)) {
@@ -79,9 +79,9 @@ public class UserService {
         }
     }
 
-    private void validateDuplicateEmail(Email email) {
-        if (userRepository.existsByEmail(email)) {
-            throw BaseException.type(UserErrorCode.DUPLICATE_EMAIL);
-        }
-    }
+//    private void validateDuplicateEmail(Email email) {
+//        if (userRepository.existsByEmail(email)) {
+//            throw BaseException.type(UserErrorCode.DUPLICATE_EMAIL);
+//        }
+//    }
 }
