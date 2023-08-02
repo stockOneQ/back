@@ -51,25 +51,25 @@ class UserRepositoryTest extends RepositoryTest {
         );
     }
 
-//    @Test
-//    @DisplayName("이메일로 사용자가 존재하는지 확인한다")
-//    void existsByEmail() {
-//        // when
-//        boolean actual1 = userRepository.existsByEmail(Email.from(SAEWOO.getEmail()));
-//        boolean actual2 = userRepository.existsByEmail(Email.from(ANNE.getEmail()));
-//        boolean actual3 = userRepository.existsByEmail(Email.from(WIZ.getEmail()));
-//        boolean actual4 = userRepository.existsByEmail(Email.from(WONI.getEmail()));
-//        boolean actual5 = userRepository.existsByEmail(Email.from("fakefake@gmail.com"));
-//
-//        // then
-//        assertAll(
-//                () -> assertThat(actual1).isTrue(),
-//                () -> assertThat(actual2).isTrue(),
-//                () -> assertThat(actual3).isTrue(),
-//                () -> assertThat(actual4).isTrue(),
-//                () -> assertThat(actual5).isFalse()
-//        );
-//    }
+    @Test
+    @DisplayName("이메일로 사용자가 존재하는지 확인한다")
+    void existsByEmail() {
+        // when
+        boolean actual1 = userRepository.existsByEmail(Email.from(SAEWOO.getEmail()));
+        boolean actual2 = userRepository.existsByEmail(Email.from(ANNE.getEmail()));
+        boolean actual3 = userRepository.existsByEmail(Email.from(WIZ.getEmail()));
+        boolean actual4 = userRepository.existsByEmail(Email.from(WONI.getEmail()));
+        boolean actual5 = userRepository.existsByEmail(Email.from("fakefake@gmail.com"));
+
+        // then
+        assertAll(
+                () -> assertThat(actual1).isTrue(),
+                () -> assertThat(actual2).isTrue(),
+                () -> assertThat(actual3).isTrue(),
+                () -> assertThat(actual4).isTrue(),
+                () -> assertThat(actual5).isFalse()
+        );
+    }
 
     @Test
     @DisplayName("로그인 아이디로 사용자를 조회한다")
