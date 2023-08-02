@@ -43,7 +43,7 @@ public class BusinessService {
         businessRepository.deleteBySupervisorAndManager(supervisor, manager);
     }
 
-    private void validateNotExist(User supervisor, User manager) {
+    void validateNotExist(User supervisor, User manager) {
         if (!businessRepository.existsBySupervisorAndManager(supervisor, manager)) {
             throw BaseException.type(BusinessErrorCode.BUSINESS_NOT_FOUND);
         }

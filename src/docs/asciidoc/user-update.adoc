@@ -1,0 +1,77 @@
+= User 수정 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 회원 정보 수정
+=== 1. Authorization Header에 AccessToken이 없으면 회원정보 수정에 실패한다
+HTTP Request
+include::{snippets}/UserApi/Update/Failure/Case1/http-request.adoc[]
+include::{snippets}/UserApi/Update/Failure/Case1/request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Update/Failure/Case1/http-response.adoc[]
+include::{snippets}/UserApi/Update/Failure/Case1/response-fields.adoc[]
+
+=== 2. 중복된 로그인 아이디가 존재한다면 회원 정보 수정에 실패한다
+HTTP Request
+include::{snippets}/UserApi/Update/Failure/Case2/http-request.adoc[]
+include::{snippets}/UserApi/Update/Failure/Case2/request-headers.adoc[]
+include::{snippets}/UserApi/Update/Failure/Case2/request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Update/Failure/Case2/http-response.adoc[]
+include::{snippets}/UserApi/Update/Failure/Case2/response-fields.adoc[]
+
+=== 3. 회원 정보 수정에 성공한다
+HTTP Request
+include::{snippets}/UserApi/Update/Success/http-request.adoc[]
+include::{snippets}/UserApi/Update/Success/request-headers.adoc[]
+include::{snippets}/UserApi/Update/Success/request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Update/Success/http-response.adoc[]
+
+== 비밀번호 변경 가능 여부 검증
+=== 1. 정보가 일치하는 사용자를 찾을 수 없으면 비밀번호 변경 가능 여부 검증에 실패한다
+HTTP Request
+include::{snippets}/UserApi/validateUpdatePassword/Failure/Case1/http-request.adoc[]
+include::{snippets}/UserApi/validateUpdatePassword/Failure/Case1/response-fields.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/validateUpdatePassword/Failure/Case1/http-response.adoc[]
+
+=== 2. 비밀번호 변경 가능 여부 검증에 성공한다
+HTTP Request
+include::{snippets}/UserApi/validateUpdatePassword/Success/http-request.adoc[]
+include::{snippets}/UserApi/validateUpdatePassword/Success/response-fields.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/validateUpdatePassword/Success/http-response.adoc[]
+
+== 비밀번호 변경
+=== 1. 정보가 일치하는 사용자를 찾을 수 없으면 비밀번호 변경에 실패한다
+HTTP Request
+include::{snippets}/UserApi/UpdatePassword/Failure/Case1/http-request.adoc[]
+include::{snippets}/UserApi/UpdatePassword/Failure/Case1/request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/UpdatePassword/Failure/Case1/http-response.adoc[]
+
+=== 2. 비밀번호 변경 검증이 되지 않았다면 비밀번호 변경에 실패한다
+HTTP Request
+include::{snippets}/UserApi/UpdatePassword/Failure/Case2/http-request.adoc[]
+include::{snippets}/UserApi/UpdatePassword/Failure/Case2/request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/UpdatePassword/Failure/Case2/http-response.adoc[]
+
+=== 3. 비밀번호 변경에 성공한다
+HTTP Request
+include::{snippets}/UserApi/UpdatePassword/Success/http-request.adoc[]
+include::{snippets}/UserApi/UpdatePassword/Success/request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/UpdatePassword/Success/http-response.adoc[]

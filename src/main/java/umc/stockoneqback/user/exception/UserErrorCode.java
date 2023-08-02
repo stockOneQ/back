@@ -18,7 +18,10 @@ public enum UserErrorCode implements ErrorCode {
     USER_IS_NOT_MANAGER(HttpStatus.BAD_REQUEST, "USER_008", "해당 유저는 사장님이 아닙니다."),
     USER_IS_NOT_ALLOWED_TO_SEARCH(HttpStatus.BAD_REQUEST, "USER_009", "해당 유저는 점주 검색 권한이 없습니다."),
     USER_STORE_MATCH_FAIL(HttpStatus.BAD_REQUEST, "USER_010", "요청한 사용자가 요청한 가게 소속이 아닙니다."),
-    USER_PRODUCT_MATCH_FAIL(HttpStatus.BAD_REQUEST, "USER_011", "요청한 사용자가 요청한 제품을 가지고 있지 않습니다.")
+    USER_PRODUCT_MATCH_FAIL(HttpStatus.BAD_REQUEST, "USER_011", "요청한 사용자가 요청한 제품을 가지고 있지 않습니다."),
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "USER_012", "중복된 이메일이 존재합니다."),
+    NOT_ALLOWED_UPDATE_PASSWORD(HttpStatus.FORBIDDEN, "USER_013", "비밀번호를 업데이트할 자격이 없습니다."),
+    INVALID_SEARCH_CONDITION(HttpStatus.NOT_FOUND, "USER_014", "유효하지 않은 검색 조건입니다."),
     ;
 
     private final HttpStatus status;

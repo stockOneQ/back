@@ -27,20 +27,24 @@ import umc.stockoneqback.board.service.BoardListService;
 import umc.stockoneqback.board.service.BoardService;
 import umc.stockoneqback.board.service.like.BoardLikeService;
 import umc.stockoneqback.business.controller.BusinessApiController;
+import umc.stockoneqback.business.controller.BusinessProductApiController;
+import umc.stockoneqback.business.service.BusinessProductService;
 import umc.stockoneqback.business.service.BusinessService;
 import umc.stockoneqback.comment.controller.CommentApiController;
 import umc.stockoneqback.comment.service.CommentFindService;
 import umc.stockoneqback.comment.service.CommentService;
 import umc.stockoneqback.friend.controller.FriendApiController;
-import umc.stockoneqback.friend.controller.FriendFindApiController;
 import umc.stockoneqback.friend.controller.FriendInformationController;
+import umc.stockoneqback.friend.controller.FriendProductApiController;
 import umc.stockoneqback.friend.service.FriendFindService;
 import umc.stockoneqback.friend.service.FriendInformationService;
+import umc.stockoneqback.friend.service.FriendProductService;
 import umc.stockoneqback.friend.service.FriendService;
 import umc.stockoneqback.global.security.handler.JwtAccessDeniedHandler;
 import umc.stockoneqback.global.security.handler.JwtAuthenticationEntryPoint;
 import umc.stockoneqback.global.security.service.CustomUserDetailsService;
 import umc.stockoneqback.product.controller.ProductApiController;
+import umc.stockoneqback.product.service.ProductOthersService;
 import umc.stockoneqback.product.service.ProductService;
 import umc.stockoneqback.reply.controller.ReplyApiController;
 import umc.stockoneqback.reply.service.ReplyFindService;
@@ -48,14 +52,21 @@ import umc.stockoneqback.reply.service.ReplyService;
 import umc.stockoneqback.role.service.CompanyService;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.controller.UserApiController;
+import umc.stockoneqback.user.controller.UserInformationApiController;
+import umc.stockoneqback.user.controller.UserUpdateApiController;
+import umc.stockoneqback.user.controller.UserFindApiController;
 import umc.stockoneqback.user.service.UserFindService;
+import umc.stockoneqback.user.service.UserInformationService;
 import umc.stockoneqback.user.service.UserService;
+import umc.stockoneqback.user.service.UserUpdateService;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest(value = {
         UserApiController.class,
+        UserUpdateApiController.class,
+        UserInformationApiController.class,
         BusinessApiController.class,
         BoardApiController.class,
         BusinessApiController.class,
@@ -64,11 +75,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         ReplyApiController.class,
         ProductApiController.class,
         FriendApiController.class,
-        FriendFindApiController.class,
         BoardLikeApiController.class,
         FriendInformationController.class,
         TokenReissueApiController.class,
         BoardListApiController.class,
+        UserFindApiController.class,
+        FriendProductApiController.class,
+        BusinessProductApiController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs
@@ -81,6 +94,12 @@ public abstract class ControllerTest {
 
     @MockBean
     protected UserService userService;
+
+    @MockBean
+    protected UserUpdateService userUpdateService;
+
+    @MockBean
+    protected UserInformationService userInformationService;
 
     @MockBean
     protected StoreService storeService;
@@ -147,6 +166,14 @@ public abstract class ControllerTest {
 
     @MockBean
     protected BoardListService boardListService;
+
+    protected FriendProductService friendProductService;
+
+    @MockBean
+    protected BusinessProductService businessProductService;
+
+    @MockBean
+    protected ProductOthersService productOthersService;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {
