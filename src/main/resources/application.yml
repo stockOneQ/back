@@ -17,7 +17,7 @@ spring:
 
   config:
     import:
-    - classpath:secret.yml
+      - classpath:secret.yml
 
 logging:
   level:

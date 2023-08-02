@@ -32,7 +32,6 @@ import umc.stockoneqback.comment.controller.CommentApiController;
 import umc.stockoneqback.comment.service.CommentFindService;
 import umc.stockoneqback.comment.service.CommentService;
 import umc.stockoneqback.friend.controller.FriendApiController;
-import umc.stockoneqback.friend.controller.FriendFindApiController;
 import umc.stockoneqback.friend.controller.FriendInformationController;
 import umc.stockoneqback.friend.controller.FriendProductApiController;
 import umc.stockoneqback.friend.service.FriendFindService;
@@ -51,6 +50,7 @@ import umc.stockoneqback.reply.service.ReplyService;
 import umc.stockoneqback.role.service.CompanyService;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.controller.UserApiController;
+import umc.stockoneqback.user.controller.UserFindApiController;
 import umc.stockoneqback.user.service.UserFindService;
 import umc.stockoneqback.user.service.UserService;
 
@@ -67,10 +67,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         ReplyApiController.class,
         ProductApiController.class,
         FriendApiController.class,
-        FriendFindApiController.class,
         BoardLikeApiController.class,
         FriendInformationController.class,
         TokenReissueApiController.class,
+        UserFindApiController.class
         FriendProductApiController.class,
         BusinessProductApiController.class
 })
