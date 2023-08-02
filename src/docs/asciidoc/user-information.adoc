@@ -22,3 +22,50 @@ include::{snippets}/UserApi/Information/FindLoginId/Success/request-fields.adoc[
 HTTP Response
 include::{snippets}/UserApi/Information/FindLoginId/Success/http-response.adoc[]
 include::{snippets}/UserApi/Information/FindLoginId/Success/response-fields.adoc[]
+
+== 사용자 정보 조회
+=== 1. Authorization Header에 AccessToken이 없으면 사용자 정보 조회에 실패한다
+HTTP Request
+include::{snippets}/UserApi/Information/Get/Failure/Case1/http-request.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Information/Get/Failure/Case1/http-response.adoc[]
+
+=== 2. 사용자를 찾을 수 없으면 사용자 정보 조회에 실패한다
+HTTP Request
+include::{snippets}/UserApi/Information/Get/Failure/Case2/http-request.adoc[]
+include::{snippets}/UserApi/Information/Get/Failure/Case2/request-headers.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Information/Get/Failure/Case2/http-response.adoc[]
+
+=== 3. 사용자 정보 조회에 성공한다 - 사장님
+HTTP Request
+include::{snippets}/UserApi/Information/Get/Success/Case1/http-request.adoc[]
+include::{snippets}/UserApi/Information/Get/Success/Case1/request-headers.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Information/Get/Success/Case1/http-response.adoc[]
+include::{snippets}/UserApi/Information/Get/Success/Case1/response-fields.adoc[]
+
+=== 4. 사용자 정보 조회에 성공한다 - 아르바이트생
+HTTP Request
+include::{snippets}/UserApi/Information/Get/Success/Case2/http-request.adoc[]
+include::{snippets}/UserApi/Information/Get/Success/Case2/request-headers.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Information/Get/Success/Case2/http-response.adoc[]
+include::{snippets}/UserApi/Information/Get/Success/Case2/response-fields.adoc[]
+
+=== 5. 사용자 정보 조회에 성공한다 - 슈퍼바이저
+HTTP Request
+include::{snippets}/UserApi/Information/Get/Success/Case3/http-request.adoc[]
+include::{snippets}/UserApi/Information/Get/Success/Case3/request-headers.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Information/Get/Success/Case3/http-response.adoc[]
+include::{snippets}/UserApi/Information/Get/Success/Case3/response-fields.adoc[]
+
+
+
+
