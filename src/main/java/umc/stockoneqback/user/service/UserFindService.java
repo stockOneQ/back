@@ -7,12 +7,12 @@ import umc.stockoneqback.friend.domain.FriendStatus;
 import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.user.domain.Email;
-import umc.stockoneqback.user.controller.dto.response.FindManagerResponse;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
 import umc.stockoneqback.user.domain.search.SearchCondition;
 import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.infra.query.dto.FindManager;
+import umc.stockoneqback.user.service.dto.response.FindManagerResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;

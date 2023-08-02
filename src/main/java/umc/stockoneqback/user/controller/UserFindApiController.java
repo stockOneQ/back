@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import umc.stockoneqback.global.annotation.ExtractPayload;
-import umc.stockoneqback.user.controller.dto.response.FindManagerResponse;
 import umc.stockoneqback.user.service.UserFindService;
+import umc.stockoneqback.user.service.dto.response.FindManagerResponse;
 
 @RestController
 @RequiredArgsConstructor
