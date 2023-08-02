@@ -3,13 +3,18 @@ package umc.stockoneqback.reply.controller;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.reply.controller.dto.ReplyRequest;
 import umc.stockoneqback.reply.exception.ReplyErrorCode;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -21,10 +26,11 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static umc.stockoneqback.common.DocumentFormatGenerator.getInputDTOFormat;
+import static umc.stockoneqback.common.DocumentFormatGenerator.getInputImageFormat;
 import static umc.stockoneqback.fixture.ReplyFixture.REPLY_0;
 import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
@@ -43,10 +49,15 @@ public class ReplyApiControllerTest extends ControllerTest {
         void withoutAccessToken() throws Exception {
             // when
             final ReplyRequest request = createReplyRequest();
+            MockMultipartFile file = new MockMultipartFile("image", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("request", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .post(BASE_URL, COMMENT_ID)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .multipart(BASE_URL, COMMENT_ID)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON);
 
             // then
             final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
@@ -68,7 +79,12 @@ public class ReplyApiControllerTest extends ControllerTest {
                                     pathParameters(
                                             parameterWithName("commentId").description("등록할 댓글 ID(PK)")
                                     ),
-                                    requestFields(
+                                    requestParts(
+                                            partWithName("image").attributes(getInputImageFormat()).description("파일"),
+                                            partWithName("request").attributes(getInputDTOFormat()).description("등록할 대댓글 DTO")
+                                    ),
+                                    requestPartFields(
+                                            "request",
                                             fieldWithPath("image").description("등록할 이미지"),
                                             fieldWithPath("content").description("등록할 내용")
                                     ),
@@ -91,11 +107,16 @@ public class ReplyApiControllerTest extends ControllerTest {
 
             // when
             final ReplyRequest request = createReplyRequest();
+            MockMultipartFile file = new MockMultipartFile("image", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("request", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .post(BASE_URL, COMMENT_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .multipart(BASE_URL, COMMENT_ID)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -113,7 +134,12 @@ public class ReplyApiControllerTest extends ControllerTest {
                                     pathParameters(
                                             parameterWithName("commentId").description("등록할 댓글 ID(PK)")
                                     ),
-                                    requestFields(
+                                    requestParts(
+                                            partWithName("image").attributes(getInputImageFormat()).description("파일"),
+                                            partWithName("request").attributes(getInputDTOFormat()).description("등록할 대댓글 DTO")
+                                    ),
+                                    requestPartFields(
+                                            "request",
                                             fieldWithPath("image").description("등록할 이미지"),
                                             fieldWithPath("content").description("등록할 내용")
                                     )
@@ -134,10 +160,22 @@ public class ReplyApiControllerTest extends ControllerTest {
         void withoutAccessToken() throws Exception {
             // given
             final ReplyRequest request = createReplyRequest();
+            MockMultipartFile file = new MockMultipartFile("image", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("request", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .post(BASE_URL, REPLY_ID)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .multipart(BASE_URL, REPLY_ID)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
+                    .with(new RequestPostProcessor() {
+                        @Override
+                        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                            request.setMethod("PATCH");
+                            return request;
+                        }
+                    });
 
             // then
             final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
@@ -159,7 +197,12 @@ public class ReplyApiControllerTest extends ControllerTest {
                                     pathParameters(
                                             parameterWithName("replyId").description("수정할 대댓글 ID(PK)")
                                     ),
-                                    requestFields(
+                                    requestParts(
+                                            partWithName("image").attributes(getInputImageFormat()).description("파일"),
+                                            partWithName("request").attributes(getInputDTOFormat()).description("수정할 대댓글 DTO")
+                                    ),
+                                    requestPartFields(
+                                            "request",
                                             fieldWithPath("image").description("수정할 이미지"),
                                             fieldWithPath("content").description("수정할 내용")
                                     ),
@@ -181,11 +224,23 @@ public class ReplyApiControllerTest extends ControllerTest {
 
             // when
             final ReplyRequest request = createReplyRequest();
+            MockMultipartFile file = new MockMultipartFile("image", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("request", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .patch(BASE_URL, REPLY_ID)
+                    .multipart(BASE_URL, REPLY_ID)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .with(new RequestPostProcessor() {
+                        @Override
+                        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                            request.setMethod("PATCH");
+                            return request;
+                        }
+                    });
 
             // then
             final ReplyErrorCode expectedError = ReplyErrorCode.USER_IS_NOT_REPLY_WRITER;
@@ -210,7 +265,12 @@ public class ReplyApiControllerTest extends ControllerTest {
                                     pathParameters(
                                             parameterWithName("replyId").description("수정할 대댓글 ID(PK)")
                                     ),
-                                    requestFields(
+                                    requestParts(
+                                            partWithName("image").attributes(getInputImageFormat()).description("파일"),
+                                            partWithName("request").attributes(getInputDTOFormat()).description("수정할 대댓글 DTO")
+                                    ),
+                                    requestPartFields(
+                                            "request",
                                             fieldWithPath("image").description("수정할 이미지"),
                                             fieldWithPath("content").description("수정할 내용")
                                     ),
@@ -233,11 +293,23 @@ public class ReplyApiControllerTest extends ControllerTest {
 
             // when
             final ReplyRequest request = createReplyRequest();
+            MockMultipartFile file = new MockMultipartFile("image", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("request", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .patch(BASE_URL, REPLY_ID)
+                    .multipart(BASE_URL, REPLY_ID)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .with(new RequestPostProcessor() {
+                        @Override
+                        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                            request.setMethod("PATCH");
+                            return request;
+                        }
+                    });
 
             // then
             mockMvc.perform(requestBuilder)
@@ -255,7 +327,12 @@ public class ReplyApiControllerTest extends ControllerTest {
                                     pathParameters(
                                             parameterWithName("replyId").description("수정할 대댓글 ID(PK)")
                                     ),
-                                    requestFields(
+                                    requestParts(
+                                            partWithName("image").attributes(getInputImageFormat()).description("파일"),
+                                            partWithName("request").attributes(getInputDTOFormat()).description("수정할 대댓글 DTO")
+                                    ),
+                                    requestPartFields(
+                                            "request",
                                             fieldWithPath("image").description("수정할 이미지"),
                                             fieldWithPath("content").description("수정할 내용")
                                     )
@@ -324,7 +401,14 @@ public class ReplyApiControllerTest extends ControllerTest {
                     .delete(BASE_URL, WRITER_ID, REPLY_ID)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .content(objectMapper.writeValueAsString(request))
+                    .with(new RequestPostProcessor() {
+                        @Override
+                        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                            request.setMethod("DELETE");
+                            return request;
+                        }
+                    });
 
             // then
             final ReplyErrorCode expectedError = ReplyErrorCode.USER_IS_NOT_REPLY_WRITER;
@@ -372,7 +456,14 @@ public class ReplyApiControllerTest extends ControllerTest {
                     .delete(BASE_URL, REPLY_ID)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
                     .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .content(objectMapper.writeValueAsString(request))
+                    .with(new RequestPostProcessor() {
+                        @Override
+                        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                            request.setMethod("DELETE");
+                            return request;
+                        }
+                    });
 
             // then
             mockMvc.perform(requestBuilder)

@@ -10,6 +10,9 @@ import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.controller.dto.request.SignUpManagerRequest;
 import umc.stockoneqback.user.controller.dto.request.SignUpPartTimerRequest;
 import umc.stockoneqback.user.controller.dto.request.SignUpSupervisorRequest;
+import umc.stockoneqback.user.controller.dto.request.UserInfoRequest;
+import umc.stockoneqback.user.controller.dto.response.FindManagerResponse;
+import umc.stockoneqback.user.service.UserFindService;
 import umc.stockoneqback.user.service.UserService;
 
 import javax.validation.Valid;

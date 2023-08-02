@@ -18,7 +18,7 @@ public class ReplyApiController {
 
     @PostMapping("/{commentId}")
     public ResponseEntity<Void> create(@ExtractPayload Long writerId, @PathVariable Long commentId,
-                                       @RequestBody @Valid ReplyRequest request,
+                                       @RequestPart(value = "request")  @Valid ReplyRequest request,
                                        @RequestPart(value = "image", required = false) MultipartFile multipartFile) {
         replyService.create(writerId, commentId, multipartFile, request.content());
         return ResponseEntity.ok().build();
@@ -26,7 +26,7 @@ public class ReplyApiController {
 
     @PatchMapping("/{replyId}")
     public ResponseEntity<Void> update(@ExtractPayload Long writerId, @PathVariable Long replyId,
-                                       @RequestBody @Valid ReplyRequest request,
+                                       @RequestPart(value = "request")  @Valid ReplyRequest request,
                                        @RequestPart(value = "image", required = false) MultipartFile multipartFile) {
         replyService.update(writerId, replyId, multipartFile, request.content());
         return ResponseEntity.ok().build();

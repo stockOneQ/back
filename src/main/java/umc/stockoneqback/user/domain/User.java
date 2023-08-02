@@ -1,6 +1,7 @@
 package umc.stockoneqback.user.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -59,6 +60,7 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "writer", cascade = PERSIST, orphanRemoval = true)
     private List<Board> boardList = new ArrayList<>();
 
+    @Builder
     private User(Email email, String loginId, Password password, String username, LocalDate birth, String phoneNumber, Role role) {
         this.email = email;
         this.loginId = loginId;

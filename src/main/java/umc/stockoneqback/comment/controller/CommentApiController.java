@@ -18,7 +18,7 @@ public class CommentApiController {
 
     @PostMapping("/{boardId}")
     public ResponseEntity<Void> create(@ExtractPayload Long writerId, @PathVariable Long boardId,
-                                       @RequestBody @Valid CommentRequest request,
+                                       @RequestPart(value = "request")  @Valid CommentRequest request,
                                        @RequestPart(value = "image", required = false) MultipartFile multipartFile) {
         commentService.create(writerId, boardId, multipartFile, request.content());
         return ResponseEntity.ok().build();
@@ -26,7 +26,7 @@ public class CommentApiController {
 
     @PatchMapping("/{commentId}")
     public ResponseEntity<Void> update(@ExtractPayload Long writerId, @PathVariable Long commentId,
-                                       @RequestBody @Valid CommentRequest request,
+                                       @RequestPart(value = "request")  @Valid CommentRequest request,
                                        @RequestPart(value = "image", required = false) MultipartFile multipartFile) {
         commentService.update(writerId, commentId, multipartFile, request.content());
         return ResponseEntity.ok().build();

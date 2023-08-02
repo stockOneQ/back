@@ -97,4 +97,10 @@ public class FriendService {
             throw BaseException.type(FriendErrorCode.STATUS_IS_REQUEST);
         }
     }
+
+    void validateNotFriend(User sender, User receiver) {
+        if (!friendRepository.existsBySenderAndReceiver(sender, receiver) && !friendRepository.existsBySenderAndReceiver(receiver, sender)) {
+            throw BaseException.type(FriendErrorCode.FRIEND_NOT_FOUND);
+        }
+    }
 }
