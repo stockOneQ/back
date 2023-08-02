@@ -179,6 +179,7 @@ public class FriendProductServiceTest extends ServiceTest {
         void success() throws IOException {
             User user = userRepository.findByLoginId(ELLA.toUser().getLoginId()).orElseThrow();
             User friend = userRepository.findByLoginId(ANNE.toUser().getLoginId()).orElseThrow();
+
             List<SearchProductOthersResponse> allProductOthersResponseList = friendProductService.getListOfCategoryProductOthers
                     (user.getId(), friend.getId(), products[0].getStoreCondition().getValue(), null, "All");
             List<SearchProductOthersResponse> passProductOthersResponseList = friendProductService.getListOfCategoryProductOthers
@@ -187,7 +188,6 @@ public class FriendProductServiceTest extends ServiceTest {
                     (user.getId(), friend.getId(), products[0].getStoreCondition().getValue(), null, "Close");
             List<SearchProductOthersResponse> lackProductOthersResponseList = friendProductService.getListOfCategoryProductOthers
                     (user.getId(), friend.getId(), products[0].getStoreCondition().getValue(), null, "Lack");
-
 
             assertAll(
                     () -> assertThat(allProductOthersResponseList.get(0).name()).isEqualTo("감"),

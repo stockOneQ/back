@@ -178,7 +178,6 @@ public class BusinessProductServiceTest extends ServiceTest {
                     (user.getId(), manager.getId(), products[0].getStoreCondition().getValue(), null, "Error"))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ProductErrorCode.NOT_FOUND_CATEGORY.getMessage());
-
         }
 
         @Test
@@ -186,6 +185,7 @@ public class BusinessProductServiceTest extends ServiceTest {
         void success() throws IOException {
             User user = userRepository.findByLoginId(WIZ.toUser().getLoginId()).orElseThrow();
             User manager = userRepository.findByLoginId(ANNE.toUser().getLoginId()).orElseThrow();
+
             List<SearchProductOthersResponse> allProductOthersResponseList = businessProductService.getListOfCategoryProductOthers
                     (user.getId(), manager.getId(), products[0].getStoreCondition().getValue(), null, "All");
             List<SearchProductOthersResponse> passProductOthersResponseList = businessProductService.getListOfCategoryProductOthers
@@ -194,7 +194,6 @@ public class BusinessProductServiceTest extends ServiceTest {
                     (user.getId(), manager.getId(), products[0].getStoreCondition().getValue(), null, "Close");
             List<SearchProductOthersResponse> lackProductOthersResponseList = businessProductService.getListOfCategoryProductOthers
                     (user.getId(), manager.getId(), products[0].getStoreCondition().getValue(), null, "Lack");
-
 
             assertAll(
                     () -> assertThat(allProductOthersResponseList.get(0).name()).isEqualTo("감"),
