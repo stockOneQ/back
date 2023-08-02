@@ -45,11 +45,11 @@ public class User extends BaseTimeEntity {
     @Convert(converter = Role.RoleConverter.class)
     private Role role;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_store_id", referencedColumnName = "id")
     private Store managerStore;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
 

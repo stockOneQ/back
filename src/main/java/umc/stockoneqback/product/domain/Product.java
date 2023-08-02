@@ -62,7 +62,7 @@ public class Product extends BaseTimeEntity {
     @Convert(converter = Status.StatusConverter.class)
     private Status status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "store")
     private Store store;
 
