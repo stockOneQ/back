@@ -175,7 +175,7 @@ class BoardListApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "BoardApi/List/Failure/Case2",
+                                    "BoardApi/List/Failure/Case3",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestHeaders(
