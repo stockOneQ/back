@@ -5,10 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.board.controller.dto.BoardRequest;
+import umc.stockoneqback.board.controller.dto.BoardResponse;
 import umc.stockoneqback.board.service.BoardService;
 import umc.stockoneqback.global.annotation.ExtractPayload;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,5 +39,11 @@ public class BoardApiController {
     public ResponseEntity<Void> delete(@ExtractPayload Long writerId, @PathVariable Long boardId) {
         boardService.delete(writerId, boardId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{boardId}")
+    public ResponseEntity<BoardResponse> loadBoard(@ExtractPayload Long userId,
+                                                   @PathVariable Long boardId) throws IOException {
+        return ResponseEntity.ok(boardService.loadBoard(userId, boardId));
     }
 }
