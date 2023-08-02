@@ -70,7 +70,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         BoardLikeApiController.class,
         FriendInformationController.class,
         TokenReissueApiController.class,
-        UserFindApiController.class
+        UserFindApiController.class,
         FriendProductApiController.class,
         BusinessProductApiController.class
 })
