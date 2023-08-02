@@ -15,7 +15,7 @@ public class BoardLikeApiController {
     @PostMapping
     public ResponseEntity<Void> register(@ExtractPayload Long userId, @PathVariable Long boardId) {
         boardLikeService.register(userId, boardId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping

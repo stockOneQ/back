@@ -1,0 +1,91 @@
+= Reply 등록 / 수정 / 삭제 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 대댓글 등록
+=== 1. Authorization Header에 AccessToken이 없으면 대댓글 등록에 실패한다
+HTTP Request
+include::{snippets}/ReplyApi/Create/Failure/Case1/http-request.adoc[]
+
+HTTP Response
+include::{snippets}/ReplyApi/Create/Failure/Case1/http-response.adoc[]
+include::{snippets}/ReplyApi/Create/Failure/Case1/response-fields.adoc[]
+
+==== 2. 대댓글 등록에 성공한다
+HTTP Request
+include::{snippets}/ReplyApi/Create/Success/http-request.adoc[]
+include::{snippets}/ReplyApi/Create/Success/request-headers.adoc[]
+include::{snippets}/ReplyApi/Create/Success/path-parameters.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-parts.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/ReplyApi/Create/Success/http-response.adoc[]
+
+== 대댓글 수정
+=== 1. Authorization Header에 AccessToken이 없으면 대댓글 수정에 실패한다
+HTTP Request
+include::{snippets}/ReplyApi/Update/Failure/Case1/http-request.adoc[]
+
+HTTP Response
+include::{snippets}/ReplyApi/Update/Failure/Case1/http-response.adoc[]
+include::{snippets}/ReplyApi/Update/Failure/Case1/response-fields.adoc[]
+
+=== 2. 다른 사람의 대댓글은 수정할 수 없다
+HTTP Request
+include::{snippets}/ReplyApi/Update/Failure/Case2/http-request.adoc[]
+include::{snippets}/ReplyApi/Update/Failure/Case2/request-headers.adoc[]
+include::{snippets}/ReplyApi/Update/Failure/Case2/path-parameters.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-parts.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/ReplyApi/Update/Failure/Case2/http-response.adoc[]
+include::{snippets}/ReplyApi/Update/Failure/Case2/response-fields.adoc[]
+
+=== 3. 대댓글 수정에 성공한다
+HTTP Request
+include::{snippets}/ReplyApi/Update/Success/http-request.adoc[]
+include::{snippets}/ReplyApi/Update/Success/request-headers.adoc[]
+include::{snippets}/ReplyApi/Update/Success/path-parameters.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-parts.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/ReplyApi/Update/Success/http-response.adoc[]
+
+== 대댓글 삭제
+=== 1. Authorization Header에 AccessToken이 없으면 대댓글 삭제에 실패한다
+HTTP Request
+include::{snippets}/ReplyApi/Delete/Failure/Case1/http-request.adoc[]
+
+HTTP Response
+include::{snippets}/ReplyApi/Delete/Failure/Case1/http-response.adoc[]
+include::{snippets}/ReplyApi/Delete/Failure/Case1/response-fields.adoc[]
+
+=== 2. 다른 사람의 대댓글은 삭제할 수 없다
+HTTP Request
+include::{snippets}/ReplyApi/Delete/Failure/Case2/http-request.adoc[]
+include::{snippets}/ReplyApi/Delete/Failure/Case2/request-headers.adoc[]
+include::{snippets}/ReplyApi/Delete/Failure/Case2/path-parameters.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-parts.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/ReplyApi/Delete/Failure/Case2/http-response.adoc[]
+include::{snippets}/ReplyApi/Delete/Failure/Case2/response-fields.adoc[]
+
+=== 3. 대댓글 삭제에 성공한다
+HTTP Request
+include::{snippets}/ReplyApi/Delete/Success/http-request.adoc[]
+include::{snippets}/ReplyApi/Delete/Success/request-headers.adoc[]
+include::{snippets}/ReplyApi/Delete/Success/path-parameters.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-parts.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/ReplyApi/Delete/Success/http-response.adoc[]
+

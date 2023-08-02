@@ -5,10 +5,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import umc.stockoneqback.auth.domain.Token;
+import umc.stockoneqback.auth.service.AuthService;
+import umc.stockoneqback.auth.service.TokenService;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.domain.SortCondition;
@@ -19,21 +23,26 @@ import umc.stockoneqback.product.dto.response.SearchProductResponse;
 import umc.stockoneqback.product.exception.ProductErrorCode;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.StoreService;
+import umc.stockoneqback.user.domain.Email;
+import umc.stockoneqback.user.domain.Password;
+import umc.stockoneqback.user.domain.User;
+import umc.stockoneqback.user.exception.UserErrorCode;
+import umc.stockoneqback.user.service.UserFindService;
 import umc.stockoneqback.user.service.UserService;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static umc.stockoneqback.fixture.StoreFixture.Z_SIHEUNG;
 import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
-import static umc.stockoneqback.fixture.UserFixture.ANNE;
+import static umc.stockoneqback.fixture.UserFixture.*;
+import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
-/*
-    TODO : 공통 예외, 메인 호출, 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회 Service Test 추가
- */
 @DisplayName("Product [Service Layer] -> ProductService 테스트")
 public class ProductServiceTest extends ServiceTest {
     @Autowired
@@ -48,17 +57,75 @@ public class ProductServiceTest extends ServiceTest {
     @Autowired
     private FileService fileService;
 
+    @Autowired
+    private UserFindService userFindService;
+
+    @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private TokenService tokenService;
+
     private final ProductFixture[] productFixtures = ProductFixture.values();
     private final Product[] products = new Product[17];
     private static final Integer PAGE_SIZE = 12;
     private static Long USER_ID;
+    private static Store zStore;
 
     @BeforeEach
     void setup() {
-        Store zStore = storeRepository.save(Z_YEONGTONG.toStore());
+        zStore = storeRepository.save(Z_YEONGTONG.toStore());
         USER_ID = userService.saveManager(ANNE.toUser(), zStore.getId());
+        authService.login(ANNE.getLoginId(), ANNE.getPassword());
         for (int i = 0; i < products.length-1; i++)
             products[i] = productRepository.save(productFixtures[i].toProduct(zStore));
+    }
+
+    @Nested
+    @DisplayName("공통 예외")
+    class commonError {
+        @Test
+        @DisplayName("권한이 없는 사용자가 Product API를 호출한 경우 API 호출에 실패한다")
+        void throwExceptionByUnauthorizedUser() throws Exception {
+            User supervisor = WIZ.toUser();
+            userRepository.save(supervisor);
+            assertThatThrownBy(() -> productService.getRequiredInfo(supervisor.getId()))
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(GlobalErrorCode.INVALID_USER_JWT.getMessage());
+        }
+
+        @Test
+        @DisplayName("입력된 사용자가 입력된 가게 소속이 아닌 경우 API 호출에 실패한다")
+        void throwExceptionByConflictUserAndStore() throws Exception {
+            Store zStore2 = storeRepository.save(Z_SIHEUNG.toStore());
+            Long USER2_ID = userService.saveManager(ELLA.toUser(), zStore2.getId());
+            assertThatThrownBy(() -> productService.saveProduct(USER2_ID, zStore.getId(), "상온", products[16], null))
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(UserErrorCode.USER_STORE_MATCH_FAIL.getMessage());
+        }
+
+        @Test
+        @DisplayName("입력된 사용자가 유효하지 않은 역할을 가지고 있는 경우 API 호출에 실패한다")
+        void throwExceptionByInvalidUser() throws Exception {
+            User user = userRepository.save(User.createUser(Email.from("a@naver.com"), "a", Password.encrypt("secure123!", ENCODER),
+                    "a", LocalDate.of(2001, 1, 1), "010-0000-0000", null));
+
+            assertThatThrownBy(() -> productService.getTotalProduct(user.getId(), zStore.getId(), "냉동"))
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(UserErrorCode.ROLE_NOT_FOUND.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("메인 호출")
+    class getRequiredInfo {
+        @Test
+        @DisplayName("메인 호출에 성공한다")
+        void success() {
+            Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
+            User user = userFindService.findById(USER_ID);
+            assertThat(storeService.findByUser(user)).isEqualTo(zStore);
+        }
     }
 
     @Nested
@@ -321,4 +388,35 @@ public class ProductServiceTest extends ServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("현재 접속중인 사용자별 유통기한 경과 제품 목록 조회")
+    class getListOfPassProductByOnlineUsers {
+        @Test
+        @DisplayName("역할이 잘못된 사용자가 존재하면 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 실패한다")
+        void throwExceptionByInvalidRole() {
+            User user = userRepository.save(User.createUser(Email.from("a@naver.com"), "a", Password.encrypt("secure123!", ENCODER),
+                    "a", LocalDate.of(2001, 1, 1), "010-0000-0000", null));
+            tokenRepository.save(new Token(2L, "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwia"));
+            List<Token> tokenList = tokenService.findAllOnlineUsers();
+
+            assertThatThrownBy(() -> productService.getListOfPassProductByOnlineUsers())
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(UserErrorCode.ROLE_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        @DisplayName("현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 성공한다")
+        void success() {
+            List<Token> tokenList = tokenService.findAllOnlineUsers();
+            User user = userFindService.findById(tokenList.get(0).getUserId());
+            List<String> getListOfPassProductByOnlineUsersResponse = productRepository.findPassByManager(user, LocalDate.now());
+
+            assertAll(
+                    () -> assertThat(user.getId()).isEqualTo(USER_ID),
+                    () -> assertThat(getListOfPassProductByOnlineUsersResponse.size()).isEqualTo(2),
+                    () -> assertThat(getListOfPassProductByOnlineUsersResponse.get(0)).isEqualTo("감"),
+                    () -> assertThat(getListOfPassProductByOnlineUsersResponse.get(1)).isEqualTo("포도")
+            );
+        }
+    }
 }

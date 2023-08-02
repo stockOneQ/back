@@ -25,19 +25,24 @@ import umc.stockoneqback.board.service.BoardFindService;
 import umc.stockoneqback.board.service.BoardService;
 import umc.stockoneqback.board.service.like.BoardLikeService;
 import umc.stockoneqback.business.controller.BusinessApiController;
+import umc.stockoneqback.business.controller.BusinessProductApiController;
+import umc.stockoneqback.business.service.BusinessProductService;
 import umc.stockoneqback.business.service.BusinessService;
 import umc.stockoneqback.comment.controller.CommentApiController;
 import umc.stockoneqback.comment.service.CommentFindService;
 import umc.stockoneqback.comment.service.CommentService;
 import umc.stockoneqback.friend.controller.FriendApiController;
 import umc.stockoneqback.friend.controller.FriendInformationController;
+import umc.stockoneqback.friend.controller.FriendProductApiController;
 import umc.stockoneqback.friend.service.FriendFindService;
 import umc.stockoneqback.friend.service.FriendInformationService;
+import umc.stockoneqback.friend.service.FriendProductService;
 import umc.stockoneqback.friend.service.FriendService;
 import umc.stockoneqback.global.security.handler.JwtAccessDeniedHandler;
 import umc.stockoneqback.global.security.handler.JwtAuthenticationEntryPoint;
 import umc.stockoneqback.global.security.service.CustomUserDetailsService;
 import umc.stockoneqback.product.controller.ProductApiController;
+import umc.stockoneqback.product.service.ProductOthersService;
 import umc.stockoneqback.product.service.ProductService;
 import umc.stockoneqback.reply.controller.ReplyApiController;
 import umc.stockoneqback.reply.service.ReplyFindService;
@@ -66,6 +71,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         FriendInformationController.class,
         TokenReissueApiController.class,
         UserFindApiController.class
+        FriendProductApiController.class,
+        BusinessProductApiController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs
@@ -141,6 +148,15 @@ public abstract class ControllerTest {
 
     @MockBean
     protected TokenReissueService tokenReissueService;
+
+    @MockBean
+    protected FriendProductService friendProductService;
+
+    @MockBean
+    protected BusinessProductService businessProductService;
+
+    @MockBean
+    protected ProductOthersService productOthersService;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {

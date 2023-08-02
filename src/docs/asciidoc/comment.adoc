@@ -1,0 +1,87 @@
+= Comment 등록 / 수정 / 삭제 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 댓글 등록
+=== 1. Authorization Header에 AccessToken이 없으면 댓글 등록에 실패한다
+HTTP Request
+include::{snippets}/CommentApi/Create/Failure/Case1/http-request.adoc[]
+
+HTTP Response
+include::{snippets}/CommentApi/Create/Failure/Case1/http-response.adoc[]
+include::{snippets}/CommentApi/Create/Failure/Case1/response-fields.adoc[]
+
+==== 2. 댓글 등록에 성공한다
+HTTP Request
+include::{snippets}/CommentApi/Create/Success/http-request.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-headers.adoc[]
+include::{snippets}/CommentApi/Create/Success/path-parameters.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-parts.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/CommentApi/Create/Success/http-response.adoc[]
+
+== 댓글 수정
+=== 1. Authorization Header에 AccessToken이 없으면 댓글 수정에 실패한다
+HTTP Request
+include::{snippets}/CommentApi/Update/Failure/Case1/http-request.adoc[]
+
+HTTP Response
+include::{snippets}/CommentApi/Update/Failure/Case1/http-response.adoc[]
+include::{snippets}/CommentApi/Update/Failure/Case1/response-fields.adoc[]
+
+=== 2. 다른 사람의 댓글은 수정할 수 없다
+HTTP Request
+include::{snippets}/CommentApi/Update/Failure/Case2/http-request.adoc[]
+include::{snippets}/CommentApi/Update/Failure/Case2/request-headers.adoc[]
+include::{snippets}/CommentApi/Update/Failure/Case2/path-parameters.adoc[]
+include::{snippets}/CommentApi/Update/Failure/Case2/request-parts.adoc[]
+include::{snippets}/CommentApi/Update/Failure/Case2/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/CommentApi/Update/Failure/Case2/http-response.adoc[]
+include::{snippets}/CommentApi/Update/Failure/Case2/response-fields.adoc[]
+
+=== 3. 댓글 수정에 성공한다
+HTTP Request
+include::{snippets}/CommentApi/Update/Success/http-request.adoc[]
+include::{snippets}/CommentApi/Update/Success/request-headers.adoc[]
+include::{snippets}/CommentApi/Update/Success/path-parameters.adoc[]
+include::{snippets}/CommentApi/Update/Success/request-parts.adoc[]
+include::{snippets}/CommentApi/Update/Success/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/CommentApi/Update/Success/http-response.adoc[]
+
+== 댓글 삭제
+=== 1. Authorization Header에 AccessToken이 없으면 댓글 삭제에 실패한다
+HTTP Request
+include::{snippets}/CommentApi/Delete/Failure/Case1/http-request.adoc[]
+
+HTTP Response
+include::{snippets}/CommentApi/Delete/Failure/Case1/http-response.adoc[]
+include::{snippets}/CommentApi/Delete/Failure/Case1/response-fields.adoc[]
+
+=== 2. 다른 사람의 댓글은 삭제할 수 없다
+HTTP Request
+include::{snippets}/CommentApi/Delete/Failure/Case2/http-request.adoc[]
+include::{snippets}/CommentApi/Delete/Failure/Case2/request-headers.adoc[]
+include::{snippets}/CommentApi/Delete/Failure/Case2/path-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/CommentApi/Delete/Failure/Case2/http-response.adoc[]
+include::{snippets}/CommentApi/Delete/Failure/Case2/response-fields.adoc[]
+
+=== 3. 댓글 삭제에 성공한다
+HTTP Request
+include::{snippets}/CommentApi/Delete/Success/http-request.adoc[]
+include::{snippets}/CommentApi/Delete/Success/
+include::{snippets}/CommentApi/Delete/Success/path-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/CommentApi/Delete/Success/http-response.adoc[]
+

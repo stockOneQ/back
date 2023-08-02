@@ -3,13 +3,18 @@ package umc.stockoneqback.board.controller;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.board.controller.dto.BoardRequest;
 import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -21,10 +26,11 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static umc.stockoneqback.common.DocumentFormatGenerator.getInputDTOFormat;
+import static umc.stockoneqback.common.DocumentFormatGenerator.getInputImageFormat;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
 import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
@@ -41,10 +47,16 @@ public class BoardApiControllerTest extends ControllerTest {
         void withoutAccessToken() throws Exception {
             // when
             final BoardRequest request = createBoardRequest();
+            MockMultipartFile file = new MockMultipartFile("file", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("request", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .post(BASE_URL)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .multipart(BASE_URL)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON);
 
             // then
             final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
@@ -63,7 +75,12 @@ public class BoardApiControllerTest extends ControllerTest {
                                     "BoardApi/Create/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
-                                    requestFields(
+                                    requestParts(
+                                            partWithName("file").attributes(getInputImageFormat()).description("파일"),
+                                            partWithName("request").attributes(getInputDTOFormat()).description("등록할 게시글 DTO")
+                                    ),
+                                    requestPartFields(
+                                            "request",
                                             fieldWithPath("title").description("등록할 제목"),
                                             fieldWithPath("file").description("등록할 파일"),
                                             fieldWithPath("content").description("등록할 내용")
@@ -87,24 +104,35 @@ public class BoardApiControllerTest extends ControllerTest {
 
             // when
             final BoardRequest request = createBoardRequest();
+            MockMultipartFile file = new MockMultipartFile("file", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("request", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .post(BASE_URL)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .multipart(BASE_URL)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
                     .andExpect(status().isOk())
                     .andDo(
                             document(
-                                    "UserApi/Create/Success",
+                                    "BoardApi/Create/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestHeaders(
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
-                                    requestFields(
+                                    requestParts(
+                                            partWithName("file").attributes(getInputImageFormat()).description("파일"),
+                                            partWithName("request").attributes(getInputDTOFormat()).description("등록할 게시글 DTO")
+                                    ),
+                                    requestPartFields(
+                                            "request",
                                             fieldWithPath("title").description("등록할 제목"),
                                             fieldWithPath("file").description("등록할 파일"),
                                             fieldWithPath("content").description("등록할 내용")
@@ -126,10 +154,24 @@ public class BoardApiControllerTest extends ControllerTest {
         void withoutAccessToken() throws Exception {
             // when
             final BoardRequest request = createBoardRequest();
+            MockMultipartFile file = new MockMultipartFile("file", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("request", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .patch(BASE_URL, BOARD_ID)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .multipart(BASE_URL, BOARD_ID)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
+                    .with(new RequestPostProcessor() {
+                        @Override
+                        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                            request.setMethod("PATCH");
+                            return request;
+                        }
+                    });
+
             // then
             final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
             mockMvc.perform(requestBuilder)
@@ -150,7 +192,12 @@ public class BoardApiControllerTest extends ControllerTest {
                                     pathParameters(
                                             parameterWithName("boardId").description("수정할 게시글 ID(PK)")
                                     ),
-                                    requestFields(
+                                    requestParts(
+                                            partWithName("file").attributes(getInputImageFormat()).description("파일"),
+                                            partWithName("request").attributes(getInputDTOFormat()).description("수정할 게시글 DTO")
+                                    ),
+                                    requestPartFields(
+                                            "request",
                                             fieldWithPath("title").description("수정할 제목"),
                                             fieldWithPath("file").description("수정할 파일"),
                                             fieldWithPath("content").description("수정할 내용")
@@ -174,11 +221,24 @@ public class BoardApiControllerTest extends ControllerTest {
 
             // when
             final BoardRequest request = createBoardRequest();
+            MockMultipartFile file = new MockMultipartFile("file", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("request", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .patch(BASE_URL, BOARD_ID)
+                    .multipart(BASE_URL, BOARD_ID)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .with(new RequestPostProcessor() {
+                        @Override
+                        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                            request.setMethod("PATCH");
+                            return request;
+                        }
+                    });
 
             // then
             final BoardErrorCode expectedError = BoardErrorCode.USER_IS_NOT_BOARD_WRITER;
@@ -203,7 +263,12 @@ public class BoardApiControllerTest extends ControllerTest {
                                     pathParameters(
                                             parameterWithName("boardId").description("수정할 게시글 ID(PK)")
                                     ),
-                                    requestFields(
+                                    requestParts(
+                                            partWithName("file").attributes(getInputImageFormat()).description("파일"),
+                                            partWithName("request").attributes(getInputDTOFormat()).description("수정할 게시글 DTO")
+                                    ),
+                                    requestPartFields(
+                                            "request",
                                             fieldWithPath("title").description("수정할 제목"),
                                             fieldWithPath("file").description("수정할 파일"),
                                             fieldWithPath("content").description("수정할 내용")
@@ -227,11 +292,24 @@ public class BoardApiControllerTest extends ControllerTest {
 
             // when
             final BoardRequest request = createBoardRequest();
+            MockMultipartFile file = new MockMultipartFile("file", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("request", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .patch(BASE_URL, BOARD_ID)
+                    .multipart(BASE_URL, BOARD_ID)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .with(new RequestPostProcessor() {
+                        @Override
+                        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                            request.setMethod("PATCH");
+                            return request;
+                        }
+                    });
 
             // then
             mockMvc.perform(requestBuilder)
@@ -247,7 +325,12 @@ public class BoardApiControllerTest extends ControllerTest {
                                     pathParameters(
                                             parameterWithName("boardId").description("수정할 게시글 ID(PK)")
                                     ),
-                                    requestFields(
+                                    requestParts(
+                                            partWithName("file").attributes(getInputImageFormat()).description("파일"),
+                                            partWithName("request").attributes(getInputDTOFormat()).description("수정할 게시글 DTO")
+                                    ),
+                                    requestPartFields(
+                                            "request",
                                             fieldWithPath("title").description("수정할 제목"),
                                             fieldWithPath("file").description("수정할 파일"),
                                             fieldWithPath("content").description("수정할 내용")
@@ -269,10 +352,23 @@ public class BoardApiControllerTest extends ControllerTest {
         void withoutAccessToken() throws Exception {
             // when
             final BoardRequest request = createBoardRequest();
+            MockMultipartFile file = new MockMultipartFile("file", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("request", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .delete(BASE_URL, BOARD_ID)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .multipart(BASE_URL, BOARD_ID)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
+                    .with(new RequestPostProcessor() {
+                        @Override
+                        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                            request.setMethod("DELETE");
+                            return request;
+                        }
+                    });
 
             // then
             final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
@@ -313,11 +409,24 @@ public class BoardApiControllerTest extends ControllerTest {
 
             // when
             final BoardRequest request = createBoardRequest();
+            MockMultipartFile file = new MockMultipartFile("file", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("request", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .delete(BASE_URL, BOARD_ID)
+                    .multipart(BASE_URL, BOARD_ID)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .with(new RequestPostProcessor() {
+                        @Override
+                        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                            request.setMethod("DELETE");
+                            return request;
+                        }
+                    });
 
             // then
             final BoardErrorCode expectedError = BoardErrorCode.USER_IS_NOT_BOARD_WRITER;
@@ -361,15 +470,28 @@ public class BoardApiControllerTest extends ControllerTest {
 
             // when
             final BoardRequest request = createBoardRequest();
+            MockMultipartFile file = new MockMultipartFile("file", null,
+                    "multipart/form-data", new byte[]{});
+            MockMultipartFile mockRequest = new MockMultipartFile("request", null,
+                    "application/json", objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .delete(BASE_URL, WRITER_ID, BOARD_ID)
+                    .multipart(BASE_URL, BOARD_ID)
+                    .file(file)
+                    .file(mockRequest)
+                    .accept(APPLICATION_JSON)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
+                    .with(new RequestPostProcessor() {
+                        @Override
+                        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                            request.setMethod("DELETE");
+                            return request;
+                        }
+                    });
 
             // then
             mockMvc.perform(requestBuilder)
-                    .andExpectAll(status().isNoContent())
+                    .andExpectAll(status().isOk())
                     .andDo(
                             document(
                                     "BoardApi/Delete/Success",

@@ -18,8 +18,8 @@ public class BoardApiController {
 
     @PostMapping
     public ResponseEntity<Void> create(@ExtractPayload Long writerId,
-                                       @RequestBody @Valid BoardRequest request,
-                                       @RequestPart(value = "image", required = false) MultipartFile multipartFile) {
+                                       @RequestPart(value = "request") @Valid BoardRequest request,
+                                       @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         Long boardId = boardService.create(writerId, request.title(), multipartFile, request.content());
         return ResponseEntity.ok().build();
     }
@@ -27,8 +27,8 @@ public class BoardApiController {
     @PatchMapping("/{boardId}")
     public ResponseEntity<Void> update(@ExtractPayload Long writerId,
                                        @PathVariable Long boardId,
-                                       @RequestBody @Valid BoardRequest request,
-                                       @RequestPart(value = "image", required = false) MultipartFile multipartFile) {
+                                       @RequestPart(value = "request")  @Valid BoardRequest request,
+                                       @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         boardService.update(writerId, boardId, request.title(), multipartFile, request.content());
         return ResponseEntity.ok().build();
     }
@@ -36,6 +36,6 @@ public class BoardApiController {
     @DeleteMapping("/{boardId}")
     public ResponseEntity<Void> delete(@ExtractPayload Long writerId, @PathVariable Long boardId) {
         boardService.delete(writerId, boardId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }
