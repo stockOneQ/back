@@ -6,30 +6,24 @@ import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.role.exception.StoreErrorCode;
 import umc.stockoneqback.user.controller.dto.request.SignUpManagerRequest;
 import umc.stockoneqback.user.controller.dto.request.SignUpPartTimerRequest;
 import umc.stockoneqback.user.controller.dto.request.SignUpSupervisorRequest;
-import umc.stockoneqback.user.controller.dto.request.UserInfoRequest;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
-import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 
 @DisplayName("User [Controller Layer] -> UserApiController 테스트")
@@ -497,154 +491,6 @@ class UserApiControllerTest extends ControllerTest {
         }
     }
 
-    @Nested
-    @DisplayName("회원 정보 수정 API [PUT /api/user/update]")
-    class updateInformation {
-        private static final String BASE_URL = "/api/user/update";
-        private static final Long USER_ID = 1L;
-
-        @Test
-        @DisplayName("Authorization Header에 AccessToken이 없으면 회원정보 수정에 실패한다")
-        void withoutAccessToken() throws Exception {
-            // given
-            doThrow(BaseException.type(UserErrorCode.DUPLICATE_LOGIN_ID))
-                    .when(userService)
-                    .updateInformation(anyLong(), anyString(), any(), anyString(), anyString(), anyString(), anyString());
-
-            // when
-            final UserInfoRequest request = createUserInfoRequest();
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .put(BASE_URL)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
-
-            // then
-            final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(
-                            status().isForbidden(),
-                            jsonPath("$.status").exists(),
-                            jsonPath("$.status").value(expectedError.getStatus().value()),
-                            jsonPath("$.errorCode").exists(),
-                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
-                            jsonPath("$.message").exists(),
-                            jsonPath("$.message").value(expectedError.getMessage())
-                    )
-                    .andDo(
-                            document(
-                                    "UserApi/Update/Failure/Case1",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestFields(
-                                            fieldWithPath("name").description("이름"),
-                                            fieldWithPath("birth").description("생일"),
-                                            fieldWithPath("email").description("이메일"),
-                                            fieldWithPath("loginId").description("아이디"),
-                                            fieldWithPath("password").description("비밀번호"),
-                                            fieldWithPath("phoneNumber").description("전화번호")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
-                                    )
-                            )
-                    );
-        }
-
-        @Test
-        @DisplayName("중복된 로그인 아이디가 존재한다면 회원 정보 수정에 실패한다")
-        void throwExceptionByDuplicateLoginId() throws Exception {
-            // given
-            doThrow(BaseException.type(UserErrorCode.DUPLICATE_LOGIN_ID))
-                    .when(userService)
-                    .updateInformation(anyLong(), anyString(), any(), anyString(), anyString(), anyString(), anyString());
-
-            // when
-            final UserInfoRequest request = createUserInfoRequest();
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .put(BASE_URL)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
-
-            // then
-            final UserErrorCode expectedError = UserErrorCode.DUPLICATE_LOGIN_ID;
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(
-                            status().isConflict(),
-                            jsonPath("$.status").exists(),
-                            jsonPath("$.status").value(expectedError.getStatus().value()),
-                            jsonPath("$.errorCode").exists(),
-                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
-                            jsonPath("$.message").exists(),
-                            jsonPath("$.message").value(expectedError.getMessage())
-                    )
-                    .andDo(
-                            document(
-                                    "UserApi/Update/Failure/Case2",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName(AUTHORIZATION).description("Access Token")
-                                    ),
-                                    requestFields(
-                                            fieldWithPath("name").description("이름"),
-                                            fieldWithPath("birth").description("생일"),
-                                            fieldWithPath("email").description("이메일"),
-                                            fieldWithPath("loginId").description("아이디"),
-                                            fieldWithPath("password").description("비밀번호"),
-                                            fieldWithPath("phoneNumber").description("전화번호")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
-                                    )
-                            )
-                    );
-        }
-
-        @Test
-        @DisplayName("회원 정보 수정에 성공한다")
-        void success() throws Exception {
-            // given
-            doNothing()
-                    .when(userService)
-                    .updateInformation(anyLong(), anyString(), any(), anyString(), anyString(), anyString(), anyString());
-
-            // when
-            final UserInfoRequest request = createUserInfoRequest();
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .put(BASE_URL)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
-
-            // then
-            mockMvc.perform(requestBuilder)
-                    .andExpect(status().isOk())
-                    .andDo(
-                            document(
-                                    "UserApi/Update/Success",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName(AUTHORIZATION).description("Access Token")
-                                    ),
-                                    requestFields(
-                                            fieldWithPath("name").description("이름"),
-                                            fieldWithPath("birth").description("생일"),
-                                            fieldWithPath("email").description("이메일"),
-                                            fieldWithPath("loginId").description("아이디"),
-                                            fieldWithPath("password").description("비밀번호"),
-                                            fieldWithPath("phoneNumber").description("전화번호")
-                                    )
-                            )
-                    );
-        }
-    }
-
     private SignUpManagerRequest createSignUpManagerRequest() {
         return new SignUpManagerRequest(
                 SAEWOO.getName(),
@@ -682,17 +528,6 @@ class UserApiControllerTest extends ControllerTest {
                 SAEWOO.getPassword(),
                 "A 납품업체",
                 "ABC123"
-        );
-    }
-
-    private UserInfoRequest createUserInfoRequest() {
-        return new UserInfoRequest(
-                SAEWOO.getName(),
-                SAEWOO.getBirth(),
-                SAEWOO.getEmail(),
-                SAEWOO.getLoginId(),
-                SAEWOO.getPassword(),
-                SAEWOO.getPhoneNumber()
         );
     }
 }
