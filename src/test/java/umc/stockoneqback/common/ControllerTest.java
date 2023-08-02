@@ -20,8 +20,10 @@ import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.auth.service.TokenReissueService;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
 import umc.stockoneqback.board.controller.BoardApiController;
+import umc.stockoneqback.board.controller.BoardListApiController;
 import umc.stockoneqback.board.controller.like.BoardLikeApiController;
 import umc.stockoneqback.board.service.BoardFindService;
+import umc.stockoneqback.board.service.BoardListService;
 import umc.stockoneqback.board.service.BoardService;
 import umc.stockoneqback.board.service.like.BoardLikeService;
 import umc.stockoneqback.business.controller.BusinessApiController;
@@ -76,6 +78,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         BoardLikeApiController.class,
         FriendInformationController.class,
         TokenReissueApiController.class,
+        BoardListApiController.class,
         UserFindApiController.class,
         FriendProductApiController.class,
         BusinessProductApiController.class
@@ -103,7 +106,7 @@ public abstract class ControllerTest {
 
     @MockBean
     protected CompanyService companyService;
-    
+
     @MockBean
     protected BusinessService businessService;
 
@@ -112,7 +115,7 @@ public abstract class ControllerTest {
 
     @MockBean
     protected ProductService productService;
-    
+
     @MockBean
     protected UserFindService userFindService;
 
@@ -145,13 +148,13 @@ public abstract class ControllerTest {
 
     @MockBean
     protected ReplyService replyService;
-     
+
     @MockBean
     protected FriendService friendService;
 
     @MockBean
     protected FriendFindService friendFindService;
-  
+
     @MockBean
     protected BoardLikeService boardLikeService;
 
@@ -162,6 +165,8 @@ public abstract class ControllerTest {
     protected TokenReissueService tokenReissueService;
 
     @MockBean
+    protected BoardListService boardListService;
+
     protected FriendProductService friendProductService;
 
     @MockBean
