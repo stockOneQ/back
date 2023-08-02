@@ -68,7 +68,6 @@ public class ProductServiceTest extends ServiceTest {
 
     private final ProductFixture[] productFixtures = ProductFixture.values();
     private final Product[] products = new Product[17];
-    private static final Integer PAGE_SIZE = 12;
     private static Long USER_ID;
     private static Store zStore;
 

@@ -24,10 +24,10 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BusinessProductService {
-    private UserFindService userFindService;
-    private StoreService storeService;
-    private ProductOthersService productOthersService;
-    private BusinessService businessService;
+    private final UserFindService userFindService;
+    private final StoreService storeService;
+    private final ProductOthersService productOthersService;
+    private final BusinessService businessService;
 
     @Transactional
     public List<SearchProductOthersResponse> searchProductOthers
@@ -70,7 +70,7 @@ public class BusinessProductService {
         throw BaseException.type(ProductErrorCode.NOT_FOUND_CATEGORY);
     }
 
-    private User isSupervisor(Long userId) {
+    User isSupervisor(Long userId) {
         User user = userFindService.findById(userId);
         if (user.getRole() == Role.SUPERVISOR)
             return user;
@@ -79,7 +79,7 @@ public class BusinessProductService {
         throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
     }
 
-    private User checkRelation(User supervisor, Long managerId) {
+    User checkRelation(User supervisor, Long managerId) {
         User manager = userFindService.findById(managerId);
         businessService.validateNotExist(supervisor, manager);
         return manager;
