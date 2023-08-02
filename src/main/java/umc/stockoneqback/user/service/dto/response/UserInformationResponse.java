@@ -13,7 +13,6 @@ public record UserInformationResponse(
         String storeName,
         String storeCode,
         String storeAddress,
-        String companyName,
-        String companyCode
+        String companyName
 ) {
 }
