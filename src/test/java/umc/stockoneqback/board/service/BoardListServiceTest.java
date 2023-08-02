@@ -33,6 +33,9 @@ class BoardListServiceTest extends ServiceTest {
     private Long userId;
     private static final String SORT_BY = "조회순";
     private static final String INVALID_SORT = "댓글순";
+    private static final String INVALID_SEARCH = "댓글";
+    private static final String SEARCH_TYPE = "제목";
+    private static final String SEARCH_QUERY = "제목";
     private static final int PAGE_SIZE = 7;
 
     @BeforeEach
@@ -65,7 +68,7 @@ class BoardListServiceTest extends ServiceTest {
         Long invalidUserId = userRepository.save(SAEWOO.toUser()).getId();
 
         // when - then
-        assertThatThrownBy(() -> boardListService.getBoardList(invalidUserId, Long.valueOf(-1), null))
+        assertThatThrownBy(() -> boardListService.getBoardList(invalidUserId, Long.valueOf(-1), null, SEARCH_TYPE, SEARCH_QUERY))
                 .isInstanceOf(BaseException.class)
                 .hasMessage(UserErrorCode.USER_IS_NOT_MANAGER.getMessage());
     }
@@ -74,16 +77,25 @@ class BoardListServiceTest extends ServiceTest {
     @DisplayName("유효한 정렬 조건이 아니면 게시글 목록 조회에 실패한다")
     void throwNotFoundSortCondition() {
         // when - then
-        assertThatThrownBy(() -> boardListService.getBoardList(userId, Long.valueOf(-1), INVALID_SORT))
+        assertThatThrownBy(() -> boardListService.getBoardList(userId, Long.valueOf(-1), INVALID_SORT, SEARCH_TYPE, SEARCH_QUERY))
                 .isInstanceOf(BaseException.class)
                 .hasMessage(BoardErrorCode.NOT_FOUND_SORT_CONDITION.getMessage());
     }
 
     @Test
-    @DisplayName("정렬 기준에 따른 게시글 목록 조회에 성공한다")
+    @DisplayName("유효한 검색 조건이 아니면 게시글 목록 검색에 실패한다")
+    void throwNotFoundSearchType() {
+        // when - then
+        assertThatThrownBy(() -> boardListService.getBoardList(userId, Long.valueOf(-1), SORT_BY, INVALID_SEARCH, SEARCH_QUERY))
+                .isInstanceOf(BaseException.class)
+                .hasMessage(BoardErrorCode.NOT_FOUND_SEARCH_TYPE.getMessage());
+    }
+
+    @Test
+    @DisplayName("정렬 기준과 검색에 따른 게시글 목록 조회에 성공한다")
     void getBoardListByHit() throws IOException {
         // when
-        BoardListResponse boardListSortByTime = boardListService.getBoardList(userId, Long.valueOf(-1), SORT_BY);
+        BoardListResponse boardListSortByTime = boardListService.getBoardList(userId, Long.valueOf(-1), SORT_BY, SEARCH_TYPE, SEARCH_QUERY);
 
         // then
         assertThat(boardListSortByTime.boardListResponse().size()).isLessThanOrEqualTo(PAGE_SIZE);

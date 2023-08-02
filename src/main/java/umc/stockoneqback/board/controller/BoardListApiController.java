@@ -21,7 +21,9 @@ public class BoardListApiController {
     @GetMapping
     public ResponseEntity<BoardListResponse> boardList(@ExtractPayload Long userId,
                                                        @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastBoardId,
-                                                       @RequestParam(value = "sort", defaultValue = "최신순") String sortBy) throws IOException {
-        return ResponseEntity.ok(boardListService.getBoardList(userId, lastBoardId, sortBy));
+                                                       @RequestParam(value = "sort", required = false, defaultValue = "최신순") String sortBy,
+                                                       @RequestParam(value = "search", required = false, defaultValue = "제목") String searchBy,
+                                                       @RequestParam(value = "word", required = false, defaultValue = "") String searchWord) throws IOException {
+        return ResponseEntity.ok(boardListService.getBoardList(userId, lastBoardId, sortBy, searchBy, searchWord));
     }
 }

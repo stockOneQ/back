@@ -167,6 +167,7 @@ public abstract class ControllerTest {
     @MockBean
     protected BoardListService boardListService;
 
+    @MockBean
     protected FriendProductService friendProductService;
 
     @MockBean

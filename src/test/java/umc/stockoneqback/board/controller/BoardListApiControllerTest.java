@@ -42,7 +42,10 @@ class BoardListApiControllerTest extends ControllerTest {
     class getBoardList {
         private static final String BASE_URL = "/api/boards";
         private static final String INVALID_SORT = "댓글순";
+        private static final String INVALID_SEARCH = "댓글";
         private static final String SORT_BY_TIME = "최신순";
+        private static final String SEARCH_TYPE = "제목";
+        private static final String SEARCH_WORD = "제목";
         private static final Long LAST_USER_ID = -1L;
         private static final Long USER_ID = 1L;
 
@@ -52,8 +55,10 @@ class BoardListApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
-                    .param("last", (String) null)
-                    .param("sort", INVALID_SORT);
+                    .param("last", String.valueOf(LAST_USER_ID))
+                    .param("sort", SORT_BY_TIME)
+                    .param("search", SEARCH_TYPE)
+                    .param("word", SEARCH_WORD);
 
             // then
             final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
@@ -74,7 +79,9 @@ class BoardListApiControllerTest extends ControllerTest {
                                     preprocessResponse(prettyPrint()),
                                     requestParameters(
                                             parameterWithName("last").description("마지막 게시글 ID"),
-                                            parameterWithName("sort").description("정렬 기준(최신순/조회순)")
+                                            parameterWithName("sort").description("정렬 기준(최신순/조회순)"),
+                                            parameterWithName("search").description("검색 조건(제목/내용/작성자)"),
+                                            parameterWithName("word").description("검색어")
                                     ),
                                     responseFields(
                                             fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
@@ -91,13 +98,15 @@ class BoardListApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(BoardErrorCode.NOT_FOUND_SORT_CONDITION))
                     .when(boardListService)
-                    .getBoardList(anyLong(), eq(LAST_USER_ID), eq(INVALID_SORT));
+                    .getBoardList(anyLong(), eq(LAST_USER_ID), eq(INVALID_SORT), eq(SEARCH_TYPE), eq(SEARCH_WORD));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
                     .param("last", String.valueOf(LAST_USER_ID))
                     .param("sort", INVALID_SORT)
+                    .param("search", SEARCH_TYPE)
+                    .param("word", SEARCH_WORD)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
@@ -122,7 +131,9 @@ class BoardListApiControllerTest extends ControllerTest {
                                     ),
                                     requestParameters(
                                             parameterWithName("last").description("마지막 게시글 ID"),
-                                            parameterWithName("sort").description("정렬 기준(최신순/조회순)")
+                                            parameterWithName("sort").description("정렬 기준(최신순/조회순)"),
+                                            parameterWithName("search").description("검색 조건(제목/내용/작성자)"),
+                                            parameterWithName("word").description("검색어")
                                     ),
                                     responseFields(
                                             fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
@@ -134,20 +145,74 @@ class BoardListApiControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("정렬 기준에 따른 게시글 목록 조회에 성공한다")
-        void success() throws Exception{
+        @DisplayName("유효하지 않은 검색 조건이라면 게시글 목록 검색에 실패한다")
+        void throwExceptionByNotFoundSearchType() throws Exception {
             // given
-            given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
-            given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
-            doReturn(getBoardListResponse())
+            doThrow(BaseException.type(BoardErrorCode.NOT_FOUND_SEARCH_TYPE))
                     .when(boardListService)
-                    .getBoardList(USER_ID, LAST_USER_ID, SORT_BY_TIME);
+                    .getBoardList(anyLong(), eq(LAST_USER_ID), eq(SORT_BY_TIME), eq(INVALID_SEARCH), eq(SEARCH_WORD));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
                     .param("last", String.valueOf(LAST_USER_ID))
                     .param("sort", SORT_BY_TIME)
+                    .param("search", INVALID_SEARCH)
+                    .param("word", SEARCH_WORD)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
+
+            // then
+            final BoardErrorCode expectedError = BoardErrorCode.NOT_FOUND_SEARCH_TYPE;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isNotFound(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "BoardApi/List/Failure/Case3",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
+                                    requestParameters(
+                                            parameterWithName("last").description("마지막 게시글 ID"),
+                                            parameterWithName("sort").description("정렬 기준(최신순/조회순)"),
+                                            parameterWithName("search").description("검색 조건(제목/내용/작성자)"),
+                                            parameterWithName("word").description("검색어")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("정렬 기준과 검색에 따른 게시글 목록 조회에 성공한다")
+        void success() throws Exception{
+            // given
+            given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
+            given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
+            doReturn(getBoardListResponse())
+                    .when(boardListService)
+                    .getBoardList(USER_ID, LAST_USER_ID, SORT_BY_TIME, SEARCH_TYPE, SEARCH_WORD);
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .param("last", String.valueOf(LAST_USER_ID))
+                    .param("sort", SORT_BY_TIME)
+                    .param("search", SEARCH_TYPE)
+                    .param("word", SEARCH_WORD)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
@@ -163,7 +228,9 @@ class BoardListApiControllerTest extends ControllerTest {
                                     ),
                                     requestParameters(
                                             parameterWithName("last").description("마지막 게시글 ID"),
-                                            parameterWithName("sort").description("정렬 기준(최신순/조회순)")
+                                            parameterWithName("sort").description("정렬 기준(최신순/조회순)"),
+                                            parameterWithName("search").description("검색 조건(제목/내용/작성자)"),
+                                            parameterWithName("word").description("검색어")
                                     ),
                                     responseFields(
                                             fieldWithPath("boardListResponse[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),

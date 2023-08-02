@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.domain.BoardRepository;
+import umc.stockoneqback.board.domain.SearchType;
 import umc.stockoneqback.board.infra.query.dto.BoardList;
 import umc.stockoneqback.common.RepositoryTest;
 import umc.stockoneqback.user.domain.User;
@@ -26,6 +27,8 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
 
     private final Board[] boardList = new Board[10];
     private User writer;
+    private static final SearchType SEARCH_TYPE = SearchType.TITLE;
+    private static final String SEARCH_QUERY = "제목";
 
     @BeforeEach
     void setUp() {
@@ -54,10 +57,10 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
     class boardList {
         @Order(1)
         @Test
-        @DisplayName("게시글을 최신순으로 조회한다")
+        @DisplayName("검색 결과에 따른 게시글을 최신순으로 조회한다")
         void getBoardListOrderByTime() {
             // when
-            List<BoardList> boardListOrderByTime = boardRepository.getBoardListOrderByTime();
+            List<BoardList> boardListOrderByTime = boardRepository.getBoardListOrderByTime(SEARCH_TYPE, SEARCH_QUERY);
 
             // then
             assertAll(
@@ -70,10 +73,10 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
 
         @Order(2)
         @Test
-        @DisplayName("게시글을 조회순으로 조회한다")
+        @DisplayName("검색 결과에 따른 게시글을 조회순으로 조회한다")
         void getBoardListOrderByHit() {
             // when
-            List<BoardList> boardListOrderByHit = boardRepository.getBoardListOrderByHit();
+            List<BoardList> boardListOrderByHit = boardRepository.getBoardListOrderByHit(SEARCH_TYPE, SEARCH_QUERY);
 
             // then
             for (int i = 0; i < boardListOrderByHit.size(); i++) {
