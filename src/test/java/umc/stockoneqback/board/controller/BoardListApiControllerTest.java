@@ -145,7 +145,7 @@ class BoardListApiControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("유효하지 않은 검색 조건이라면 게시글 목록 조회에 실패한다")
+        @DisplayName("유효하지 않은 검색 조건이라면 게시글 목록 검색에 실패한다")
         void throwExceptionByNotFoundSearchType() throws Exception {
             // given
             doThrow(BaseException.type(BoardErrorCode.NOT_FOUND_SEARCH_TYPE))
