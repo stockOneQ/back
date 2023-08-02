@@ -35,6 +35,7 @@ public class Board extends BaseTimeEntity {
 
     private int hit;
 
+    @Convert(converter = Status.StatusConverter.class)
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
