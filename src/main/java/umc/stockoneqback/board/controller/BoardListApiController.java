@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import umc.stockoneqback.board.controller.dto.BoardListResponse;
-import umc.stockoneqback.board.controller.dto.SelectedMyBoardRequest;
 import umc.stockoneqback.board.service.BoardListService;
 import umc.stockoneqback.global.annotation.ExtractPayload;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,8 +36,8 @@ public class BoardListApiController {
 
     @DeleteMapping("/my")
     public ResponseEntity<Void> deleteMyBoard(@ExtractPayload Long userId,
-                                              @RequestBody SelectedMyBoardRequest request) throws IOException {
-        boardListService.deleteMyBoard(userId, request.SelectedBoardId());
+                                              @RequestParam List<Long> selectedBoardId) throws IOException {
+        boardListService.deleteMyBoard(userId, selectedBoardId);
         return ResponseEntity.ok().build();
     }
 }
