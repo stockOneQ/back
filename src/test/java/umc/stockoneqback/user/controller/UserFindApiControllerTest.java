@@ -9,9 +9,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.user.controller.dto.response.FindManagerResponse;
 import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.infra.query.dto.FindManager;
+import umc.stockoneqback.user.service.dto.response.FindManagerResponse;
 
 import java.util.List;
 
@@ -152,7 +152,7 @@ class UserFindApiControllerTest extends ControllerTest {
                     .param("condition", SEARCH_CONDITION)
                     .param("last", String.valueOf(LAST_USER_ID))
                     .param("name", SEARCH_NAME)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);;
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)

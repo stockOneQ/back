@@ -8,9 +8,9 @@ import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.friend.domain.Friend;
 import umc.stockoneqback.friend.domain.FriendStatus;
 import umc.stockoneqback.role.domain.store.Store;
-import umc.stockoneqback.user.controller.dto.response.FindManagerResponse;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.infra.query.dto.FindManager;
+import umc.stockoneqback.user.service.dto.response.FindManagerResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;

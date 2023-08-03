@@ -3,10 +3,10 @@ package umc.stockoneqback.friend.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import umc.stockoneqback.global.base.GlobalErrorCode;
-import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
+import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
 import umc.stockoneqback.product.exception.ProductErrorCode;
 import umc.stockoneqback.product.service.ProductOthersService;
 import umc.stockoneqback.role.domain.store.Store;
@@ -30,8 +30,10 @@ public class FriendProductService {
     private final FriendService friendService;
 
     @Transactional
-    public List<SearchProductOthersResponse> searchProductOthers
-            (Long userId, Long friendId, String storeConditionValue, String productName) throws IOException {
+    public List<SearchProductOthersResponse> searchProductOthers(Long userId,
+                                                                 Long friendId,
+                                                                 String storeConditionValue,
+                                                                 String productName) throws IOException {
         User manager = isManager(userId);
         User friend = checkRelation(manager, friendId);
         Store friendStore = storeService.findByUser(friend);
@@ -39,8 +41,9 @@ public class FriendProductService {
     }
 
     @Transactional
-    public List<GetTotalProductResponse> getTotalProductOthers
-            (Long userId, Long friendId, String storeConditionValue) throws IOException {
+    public List<GetTotalProductResponse> getTotalProductOthers(Long userId,
+                                                               Long friendId,
+                                                               String storeConditionValue) {
         User manager = isManager(userId);
         User friend = checkRelation(manager, friendId);
         Store friendStore = storeService.findByUser(friend);
@@ -48,8 +51,11 @@ public class FriendProductService {
     }
 
     @Transactional
-    public List<SearchProductOthersResponse> getListOfCategoryProductOthers
-            (Long userId, Long friendId, String storeConditionValue, Long productId, String category) throws IOException {
+    public List<SearchProductOthersResponse> getListOfCategoryProductOthers(Long userId,
+                                                                            Long friendId,
+                                                                            String storeConditionValue,
+                                                                            Long productId,
+                                                                            String category) throws IOException {
         User manager = isManager(userId);
         User friend = checkRelation(manager, friendId);
         Store friendStore = storeService.findByUser(friend);

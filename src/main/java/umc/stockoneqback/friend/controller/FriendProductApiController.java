@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import umc.stockoneqback.friend.service.FriendProductService;
-import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
 import umc.stockoneqback.global.annotation.ExtractPayload;
 import umc.stockoneqback.global.base.BaseResponse;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
+import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
 
 import java.io.IOException;
 import java.util.List;
