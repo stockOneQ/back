@@ -32,4 +32,12 @@ public enum SearchType implements EnumStandard {
             throw BaseException.type(BoardErrorCode.NOT_FOUND_SEARCH_TYPE);
         }
     }
+
+    public static SearchType findMyBoardSearchTypeByValue(String searchTypeValue) {
+        if (map.get(searchTypeValue) == SearchType.CONTENT || map.get(searchTypeValue) == SearchType.TITLE) {
+            return map.get(searchTypeValue);
+        } else {
+            throw BaseException.type(BoardErrorCode.NOT_FOUND_SEARCH_TYPE);
+        }
+    }
 }

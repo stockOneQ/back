@@ -9,10 +9,12 @@ import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.board.domain.SearchType;
 import umc.stockoneqback.board.domain.SortCondition;
 import umc.stockoneqback.board.domain.like.BoardLikeRepository;
+import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.board.infra.query.dto.BoardList;
 import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.comment.domain.CommentRepository;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.reply.domain.ReplyRepository;
 import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.User;
@@ -54,6 +56,34 @@ public class BoardListService {
 
         int lastIndex = getLastIndex(boardLists, lastBoardId);
         return configPaging(boardLists, lastIndex, PAGE_SIZE);
+    }
+
+    @Transactional
+    public BoardListResponse getMyBoardList(Long userId, Long lastBoardId, String sortBy, String searchBy, String searchWord) throws IOException {
+        User user = userFindService.findById(userId);
+        validateUser(user);
+
+        SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
+        SearchType searchType = SearchType.findMyBoardSearchTypeByValue(searchBy);
+
+        List<BoardList> boardList = new ArrayList<>();
+        switch (sortCondition) {
+            case TIME -> boardList = boardRepository.getMyBoardListOrderByTime(userId, searchType, searchWord);
+            case HIT -> boardList = boardRepository.getMyBoardListOrderByHit(userId, searchType, searchWord);
+        }
+
+        List<BoardList> boardLists = getSortedBoardList(boardList);
+
+        int lastIndex = getLastIndex(boardLists, lastBoardId);
+        return configPaging(boardLists, lastIndex, PAGE_SIZE);
+    }
+
+    @Transactional
+    public void deleteMyBoard(Long userId, List<Long> selectedBoardId) {
+        for (Long boardId : selectedBoardId) {
+            validateWriter(boardId, userId);
+            boardRepository.deleteById(boardId);
+        }
     }
 
     private List<BoardList> getSortedBoardList(List<BoardList> boardLists) throws IOException {
@@ -118,6 +148,19 @@ public class BoardListService {
     private void validateManager(User user) {
         if (user.getRole() != Role.MANAGER) {
             throw BaseException.type(UserErrorCode.USER_IS_NOT_MANAGER);
+        }
+    }
+
+    private void validateWriter(Long boardId, Long writerId) {
+        Board board = boardFindService.findById(boardId);
+        if (!board.getWriter().getId().equals(writerId)) {
+            throw BaseException.type(BoardErrorCode.USER_IS_NOT_BOARD_WRITER);
+        }
+    }
+
+    private void validateUser(User user) {
+        if (user.getRole() != Role.MANAGER || user.getStatus() == Status.EXPIRED) {
+            throw BaseException.type(UserErrorCode.USER_NOT_ALLOWED);
         }
     }
 }
