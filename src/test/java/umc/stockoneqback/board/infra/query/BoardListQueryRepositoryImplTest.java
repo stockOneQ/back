@@ -91,5 +91,42 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
                 );
             }
         }
+
+        @Order(3)
+        @Test
+        @DisplayName("내가 쓴 글에서 검색 결과에 따른 게시글을 최신순으로 조회한다")
+        void getMyBoardListOrderByTime() {
+            // when
+            List<BoardList> myBoardList = boardRepository.getMyBoardListOrderByTime(writer.getId(), SEARCH_TYPE, SEARCH_QUERY);
+
+            // then
+            assertAll(
+                    () -> assertThat(myBoardList.get(9).getId()).isEqualTo(boardList[0].getId()),
+                    () -> assertThat(myBoardList.get(9).getTitle()).isEqualTo(boardList[0].getTitle()),
+                    () -> assertThat(myBoardList.get(9).getContent()).isEqualTo(boardList[0].getContent()),
+                    () -> assertThat(myBoardList.get(9).getHit()).isEqualTo(boardList[0].getHit())
+            );
+        }
+
+        @Order(4)
+        @Test
+        @DisplayName("내가 쓴 글에서 검색 결과에 따른 게시글을 조회순으로 조회한다")
+        void getMyBoardListOrderByHit() {
+            // when
+            List<BoardList> myBoardList = boardRepository.getMyBoardListOrderByHit(writer.getId(), SEARCH_TYPE, SEARCH_QUERY);
+
+            // then
+            for (int i = 0; i < myBoardList.size(); i++) {
+                BoardList boardOrderByHit = myBoardList.get(i);
+                Board board = boardList[i];
+
+                assertAll(
+                        () -> assertThat(boardOrderByHit.getId()).isEqualTo(board.getId()),
+                        () -> assertThat(boardOrderByHit.getTitle()).isEqualTo(board.getTitle()),
+                        () -> assertThat(boardOrderByHit.getContent()).isEqualTo(board.getContent()),
+                        () -> assertThat(boardOrderByHit.getHit()).isEqualTo(board.getHit())
+                );
+            }
+        }
     }
 }
