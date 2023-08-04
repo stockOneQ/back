@@ -16,8 +16,6 @@ import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.GlobalErrorCode;
-import umc.stockoneqback.product.exception.ProductErrorCode;
-import umc.stockoneqback.user.exception.UserErrorCode;
 
 import java.nio.charset.StandardCharsets;
 
@@ -36,9 +34,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.common.DocumentFormatGenerator.*;
-import static umc.stockoneqback.common.DocumentFormatGenerator.getDateFormat;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
-import static umc.stockoneqback.fixture.ProductFixture.APPLE;
 import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 
