@@ -36,8 +36,8 @@ public class BoardListApiController {
 
     @DeleteMapping("/my")
     public ResponseEntity<Void> deleteMyBoard(@ExtractPayload Long userId,
-                                              @RequestParam List<Long> selectedBoardId) throws IOException {
-        boardListService.deleteMyBoard(userId, selectedBoardId);
+                                              @RequestParam List<Long> boardId) throws IOException {
+        boardListService.deleteMyBoard(userId, boardId);
         return ResponseEntity.ok().build();
     }
 }

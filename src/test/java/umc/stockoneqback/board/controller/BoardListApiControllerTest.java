@@ -461,7 +461,7 @@ class BoardListApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL)
-                    .param("selectedBoardId", String.valueOf(BOARD_ID));
+                    .param("boardId", String.valueOf(BOARD_ID));
 
             // then
             final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
@@ -481,7 +481,7 @@ class BoardListApiControllerTest extends ControllerTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestParameters(
-                                            parameterWithName("selectedBoardId").description("선택된 게시글 ID")
+                                            parameterWithName("boardId").description("선택된 게시글들 ID")
                                     )
                             )
                     );
@@ -498,7 +498,7 @@ class BoardListApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL)
-                    .param("selectedBoardId", String.valueOf(BOARD_ID))
+                    .param("boardId", String.valueOf(BOARD_ID))
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
@@ -522,7 +522,7 @@ class BoardListApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParameters(
-                                            parameterWithName("selectedBoardId").description("선택된 게시글 ID")
+                                            parameterWithName("boardId").description("선택된 게시글들 ID")
                                     )
                             )
                     );
@@ -539,7 +539,7 @@ class BoardListApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .delete(BASE_URL)
-                    .param("selectedBoardId", String.valueOf(BOARD_ID))
+                    .param("boardId", String.valueOf(BOARD_ID))
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
@@ -554,7 +554,7 @@ class BoardListApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParameters(
-                                            parameterWithName("selectedBoardId").description("선택된 게시글 ID")
+                                            parameterWithName("boardId").description("선택된 게시글들 ID")
                                     )
                             )
                     );
