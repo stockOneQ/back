@@ -156,3 +156,27 @@ include::{snippets}/BoardApi/Like/Register/Failure/Case3/path-parameters.adoc[]
 
 HTTP Response
 include::{snippets}/BoardApi/Like/Cancel/Success/http-response.adoc[]
+
+= Board 상세조회 API
+
+== 게시글 상세조회
+=== 1. 유효하지 않은 권한으로 게시글 상세 조회 시 실패한다
+HTTP Request
+include::{snippets}/BoardApi/Detail/Failure/Case1/http-request.adoc[]
+include::{snippets}/BoardApi/Detail/Failure/Case1/request-headers.adoc[]
+include::{snippets}/BoardApi/Detail/Failure/Case1/path-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/BoardApi/Detail/Failure/Case1/http-response.adoc[]
+include::{snippets}/BoardApi/Detail/Failure/Case1/response-fields.adoc[]
+
+==== 2. 게시글 상세조회에 성공한다
+HTTP Request
+include::{snippets}/BoardApi/Detail/Success/http-request.adoc[]
+include::{snippets}/BoardApi/Detail/Success/request-headers.adoc[]
+include::{snippets}/BoardApi/Detail/Failure/Case1/path-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/BoardApi/Detail/Success/http-response.adoc[]
+include::{snippets}/BoardApi/Detail/Success/response-fields.adoc[]
+
