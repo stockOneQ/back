@@ -18,7 +18,7 @@ import java.io.IOException;
 public class BoardListApiController {
     private final BoardListService boardListService;
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<BoardListResponse> boardList(@ExtractPayload Long userId,
                                                        @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastBoardId,
                                                        @RequestParam(value = "sort", required = false, defaultValue = "최신순") String sortBy,
