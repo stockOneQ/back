@@ -10,6 +10,8 @@ public record BoardResponse(
 
         byte[] file,
 
-        String content
+        String content,
+
+        String writer
 ) {
 }

@@ -67,6 +67,7 @@ public class BoardService {
                 .title(board.getTitle())
                 .file(file)
                 .content(board.getContent())
+                .writer(board.getWriter().getLoginId())
                 .build();
     }
 
