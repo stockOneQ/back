@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.board.controller.dto.BoardResponse;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.domain.BoardRepository;
+import umc.stockoneqback.board.domain.like.BoardLikeRepository;
 import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.global.base.BaseException;
@@ -25,6 +26,7 @@ public class BoardService {
     private final BoardFindService boardFindService;
     private final BoardRepository boardRepository;
     private final FileService fileService;
+    private final BoardLikeRepository boardLikeRepository;
 
     @Transactional
     public Long create(Long writerId, String title, MultipartFile file, String content){
@@ -67,6 +69,9 @@ public class BoardService {
                 .title(board.getTitle())
                 .file(file)
                 .content(board.getContent())
+                .hit(board.getHit())
+                .likes(boardLikeRepository.countByBoard(board))
+                .createdDate(board.getCreatedDate())
                 .writer(board.getWriter().getLoginId())
                 .build();
     }
