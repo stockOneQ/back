@@ -18,6 +18,7 @@ import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.GlobalErrorCode;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -37,6 +38,7 @@ import static umc.stockoneqback.common.DocumentFormatGenerator.*;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
 import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
+import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 
 @DisplayName("Board [Controller Layer] -> BoardApiController 테스트")
 public class BoardApiControllerTest extends ControllerTest {
@@ -590,7 +592,11 @@ public class BoardApiControllerTest extends ControllerTest {
                                             fieldWithPath("id").type(JsonFieldType.NUMBER).description("상세조회한 게시글 ID"),
                                             fieldWithPath("title").type(JsonFieldType.STRING).description("상세조회한 제목"),
                                             fieldWithPath("file").type(JsonFieldType.ARRAY).description("상세조회한 파일").optional(),
-                                            fieldWithPath("content").type(JsonFieldType.STRING).description("상세조회한 내용")
+                                            fieldWithPath("content").type(JsonFieldType.STRING).description("상세조회한 내용"),
+                                            fieldWithPath("hit").type(JsonFieldType.NUMBER).description("상세조회한 조회수"),
+                                            fieldWithPath("likes").type(JsonFieldType.NUMBER).description("상세조회한 좋아요수"),
+                                            fieldWithPath("createdDate").type(JsonFieldType.STRING).description("상세조회한 등록일"),
+                                            fieldWithPath("writer").type(JsonFieldType.STRING).description("상세조회한 작성자")
                                     )
                             )
                     );
@@ -603,7 +609,8 @@ public class BoardApiControllerTest extends ControllerTest {
     }
 
     private BoardResponse loadBoardResponse() {
-        return new BoardResponse(1L, BOARD_0.getTitle(), null ,BOARD_0.getContent());
+        return new BoardResponse(1L, BOARD_0.getTitle(), null ,BOARD_0.getContent(), BOARD_0.getHit(), 0,
+                LocalDate.of(2023, 7, 22).atTime(1, 1) ,SAEWOO.toUser().getLoginId());
     }
 }
 
