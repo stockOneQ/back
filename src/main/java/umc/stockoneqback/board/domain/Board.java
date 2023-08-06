@@ -19,17 +19,12 @@ import static javax.persistence.CascadeType.PERSIST;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "board")
-/*
- * TODO : 첨부파일 관련 사항 확정 시 file 컬럼 수정
- * */
 public class Board extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
-
-    private String file;
 
     private String content;
 
@@ -46,17 +41,16 @@ public class Board extends BaseTimeEntity {
     private List<Comment> commentList = new ArrayList<>();
 
     @Builder
-    private Board (User writer, String title, String file, String content) {
+    private Board (User writer, String title, String content) {
         this.writer = writer;
         this.title = title;
-        this.file = file;
         this.content = content;
         this.hit = 0;
         this.status = Status.NORMAL;
     }
 
-    public static Board createBoard(User writer, String title, String file, String content) {
-        return new Board(writer, title, file, content);
+    public static Board createBoard(User writer, String title, String content) {
+        return new Board(writer, title, content);
     }
 
     public void addComment(User writer, String image, String content) {
@@ -65,10 +59,6 @@ public class Board extends BaseTimeEntity {
 
     public void updateTitle(String updateTitle){
         this.title = updateTitle;
-    }
-
-    public void updateFile(String updateFile){
-        this.file = updateFile;
     }
 
     public void updateContent(String updateContent){

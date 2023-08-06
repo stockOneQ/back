@@ -10,8 +10,6 @@ public record BoardResponse(
 
         String title,
 
-        byte[] file,
-
         String content,
 
         int hit,
