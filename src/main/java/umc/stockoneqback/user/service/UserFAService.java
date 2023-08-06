@@ -10,6 +10,8 @@ import umc.stockoneqback.user.service.dto.response.GetFAResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Comparator.comparing;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ public class UserFAService {
     @Transactional
     public List<GetFAResponse> getFA() {
         List<StaticFA> staticFAList = staticFARedisRepository.findAll();
+        staticFAList.sort(comparing(StaticFA::getId));
         List<GetFAResponse> getFAResponseList = new ArrayList<>();
         for (StaticFA staticFA: staticFAList) {
             getFAResponseList.add(GetFAResponse.builder()
