@@ -72,6 +72,10 @@ dependencies {
 
     // validation (add)
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // Redis (add)
+    implementation 'it.ozimov:embedded-redis:0.7.2'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 ext {
