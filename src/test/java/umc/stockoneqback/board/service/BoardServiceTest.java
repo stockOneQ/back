@@ -49,14 +49,13 @@ public class BoardServiceTest extends ServiceTest {
     @DisplayName("게시글 등록에 성공한다")
     void success() {
         // when
-        Long boardId = boardService.create(writer.getId(), "제목", null, "내용");
+        Long boardId = boardService.create(writer.getId(), "제목", "내용");
 
         // then
         Board findBoard = boardRepository.findById(boardId).orElseThrow();
         assertAll(
                 () -> assertThat(findBoard.getWriter().getId()).isEqualTo(writer.getId()),
                 () -> assertThat(findBoard.getTitle()).isEqualTo("제목"),
-                () -> assertThat(findBoard.getFile()).isEqualTo(null),
                 () -> assertThat(findBoard.getContent()).isEqualTo("내용"),
                 () -> assertThat(findBoard.getCreatedDate().format(formatter)).isEqualTo(LocalDateTime.now().format(formatter)),
                 () -> assertThat(findBoard.getModifiedDate().format(formatter)).isEqualTo(LocalDateTime.now().format(formatter))
@@ -70,7 +69,7 @@ public class BoardServiceTest extends ServiceTest {
         @DisplayName("다른 사람의 게시글은 수정할 수 없다")
         void throwExceptionByUserNotBoardWriter() {
             // when - then
-            assertThatThrownBy(() -> boardService.update(not_writer.getId(),board.getId(), "제목2", null, "내용2"))
+            assertThatThrownBy(() -> boardService.update(not_writer.getId(),board.getId(), "제목2", "내용2"))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(BoardErrorCode.USER_IS_NOT_BOARD_WRITER.getMessage());
         }
@@ -79,7 +78,7 @@ public class BoardServiceTest extends ServiceTest {
         @DisplayName("게시글 수정에 성공한다")
         void success() {
             // given
-            boardService.update(writer.getId(), board.getId(), "제목2", null,"내용2");
+            boardService.update(writer.getId(), board.getId(), "제목2", "내용2");
 
             // when
             Board findBoard = boardFindService.findById(board.getId());
@@ -87,7 +86,6 @@ public class BoardServiceTest extends ServiceTest {
             // then
             assertAll(
                     () -> assertThat(findBoard.getTitle()).isEqualTo("제목2"),
-                    () -> assertThat(findBoard.getFile()).isEqualTo(null),
                     () -> assertThat(findBoard.getContent()).isEqualTo("내용2"),
                     () -> assertThat(findBoard.getModifiedDate().format(formatter)).isEqualTo(LocalDateTime.now().format(formatter))
             );

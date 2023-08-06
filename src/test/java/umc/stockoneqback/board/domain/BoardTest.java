@@ -31,7 +31,6 @@ public class BoardTest {
         assertAll(
                 () -> assertThat(board.getWriter()).isEqualTo(writer[0]),
                 () -> assertThat(board.getTitle()).isEqualTo(BOARD_0.getTitle()),
-                () -> assertThat(board.getFile()).isEqualTo(BOARD_0.getFile()),
                 () -> assertThat(board.getContent()).isEqualTo(BOARD_0.getContent()),
                 () -> assertThat(board.getHit()).isEqualTo(0),
                 () -> assertThat(board.getStatus()).isEqualTo(NORMAL)
