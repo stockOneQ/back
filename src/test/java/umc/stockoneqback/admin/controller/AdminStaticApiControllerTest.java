@@ -19,6 +19,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -81,6 +83,9 @@ public class AdminStaticApiControllerTest extends ControllerTest {
                                     "AdminStaticApi/CommonError/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("question").description("삭제할 질문")
                                     ),
@@ -126,6 +131,9 @@ public class AdminStaticApiControllerTest extends ControllerTest {
                                     "AdminStaticApi/AddFA/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestFields(
                                             fieldWithPath("addFAKeyValueList[].question").description("질문"),
                                             fieldWithPath("addFAKeyValueList[].answer").description("답변")
@@ -164,6 +172,9 @@ public class AdminStaticApiControllerTest extends ControllerTest {
                                     "AdminStaticApi/DeleteFA/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
                                     requestParameters(
                                             parameterWithName("question").description("삭제할 질문")
                                     )
