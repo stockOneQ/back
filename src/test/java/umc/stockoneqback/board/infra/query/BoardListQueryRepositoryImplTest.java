@@ -28,7 +28,8 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
     private final Board[] boardList = new Board[10];
     private User writer;
     private static final SearchType SEARCH_TYPE = SearchType.TITLE;
-    private static final String SEARCH_QUERY = "제목";
+    private static final String SEARCH_TITLE = "제목";
+    private static final String SEARCH_CONTENT = "5";
 
     @BeforeEach
     void setUp() {
@@ -60,14 +61,14 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
         @DisplayName("검색 결과에 따른 게시글을 최신순으로 조회한다")
         void getBoardListOrderByTime() {
             // when
-            List<BoardList> boardListOrderByTime = boardRepository.getBoardListOrderByTime(SEARCH_TYPE, SEARCH_QUERY);
+            List<BoardList> boardListOrderByTime = boardRepository.getBoardListOrderByTime(SEARCH_TYPE, SEARCH_CONTENT);
 
             // then
             assertAll(
-                    () -> assertThat(boardListOrderByTime.get(9).getId()).isEqualTo(boardList[0].getId()),
-                    () -> assertThat(boardListOrderByTime.get(9).getTitle()).isEqualTo(boardList[0].getTitle()),
-                    () -> assertThat(boardListOrderByTime.get(9).getContent()).isEqualTo(boardList[0].getContent()),
-                    () -> assertThat(boardListOrderByTime.get(9).getHit()).isEqualTo(boardList[0].getHit())
+                    () -> assertThat(boardListOrderByTime.get(0).getId()).isEqualTo(boardList[5].getId()),
+                    () -> assertThat(boardListOrderByTime.get(0).getTitle()).isEqualTo(boardList[5].getTitle()),
+                    () -> assertThat(boardListOrderByTime.get(0).getContent()).isEqualTo(boardList[5].getContent()),
+                    () -> assertThat(boardListOrderByTime.get(0).getHit()).isEqualTo(boardList[5].getHit())
             );
         }
 
@@ -76,11 +77,48 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
         @DisplayName("검색 결과에 따른 게시글을 조회순으로 조회한다")
         void getBoardListOrderByHit() {
             // when
-            List<BoardList> boardListOrderByHit = boardRepository.getBoardListOrderByHit(SEARCH_TYPE, SEARCH_QUERY);
+            List<BoardList> boardListOrderByHit = boardRepository.getBoardListOrderByHit(SEARCH_TYPE, SEARCH_TITLE);
 
             // then
             for (int i = 0; i < boardListOrderByHit.size(); i++) {
                 BoardList boardOrderByHit = boardListOrderByHit.get(i);
+                Board board = boardList[i];
+
+                assertAll(
+                        () -> assertThat(boardOrderByHit.getId()).isEqualTo(board.getId()),
+                        () -> assertThat(boardOrderByHit.getTitle()).isEqualTo(board.getTitle()),
+                        () -> assertThat(boardOrderByHit.getContent()).isEqualTo(board.getContent()),
+                        () -> assertThat(boardOrderByHit.getHit()).isEqualTo(board.getHit())
+                );
+            }
+        }
+
+        @Order(3)
+        @Test
+        @DisplayName("내가 쓴 글에서 검색 결과에 따른 게시글을 최신순으로 조회한다")
+        void getMyBoardListOrderByTime() {
+            // when
+            List<BoardList> myBoardList = boardRepository.getMyBoardListOrderByTime(writer.getId(), SEARCH_TYPE, SEARCH_CONTENT);
+
+            // then
+            assertAll(
+                    () -> assertThat(myBoardList.get(0).getId()).isEqualTo(boardList[5].getId()),
+                    () -> assertThat(myBoardList.get(0).getTitle()).isEqualTo(boardList[5].getTitle()),
+                    () -> assertThat(myBoardList.get(0).getContent()).isEqualTo(boardList[5].getContent()),
+                    () -> assertThat(myBoardList.get(0).getHit()).isEqualTo(boardList[5].getHit())
+            );
+        }
+
+        @Order(4)
+        @Test
+        @DisplayName("내가 쓴 글에서 검색 결과에 따른 게시글을 조회순으로 조회한다")
+        void getMyBoardListOrderByHit() {
+            // when
+            List<BoardList> myBoardList = boardRepository.getMyBoardListOrderByHit(writer.getId(), SEARCH_TYPE, SEARCH_TITLE);
+
+            // then
+            for (int i = 0; i < myBoardList.size(); i++) {
+                BoardList boardOrderByHit = myBoardList.get(i);
                 Board board = boardList[i];
 
                 assertAll(

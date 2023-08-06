@@ -38,6 +38,26 @@ public class BoardListQueryRepositoryImpl implements BoardListQueryRepository {
                 .fetch();
     }
 
+    @Override
+    public List<BoardList> getMyBoardListOrderByTime(Long userId, SearchType searchType, String searchWord) {
+        return query
+                .selectDistinct(new QBoardList(board.id, board.title, board.content, board.hit, board.createdDate))
+                .from(board)
+                .where(board.status.eq(Status.NORMAL), board.writer.id.eq(userId), search(searchType, searchWord))
+                .orderBy(board.createdDate.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<BoardList> getMyBoardListOrderByHit(Long userId, SearchType searchType, String searchWord) {
+        return query
+                .selectDistinct(new QBoardList(board.id, board.title, board.content, board.hit, board.createdDate))
+                .from(board)
+                .where(board.status.eq(Status.NORMAL), board.writer.id.eq(userId), search(searchType, searchWord))
+                .orderBy(board.hit.desc())
+                .fetch();
+    }
+
     private BooleanExpression search(SearchType searchType, String searchWord) {
         if (searchWord == null || searchWord.isEmpty()) {
             return null;
