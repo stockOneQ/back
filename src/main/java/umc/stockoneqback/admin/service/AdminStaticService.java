@@ -7,9 +7,9 @@ import umc.stockoneqback.admin.domain.StaticFA;
 import umc.stockoneqback.admin.domain.StaticFARedisRepository;
 import umc.stockoneqback.admin.dto.request.AddFARequest;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.User;
-import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.service.UserFindService;
 
 @Service
@@ -39,6 +39,6 @@ public class AdminStaticService {
         User user = userFindService.findById(userId);
         if (user.getRole() == Role.ADMINISTRATOR)
             return;
-        throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
+        throw BaseException.type(GlobalErrorCode.NOT_FOUND);
     }
 }
