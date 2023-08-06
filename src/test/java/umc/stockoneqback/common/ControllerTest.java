@@ -51,14 +51,8 @@ import umc.stockoneqback.reply.service.ReplyFindService;
 import umc.stockoneqback.reply.service.ReplyService;
 import umc.stockoneqback.role.service.CompanyService;
 import umc.stockoneqback.role.service.StoreService;
-import umc.stockoneqback.user.controller.UserApiController;
-import umc.stockoneqback.user.controller.UserFindApiController;
-import umc.stockoneqback.user.controller.UserInformationApiController;
-import umc.stockoneqback.user.controller.UserUpdateApiController;
-import umc.stockoneqback.user.service.UserFindService;
-import umc.stockoneqback.user.service.UserInformationService;
-import umc.stockoneqback.user.service.UserService;
-import umc.stockoneqback.user.service.UserUpdateService;
+import umc.stockoneqback.user.controller.*;
+import umc.stockoneqback.user.service.*;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -67,6 +61,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         UserApiController.class,
         UserUpdateApiController.class,
         UserInformationApiController.class,
+        UserFAApiController.class,
         BusinessApiController.class,
         BoardApiController.class,
         BusinessApiController.class,
@@ -175,6 +170,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected ProductOthersService productOthersService;
+
+    @MockBean
+    protected UserFAService userFAService;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {
