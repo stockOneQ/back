@@ -1,0 +1,17 @@
+= USER F&A API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+
+== 사용자 F&A 조회 (10.2)
+=== 1. 사용자 F&A 조회에 성공한다
+==== HTTP Request
+include::{snippets}/UserFAApi/GetFAList/Success/http-request.adoc[]
+Request Header
+include::{snippets}/UserFAApi/GetFAList/Success/request-headers.adoc[]
+
+==== HTTP Response
+include::{snippets}/UserFAApi/GetFAList/Success/http-response.adoc[]
+include::{snippets}/UserFAApi/GetFAList/Success/response-fields.adoc[]
