@@ -3,20 +3,16 @@ package umc.stockoneqback.board.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.board.controller.dto.BoardResponse;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.board.domain.like.BoardLikeRepository;
 import umc.stockoneqback.board.exception.BoardErrorCode;
-import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.service.UserFindService;
-
-import java.io.IOException;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,7 +21,6 @@ public class BoardService {
     private final UserFindService userFindService;
     private final BoardFindService boardFindService;
     private final BoardRepository boardRepository;
-    private final FileService fileService;
     private final BoardLikeRepository boardLikeRepository;
 
     @Transactional
