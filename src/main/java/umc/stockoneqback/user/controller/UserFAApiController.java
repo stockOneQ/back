@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
-public class UserFAController {
+public class UserFAApiController {
     private final UserFAService userFAService;
 
     @GetMapping("/fa")

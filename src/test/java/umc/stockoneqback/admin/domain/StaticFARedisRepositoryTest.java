@@ -26,11 +26,12 @@ public class StaticFARedisRepositoryTest {
     );
     private final List<String> answerList = Arrays.asList(
                     "A1. 이직하는 프랜차이즈의 발급코드가 필요하기 때문에 탈퇴하고 다시 회원가입을 진행해주셔야 합니다.",
-                    "A2. 알바생은 사장님과 동일하게 Home(재고 관리), Connect, 마이페이지 메뉴를 이용할 수 있고, 슈퍼바이저는 Connect와 마이페이지 메뉴를 이용할 수 있습니다."
+                    "A2. 알바생은 사장님과 동일하게 Home(재고 관리), Connect, 마이페이지 메뉴를 이용할 수 있고, " +
+                            "슈퍼바이저는 Connect와 마이페이지 메뉴를 이용할 수 있습니다."
     );
 
     @BeforeEach
-    void clear(){
+    void setup(){
         staticFARedisRepository.deleteAll();
         for (int i = 0; i < questionList.size(); i++) {
             staticFARedisRepository.save(StaticFA.builder()
