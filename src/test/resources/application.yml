@@ -22,6 +22,15 @@ spring:
     import:
       - classpath:secret.yml
 
+  redis:
+    lettuce:
+      pool:
+        min-idle: 0
+        max-idle: 8
+        max-active: 8
+    port: 16379
+    host: localhost
+
 logging:
   level:
     com:
