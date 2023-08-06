@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import umc.stockoneqback.admin.controller.AdminStaticApiController;
+import umc.stockoneqback.admin.service.AdminStaticService;
 import umc.stockoneqback.auth.controller.AuthApiController;
 import umc.stockoneqback.auth.controller.TokenReissueApiController;
 import umc.stockoneqback.auth.service.AuthService;
@@ -76,7 +78,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         BoardListApiController.class,
         UserFindApiController.class,
         FriendProductApiController.class,
-        BusinessProductApiController.class
+        BusinessProductApiController.class,
+        AdminStaticApiController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs
@@ -173,6 +176,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected UserFAService userFAService;
+
+    @MockBean
+    protected AdminStaticService adminStaticService;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {
