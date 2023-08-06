@@ -74,6 +74,7 @@ public class BoardListService {
 
         List<BoardList> boardLists = getSortedBoardList(boardList);
 
+        int countPage = 1;
         int lastIndex = getLastIndex(boardLists, lastBoardId);
         return configPaging(boardLists, lastIndex, PAGE_SIZE);
     }
@@ -116,9 +117,9 @@ public class BoardListService {
 
     private BoardListResponse configPaging(List<BoardList> boardLists, int lastIndex, int size) {
         if (lastIndex + 1 + size >= boardLists.size()) {
-            return new BoardListResponse(boardLists.subList(lastIndex + 1, boardLists.size()));
+            return new BoardListResponse(boardLists.size(), boardLists.subList(lastIndex + 1, boardLists.size()));
         }
-        return new BoardListResponse(boardLists.subList(lastIndex + 1, lastIndex + 1 + size));
+        return new BoardListResponse(boardLists.size(), boardLists.subList(lastIndex + 1, lastIndex + 1 + size));
     }
 
     private int countLike(Board board) {
