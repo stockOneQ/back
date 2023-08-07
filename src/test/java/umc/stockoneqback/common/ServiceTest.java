@@ -3,7 +3,9 @@ package umc.stockoneqback.common;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
+import umc.stockoneqback.admin.domain.StaticFARedisRepository;
 import umc.stockoneqback.auth.domain.TokenRepository;
 import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.board.domain.like.BoardLikeRepository;
@@ -19,6 +21,7 @@ import umc.stockoneqback.user.domain.UserRepository;
 
 @SpringBootTest
 @Transactional
+@Import(EmbeddedRedisConfig.class)
 public class ServiceTest {
     @Autowired
     private DatabaseCleaner databaseCleaner;
@@ -58,6 +61,9 @@ public class ServiceTest {
 
     @Autowired
     protected BoardLikeRepository boardLikeRepository;
+
+    @Autowired
+    protected StaticFARedisRepository staticFARedisRepository;
 
     public void flushAndClear() {
         databaseCleaner.flushAndClear();

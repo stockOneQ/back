@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import umc.stockoneqback.admin.controller.AdminStaticApiController;
+import umc.stockoneqback.admin.service.AdminStaticService;
 import umc.stockoneqback.auth.controller.AuthApiController;
 import umc.stockoneqback.auth.controller.TokenReissueApiController;
 import umc.stockoneqback.auth.service.AuthService;
@@ -51,14 +53,8 @@ import umc.stockoneqback.reply.service.ReplyFindService;
 import umc.stockoneqback.reply.service.ReplyService;
 import umc.stockoneqback.role.service.CompanyService;
 import umc.stockoneqback.role.service.StoreService;
-import umc.stockoneqback.user.controller.UserApiController;
-import umc.stockoneqback.user.controller.UserFindApiController;
-import umc.stockoneqback.user.controller.UserInformationApiController;
-import umc.stockoneqback.user.controller.UserUpdateApiController;
-import umc.stockoneqback.user.service.UserFindService;
-import umc.stockoneqback.user.service.UserInformationService;
-import umc.stockoneqback.user.service.UserService;
-import umc.stockoneqback.user.service.UserUpdateService;
+import umc.stockoneqback.user.controller.*;
+import umc.stockoneqback.user.service.*;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -67,6 +63,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         UserApiController.class,
         UserUpdateApiController.class,
         UserInformationApiController.class,
+        UserFAApiController.class,
         BusinessApiController.class,
         BoardApiController.class,
         BusinessApiController.class,
@@ -81,7 +78,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         BoardListApiController.class,
         UserFindApiController.class,
         FriendProductApiController.class,
-        BusinessProductApiController.class
+        BusinessProductApiController.class,
+        AdminStaticApiController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs
@@ -175,6 +173,12 @@ public abstract class ControllerTest {
 
     @MockBean
     protected ProductOthersService productOthersService;
+
+    @MockBean
+    protected UserFAService userFAService;
+
+    @MockBean
+    protected AdminStaticService adminStaticService;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {
