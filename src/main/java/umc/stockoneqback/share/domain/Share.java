@@ -1,9 +1,10 @@
-package umc.stockoneqback.business.domain;
+package umc.stockoneqback.share.domain;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import umc.stockoneqback.business.domain.Business;
 import umc.stockoneqback.global.base.BaseTimeEntity;
 import umc.stockoneqback.global.base.Status;
 
