@@ -232,6 +232,7 @@ class BoardListApiControllerTest extends ControllerTest {
                                             parameterWithName("word").description("검색어")
                                     ),
                                     responseFields(
+                                            fieldWithPath("total").type(JsonFieldType.NUMBER).description("전체 게시글 수"),
                                             fieldWithPath("boardListResponse[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
                                             fieldWithPath("boardListResponse[].title").type(JsonFieldType.STRING).description("게시글 제목"),
                                             fieldWithPath("boardListResponse[].content").type(JsonFieldType.STRING).description("내용 미리보기"),
@@ -436,6 +437,7 @@ class BoardListApiControllerTest extends ControllerTest {
                                             parameterWithName("word").description("검색어")
                                     ),
                                     responseFields(
+                                            fieldWithPath("total").type(JsonFieldType.NUMBER).description("전체 게시글 수"),
                                             fieldWithPath("boardListResponse[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
                                             fieldWithPath("boardListResponse[].title").type(JsonFieldType.STRING).description("게시글 제목"),
                                             fieldWithPath("boardListResponse[].content").type(JsonFieldType.STRING).description("내용 미리보기"),
@@ -563,6 +565,7 @@ class BoardListApiControllerTest extends ControllerTest {
 
     private BoardListResponse getBoardListResponse() {
         return new BoardListResponse(
+                4,
                 List.of(
                         new BoardList(1L, BOARD_0.getTitle(), BOARD_0.getContent(), 1, LocalDateTime.now(), 0, 0),
                         new BoardList(2L, BOARD_1.getTitle(), BOARD_1.getContent(), 2, LocalDateTime.now(), 0, 0),
