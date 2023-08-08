@@ -41,12 +41,6 @@ public class BoardService {
     }
 
     @Transactional
-    public void delete(Long writerId, Long boardId){
-        validateWriter(boardId, writerId);
-        boardRepository.deleteById(boardId);
-    }
-
-    @Transactional
     public BoardResponse loadBoard(Long userId, Long boardId) {
         Board board = boardFindService.findById(boardId);
         validateUser(userId);
@@ -57,7 +51,8 @@ public class BoardService {
                 .hit(board.getHit())
                 .likes(boardLikeRepository.countByBoard(board))
                 .createdDate(board.getCreatedDate())
-                .writer(board.getWriter().getLoginId())
+                .writerId(board.getWriter().getLoginId())
+                .writerName(board.getWriter().getName())
                 .build();
     }
 
