@@ -58,34 +58,6 @@ include::{snippets}/BoardApi/Update/Success/request-part-request-fields.adoc[]
 HTTP Response
 include::{snippets}/BoardApi/Update/Success/http-response.adoc[]
 
-== 게시글 삭제
-=== 1. Authorization Header에 AccessToken이 없으면 게시글 삭제에 실패한다
-HTTP Request
-include::{snippets}/BoardApi/Delete/Failure/Case1/http-request.adoc[]
-
-HTTP Response
-include::{snippets}/BoardApi/Delete/Failure/Case1/http-response.adoc[]
-include::{snippets}/BoardApi/Delete/Failure/Case1/response-fields.adoc[]
-
-=== 2. 다른 사람의 게시글은 삭제할 수 없다
-HTTP Request
-include::{snippets}/BoardApi/Delete/Failure/Case2/http-request.adoc[]
-include::{snippets}/BoardApi/Delete/Failure/Case2/request-headers.adoc[]
-include::{snippets}/BoardApi/Delete/Failure/Case2/path-parameters.adoc[]
-
-HTTP Response
-include::{snippets}/BoardApi/Delete/Failure/Case2/http-response.adoc[]
-include::{snippets}/BoardApi/Delete/Failure/Case2/response-fields.adoc[]
-
-=== 3. 게시글 삭제에 성공한다
-HTTP Request
-include::{snippets}/BoardApi/Delete/Success/http-request.adoc[]
-include::{snippets}/BoardApi/Delete/Success/request-headers.adoc[]
-include::{snippets}/BoardApi/Delete/Success/path-parameters.adoc[]
-
-HTTP Response
-include::{snippets}/BoardApi/Delete/Success/http-response.adoc[]
-
 
 = Board Like 등록 / 취소 API
 
