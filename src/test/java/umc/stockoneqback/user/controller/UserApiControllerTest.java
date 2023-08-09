@@ -144,6 +144,61 @@ class UserApiControllerTest extends ControllerTest {
         }
 
         @Test
+        @DisplayName("중복된 이메일이 존재한다면 가게 사장님 등록에 실패한다")
+        void throwExceptionByDuplicateEmail() throws Exception {
+            // given
+            doReturn(STORE_ID)
+                    .when(storeService)
+                    .save(anyString(), anyString(), anyString());
+            doThrow(BaseException.type(UserErrorCode.DUPLICATE_LOGIN_ID))
+                    .when(userService)
+                    .saveManager(any(), anyLong());
+
+            // when
+            final SignUpManagerRequest request = createSignUpManagerRequest();
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .post(BASE_URL)
+                    .with(csrf())
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request));
+
+            // then
+            final UserErrorCode expectedError = UserErrorCode.DUPLICATE_LOGIN_ID;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isConflict(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "UserApi/SignUp/Manager/Failure/Case3",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestFields(
+                                            fieldWithPath("name").description("이름"),
+                                            fieldWithPath("birth").description("생일"),
+                                            fieldWithPath("email").description("이메일"),
+                                            fieldWithPath("loginId").description("아이디"),
+                                            fieldWithPath("password").description("비밀번호"),
+                                            fieldWithPath("phoneNumber").description("전화번호"),
+                                            fieldWithPath("storeName").description("가게 이름"),
+                                            fieldWithPath("storeSector").description("가게 업종"),
+                                            fieldWithPath("storeAddress").description("가게 주소")                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
         @DisplayName("가게 사장님 등록에 성공한다")
         @WithMockUser
         void success() throws Exception {
@@ -248,6 +303,58 @@ class UserApiControllerTest extends ControllerTest {
         }
 
         @Test
+        @DisplayName("중복된 이메일이 있다면 아르바이트생 등록에 실패한다")
+        void throwExceptionByDuplicateEmail() throws Exception {
+            // given
+            doThrow(BaseException.type(UserErrorCode.DUPLICATE_EMAIL))
+                    .when(userService)
+                    .savePartTimer(any(), anyString(), anyString());
+
+            // when
+            final SignUpPartTimerRequest request = createSignUpPartTimerRequest();
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .post(BASE_URL)
+                    .with(csrf())
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request));
+
+            // then
+            final UserErrorCode expectedError = UserErrorCode.DUPLICATE_EMAIL;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isConflict(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "UserApi/SignUp/PartTimer/Failure/Case2",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestFields(
+                                            fieldWithPath("name").description("이름"),
+                                            fieldWithPath("birth").description("생일"),
+                                            fieldWithPath("email").description("이메일"),
+                                            fieldWithPath("loginId").description("아이디"),
+                                            fieldWithPath("password").description("비밀번호"),
+                                            fieldWithPath("phoneNumber").description("전화번호"),
+                                            fieldWithPath("storeName").description("가게 이름"),
+                                            fieldWithPath("storeCode").description("가게 코드")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
         @DisplayName("가게 코드가 일치하지 않으면 아르바이트생 등록에 실패한다")
         void throwExceptionByInvalidStoreCode() throws Exception {
             // given
@@ -277,7 +384,7 @@ class UserApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "UserApi/SignUp/PartTimer/Failure/Case2",
+                                    "UserApi/SignUp/PartTimer/Failure/Case3",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestFields(
@@ -399,6 +506,58 @@ class UserApiControllerTest extends ControllerTest {
         }
 
         @Test
+        @DisplayName("중복된 이메일이 있다면 슈퍼바이저 등록에 실패한다")
+        void throwExceptionByDuplicateEmail() throws Exception {
+            // given
+            doThrow(BaseException.type(UserErrorCode.DUPLICATE_EMAIL))
+                    .when(userService)
+                    .saveSupervisor(any(), anyString(), anyString());
+
+            // when
+            final SignUpSupervisorRequest request = createSignUpSupervisorRequest();
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .post(BASE_URL)
+                    .with(csrf())
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request));
+
+            // then
+            final UserErrorCode expectedError = UserErrorCode.DUPLICATE_EMAIL;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isConflict(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "UserApi/SignUp/Supervisor/Failure/Case2",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestFields(
+                                            fieldWithPath("name").description("이름"),
+                                            fieldWithPath("birth").description("생일"),
+                                            fieldWithPath("email").description("이메일"),
+                                            fieldWithPath("loginId").description("아이디"),
+                                            fieldWithPath("password").description("비밀번호"),
+                                            fieldWithPath("phoneNumber").description("전화번호"),
+                                            fieldWithPath("companyName").description("회사 이름"),
+                                            fieldWithPath("companyCode").description("회사 코드")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("status").description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
+                                            fieldWithPath("message").description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
         @DisplayName("회사 코드가 일치하지 않으면 슈퍼바이저 등록에 실패한다")
         void throwExceptionByInvalidCompanyCode() throws Exception {
             // given
@@ -428,7 +587,7 @@ class UserApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "UserApi/SignUp/Supervisor/Failure/Case2",
+                                    "UserApi/SignUp/Supervisor/Failure/Case3",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestFields(

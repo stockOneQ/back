@@ -54,6 +54,8 @@ public class SecurityConfig {
                     .antMatchers("/api/user/sign-up/manager").permitAll()
                     .antMatchers("/api/user/sign-up/part-timer").permitAll()
                     .antMatchers("/api/user/sign-up/supervisor").permitAll()
+                    .antMatchers("/api/user/update/password").permitAll()
+                    .antMatchers("/api/user/find-id").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

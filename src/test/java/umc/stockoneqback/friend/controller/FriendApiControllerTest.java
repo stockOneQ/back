@@ -298,11 +298,11 @@ class FriendApiControllerTest extends ControllerTest {
             given(jwtTokenProvider.getId(anyString())).willReturn(SENDER_ID);
             doThrow(BaseException.type(FriendErrorCode.FRIEND_NOT_FOUND))
                     .when(friendService)
-                    .requestFriend(SENDER_ID, RECEIVER_ID);
+                    .cancelFriend(SENDER_ID, RECEIVER_ID);
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .post(BASE_URL, RECEIVER_ID)
+                    .delete(BASE_URL, RECEIVER_ID)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
@@ -345,11 +345,11 @@ class FriendApiControllerTest extends ControllerTest {
             given(jwtTokenProvider.getId(anyString())).willReturn(SENDER_ID);
             doThrow(BaseException.type(FriendErrorCode.STATUS_IS_ACCEPT))
                     .when(friendService)
-                    .requestFriend(SENDER_ID, RECEIVER_ID);
+                    .cancelFriend(SENDER_ID, RECEIVER_ID);
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .post(BASE_URL, RECEIVER_ID)
+                    .delete(BASE_URL, RECEIVER_ID)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
@@ -396,7 +396,7 @@ class FriendApiControllerTest extends ControllerTest {
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .post(BASE_URL, RECEIVER_ID)
+                    .delete(BASE_URL, RECEIVER_ID)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
