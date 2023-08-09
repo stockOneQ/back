@@ -31,7 +31,6 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
                 .where(business.status.eq(Status.NORMAL),
                         business.manager.id.eq(managerId))
                 .orderBy(business.id.asc())
-                .distinct()
                 .fetch();
 
         JPAQuery<Long> countQuery = query
@@ -56,7 +55,6 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
                 .where(business.status.eq(Status.NORMAL),
                         partTimer.id.eq(partTimerId))
                 .orderBy(business.id.asc())
-                .distinct()
                 .fetch();
 
         JPAQuery<Long> countQuery = query
@@ -81,7 +79,6 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
                 .where(business.status.eq(Status.NORMAL),
                         business.supervisor.id.eq(supervisorId))
                 .orderBy(business.id.asc())
-                .distinct()
                 .fetch();
 
         JPAQuery<Long> countQuery = query
@@ -90,7 +87,6 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
                 .innerJoin(user).on(user.id.eq(business.manager.id))
                 .where(business.status.eq(Status.NORMAL),
                         business.supervisor.id.eq(supervisorId))
-                .orderBy(business.id.asc())
                 ;
 
         return new FilteredBusinessUser<>(countQuery.fetchOne(), shareLists);
@@ -105,7 +101,6 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
                 .where(business.status.eq(Status.NORMAL),
                         partTimer.partTimer.id.eq(partTimerId),
                         business.supervisor.id.eq(supervisorId))
-                .distinct()
                 .fetchOne();
     }
 }

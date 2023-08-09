@@ -53,7 +53,7 @@ public class ShareListQueryRepositoryImpl implements ShareListQueryRepository{
                         share.category.eq(category),
                         search(searchType, searchWord));
 
-        return new CustomShareListPage<>(PageableExecutionUtils.getPage(shareLists, pageable, countQuery::fetchFirst));
+        return new CustomShareListPage<>(PageableExecutionUtils.getPage(shareLists, pageable, countQuery::fetchOne));
     }
 
     private BooleanExpression search(SearchType searchType, String searchWord) {

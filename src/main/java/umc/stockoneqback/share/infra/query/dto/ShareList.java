@@ -1,5 +1,6 @@
 package umc.stockoneqback.share.infra.query.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 
@@ -12,6 +13,7 @@ public class ShareList {
     private final String title;
     private final LocalDate createdDate;
     private final String writer;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private final String file;
 
     @QueryProjection

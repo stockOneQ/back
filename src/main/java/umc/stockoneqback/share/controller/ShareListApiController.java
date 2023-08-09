@@ -29,8 +29,8 @@ public class ShareListApiController {
                                                          @RequestParam(value = "user") Long selectedUserId,
                                                          @RequestParam(value = "page", required = false, defaultValue = "0") int page,
                                                          @RequestParam(value = "category", required = false, defaultValue = "공지사항") String category,
-                                                         @RequestParam(value = "search", required = false, defaultValue = "제목") String searchBy,
+                                                         @RequestParam(value = "search", required = false, defaultValue = "제목") String searchType,
                                                          @RequestParam(value = "word", required = false, defaultValue = "") String searchWord) throws IOException {
-        return ResponseEntity.ok(shareListService.getShareList(userId, selectedUserId, page, category, searchBy, searchWord));
+        return ResponseEntity.ok(shareListService.getShareList(userId, selectedUserId, page, category, searchType, searchWord));
     }
 }

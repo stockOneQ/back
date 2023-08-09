@@ -36,18 +36,14 @@ public class ShareListService {
         Role role = classifyUser(user);
 
         switch (role) {
-            case MANAGER -> {
+            case MANAGER:
                 return businessRepository.findBusinessByManager(userId);
-            }
-            case PART_TIMER -> {
+            case PART_TIMER:
                 return businessRepository.findBusinessByPartTimer(userId);
-            }
-            case SUPERVISOR -> {
+            case SUPERVISOR:
                 return businessRepository.findBusinessBySupervisor(userId);
-            }
-            default -> {
+            default:
                 return null;
-            }
         }
     }
 
@@ -99,7 +95,9 @@ public class ShareListService {
         return getManagerOrSupervisorShareList(managerId, supervisorId, page, categoryValue, searchTypeValue, searchWord);
     }
 
-    private CustomShareListPage<ShareList> getManagerOrSupervisorShareList(Long managerId, Long supervisorId, int page, String categoryValue, String searchTypeValue, String searchWord) {
+    private CustomShareListPage<ShareList> getManagerOrSupervisorShareList(Long managerId, Long supervisorId,
+                                                                           int page, String categoryValue,
+                                                                           String searchTypeValue, String searchWord) {
         Business business = businessRepository.findByManagerIdAndSupervisorId(managerId, supervisorId)
                 .orElseThrow(() -> BaseException.type(BusinessErrorCode.BUSINESS_NOT_FOUND));
         Long businessId = business.getId();
