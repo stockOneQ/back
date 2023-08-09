@@ -103,7 +103,7 @@ public class ProductService {
     public void editProduct(Long userId, Long productId, Product newProduct, MultipartFile image) {
         Product product = findProductById(productId);
         checkRequestIdHasRequestProduct(userId, product);
-        String imageUrl = null;
+        String imageUrl = product.getImageUrl();
         if (image != null)
             imageUrl = fileService.uploadProductFiles(image);
         product.update(newProduct, imageUrl);
