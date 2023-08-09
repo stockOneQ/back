@@ -23,7 +23,7 @@ public class PassProductBatchScheduler {
     @Autowired
     private PassProductBatchConfig passProductBatchConfig;
 
-    @Scheduled(cron = "0 0,12,14,22,25,27,30,35,52,55,59 0,1,2,3,4,5,10,20 * * *")
+    @Scheduled(cron = "0 0 10,20 * * *")
     public void runJob() {
         // job parameter 설정
         Map<String, JobParameter> confMap = new HashMap<>();

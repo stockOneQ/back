@@ -1,5 +1,6 @@
 package umc.stockoneqback.product.config;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -7,7 +8,6 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import umc.stockoneqback.product.service.ProductService;
@@ -15,15 +15,13 @@ import umc.stockoneqback.product.service.ProductService;
 @Slf4j
 @Configuration
 @EnableBatchProcessing
+@RequiredArgsConstructor
 public class PassProductBatchConfig {
-    @Autowired
-    public JobBuilderFactory jobBuilderFactory;
+    public final JobBuilderFactory jobBuilderFactory;
 
-    @Autowired
-    public StepBuilderFactory stepBuilderFactory;
+    public final StepBuilderFactory stepBuilderFactory;
 
-    @Autowired
-    public ProductService productService;
+    public final ProductService productService;
 
     @Bean
     public Job job() {
