@@ -9,7 +9,6 @@ import umc.stockoneqback.business.exception.BusinessErrorCode;
 import umc.stockoneqback.business.infra.query.dto.FilteredBusinessUser;
 import umc.stockoneqback.business.infra.query.dto.FindBusinessUser;
 import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.share.controller.dto.ShareListResponse;
 import umc.stockoneqback.share.domain.Category;
 import umc.stockoneqback.share.domain.SearchType;
 import umc.stockoneqback.share.exception.ShareErrorCode;
@@ -32,7 +31,28 @@ public class ShareListService {
     private final BusinessRepository businessRepository;
 
     @Transactional
-    public ShareListResponse getShareList(Long userId, Long selectedUserId,
+    public FilteredBusinessUser userSelectBox(Long userId) {
+        User user = userFindService.findById(userId);
+        Role role = classifyUser(user);
+
+        switch (role) {
+            case MANAGER -> {
+                return businessRepository.findBusinessByManager(userId);
+            }
+            case PART_TIMER -> {
+                return businessRepository.findBusinessByPartTimer(userId);
+            }
+            case SUPERVISOR -> {
+                return businessRepository.findBusinessBySupervisor(userId);
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    @Transactional
+    public CustomShareListPage getShareList(Long userId, Long selectedUserId,
                                           int page, String category,
                                           String searchType, String searchWord) throws IOException {
         User user = userFindService.findById(userId);
@@ -40,22 +60,16 @@ public class ShareListService {
 
         switch (role) {
             case MANAGER -> {
-                FilteredBusinessUser<FindBusinessUser> filteredBusinessUser = businessRepository.findBusinessByManager(userId);
-                validateFilteredBusinessUser(filteredBusinessUser, selectedUserId);
-                CustomShareListPage<ShareList> shareList = shareListForManager(userId, selectedUserId, page, category, searchType, searchWord);
-                return new ShareListResponse(filteredBusinessUser, shareList);
+                validateFilteredBusinessUser(businessRepository.findBusinessByManager(userId), selectedUserId);
+                return shareListForManager(userId, selectedUserId, page, category, searchType, searchWord);
             }
             case PART_TIMER -> {
-                FilteredBusinessUser<FindBusinessUser> filteredBusinessUser = businessRepository.findBusinessByPartTimer(userId);
-                validateFilteredBusinessUser(filteredBusinessUser, selectedUserId);
-                CustomShareListPage<ShareList> shareList = shareListForPartTimer(userId, selectedUserId, page, category, searchType, searchWord);
-                return new ShareListResponse(filteredBusinessUser, shareList);
+                validateFilteredBusinessUser(businessRepository.findBusinessByPartTimer(userId), selectedUserId);
+                return shareListForPartTimer(userId, selectedUserId, page, category, searchType, searchWord);
             }
             case SUPERVISOR -> {
-                FilteredBusinessUser<FindBusinessUser> filteredBusinessUser = businessRepository.findBusinessBySupervisor(userId);
-                validateFilteredBusinessUser(filteredBusinessUser, selectedUserId);
-                CustomShareListPage<ShareList> shareList = shareListForSupervisor(userId, selectedUserId, page, category, searchType, searchWord);
-                return new ShareListResponse(filteredBusinessUser, shareList);
+                validateFilteredBusinessUser(businessRepository.findBusinessBySupervisor(userId), selectedUserId);
+                return shareListForSupervisor(userId, selectedUserId, page, category, searchType, searchWord);
             }
             default -> {
                 return null;
@@ -80,8 +94,8 @@ public class ShareListService {
     }
 
     private CustomShareListPage<ShareList> shareListForSupervisor(Long supervisorId, Long managerId,
-                                                               int page, String categoryValue,
-                                                               String searchTypeValue, String searchWord) {
+                                                                  int page, String categoryValue,
+                                                                  String searchTypeValue, String searchWord) {
         return getManagerOrSupervisorShareList(managerId, supervisorId, page, categoryValue, searchTypeValue, searchWord);
     }
 

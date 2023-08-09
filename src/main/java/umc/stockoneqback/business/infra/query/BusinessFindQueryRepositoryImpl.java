@@ -35,13 +35,12 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
                 .fetch();
 
         JPAQuery<Long> countQuery = query
-                .select(business.count())
+                .select(business.countDistinct())
                 .from(business)
                 .innerJoin(user).on(user.id.eq(business.supervisor.id))
                 .where(business.status.eq(Status.NORMAL),
                         business.manager.id.eq(managerId))
-                .orderBy(business.id.asc())
-                .distinct();
+                ;
 
         return new FilteredBusinessUser<>(countQuery.fetchOne(), shareLists);
     }
@@ -61,15 +60,14 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
                 .fetch();
 
         JPAQuery<Long> countQuery = query
-                .select(business.count())
+                .select(business.countDistinct())
                 .from(partTimer)
                 .innerJoin(store).on(store.id.eq(partTimer.store.id))
                 .innerJoin(business).on(business.manager.id.eq(store.manager.id))
                 .innerJoin(user).on(user.id.eq(business.supervisor.id))
                 .where(business.status.eq(Status.NORMAL),
                         partTimer.id.eq(partTimerId))
-                .orderBy(business.id.asc())
-                .distinct();
+                ;
 
         return new FilteredBusinessUser<>(countQuery.fetchOne(), shareLists);
     }
@@ -87,13 +85,13 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
                 .fetch();
 
         JPAQuery<Long> countQuery = query
-                .select(business.count())
+                .select(business.countDistinct())
                 .from(business)
                 .innerJoin(user).on(user.id.eq(business.manager.id))
                 .where(business.status.eq(Status.NORMAL),
                         business.supervisor.id.eq(supervisorId))
                 .orderBy(business.id.asc())
-                .distinct();
+                ;
 
         return new FilteredBusinessUser<>(countQuery.fetchOne(), shareLists);
     }

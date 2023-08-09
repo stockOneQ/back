@@ -24,6 +24,7 @@ import static umc.stockoneqback.share.domain.QShare.share;
 @RequiredArgsConstructor
 public class ShareListQueryRepositoryImpl implements ShareListQueryRepository{
     private final JPAQueryFactory query;
+
     @Override
     public CustomShareListPage<ShareList> findShareList(Long businessId, Category category, SearchType searchType, String searchWord, int page) {
         Pageable pageable = PageRequest.of(page, 6);
@@ -45,14 +46,14 @@ public class ShareListQueryRepositoryImpl implements ShareListQueryRepository{
                 .fetch();
 
         JPAQuery<Long> countQuery = query
-                .select(share.count())
+                .select(share.countDistinct())
                 .from(share)
                 .innerJoin(business).on(share.business.id.eq(businessId))
                 .where(share.status.eq(Status.NORMAL),
                         share.category.eq(category),
                         search(searchType, searchWord));
 
-        return new CustomShareListPage<>(PageableExecutionUtils.getPage(shareLists, pageable, countQuery::fetchOne));
+        return new CustomShareListPage<>(PageableExecutionUtils.getPage(shareLists, pageable, countQuery::fetchFirst));
     }
 
     private BooleanExpression search(SearchType searchType, String searchWord) {
