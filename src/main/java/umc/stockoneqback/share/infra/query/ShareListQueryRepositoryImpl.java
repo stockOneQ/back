@@ -26,7 +26,7 @@ public class ShareListQueryRepositoryImpl implements ShareListQueryRepository{
     private final JPAQueryFactory query;
 
     @Override
-    public CustomShareListPage<ShareList> findShareList(Long businessId, Category category, SearchType searchType, String searchWord, int page) {
+    public CustomShareListPage findShareList(Long businessId, Category category, SearchType searchType, String searchWord, int page) {
         Pageable pageable = PageRequest.of(page, 6);
         List<ShareList> shareLists = query
                 .selectDistinct(new QShareList(

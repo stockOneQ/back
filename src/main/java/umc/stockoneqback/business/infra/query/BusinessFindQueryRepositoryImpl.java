@@ -23,7 +23,7 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
     private static final QPartTimer partTimer = new QPartTimer("partTimer");
 
     @Override
-    public FilteredBusinessUser<FindBusinessUser> findBusinessByManager(Long managerId) {
+    public FilteredBusinessUser findBusinessByManager(Long managerId) {
         List<FindBusinessUser> shareLists = query
                 .selectDistinct(new QFindBusinessUser(business.supervisor.id, business.supervisor.name))
                 .from(business)
@@ -46,7 +46,7 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
     }
 
     @Override
-    public FilteredBusinessUser<FindBusinessUser> findBusinessByPartTimer(Long partTimerId) {
+    public FilteredBusinessUser findBusinessByPartTimer(Long partTimerId) {
         List<FindBusinessUser> shareLists = query
                 .selectDistinct(new QFindBusinessUser(business.supervisor.id, business.supervisor.name))
                 .from(partTimer)
@@ -73,7 +73,7 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
     }
 
     @Override
-    public FilteredBusinessUser<FindBusinessUser> findBusinessBySupervisor(Long supervisorId) {
+    public FilteredBusinessUser findBusinessBySupervisor(Long supervisorId) {
         List<FindBusinessUser> shareLists = query
                 .selectDistinct(new QFindBusinessUser(business.manager.id, business.manager.name))
                 .from(business)
