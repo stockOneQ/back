@@ -9,10 +9,10 @@ import java.util.List;
 @NoArgsConstructor
 public class FilteredBusinessUser<T> {
     long total;
-    List<T> filterBusinessUserList;
+    List<T> businessUserList;
 
-    public FilteredBusinessUser(long total, List<T> filterBusinessUserList) {
+    public FilteredBusinessUser(long total, List<T> businessUserList) {
         this.total = total;
-        this.filterBusinessUserList = filterBusinessUserList;
+        this.businessUserList = businessUserList;
     }
 }

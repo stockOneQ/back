@@ -7,6 +7,8 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
+import umc.stockoneqback.business.infra.query.dto.FilteredBusinessUser;
+import umc.stockoneqback.business.infra.query.dto.FindBusinessUser;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.share.exception.ShareErrorCode;
@@ -47,11 +49,87 @@ class ShareListApiControllerTest extends ControllerTest {
     private static final int PAGE = 0;
 
     @Nested
+    @DisplayName("유저 셀렉트박스 반환 API [GET /api/share/users]")
+    class userSelectBox {
+        private static final String BASE_URL = "/api/share/users";
+        private static final Long USER_ID = 1L;
+
+        @Test
+        @DisplayName("Authorization Header에 AccessToken이 없으면 유저 셀렉트박스 반환에 실패한다")
+        void withoutAccessToken() throws Exception {
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL);
+
+            // then
+            final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isForbidden(),
+                            jsonPath("$.status").exists(),
+                            jsonPath("$.status").value(expectedError.getStatus().value()),
+                            jsonPath("$.errorCode").exists(),
+                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                            jsonPath("$.message").exists(),
+                            jsonPath("$.message").value(expectedError.getMessage())
+                    )
+                    .andDo(
+                            document(
+                                    "ShareApi/SelectBox/Failure",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    responseFields(
+                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                    )
+                            )
+                    );
+        }
+
+        @Test
+        @DisplayName("유저 셀렉트박스 반환에 성공한다")
+        void success() throws Exception {
+            // given
+            given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
+            given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
+            doReturn(getFilteredBusinessUser())
+                    .when(shareListService)
+                    .userSelectBox(USER_ID);
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .get(BASE_URL)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
+
+            // then
+            mockMvc.perform(requestBuilder)
+                    .andExpect(status().isOk())
+                    .andDo(
+                            document(
+                                    "ShareApi/SelectBox/Success",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
+                                    responseFields(
+                                            fieldWithPath("total").type(JsonFieldType.NUMBER).description("반환되는 전체 유저의 수"),
+                                            fieldWithPath("businessUserList[].userBusinessId").type(JsonFieldType.NUMBER).description("(해당 유저와의) 비즈니스 id"),
+                                            fieldWithPath("businessUserList[].userId").type(JsonFieldType.NUMBER).description("유저 id"),
+                                            fieldWithPath("businessUserList[].name").type(JsonFieldType.STRING).description("유저 이름")
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
     @DisplayName("커넥트 - 자료 목록 조회 API [GET /api/share]")
     class shareList {
         private static final String BASE_URL = "/api/share";
         private static final Long USER_ID = 1L;
-        private static final Long SELECTED_USER_ID = 2L;
+        private static final Long SELECTED_BUSINESS_ID = 2L;
 
         @Test
         @DisplayName("Authorization Header에 AccessToken이 없으면 자료 목록 조회에 실패한다")
@@ -83,7 +161,7 @@ class ShareListApiControllerTest extends ControllerTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestParameters(
-                                            parameterWithName("user").description("선택된 유저의 id"),
+                                            parameterWithName("user").description("(선택된 유저와의) 비즈니스 id"),
                                             parameterWithName("page").description("페이지 번호"),
                                             parameterWithName("category").description("카테고리(공지사항/레시피/행사내용/기타)"),
                                             parameterWithName("search").description("검색 조건(제목/내용)").optional(),
@@ -137,7 +215,7 @@ class ShareListApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParameters(
-                                            parameterWithName("user").description("선택된 유저의 id"),
+                                            parameterWithName("user").description("(선택된 유저와의) 비즈니스 id"),
                                             parameterWithName("page").description("페이지 번호"),
                                             parameterWithName("category").description("카테고리(공지사항/레시피/행사내용/기타)"),
                                             parameterWithName("search").description("검색 조건(제목/내용)").optional(),
@@ -191,7 +269,7 @@ class ShareListApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParameters(
-                                            parameterWithName("user").description("선택된 유저의 id"),
+                                            parameterWithName("user").description("(선택된 유저와의) 비즈니스 id"),
                                             parameterWithName("page").description("페이지 번호"),
                                             parameterWithName("category").description("카테고리(공지사항/레시피/행사내용/기타)"),
                                             parameterWithName("search").description("검색 조건(제목/내용)").optional(),
@@ -208,18 +286,18 @@ class ShareListApiControllerTest extends ControllerTest {
 
         @Test
         @DisplayName("자료 목록 조회에 성공한다")
-        void success() throws Exception{
+        void success() throws Exception {
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
             given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
             doReturn(getCustomShareListPage())
                     .when(shareListService)
-                    .getShareList(USER_ID, SELECTED_USER_ID, PAGE, CATEGORY, SEARCH_TYPE, SEARCH_WORD);
+                    .getShareList(USER_ID, SELECTED_BUSINESS_ID, PAGE, CATEGORY, SEARCH_TYPE, SEARCH_WORD);
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
-                    .param("user", String.valueOf(SELECTED_USER_ID))
+                    .param("user", String.valueOf(SELECTED_BUSINESS_ID))
                     .param("page", String.valueOf(PAGE))
                     .param("category", CATEGORY)
                     .param("search", SEARCH_TYPE)
@@ -238,7 +316,7 @@ class ShareListApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParameters(
-                                            parameterWithName("user").description("선택된 유저의 id"),
+                                            parameterWithName("user").description("(선택된 유저와의) 비즈니스 id"),
                                             parameterWithName("page").description("페이지 번호"),
                                             parameterWithName("category").description("카테고리(공지사항/레시피/행사내용/기타)"),
                                             parameterWithName("search").description("검색 조건(제목/내용)"),
@@ -277,5 +355,17 @@ class ShareListApiControllerTest extends ControllerTest {
 
     private CustomShareListPage<ShareList> getCustomShareListPage() {
         return new CustomShareListPage<>(createCustomPageable(), createShareList());
+    }
+
+    private List<FindBusinessUser> createFindBusinessUser() {
+        List<FindBusinessUser> findBusinessUserList = new ArrayList<>();
+        findBusinessUserList.add(new FindBusinessUser(1L, 1L, "이혜리 슈퍼바이저"));
+        findBusinessUserList.add(new FindBusinessUser(5L, 3L, "김예리 슈퍼바이저"));
+        findBusinessUserList.add(new FindBusinessUser(10L, 8L, "홍아리 슈퍼바이저"));
+        return findBusinessUserList;
+    }
+
+    private FilteredBusinessUser<FindBusinessUser> getFilteredBusinessUser() {
+        return new FilteredBusinessUser<>(3, createFindBusinessUser());
     }
 }

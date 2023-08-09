@@ -59,8 +59,8 @@ class BusinessFindQueryRepositoryImplTest extends RepositoryTest {
         // then
         assertAll(
                 () -> assertThat(filteredSupervisor.getTotal()).isEqualTo(1L),
-                () -> assertThat(filteredSupervisor.getFilterBusinessUserList().size()).isEqualTo(1),
-                () -> assertThat(filteredSupervisor.getFilterBusinessUserList().get(0).getName()).isEqualTo(supervisor.getName())
+                () -> assertThat(filteredSupervisor.getBusinessUserList().size()).isEqualTo(1),
+                () -> assertThat(filteredSupervisor.getBusinessUserList().get(0).getName()).isEqualTo(supervisor.getName())
         );
     }
 
@@ -73,8 +73,8 @@ class BusinessFindQueryRepositoryImplTest extends RepositoryTest {
         // then
         assertAll(
                 () -> assertThat(filteredSupervisor.getTotal()).isEqualTo(1L),
-                () -> assertThat(filteredSupervisor.getFilterBusinessUserList().size()).isEqualTo(1),
-                () -> assertThat(filteredSupervisor.getFilterBusinessUserList().get(0).getName()).isEqualTo(supervisor.getName())
+                () -> assertThat(filteredSupervisor.getBusinessUserList().size()).isEqualTo(1),
+                () -> assertThat(filteredSupervisor.getBusinessUserList().get(0).getName()).isEqualTo(supervisor.getName())
         );
     }
 
@@ -87,8 +87,8 @@ class BusinessFindQueryRepositoryImplTest extends RepositoryTest {
         // then
         assertAll(
                 () -> assertThat(filteredManager.getTotal()).isEqualTo(1L),
-                () -> assertThat(filteredManager.getFilterBusinessUserList().size()).isEqualTo(1),
-                () -> assertThat(filteredManager.getFilterBusinessUserList().get(0).getName()).isEqualTo(manager.getName())
+                () -> assertThat(filteredManager.getBusinessUserList().size()).isEqualTo(1),
+                () -> assertThat(filteredManager.getBusinessUserList().get(0).getName()).isEqualTo(manager.getName())
         );
     }
 }

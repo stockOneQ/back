@@ -88,7 +88,7 @@ public class ShareListService {
     private void validateFilteredBusiness(FilteredBusinessUser<FindBusinessUser> filteredBusiness, Long selectedBusinessId) {
         boolean flag = false;
         for (int i = 0; i < filteredBusiness.getTotal(); i++) {
-            if (filteredBusiness.getFilterBusinessUserList().get(i).getUserBusinessId() == selectedBusinessId) {
+            if (filteredBusiness.getBusinessUserList().get(i).getUserBusinessId() == selectedBusinessId) {
                 flag = true;
                 break;
             }
