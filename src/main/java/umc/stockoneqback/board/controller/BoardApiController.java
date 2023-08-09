@@ -32,12 +32,6 @@ public class BoardApiController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{boardId}")
-    public ResponseEntity<Void> delete(@ExtractPayload Long writerId, @PathVariable Long boardId) {
-        boardService.delete(writerId, boardId);
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping("/{boardId}")
     public ResponseEntity<BoardResponse> loadBoard(@ExtractPayload Long userId,
                                                    @PathVariable Long boardId) throws IOException {
