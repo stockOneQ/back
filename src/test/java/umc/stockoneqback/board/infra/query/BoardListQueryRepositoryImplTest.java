@@ -2,6 +2,7 @@ package umc.stockoneqback.board.infra.query;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import umc.stockoneqback.board.controller.dto.CustomBoardListResponse;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.board.domain.SearchType;
@@ -30,6 +31,7 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
     private static final SearchType SEARCH_TYPE = SearchType.TITLE;
     private static final String SEARCH_TITLE = "제목";
     private static final String SEARCH_CONTENT = "5";
+    private static final int PAGE = 0;
 
     @BeforeEach
     void setUp() {
@@ -61,14 +63,14 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
         @DisplayName("검색 결과에 따른 게시글을 최신순으로 조회한다")
         void getBoardListOrderByTime() {
             // when
-            List<BoardList> boardListOrderByTime = boardRepository.getBoardListOrderByTime(SEARCH_TYPE, SEARCH_CONTENT);
+            CustomBoardListResponse<BoardList> boardListOrderByTime = boardRepository.getBoardListOrderByTime(SEARCH_TYPE, SEARCH_CONTENT, PAGE);
 
             // then
             assertAll(
-                    () -> assertThat(boardListOrderByTime.get(0).getId()).isEqualTo(boardList[5].getId()),
-                    () -> assertThat(boardListOrderByTime.get(0).getTitle()).isEqualTo(boardList[5].getTitle()),
-                    () -> assertThat(boardListOrderByTime.get(0).getContent()).isEqualTo(boardList[5].getContent()),
-                    () -> assertThat(boardListOrderByTime.get(0).getHit()).isEqualTo(boardList[5].getHit())
+                    () -> assertThat(boardListOrderByTime.getBoardList().get(0).getId()).isEqualTo(boardList[5].getId()),
+                    () -> assertThat(boardListOrderByTime.getBoardList().get(0).getTitle()).isEqualTo(boardList[5].getTitle()),
+                    () -> assertThat(boardListOrderByTime.getBoardList().get(0).getContent()).isEqualTo(boardList[5].getContent()),
+                    () -> assertThat(boardListOrderByTime.getBoardList().get(0).getHit()).isEqualTo(boardList[5].getHit())
             );
         }
 
@@ -77,20 +79,15 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
         @DisplayName("검색 결과에 따른 게시글을 조회순으로 조회한다")
         void getBoardListOrderByHit() {
             // when
-            List<BoardList> boardListOrderByHit = boardRepository.getBoardListOrderByHit(SEARCH_TYPE, SEARCH_TITLE);
+            CustomBoardListResponse<BoardList> boardListOrderByHit = boardRepository.getBoardListOrderByHit(SEARCH_TYPE, SEARCH_TITLE, PAGE);
 
             // then
-            for (int i = 0; i < boardListOrderByHit.size(); i++) {
-                BoardList boardOrderByHit = boardListOrderByHit.get(i);
-                Board board = boardList[i];
-
-                assertAll(
-                        () -> assertThat(boardOrderByHit.getId()).isEqualTo(board.getId()),
-                        () -> assertThat(boardOrderByHit.getTitle()).isEqualTo(board.getTitle()),
-                        () -> assertThat(boardOrderByHit.getContent()).isEqualTo(board.getContent()),
-                        () -> assertThat(boardOrderByHit.getHit()).isEqualTo(board.getHit())
-                );
-            }
+            assertAll(
+                    () -> assertThat(boardListOrderByHit.getBoardList().get(0).getId()).isEqualTo(boardList[9].getId()),
+                    () -> assertThat(boardListOrderByHit.getBoardList().get(0).getTitle()).isEqualTo(boardList[9].getTitle()),
+                    () -> assertThat(boardListOrderByHit.getBoardList().get(0).getContent()).isEqualTo(boardList[9].getContent()),
+                    () -> assertThat(boardListOrderByHit.getBoardList().get(0).getHit()).isEqualTo(boardList[9].getHit())
+            );
         }
 
         @Order(3)
@@ -98,14 +95,14 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
         @DisplayName("내가 쓴 글에서 검색 결과에 따른 게시글을 최신순으로 조회한다")
         void getMyBoardListOrderByTime() {
             // when
-            List<BoardList> myBoardList = boardRepository.getMyBoardListOrderByTime(writer.getId(), SEARCH_TYPE, SEARCH_CONTENT);
+            CustomBoardListResponse<BoardList> myBoardList = boardRepository.getMyBoardListOrderByTime(writer.getId(), SEARCH_TYPE, SEARCH_CONTENT, PAGE);
 
             // then
             assertAll(
-                    () -> assertThat(myBoardList.get(0).getId()).isEqualTo(boardList[5].getId()),
-                    () -> assertThat(myBoardList.get(0).getTitle()).isEqualTo(boardList[5].getTitle()),
-                    () -> assertThat(myBoardList.get(0).getContent()).isEqualTo(boardList[5].getContent()),
-                    () -> assertThat(myBoardList.get(0).getHit()).isEqualTo(boardList[5].getHit())
+                    () -> assertThat(myBoardList.getBoardList().get(0).getId()).isEqualTo(boardList[5].getId()),
+                    () -> assertThat(myBoardList.getBoardList().get(0).getTitle()).isEqualTo(boardList[5].getTitle()),
+                    () -> assertThat(myBoardList.getBoardList().get(0).getContent()).isEqualTo(boardList[5].getContent()),
+                    () -> assertThat(myBoardList.getBoardList().get(0).getHit()).isEqualTo(boardList[5].getHit())
             );
         }
 
@@ -114,20 +111,15 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
         @DisplayName("내가 쓴 글에서 검색 결과에 따른 게시글을 조회순으로 조회한다")
         void getMyBoardListOrderByHit() {
             // when
-            List<BoardList> myBoardList = boardRepository.getMyBoardListOrderByHit(writer.getId(), SEARCH_TYPE, SEARCH_TITLE);
+            CustomBoardListResponse<BoardList> myBoardList = boardRepository.getMyBoardListOrderByHit(writer.getId(), SEARCH_TYPE, SEARCH_TITLE, PAGE);
 
             // then
-            for (int i = 0; i < myBoardList.size(); i++) {
-                BoardList boardOrderByHit = myBoardList.get(i);
-                Board board = boardList[i];
-
-                assertAll(
-                        () -> assertThat(boardOrderByHit.getId()).isEqualTo(board.getId()),
-                        () -> assertThat(boardOrderByHit.getTitle()).isEqualTo(board.getTitle()),
-                        () -> assertThat(boardOrderByHit.getContent()).isEqualTo(board.getContent()),
-                        () -> assertThat(boardOrderByHit.getHit()).isEqualTo(board.getHit())
-                );
-            }
+            assertAll(
+                    () -> assertThat(myBoardList.getBoardList().get(0).getId()).isEqualTo(boardList[9].getId()),
+                    () -> assertThat(myBoardList.getBoardList().get(0).getTitle()).isEqualTo(boardList[9].getTitle()),
+                    () -> assertThat(myBoardList.getBoardList().get(0).getContent()).isEqualTo(boardList[9].getContent()),
+                    () -> assertThat(myBoardList.getBoardList().get(0).getHit()).isEqualTo(boardList[9].getHit())
+            );
         }
     }
 }
