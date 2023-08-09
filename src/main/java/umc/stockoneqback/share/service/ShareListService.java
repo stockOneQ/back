@@ -9,6 +9,7 @@ import umc.stockoneqback.business.exception.BusinessErrorCode;
 import umc.stockoneqback.business.infra.query.dto.FilteredBusinessUser;
 import umc.stockoneqback.business.infra.query.dto.FindBusinessUser;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.share.domain.Category;
 import umc.stockoneqback.share.domain.SearchType;
 import umc.stockoneqback.share.exception.ShareErrorCode;
@@ -48,24 +49,27 @@ public class ShareListService {
     }
 
     @Transactional
-    public CustomShareListPage getShareList(Long userId, Long selectedUserId,
-                                          int page, String category,
-                                          String searchType, String searchWord) throws IOException {
+    public CustomShareListPage getShareList(Long userId, Long selectedBusinessId, int page, String category,
+                                            String searchType, String searchWord) throws IOException {
         User user = userFindService.findById(userId);
         Role role = classifyUser(user);
 
         switch (role) {
             case MANAGER -> {
-                validateFilteredBusinessUser(businessRepository.findBusinessByManager(userId), selectedUserId);
-                return shareListForManager(userId, selectedUserId, page, category, searchType, searchWord);
+                Business findBusiness = businessRepository.findByIdAndManager(selectedBusinessId, user)
+                        .orElseThrow(() -> BaseException.type(BusinessErrorCode.BUSINESS_NOT_FOUND));
+                validateBusiness(findBusiness);
+                return getShareListResponse(selectedBusinessId, page, category, searchType, searchWord);
             }
             case PART_TIMER -> {
-                validateFilteredBusinessUser(businessRepository.findBusinessByPartTimer(userId), selectedUserId);
-                return shareListForPartTimer(userId, selectedUserId, page, category, searchType, searchWord);
+                validateFilteredBusiness(businessRepository.findBusinessByPartTimer(userId), selectedBusinessId);
+                return getShareListResponse(selectedBusinessId, page, category, searchType, searchWord);
             }
             case SUPERVISOR -> {
-                validateFilteredBusinessUser(businessRepository.findBusinessBySupervisor(userId), selectedUserId);
-                return shareListForSupervisor(userId, selectedUserId, page, category, searchType, searchWord);
+                Business findBusiness = businessRepository.findByIdAndSupervisor(selectedBusinessId, user)
+                        .orElseThrow(() -> BaseException.type(BusinessErrorCode.BUSINESS_NOT_FOUND));
+                validateBusiness(findBusiness);
+                return getShareListResponse(selectedBusinessId, page, category, searchType, searchWord);
             }
             default -> {
                 return null;
@@ -73,49 +77,29 @@ public class ShareListService {
         }
     }
 
-    private CustomShareListPage<ShareList> shareListForManager(Long managerId, Long supervisorId,
-                                                               int page, String categoryValue,
-                                                               String searchTypeValue, String searchWord) {
-        return getManagerOrSupervisorShareList(managerId, supervisorId, page, categoryValue, searchTypeValue, searchWord);
-    }
-
-    private CustomShareListPage<ShareList> shareListForPartTimer(Long partTimerId, Long supervisorId,
-                                                                 int page, String categoryValue,
-                                                                 String searchTypeValue, String searchWord) {
-        Long businessId = businessRepository.findBusinessIdByPartTimerIdAndSupervisorId(partTimerId, supervisorId);
+    private CustomShareListPage<ShareList> getShareListResponse(Long businessId, int page, String categoryValue,
+                                                                String searchTypeValue, String searchWord) {
         Category category = Category.findCategoryByValue(categoryValue);
         SearchType searchType = SearchType.findShareSearchTypeByValue(searchTypeValue);
         CustomShareListPage<ShareList> shareList = shareRepository.findShareList(businessId, category, searchType, searchWord, page);
         return shareList;
     }
 
-    private CustomShareListPage<ShareList> shareListForSupervisor(Long supervisorId, Long managerId,
-                                                                  int page, String categoryValue,
-                                                                  String searchTypeValue, String searchWord) {
-        return getManagerOrSupervisorShareList(managerId, supervisorId, page, categoryValue, searchTypeValue, searchWord);
-    }
-
-    private CustomShareListPage<ShareList> getManagerOrSupervisorShareList(Long managerId, Long supervisorId,
-                                                                           int page, String categoryValue,
-                                                                           String searchTypeValue, String searchWord) {
-        Business business = businessRepository.findByManagerIdAndSupervisorId(managerId, supervisorId)
-                .orElseThrow(() -> BaseException.type(BusinessErrorCode.BUSINESS_NOT_FOUND));
-        Long businessId = business.getId();
-        Category category = Category.findCategoryByValue(categoryValue);
-        SearchType searchType = SearchType.findShareSearchTypeByValue(searchTypeValue);
-        CustomShareListPage<ShareList> shareList = shareRepository.findShareList(businessId, category, searchType, searchWord, page);
-        return shareList;
-    }
-
-    private void validateFilteredBusinessUser(FilteredBusinessUser<FindBusinessUser> filteredBusinessUser, Long selectedUserId) {
+    private void validateFilteredBusiness(FilteredBusinessUser<FindBusinessUser> filteredBusiness, Long selectedBusinessId) {
         boolean flag = false;
-        for (int i = 0; i < filteredBusinessUser.getTotal(); i++) {
-            if (filteredBusinessUser.getFilterBusinessUserList().get(i).getId() == selectedUserId) {
+        for (int i = 0; i < filteredBusiness.getTotal(); i++) {
+            if (filteredBusiness.getFilterBusinessUserList().get(i).getUserBusinessId() == selectedBusinessId) {
                 flag = true;
                 break;
             }
         }
         if(!flag) throw BaseException.type(ShareErrorCode.NOT_FILTERED_USER);
+    }
+
+    private void validateBusiness(Business findBusiness) {
+        if (findBusiness.getStatus() == Status.EXPIRED) {
+            throw BaseException.type(ShareErrorCode.NOT_FILTERED_USER);
+        }
     }
 
     private Role classifyUser(User user) {

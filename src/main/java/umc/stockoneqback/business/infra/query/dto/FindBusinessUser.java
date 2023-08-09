@@ -5,12 +5,14 @@ import lombok.Getter;
 
 @Getter
 public class FindBusinessUser {
-    private final Long id;
+    private final Long userBusinessId;
+    private final Long userId;
     private final String name;
 
     @QueryProjection
-    public FindBusinessUser(Long id, String name) {
-        this.id = id;
+    public FindBusinessUser(Long userBusinessId, Long userId, String name) {
+        this.userBusinessId = userBusinessId;
+        this.userId = userId;
         this.name = name;
     }
 }

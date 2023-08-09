@@ -6,5 +6,5 @@ import umc.stockoneqback.share.infra.query.dto.CustomShareListPage;
 import umc.stockoneqback.share.infra.query.dto.ShareList;
 
 public interface ShareListQueryRepository{
-    CustomShareListPage findShareList(Long businessId, Category category, SearchType searchType, String searchWord, int page);
+    CustomShareListPage<ShareList> findShareList(Long businessId, Category category, SearchType searchType, String searchWord, int page);
 }
