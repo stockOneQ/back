@@ -22,10 +22,7 @@ public class AdminStaticService {
     public void addFA(Long userId, AddFARequest addFARequest) {
         isAdministrator(userId);
         for (AddFARequest.AddFAKeyValue addFAKeyValue : addFARequest.addFAKeyValueList()) {
-            staticFARedisRepository.save(StaticFA.builder()
-                                                    .id(addFAKeyValue.question())
-                                                    .answer(addFAKeyValue.answer())
-                                                    .build());
+            staticFARedisRepository.save(StaticFA.createStaticFa(addFAKeyValue.question(), addFAKeyValue.answer()));
         }
     }
 
