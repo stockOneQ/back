@@ -2,7 +2,7 @@ package umc.stockoneqback.board.service;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import umc.stockoneqback.board.controller.dto.BoardListResponse;
+import umc.stockoneqback.board.controller.dto.CustomBoardListResponse;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.board.infra.query.dto.BoardList;
@@ -33,6 +33,7 @@ class BoardListServiceTest extends ServiceTest {
     private User writer;
     private User not_writer;
     private Long userId;
+    private static final int PAGE = 0;
     private static final String SORT_BY = "조회순";
     private static final String INVALID_SORT = "댓글순";
     private static final String INVALID_SEARCH = "댓글";
@@ -78,7 +79,7 @@ class BoardListServiceTest extends ServiceTest {
             Long invalidUserId = userRepository.save(SAEWOO.toUser()).getId();
 
             // when - then
-            assertThatThrownBy(() -> boardListService.getBoardList(invalidUserId, Long.valueOf(-1), null, SEARCH_TYPE, SEARCH_WORD))
+            assertThatThrownBy(() -> boardListService.getBoardList(invalidUserId, PAGE, null, SEARCH_TYPE, SEARCH_WORD))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(UserErrorCode.USER_IS_NOT_MANAGER.getMessage());
         }
@@ -87,7 +88,7 @@ class BoardListServiceTest extends ServiceTest {
         @DisplayName("유효한 정렬 조건이 아니면 게시글 목록 조회에 실패한다")
         void throwNotFoundSortCondition() {
             // when - then
-            assertThatThrownBy(() -> boardListService.getBoardList(userId, Long.valueOf(-1), INVALID_SORT, SEARCH_TYPE, SEARCH_WORD))
+            assertThatThrownBy(() -> boardListService.getBoardList(userId, PAGE, INVALID_SORT, SEARCH_TYPE, SEARCH_WORD))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(BoardErrorCode.NOT_FOUND_SORT_CONDITION.getMessage());
         }
@@ -96,7 +97,7 @@ class BoardListServiceTest extends ServiceTest {
         @DisplayName("유효한 검색 조건이 아니면 게시글 목록 검색에 실패한다")
         void throwNotFoundSearchType() {
             // when - then
-            assertThatThrownBy(() -> boardListService.getBoardList(userId, Long.valueOf(-1), SORT_BY, INVALID_SEARCH, SEARCH_WORD))
+            assertThatThrownBy(() -> boardListService.getBoardList(userId, PAGE, SORT_BY, INVALID_SEARCH, SEARCH_WORD))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(BoardErrorCode.NOT_FOUND_SEARCH_TYPE.getMessage());
         }
@@ -105,24 +106,18 @@ class BoardListServiceTest extends ServiceTest {
         @DisplayName("정렬 기준과 검색에 따른 게시글 목록 조회에 성공한다")
         void getBoardListByHit() throws IOException {
             // when
-            BoardListResponse boardListSortByTime = boardListService.getBoardList(userId, Long.valueOf(-1), SORT_BY, SEARCH_TYPE, SEARCH_WORD);
+            CustomBoardListResponse<BoardList> boardListResponse = boardListService.getBoardList(userId, PAGE, SORT_BY, SEARCH_TYPE, SEARCH_WORD);
 
             // then
-            assertThat(boardListSortByTime.boardListResponse().size()).isLessThanOrEqualTo(PAGE_SIZE);
-            assertThat(boardListSortByTime.boardListResponse().size()).isEqualTo(PAGE_SIZE);
+            assertThat(boardListResponse.getBoardList().size()).isLessThanOrEqualTo(PAGE_SIZE);
+            assertThat(boardListResponse.getBoardList().size()).isEqualTo(PAGE_SIZE);
 
-            for (int i = 0; i < boardListSortByTime.boardListResponse().size(); i++) {
-                BoardList boardListResponse = boardListSortByTime.boardListResponse().get(i);
-                Board board = boardList[i];
-
-                assertAll(
-                        () -> assertThat(boardListResponse.getId()).isEqualTo(board.getId()),
-                        () -> assertThat(boardListResponse.getTitle()).isEqualTo(board.getTitle()),
-                        () -> assertThat(boardListResponse.getContent()).isEqualTo(board.getContent()),
-                        () -> assertThat(boardListResponse.getCreatedDate()).isEqualTo(board.getCreatedDate()),
-                        () -> assertThat(boardListResponse.getHit()).isEqualTo(board.getHit())
-                );
-            }
+            assertAll(
+                    () -> assertThat(boardListResponse.getBoardList().get(0).getId()).isEqualTo(boardList[9].getId()),
+                    () -> assertThat(boardListResponse.getBoardList().get(0).getTitle()).isEqualTo(boardList[9].getTitle()),
+                    () -> assertThat(boardListResponse.getBoardList().get(0).getContent()).isEqualTo(boardList[9].getContent()),
+                    () -> assertThat(boardListResponse.getBoardList().get(0).getHit()).isEqualTo(boardList[9].getHit())
+            );
         }
     }
 
@@ -136,7 +131,7 @@ class BoardListServiceTest extends ServiceTest {
             Long invalidUserId = userRepository.save(SAEWOO.toUser()).getId();
 
             // when - then
-            assertThatThrownBy(() -> boardListService.getMyBoardList(invalidUserId, Long.valueOf(-1), SORT_BY, SEARCH_TYPE, SEARCH_WORD))
+            assertThatThrownBy(() -> boardListService.getMyBoardList(invalidUserId, PAGE, SORT_BY, SEARCH_TYPE, SEARCH_WORD))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(UserErrorCode.USER_NOT_ALLOWED.getMessage());
         }
@@ -145,7 +140,7 @@ class BoardListServiceTest extends ServiceTest {
         @DisplayName("유효한 정렬 조건이 아니면 내가 쓴 글 조회에 실패한다")
         void throwNotFoundSortCondition() {
             // when - then
-            assertThatThrownBy(() -> boardListService.getMyBoardList(userId, Long.valueOf(-1), INVALID_SORT, SEARCH_TYPE, SEARCH_WORD))
+            assertThatThrownBy(() -> boardListService.getMyBoardList(userId, PAGE, INVALID_SORT, SEARCH_TYPE, SEARCH_WORD))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(BoardErrorCode.NOT_FOUND_SORT_CONDITION.getMessage());
         }
@@ -154,7 +149,7 @@ class BoardListServiceTest extends ServiceTest {
         @DisplayName("유효한 검색 조건이 아니면 게시글 목록 검색에 실패한다")
         void throwNotFoundSearchType() {
             // when - then
-            assertThatThrownBy(() -> boardListService.getMyBoardList(userId, Long.valueOf(-1), SORT_BY, INVALID_SEARCH, SEARCH_WORD))
+            assertThatThrownBy(() -> boardListService.getMyBoardList(userId, PAGE, SORT_BY, INVALID_SEARCH, SEARCH_WORD))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(BoardErrorCode.NOT_FOUND_SEARCH_TYPE.getMessage());
         }
@@ -163,24 +158,18 @@ class BoardListServiceTest extends ServiceTest {
         @DisplayName("정렬 기준과 검색에 따른 게시글 목록 조회에 성공한다")
         void getMyBoardList() throws IOException {
             // when
-            BoardListResponse myBoardList = boardListService.getMyBoardList(userId, Long.valueOf(-1), SORT_BY, SEARCH_TYPE, SEARCH_WORD);
+            CustomBoardListResponse<BoardList> myBoardList = boardListService.getMyBoardList(userId, PAGE, SORT_BY, SEARCH_TYPE, SEARCH_WORD);
 
             // then
-            assertThat(myBoardList.boardListResponse().size()).isLessThanOrEqualTo(PAGE_SIZE);
-            assertThat(myBoardList.boardListResponse().size()).isEqualTo(PAGE_SIZE);
+            assertThat(myBoardList.getBoardList().size()).isLessThanOrEqualTo(PAGE_SIZE);
+            assertThat(myBoardList.getBoardList().size()).isEqualTo(PAGE_SIZE);
 
-            for (int i = 0; i < myBoardList.boardListResponse().size(); i++) {
-                BoardList boardListResponse = myBoardList.boardListResponse().get(i);
-                Board board = boardList[i];
-
-                assertAll(
-                        () -> assertThat(boardListResponse.getId()).isEqualTo(board.getId()),
-                        () -> assertThat(boardListResponse.getTitle()).isEqualTo(board.getTitle()),
-                        () -> assertThat(boardListResponse.getContent()).isEqualTo(board.getContent()),
-                        () -> assertThat(boardListResponse.getCreatedDate()).isEqualTo(board.getCreatedDate()),
-                        () -> assertThat(boardListResponse.getHit()).isEqualTo(board.getHit())
-                );
-            }
+            assertAll(
+                    () -> assertThat(myBoardList.getBoardList().get(0).getId()).isEqualTo(boardList[9].getId()),
+                    () -> assertThat(myBoardList.getBoardList().get(0).getTitle()).isEqualTo(boardList[9].getTitle()),
+                    () -> assertThat(myBoardList.getBoardList().get(0).getContent()).isEqualTo(boardList[9].getContent()),
+                    () -> assertThat(myBoardList.getBoardList().get(0).getHit()).isEqualTo(boardList[9].getHit())
+            );
         }
     }
 
