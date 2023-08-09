@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import umc.stockoneqback.auth.controller.dto.request.LoginRequest;
+import umc.stockoneqback.auth.controller.dto.request.SaveFcmRequest;
 import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.auth.service.dto.response.LoginResponse;
 import umc.stockoneqback.global.annotation.ExtractPayload;
@@ -29,5 +30,12 @@ public class AuthApiController {
     public ResponseEntity<Void> logout(@ExtractPayload Long userId) {
         authService.logout(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/savefcm")
+    public ResponseEntity<Void> saveFcm(@ExtractPayload Long userId,
+                                        @RequestBody @Valid SaveFcmRequest saveFcmRequest) {
+        authService.saveFcm(userId, saveFcmRequest.token());
+        return ResponseEntity.ok().build();
     }
 }

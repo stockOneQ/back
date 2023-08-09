@@ -1,10 +1,11 @@
 package umc.stockoneqback.product.service;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import umc.stockoneqback.auth.domain.Token;
+import umc.stockoneqback.auth.domain.FCMToken;
 import umc.stockoneqback.auth.service.TokenService;
 import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.global.base.BaseException;
@@ -39,6 +40,7 @@ public class ProductService {
     private final TokenService tokenService;
     private final UserFindService userFindService;
     private final PartTimerService partTimerService;
+    private final PassProductFCMService passProductFCMService;
     private static final Integer PAGE_SIZE = 12;
 
     @Transactional
@@ -216,25 +218,27 @@ public class ProductService {
     }
 
     @Transactional
-    public List<GetListOfPassProductByOnlineUsersResponse> getListOfPassProductByOnlineUsers() {
-        List<Token> tokenList = tokenService.findAllOnlineUsers();
-        List<GetListOfPassProductByOnlineUsersResponse> getListOfPassProductByOnlineUsersResponseList = new ArrayList<>();
+    public void pushAlarmOfPassProductByOnlineUsers() throws FirebaseMessagingException {
+        List<FCMToken> fcmTokenList = tokenService.findAllOnlineUsers();
         LocalDate currentDate = LocalDate.now();
-        for (Token token: tokenList) {
-            User user = userFindService.findById(token.getUserId());
-            GetListOfPassProductByOnlineUsersResponse getListOfPassProductByOnlineUsersResponse;
-            if (user.getRole() == Role.SUPERVISOR)
+        for (FCMToken fcmToken: fcmTokenList) {
+            User user = userFindService.findById(fcmToken.getId());
+            if (user.getRole() == Role.SUPERVISOR || user.getRole() == Role.ADMINISTRATOR)
                 continue;
             if (user.getRole() == Role.MANAGER) {
-                getListOfPassProductByOnlineUsersResponse =
-                        new GetListOfPassProductByOnlineUsersResponse(user.getId(), productRepository.findPassByManager(user, currentDate));
+                List<Product> productList = productRepository.findPassByManager(user, currentDate);
+                for (Product product: productList) {
+                    passProductFCMService.sendNotification
+                            (fcmToken.getToken(), product.getStoreCondition().getValue(), product.getName());
+                }
             } else if (user.getRole() == Role.PART_TIMER) {
-                getListOfPassProductByOnlineUsersResponse =
-                        new GetListOfPassProductByOnlineUsersResponse(user.getId(), productRepository.findPassByPartTimer(user, currentDate));
+                List<Product> productList = productRepository.findPassByPartTimer(user, currentDate);
+                for (Product product: productList) {
+                    passProductFCMService.sendNotification
+                            (fcmToken.getToken(), product.getStoreCondition().getValue(), product.getName());
+                }
             } else throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
-            getListOfPassProductByOnlineUsersResponseList.add(getListOfPassProductByOnlineUsersResponse);
         }
-        return getListOfPassProductByOnlineUsersResponseList;
     }
 
     private void isExistProductByName(Store store, StoreCondition storeCondition, String name) {

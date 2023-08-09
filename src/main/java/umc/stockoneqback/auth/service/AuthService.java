@@ -47,5 +47,11 @@ public class AuthService {
     @Transactional
     public void logout(Long userId) {
         tokenService.deleteRefreshTokenByMemberId(userId);
+        tokenService.deleteFcmToken(userId);
+    }
+
+    @Transactional
+    public void saveFcm(Long userId, String token) {
+        tokenService.saveFcmToken(userId, token);
     }
 }
