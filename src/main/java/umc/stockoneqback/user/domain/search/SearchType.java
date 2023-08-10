@@ -25,8 +25,16 @@ public enum SearchType implements EnumStandard {
         }
     }
 
-    public static SearchType findSearchTypeByValue(String searchTypeValue) {
+    public static SearchType findFriendSearchTypeByValue(String searchTypeValue) {
         if (map.containsKey(searchTypeValue)) {
+            return map.get(searchTypeValue);
+        } else {
+            throw BaseException.type(UserErrorCode.INVALID_SEARCH_TYPE);
+        }
+    }
+
+    public static SearchType findBusinessSearchTypeByValue(String searchTypeValue) {
+        if (map.get(searchTypeValue) == SearchType.NAME || map.get(searchTypeValue) == SearchType.STORE) {
             return map.get(searchTypeValue);
         } else {
             throw BaseException.type(UserErrorCode.INVALID_SEARCH_TYPE);

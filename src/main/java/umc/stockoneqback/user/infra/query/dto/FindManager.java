@@ -13,7 +13,7 @@ public class FindManager {
     private final String name;
     private final String storeName;
     private final String phoneNumber;
-    private final String friendStatus;
+    private final String relationStatus;
 
     @QueryProjection
     public FindManager(Long id, String name, String storeName, String phoneNumber) {
@@ -21,6 +21,6 @@ public class FindManager {
         this.name = name;
         this.storeName = storeName;
         this.phoneNumber = phoneNumber;
-        this.friendStatus = null;
+        this.relationStatus = null;
     }
 }

@@ -16,11 +16,21 @@ import umc.stockoneqback.user.service.dto.response.FindManagerResponse;
 public class UserFindApiController {
     private final UserFindService userFindService;
 
-    @GetMapping("/search")
-    public ResponseEntity<FindManagerResponse> findManager(@ExtractPayload Long userId,
+    // 6.1
+    @GetMapping("/friend/search")
+    public ResponseEntity<FindManagerResponse> findFriendManagers(@ExtractPayload Long userId,
                                                            @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastUserId,
                                                            @RequestParam(value = "search", required = false, defaultValue = "이름") String searchType,
-                                                           @RequestParam(value = "word", required = false, defaultValue = "") String searchWord) {
-        return ResponseEntity.ok(userFindService.findManagers(userId, lastUserId, searchType, searchWord));
+                                                           @RequestParam(value = "word") String searchWord) {
+        return ResponseEntity.ok(userFindService.findFriendManagers(userId, lastUserId, searchType, searchWord));
+    }
+
+    // 9.3
+    @GetMapping("/business/search")
+    public ResponseEntity<FindManagerResponse> findBusinessManagers(@ExtractPayload Long userId,
+                                                           @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastUserId,
+                                                           @RequestParam(value = "search", required = false, defaultValue = "이름") String searchType,
+                                                           @RequestParam(value = "word") String searchWord) {
+        return ResponseEntity.ok(userFindService.findBusinessManagers(userId, lastUserId, searchType, searchWord));
     }
 }

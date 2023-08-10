@@ -4,8 +4,10 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.search.SearchType;
+import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.infra.query.dto.FindManager;
 import umc.stockoneqback.user.infra.query.dto.QFindManager;
 
@@ -30,7 +32,7 @@ public class UserFindQueryRepositoryImpl implements UserFindQueryRepository {
 
     private BooleanExpression search(SearchType searchType, String searchWord) {
         if (searchWord == null || searchWord.isEmpty()) {
-            return null;
+            throw BaseException.type(UserErrorCode.INPUT_VALUE_REQUIRED);
         } else {
             switch (searchType) {
                 case NAME: return user.name.contains(searchWord);
