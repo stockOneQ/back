@@ -23,7 +23,7 @@ public enum UserErrorCode implements ErrorCode {
     NOT_ALLOWED_UPDATE_PASSWORD(HttpStatus.FORBIDDEN, "USER_013", "비밀번호를 업데이트할 자격이 없습니다."),
     INVALID_SEARCH_TYPE(HttpStatus.NOT_FOUND, "USER_014", "유효하지 않은 검색 조건입니다."),
     USER_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "USER_015", "해당 페이지에 접근할 수 없는 사용자입니다."),
-    INPUT_VALUE_REQUIRED(HttpStatus.BAD_REQUEST, "USER_016", "검색어를 입력해주세요."),
+    INPUT_VALUE_REQUIRED(HttpStatus.NOT_FOUND, "USER_016", "검색어를 입력해주세요."),
     ;
 
     private final HttpStatus status;
