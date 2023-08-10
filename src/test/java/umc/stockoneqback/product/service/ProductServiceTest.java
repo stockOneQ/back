@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
-import umc.stockoneqback.auth.domain.FCMToken;
+import umc.stockoneqback.auth.domain.FcmToken;
 import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.auth.service.TokenService;
 import umc.stockoneqback.common.EmbeddedRedisConfig;
@@ -398,7 +398,7 @@ public class ProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 성공한다")
         void success() {
-            List<FCMToken> tokenList = tokenService.findAllOnlineUsers();
+            List<FcmToken> tokenList = tokenService.findAllOnlineUsers();
             User user = userFindService.findById(tokenList.get(0).getId());
             List<Product> getListOfPassProductByOnlineUsersResponse = productRepository.findPassByManager(user, LocalDate.now());
 

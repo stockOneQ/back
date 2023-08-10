@@ -4,6 +4,6 @@ import javax.validation.constraints.NotBlank;
 
 public record SaveFcmRequest(
         @NotBlank(message = "토큰은 필수입니다.")
-        String token
+        String fcmToken
 ) {
 }

@@ -32,10 +32,10 @@ public class AuthApiController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/savefcm")
+    @PostMapping("/fcm")
     public ResponseEntity<Void> saveFcm(@ExtractPayload Long userId,
                                         @RequestBody @Valid SaveFcmRequest saveFcmRequest) {
-        authService.saveFcm(userId, saveFcmRequest.token());
+        authService.saveFcm(userId, saveFcmRequest.fcmToken());
         return ResponseEntity.ok().build();
     }
 }

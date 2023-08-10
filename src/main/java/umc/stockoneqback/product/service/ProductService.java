@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import umc.stockoneqback.auth.domain.FCMToken;
+import umc.stockoneqback.auth.domain.FcmToken;
 import umc.stockoneqback.auth.service.TokenService;
 import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.global.base.BaseException;
@@ -219,9 +219,9 @@ public class ProductService {
 
     @Transactional
     public void pushAlarmOfPassProductByOnlineUsers() throws FirebaseMessagingException {
-        List<FCMToken> fcmTokenList = tokenService.findAllOnlineUsers();
+        List<FcmToken> fcmTokenList = tokenService.findAllOnlineUsers();
         LocalDate currentDate = LocalDate.now();
-        for (FCMToken fcmToken: fcmTokenList) {
+        for (FcmToken fcmToken: fcmTokenList) {
             User user = userFindService.findById(fcmToken.getId());
             if (user.getRole() == Role.SUPERVISOR || user.getRole() == Role.ADMINISTRATOR)
                 continue;

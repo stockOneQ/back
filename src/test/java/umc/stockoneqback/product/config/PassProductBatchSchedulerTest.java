@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import umc.stockoneqback.auth.domain.FCMToken;
+import umc.stockoneqback.auth.domain.FcmToken;
 import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.auth.service.TokenService;
 import umc.stockoneqback.common.EmbeddedRedisConfig;
@@ -81,7 +81,7 @@ public class PassProductBatchSchedulerTest {
             Awaitility.await()
                     .atMost(3, TimeUnit.SECONDS)
                     .untilAsserted(() -> {
-                        List<FCMToken> tokenList = tokenService.findAllOnlineUsers();
+                        List<FcmToken> tokenList = tokenService.findAllOnlineUsers();
                         User user = userFindService.findById(tokenList.get(0).getId());
                         List<Product> getListOfPassProductByOnlineUsersResponse = productRepository.findPassByManager(user, LocalDate.now());
 
