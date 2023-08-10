@@ -4,7 +4,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface FCMTokenRedisRepository extends CrudRepository<FCMToken, Long> {
+public interface FcmTokenRedisRepository extends CrudRepository<FcmToken, Long> {
     @Override
-    List<FCMToken> findAll();
+    List<FcmToken> findAll();
 }

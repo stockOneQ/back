@@ -13,10 +13,10 @@ import java.io.InputStream;
 import java.util.List;
 
 @Configuration
-public class FCMConfig {
+public class FcmConfig {
     @Bean
     public FirebaseMessaging initialize() throws IOException {
-        // initialize Admin SDK using OAuth 2.0 refresh token
+        // initialize Admin SDK using OAuth 2.0 refresh fcmToken
         ClassPathResource resource = new ClassPathResource("/firebase/firebase_service_secret.json");
         InputStream refreshToken = resource.getInputStream();
 

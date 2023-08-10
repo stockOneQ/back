@@ -10,10 +10,10 @@ import org.springframework.data.redis.core.index.Indexed;
 import javax.persistence.Id;
 
 @Getter
-@RedisHash("FCMToken")
+@RedisHash("FcmToken")
 @AllArgsConstructor
 @Builder
-public class FCMToken {
+public class FcmToken {
     public static final Long DEFAULT_TTL = 604800L;
 
     @Id
@@ -25,8 +25,8 @@ public class FCMToken {
     @TimeToLive
     private Long expiration;
 
-    public static FCMToken createFCMToken(Long userId, String token) {
-        return FCMToken.builder()
+    public static FcmToken createFcmToken(Long userId, String token) {
+        return FcmToken.builder()
                 .id(userId)
                 .token(token)
                 .expiration(DEFAULT_TTL)
