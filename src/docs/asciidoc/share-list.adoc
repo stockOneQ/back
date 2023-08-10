@@ -1,0 +1,113 @@
+= 커넥트 - 자료 글 목록 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== ! API 및 쿼리스트링 설명 !
+=== 1. API [GET] /api/share/users
+|===
+|기능 명세서 <8. 커넥트 - 자료>에서 <주기능 A. (비즈니스 유저) 고르기>에 해당하는 API입니다.
+|현재 로그인 한 유저와 연관되어 있는 비즈니스 유저 리스트(businessUserList)와 총 비즈니스 유저 수(total)를 반환합니다.
+|===
+
+=== 2. API [GET] /api/share?user=&page=&category=&search=&word=
+|===
+|<8. 커넥트 - 자료>의 디폴트_[카테고리] 화면에 해당하는 API입니다.
+|페이지네이션 관련 정보(pageInfo)와 조회되는 글 목록(shareList)을 반환합니다.
+|===
+
+=== 2. API의 쿼리스트링
+|===
+| 2-1. user (필수)
+
+|셀렉트박스에서 선택된 유저와 현재 로그인 상태인 유저 간의 비즈니스 id를 의미합니다.
+|[GET /api/share/users api] 호출 시 반환되는 businessUserList[].userBusinessId를 넘겨주시면 됩니다.
+|===
+
+|===
+|2-2. page (optional, default=0)
+
+|(현재 페이지 번호 - 1)에 해당하는 값을 넘겨주면 됩니다.
+|ex). 1페이지 -> page=0, ..., 5페이지 -> page=4
+|===
+
+|===
+|2-3. category (optional, default=공지사항)
+
+|커넥트 - 자료의 4가지 카테고리를 의미합니다.
+|공지사항 / 레시피 / 행사내용 / 기타
+|===
+
+|===
+|2-4. search (optional, default=제목)
+
+|검색 조건을 의미합니다.
+|제목 / 내용
+|===
+
+|===
+|2-5. word (optional)
+
+|검색어를 의미합니다.
+|===
+
+== 유저 셀렉트박스 API
+=== 1. Authorization Header에 AccessToken이 없으면 유저 셀렉트박스 반환에 실패한다
+HTTP Request
+include::{snippets}/ShareApi/SelectBox/Failure/http-request.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/SelectBox/Failure/http-response.adoc[]
+include::{snippets}/ShareApi/SelectBox/Failure/response-fields.adoc[]
+
+=== 2. 유저 셀렉트박스 반환에 성공한다
+HTTP Request
+include::{snippets}/ShareApi/SelectBox/Success/http-request.adoc[]
+include::{snippets}/ShareApi/SelectBox/Success/request-headers.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/SelectBox/Success/http-response.adoc[]
+include::{snippets}/ShareApi/SelectBox/Success/response-fields.adoc[]
+
+
+== 커넥트 - 자료 전체 글 목록 API
+=== 1. Authorization Header에 AccessToken이 없으면 전체 글 목록 조회에 실패한다
+HTTP Request
+include::{snippets}/ShareApi/List/Failure/Case1/http-request.adoc[]
+include::{snippets}/ShareApi/List/Failure/Case1/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/List/Failure/Case1/http-response.adoc[]
+include::{snippets}/ShareApi/List/Failure/Case1/response-fields.adoc[]
+
+=== 2. 유효하지 않은 카테고리라면 전체 글 목록 조회에 실패한다
+HTTP Request
+include::{snippets}/ShareApi/List/Failure/Case2/http-request.adoc[]
+include::{snippets}/ShareApi/List/Failure/Case2/request-headers.adoc[]
+include::{snippets}/ShareApi/List/Failure/Case2/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/List/Failure/Case2/http-response.adoc[]
+include::{snippets}/ShareApi/List/Failure/Case2/response-fields.adoc[]
+
+=== 3. 유효하지 않은 검색 조건이라면 자료 검색에 실패한다
+HTTP Request
+include::{snippets}/ShareApi/List/Failure/Case3/http-request.adoc[]
+include::{snippets}/ShareApi/List/Failure/Case3/request-headers.adoc[]
+include::{snippets}/ShareApi/List/Failure/Case3/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/List/Failure/Case3/http-response.adoc[]
+include::{snippets}/ShareApi/List/Failure/Case3/response-fields.adoc[]
+
+=== 4. 커넥트 - 자료 글 목록 조회에 성공한다
+HTTP Request
+include::{snippets}/ShareApi/List/Success/http-request.adoc[]
+include::{snippets}/ShareApi/List/Success/request-headers.adoc[]
+include::{snippets}/ShareApi/List/Success/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/List/Success/http-response.adoc[]
+include::{snippets}/ShareApi/List/Success/response-fields.adoc[]

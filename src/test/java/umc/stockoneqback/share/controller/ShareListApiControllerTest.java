@@ -333,7 +333,7 @@ class ShareListApiControllerTest extends ControllerTest {
                                             fieldWithPath("shareList[].title").type(JsonFieldType.STRING).description("글 제목"),
                                             fieldWithPath("shareList[].createdDate").type(JsonFieldType.STRING).description("글 최초 등록 시간"),
                                             fieldWithPath("shareList[].writer").type(JsonFieldType.STRING).description("글 작성자"),
-                                            fieldWithPath("shareList[].file").type(JsonFieldType.STRING).description("파일").optional()
+                                            fieldWithPath("shareList[].file").type(JsonFieldType.STRING).description("파일(존재하지 않을 경우 반환x)").optional()
                                     )
                             )
                     );
