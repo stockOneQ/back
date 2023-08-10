@@ -15,6 +15,7 @@ import umc.stockoneqback.global.base.BaseException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static umc.stockoneqback.fixture.TokenFixture.FCM_TOKEN;
 
 @DisplayName("Auth [Service Layer] -> TokenReissueService 테스트")
 class TokenReissueServiceTest extends ServiceTest {
@@ -39,7 +40,7 @@ class TokenReissueServiceTest extends ServiceTest {
         @DisplayName("RefreshToken이 유효하지 않으면 예외가 발생한다")
         void throwExceptionByAuthInvalidToken() {
             // when - then
-            assertThatThrownBy(() -> tokenReissueService.reissueTokens(USER_ID, REFRESH_TOKEN))
+            assertThatThrownBy(() -> tokenReissueService.reissueTokens(USER_ID, REFRESH_TOKEN, FCM_TOKEN))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(AuthErrorCode.AUTH_INVALID_TOKEN.getMessage());
         }
@@ -51,7 +52,7 @@ class TokenReissueServiceTest extends ServiceTest {
             tokenRepository.save(Token.createToken(USER_ID, REFRESH_TOKEN));
 
             // when
-            TokenResponse response = tokenReissueService.reissueTokens(USER_ID, REFRESH_TOKEN);
+            TokenResponse response = tokenReissueService.reissueTokens(USER_ID, REFRESH_TOKEN, FCM_TOKEN);
 
             // then
             assertAll(
