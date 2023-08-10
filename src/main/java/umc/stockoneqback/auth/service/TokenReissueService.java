@@ -3,6 +3,7 @@ package umc.stockoneqback.auth.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import umc.stockoneqback.auth.controller.dto.request.SaveFcmRequest;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.auth.service.dto.response.TokenResponse;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
@@ -15,7 +16,7 @@ public class TokenReissueService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public TokenResponse reissueTokens(Long userId, String refreshToken) {
+    public TokenResponse reissueTokens(Long userId, String refreshToken, String fcmToken) {
         if (!tokenService.isRefreshTokenExists(userId, refreshToken)) {
             throw BaseException.type(AuthErrorCode.AUTH_INVALID_TOKEN);
         }
@@ -24,6 +25,9 @@ public class TokenReissueService {
         String newRefreshToken = jwtTokenProvider.createRefreshToken(userId);
 
         tokenService.reissueRefreshTokenByRtrPolicy(userId, newRefreshToken);
+
+        tokenService.saveFcmToken(userId, fcmToken);
+
         return new TokenResponse(newAccessToken, newRefreshToken);
     }
 }
