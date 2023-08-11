@@ -1,9 +1,10 @@
 package umc.stockoneqback.auth.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import umc.stockoneqback.auth.domain.FcmToken;
+import umc.stockoneqback.auth.domain.FcmTokenRedisRepository;
 import umc.stockoneqback.auth.domain.Token;
 import umc.stockoneqback.auth.domain.TokenRepository;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TokenService {
     private final TokenRepository tokenRepository;
+    private final FcmTokenRedisRepository fcmTokenRedisRepository;
 
     @Transactional
     public void synchronizeRefreshToken(Long userId, String refreshToken) {
@@ -38,7 +40,19 @@ public class TokenService {
         return tokenRepository.existsByUserIdAndRefreshToken(userId, refreshToken);
     }
 
-    public List<Token> findAllOnlineUsers() {
-        return tokenRepository.findAll(Sort.by(Sort.Direction.ASC, "userId"));
+    @Transactional
+    public void saveFcmToken(Long userId, String token) {
+        fcmTokenRedisRepository.deleteById(userId);
+        fcmTokenRedisRepository.save(FcmToken.createFcmToken(userId, token));
+    }
+
+    @Transactional
+    public void deleteFcmToken(Long userId) {
+        fcmTokenRedisRepository.deleteById(userId);
+    }
+
+    @Transactional
+    public List<FcmToken> findAllOnlineUsers() {
+        return fcmTokenRedisRepository.findAll();
     }
 }

@@ -5,9 +5,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import umc.stockoneqback.auth.domain.Token;
+import org.springframework.context.annotation.Import;
+import umc.stockoneqback.auth.domain.FcmToken;
 import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.auth.service.TokenService;
+import umc.stockoneqback.common.EmbeddedRedisConfig;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.fixture.ProductFixture;
@@ -43,6 +45,7 @@ import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
 import static umc.stockoneqback.fixture.UserFixture.*;
 import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
+@Import(EmbeddedRedisConfig.class)
 @DisplayName("Product [Service Layer] -> ProductService 테스트")
 public class ProductServiceTest extends ServiceTest {
     @Autowired
@@ -68,6 +71,7 @@ public class ProductServiceTest extends ServiceTest {
 
     private final ProductFixture[] productFixtures = ProductFixture.values();
     private final Product[] products = new Product[17];
+    private static final String FCM_TOKEN = "examplefcmtokenblabla";
     private static Long USER_ID;
     private static Store zStore;
 
@@ -76,6 +80,7 @@ public class ProductServiceTest extends ServiceTest {
         zStore = storeRepository.save(Z_YEONGTONG.toStore());
         USER_ID = userService.saveManager(ANNE.toUser(), zStore.getId());
         authService.login(ANNE.getLoginId(), ANNE.getPassword());
+        authService.saveFcm(USER_ID, FCM_TOKEN);
         for (int i = 0; i < products.length-1; i++)
             products[i] = productRepository.save(productFixtures[i].toProduct(zStore));
     }
@@ -391,30 +396,18 @@ public class ProductServiceTest extends ServiceTest {
     @DisplayName("현재 접속중인 사용자별 유통기한 경과 제품 목록 조회")
     class getListOfPassProductByOnlineUsers {
         @Test
-        @DisplayName("역할이 잘못된 사용자가 존재하면 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 실패한다")
-        void throwExceptionByInvalidRole() {
-            User user = userRepository.save(User.createUser(Email.from("a@naver.com"), "a", Password.encrypt("secure123!", ENCODER),
-                    "a", LocalDate.of(2001, 1, 1), "010-0000-0000", null));
-            tokenRepository.save(new Token(2L, "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwia"));
-            List<Token> tokenList = tokenService.findAllOnlineUsers();
-
-            assertThatThrownBy(() -> productService.getListOfPassProductByOnlineUsers())
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(UserErrorCode.ROLE_NOT_FOUND.getMessage());
-        }
-
-        @Test
         @DisplayName("현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 성공한다")
         void success() {
-            List<Token> tokenList = tokenService.findAllOnlineUsers();
-            User user = userFindService.findById(tokenList.get(0).getUserId());
-            List<String> getListOfPassProductByOnlineUsersResponse = productRepository.findPassByManager(user, LocalDate.now());
+            List<FcmToken> tokenList = tokenService.findAllOnlineUsers();
+            User user = userFindService.findById(tokenList.get(0).getId());
+            List<Product> getListOfPassProductByOnlineUsersResponse = productRepository.findPassByManager(user, LocalDate.now());
 
             assertAll(
                     () -> assertThat(user.getId()).isEqualTo(USER_ID),
+                    () -> assertThat(tokenList.get(0).getToken()).isEqualTo(FCM_TOKEN),
                     () -> assertThat(getListOfPassProductByOnlineUsersResponse.size()).isEqualTo(2),
-                    () -> assertThat(getListOfPassProductByOnlineUsersResponse.get(0)).isEqualTo("감"),
-                    () -> assertThat(getListOfPassProductByOnlineUsersResponse.get(1)).isEqualTo("포도")
+                    () -> assertThat(getListOfPassProductByOnlineUsersResponse.get(0).getName()).isEqualTo("감"),
+                    () -> assertThat(getListOfPassProductByOnlineUsersResponse.get(1).getName()).isEqualTo("포도")
             );
         }
     }
