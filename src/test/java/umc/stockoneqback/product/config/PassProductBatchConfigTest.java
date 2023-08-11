@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import umc.stockoneqback.auth.service.AuthService;
-import umc.stockoneqback.auth.service.TokenService;
 import umc.stockoneqback.common.DatabaseCleaner;
 import umc.stockoneqback.common.EmbeddedRedisConfig;
+import umc.stockoneqback.common.RedisCleaner;
 import umc.stockoneqback.common.TestBatchLegacyConfig;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.product.domain.Product;
@@ -48,7 +48,7 @@ public class PassProductBatchConfigTest {
     private AuthService authService;
 
     @Autowired
-    private TokenService tokenService;
+    private RedisCleaner redisCleaner;
 
     @Autowired
     protected StoreRepository storeRepository;
@@ -64,9 +64,9 @@ public class PassProductBatchConfigTest {
     @BeforeEach
     void setup() {
         databaseCleaner.execute();
+        redisCleaner.flushAll();
         Store zStore = storeRepository.save(Z_YEONGTONG.toStore());
         USER_ID = userService.saveManager(ANNE.toUser(), zStore.getId());
-        authService.login(ANNE.getLoginId(), ANNE.getPassword());
         authService.saveFcm(USER_ID, FCM_TOKEN);
         for (int i = 0; i < products.length-1; i++)
             products[i] = productRepository.save(productFixtures[i].toProduct(zStore));
