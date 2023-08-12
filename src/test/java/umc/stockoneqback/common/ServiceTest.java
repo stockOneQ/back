@@ -18,6 +18,7 @@ import umc.stockoneqback.reply.domain.ReplyRepository;
 import umc.stockoneqback.role.domain.company.CompanyRepository;
 import umc.stockoneqback.role.domain.store.PartTimerRepository;
 import umc.stockoneqback.role.domain.store.StoreRepository;
+import umc.stockoneqback.share.repository.ShareRepository;
 import umc.stockoneqback.user.domain.UserRepository;
 
 @SpringBootTest
@@ -65,6 +66,9 @@ public class ServiceTest {
 
     @Autowired
     protected StaticFARedisRepository staticFARedisRepository;
+
+    @Autowired
+    protected ShareRepository shareRepository;
 
     @Autowired
     protected FcmTokenRedisRepository fcmTokenRedisRepository;
