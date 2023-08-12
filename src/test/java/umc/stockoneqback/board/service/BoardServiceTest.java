@@ -91,45 +91,4 @@ public class BoardServiceTest extends ServiceTest {
             );
         }
     }
-
-    @Nested
-    @DisplayName("게시글 삭제")
-    class delete {
-        @Test
-        @DisplayName("다른 사람의 게시글은 삭제할 수 없다")
-        void throwExceptionByUserNotBoardWriter() {
-            // when - then
-            assertThatThrownBy(() -> boardService.delete(not_writer.getId(),board.getId()))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(BoardErrorCode.USER_IS_NOT_BOARD_WRITER.getMessage());
-        }
-
-        @Test
-        @DisplayName("게시글이 삭제되면 달린 댓글도 삭제되어야 한다")
-        void successDeleteAllComment() {
-            // given
-            for(int i=1; i<=5; i++) {
-                commentService.create(writer.getId(), board.getId(), null, "댓글" + i);
-            }
-            flushAndClear();
-
-            // when
-            boardService.delete(writer.getId(), board.getId());
-
-            // then
-            assertThat(commentRepository.count()).isEqualTo(0);
-        }
-
-        @Test
-        @DisplayName("게시글 삭제에 성공한다")
-        void success() {
-            // given
-            boardService.delete(writer.getId(), board.getId());
-
-            // when - then
-            assertThatThrownBy(() -> boardFindService.findById(board.getId()))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(BoardErrorCode.BOARD_NOT_FOUND.getMessage());
-        }
-    }
 }

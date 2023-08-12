@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import umc.stockoneqback.auth.controller.dto.request.SaveFcmRequest;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.auth.service.dto.response.TokenResponse;
 import umc.stockoneqback.common.ControllerTest;
@@ -13,12 +14,12 @@ import umc.stockoneqback.global.base.BaseException;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.TokenFixture.*;
@@ -34,7 +35,11 @@ class TokenReissueApiControllerTest extends ControllerTest {
         @DisplayName("Authorization_Header에 RefreshToken이 없으면 예외가 발생한다")
         void throwExceptionByInvalidPermission() throws Exception {
             // when
-            MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(BASE_URL);
+            final SaveFcmRequest request = createSaveFcmRequest();
+            MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                    .post(BASE_URL)
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request));
 
             // then
             final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
@@ -53,6 +58,9 @@ class TokenReissueApiControllerTest extends ControllerTest {
                                     "TokenReissueApi/Failure/Case1",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
+                                    requestFields(
+                                            fieldWithPath("fcmToken").description("현재 사용자의 FCM Token")
+                                    ),
                                     responseFields(
                                             fieldWithPath("status").description("HTTP 상태 코드"),
                                             fieldWithPath("errorCode").description("커스텀 예외 코드"),
@@ -70,8 +78,11 @@ class TokenReissueApiControllerTest extends ControllerTest {
                     .willThrow(BaseException.type(AuthErrorCode.AUTH_EXPIRED_TOKEN));
 
             // when
+            final SaveFcmRequest request = createSaveFcmRequest();
             MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                     .post(BASE_URL)
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request))
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
 
             // then
@@ -94,6 +105,9 @@ class TokenReissueApiControllerTest extends ControllerTest {
                                     requestHeaders(
                                             headerWithName(AUTHORIZATION).description("Refresh Token")
                                     ),
+                                    requestFields(
+                                            fieldWithPath("fcmToken").description("현재 사용자의 FCM Token")
+                                    ),
                                     responseFields(
                                             fieldWithPath("status").description("HTTP 상태 코드"),
                                             fieldWithPath("errorCode").description("커스텀 예외 코드"),
@@ -111,8 +125,11 @@ class TokenReissueApiControllerTest extends ControllerTest {
                     .willThrow(BaseException.type(AuthErrorCode.AUTH_INVALID_TOKEN));
 
             // when
+            final SaveFcmRequest request = createSaveFcmRequest();
             MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                     .post(BASE_URL)
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request))
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
 
             // then
@@ -135,6 +152,9 @@ class TokenReissueApiControllerTest extends ControllerTest {
                                     requestHeaders(
                                             headerWithName(AUTHORIZATION).description("Refresh Token")
                                     ),
+                                    requestFields(
+                                            fieldWithPath("fcmToken").description("현재 사용자의 FCM Token")
+                                    ),
                                     responseFields(
                                             fieldWithPath("status").description("HTTP 상태 코드"),
                                             fieldWithPath("errorCode").description("커스텀 예외 코드"),
@@ -152,11 +172,14 @@ class TokenReissueApiControllerTest extends ControllerTest {
             given(jwtTokenProvider.getId(REFRESH_TOKEN)).willReturn(1L);
 
             TokenResponse response = new TokenResponse(ACCESS_TOKEN, REFRESH_TOKEN);
-            given(tokenReissueService.reissueTokens(1L, REFRESH_TOKEN)).willReturn(response);
+            given(tokenReissueService.reissueTokens(1L, REFRESH_TOKEN, FCM_TOKEN)).willReturn(response);
 
             // when
+            final SaveFcmRequest request = createSaveFcmRequest();
             MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                     .post(BASE_URL)
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request))
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + REFRESH_TOKEN);
 
             // then
@@ -176,6 +199,9 @@ class TokenReissueApiControllerTest extends ControllerTest {
                                     requestHeaders(
                                             headerWithName(AUTHORIZATION).description("Refresh Token")
                                     ),
+                                    requestFields(
+                                            fieldWithPath("fcmToken").description("현재 사용자의 FCM Token")
+                                    ),
                                     responseFields(
                                             fieldWithPath("accessToken").description("새로 발급된 Access Token (Expire - 2시간)"),
                                             fieldWithPath("refreshToken").description("새로 발급된 Refresh Token (Expire - 2주)")
@@ -183,5 +209,9 @@ class TokenReissueApiControllerTest extends ControllerTest {
                             )
                     );
         }
+    }
+
+    private SaveFcmRequest createSaveFcmRequest() {
+        return new SaveFcmRequest(FCM_TOKEN);
     }
 }

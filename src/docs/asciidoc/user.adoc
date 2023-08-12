@@ -24,6 +24,15 @@ HTTP Response
 include::{snippets}/UserApi/SignUp/Manager/Failure/Case2/http-response.adoc[]
 include::{snippets}/UserApi/SignUp/Manager/Failure/Case2/response-fields.adoc[]
 
+=== 2. 중복된 이메일이 존재한다면 가게 사장님 등록에 실패한다
+HTTP Request
+include::{snippets}/UserApi/SignUp/Manager/Failure/Case3/http-request.adoc[]
+include::{snippets}/UserApi/SignUp/Manager/Failure/Case3/request-body.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/SignUp/Manager/Failure/Case3/http-response.adoc[]
+include::{snippets}/UserApi/SignUp/Manager/Failure/Case3/response-fields.adoc[]
+
 === 3. 가게 사장님 등록에 성공한다
 HTTP Request
 include::{snippets}/UserApi/SignUp/Manager/Success/http-request.adoc[]
@@ -42,7 +51,7 @@ HTTP Response
 include::{snippets}/UserApi/SignUp/PartTimer/Failure/Case1/http-response.adoc[]
 include::{snippets}/UserApi/SignUp/PartTimer/Failure/Case1/response-fields.adoc[]
 
-=== 2. 가게 코드가 일치하지 않으면 아르바이트생 등록에 실패한다
+=== 2. 중복된 이메일이 있다면 아르바이트생 등록에 실패한다
 HTTP Request
 include::{snippets}/UserApi/SignUp/PartTimer/Failure/Case2/http-request.adoc[]
 include::{snippets}/UserApi/SignUp/PartTimer/Failure/Case2/request-body.adoc[]
@@ -50,6 +59,15 @@ include::{snippets}/UserApi/SignUp/PartTimer/Failure/Case2/request-body.adoc[]
 HTTP Response
 include::{snippets}/UserApi/SignUp/PartTimer/Failure/Case2/http-response.adoc[]
 include::{snippets}/UserApi/SignUp/PartTimer/Failure/Case2/response-fields.adoc[]
+
+=== 3. 가게 코드가 일치하지 않으면 아르바이트생 등록에 실패한다
+HTTP Request
+include::{snippets}/UserApi/SignUp/PartTimer/Failure/Case3/http-request.adoc[]
+include::{snippets}/UserApi/SignUp/PartTimer/Failure/Case3/request-body.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/SignUp/PartTimer/Failure/Case3/http-response.adoc[]
+include::{snippets}/UserApi/SignUp/PartTimer/Failure/Case3/response-fields.adoc[]
 
 === 3. 아르바이트생 등록에 성공한다
 HTTP Request
@@ -69,7 +87,7 @@ HTTP Response
 include::{snippets}/UserApi/SignUp/Supervisor/Failure/Case1/http-response.adoc[]
 include::{snippets}/UserApi/SignUp/Supervisor/Failure/Case1/response-fields.adoc[]
 
-=== 2. 회사 코드가 일치하지 않으면 슈퍼바이저 등록에 실패한다
+=== 2. 중복된 이메일이 있다면 슈퍼바이저 등록에 실패한다
 HTTP Request
 include::{snippets}/UserApi/SignUp/Supervisor/Failure/Case2/http-request.adoc[]
 include::{snippets}/UserApi/SignUp/Supervisor/Failure/Case2/request-body.adoc[]
@@ -77,6 +95,15 @@ include::{snippets}/UserApi/SignUp/Supervisor/Failure/Case2/request-body.adoc[]
 HTTP Response
 include::{snippets}/UserApi/SignUp/Supervisor/Failure/Case2/http-response.adoc[]
 include::{snippets}/UserApi/SignUp/Supervisor/Failure/Case2/response-fields.adoc[]
+
+=== 3. 회사 코드가 일치하지 않으면 슈퍼바이저 등록에 실패한다
+HTTP Request
+include::{snippets}/UserApi/SignUp/Supervisor/Failure/Case3/http-request.adoc[]
+include::{snippets}/UserApi/SignUp/Supervisor/Failure/Case3/request-body.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/SignUp/Supervisor/Failure/Case3/http-response.adoc[]
+include::{snippets}/UserApi/SignUp/Supervisor/Failure/Case3/response-fields.adoc[]
 
 === 3. 슈퍼바이저 등록에 성공한다
 HTTP Request

@@ -18,6 +18,8 @@ public record BoardResponse(
 
         LocalDateTime createdDate,
 
-        String writer
+        String writerId,
+
+        String writerName
 ) {
 }

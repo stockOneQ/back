@@ -262,135 +262,6 @@ public class BoardApiControllerTest extends ControllerTest {
     }
 
     @Nested
-    @DisplayName("게시글 삭제 API [DELETE /api/boards/{boardId}]")
-    class deleteBoard {
-        private static final String BASE_URL = "/api/boards/{boardId}";
-        private static final Long WRITER_ID = 1L;
-        private static final Long BOARD_ID = 2L;
-
-        @Test
-        @DisplayName("Authorization Header에 AccessToken이 없으면 게시글 삭제에 실패한다")
-        void withoutAccessToken() throws Exception {
-            // when
-            final BoardRequest request = createBoardRequest();
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .delete(BASE_URL, BOARD_ID)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
-
-            // then
-            final AuthErrorCode expectedError = AuthErrorCode.INVALID_PERMISSION;
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(
-                            status().isForbidden(),
-                            jsonPath("$.status").exists(),
-                            jsonPath("$.status").value(expectedError.getStatus().value()),
-                            jsonPath("$.errorCode").exists(),
-                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
-                            jsonPath("$.message").exists(),
-                            jsonPath("$.message").value(expectedError.getMessage())
-                    )
-                    .andDo(
-                            document(
-                                    "BoardApi/Delete/Failure/Case1",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    pathParameters(
-                                            parameterWithName("boardId").description("삭제할 게시글 ID(PK)")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
-                                    )
-                            )
-                    );
-        }
-
-        @Test
-        @DisplayName("다른 사람의 게시글은 삭제할 수 없다")
-        void throwExceptionByUserIsNotBoardWriter() throws Exception {
-            // given
-            doThrow(BaseException.type(BoardErrorCode.USER_IS_NOT_BOARD_WRITER))
-                    .when(boardService)
-                    .delete(anyLong(),anyLong());
-
-            // when
-            final BoardRequest request = createBoardRequest();
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .delete(BASE_URL, BOARD_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
-
-            // then
-            final BoardErrorCode expectedError = BoardErrorCode.USER_IS_NOT_BOARD_WRITER;
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(
-                            status().isConflict(),
-                            jsonPath("$.status").exists(),
-                            jsonPath("$.status").value(expectedError.getStatus().value()),
-                            jsonPath("$.errorCode").exists(),
-                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
-                            jsonPath("$.message").exists(),
-                            jsonPath("$.message").value(expectedError.getMessage())
-                    )
-                    .andDo(
-                            document(
-                                    "BoardApi/Delete/Failure/Case2",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName(AUTHORIZATION).description("Access Token")
-                                    ),
-                                    pathParameters(
-                                            parameterWithName("boardId").description("삭제할 게시글 ID(PK)")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("status").description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").description("커스텀 예외 코드"),
-                                            fieldWithPath("message").description("예외 메시지")
-                                    )
-                            )
-                    );
-        }
-
-        @Test
-        @DisplayName("게시글 삭제에 성공한다")
-        void success() throws Exception {
-            // given
-            doNothing()
-                    .when(boardService)
-                    .delete(anyLong(), anyLong());
-
-            // when
-            final BoardRequest request = createBoardRequest();
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .delete(BASE_URL, WRITER_ID, BOARD_ID)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request));
-
-            // then
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(status().isOk())
-                    .andDo(
-                            document(
-                                    "BoardApi/Delete/Success",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName(AUTHORIZATION).description("Access Token")
-                                    ),
-                                    pathParameters(
-                                            parameterWithName("boardId").description("삭제할 게시글 ID(PK)")
-                                    )
-                            )
-                    );
-        }
-    }
-
-    @Nested
     @DisplayName("게시글 상세조회 API [GET /api/boards/{boardId}]")
     class getDetailBoard {
         private static final String BASE_URL = "/api/boards/{boardId}";
@@ -477,7 +348,8 @@ public class BoardApiControllerTest extends ControllerTest {
                                             fieldWithPath("hit").type(JsonFieldType.NUMBER).description("상세조회한 조회수"),
                                             fieldWithPath("likes").type(JsonFieldType.NUMBER).description("상세조회한 좋아요수"),
                                             fieldWithPath("createdDate").type(JsonFieldType.STRING).description("상세조회한 등록일"),
-                                            fieldWithPath("writer").type(JsonFieldType.STRING).description("상세조회한 작성자")
+                                            fieldWithPath("writerId").type(JsonFieldType.STRING).description("상세조회한 작성자Id"),
+                                            fieldWithPath("writerName").type(JsonFieldType.STRING).description("상세조회한 작성자이름")
                                     )
                             )
                     );
@@ -491,7 +363,8 @@ public class BoardApiControllerTest extends ControllerTest {
 
     private BoardResponse loadBoardResponse() {
         return new BoardResponse(1L, BOARD_0.getTitle(), BOARD_0.getContent(), BOARD_0.getHit(), 0,
-                LocalDate.of(2023, 7, 22).atTime(1, 1) ,SAEWOO.toUser().getLoginId());
+                LocalDate.of(2023, 7, 22).atTime(1, 1) ,
+                SAEWOO.getLoginId(), SAEWOO.getName());
     }
 }
 

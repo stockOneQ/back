@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.admin.domain.StaticFARedisRepository;
+import umc.stockoneqback.auth.domain.FcmTokenRedisRepository;
 import umc.stockoneqback.auth.domain.TokenRepository;
 import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.board.domain.like.BoardLikeRepository;
@@ -68,6 +69,9 @@ public class ServiceTest {
 
     @Autowired
     protected ShareRepository shareRepository;
+
+    @Autowired
+    protected FcmTokenRedisRepository fcmTokenRedisRepository;
 
     public void flushAndClear() {
         databaseCleaner.flushAndClear();
