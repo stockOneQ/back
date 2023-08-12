@@ -1,12 +1,10 @@
 package umc.stockoneqback.share.domain;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import umc.stockoneqback.business.domain.Business;
 import umc.stockoneqback.global.base.BaseTimeEntity;
 import umc.stockoneqback.global.base.Status;
+import umc.stockoneqback.user.domain.User;
 
 import javax.persistence.*;
 
@@ -38,4 +36,18 @@ public class Share extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_id")
     private Business business;
+
+    @Builder
+    private Share (String title, String file, String content, Category category, Business business) {
+        this.title = title;
+        this.file = file;
+        this.content = content;
+        this.category = category;
+        this.status = Status.NORMAL;
+        this.business = business;
+    }
+
+    public static Share createShare(String title, String file, String content, Category category, Business business) {
+        return new Share(title, file, content, category, business);
+    }
 }
