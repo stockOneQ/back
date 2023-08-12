@@ -7,13 +7,14 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
-import umc.stockoneqback.board.controller.dto.BoardListResponse;
+import umc.stockoneqback.board.controller.dto.CustomBoardListResponse;
 import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.board.infra.query.dto.BoardList;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -45,7 +46,7 @@ class BoardListApiControllerTest extends ControllerTest {
     @DisplayName("게시글 목록 조회 API [GET /api/boards]")
     class getBoardList {
         private static final String BASE_URL = "/api/boards";
-        private static final Long LAST_USER_ID = -1L;
+        private static final int PAGE = 0;
         private static final Long USER_ID = 1L;
 
         @Test
@@ -54,7 +55,7 @@ class BoardListApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
-                    .param("last", String.valueOf(LAST_USER_ID))
+                    .param("page", String.valueOf(PAGE))
                     .param("sort", SORT_BY_TIME)
                     .param("search", SEARCH_TYPE)
                     .param("word", SEARCH_WORD);
@@ -77,7 +78,7 @@ class BoardListApiControllerTest extends ControllerTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestParameters(
-                                            parameterWithName("last").description("마지막 게시글 ID"),
+                                            parameterWithName("page").description("page 번호(1페이지 = 0)"),
                                             parameterWithName("sort").description("정렬 기준(최신순/조회순)"),
                                             parameterWithName("search").description("검색 조건(제목/내용/작성자)"),
                                             parameterWithName("word").description("검색어")
@@ -97,12 +98,12 @@ class BoardListApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(BoardErrorCode.NOT_FOUND_SORT_CONDITION))
                     .when(boardListService)
-                    .getBoardList(anyLong(), eq(LAST_USER_ID), eq(INVALID_SORT), eq(SEARCH_TYPE), eq(SEARCH_WORD));
+                    .getBoardList(anyLong(), eq(PAGE), eq(INVALID_SORT), eq(SEARCH_TYPE), eq(SEARCH_WORD));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
-                    .param("last", String.valueOf(LAST_USER_ID))
+                    .param("page", String.valueOf(PAGE))
                     .param("sort", INVALID_SORT)
                     .param("search", SEARCH_TYPE)
                     .param("word", SEARCH_WORD)
@@ -129,7 +130,7 @@ class BoardListApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParameters(
-                                            parameterWithName("last").description("마지막 게시글 ID"),
+                                            parameterWithName("page").description("page 번호(1페이지 = 0)"),
                                             parameterWithName("sort").description("정렬 기준(최신순/조회순)"),
                                             parameterWithName("search").description("검색 조건(제목/내용/작성자)"),
                                             parameterWithName("word").description("검색어")
@@ -149,12 +150,12 @@ class BoardListApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(BoardErrorCode.NOT_FOUND_SEARCH_TYPE))
                     .when(boardListService)
-                    .getBoardList(anyLong(), eq(LAST_USER_ID), eq(SORT_BY_TIME), eq(INVALID_SEARCH), eq(SEARCH_WORD));
+                    .getBoardList(anyLong(), eq(PAGE), eq(SORT_BY_TIME), eq(INVALID_SEARCH), eq(SEARCH_WORD));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
-                    .param("last", String.valueOf(LAST_USER_ID))
+                    .param("page", String.valueOf(PAGE))
                     .param("sort", SORT_BY_TIME)
                     .param("search", INVALID_SEARCH)
                     .param("word", SEARCH_WORD)
@@ -181,7 +182,7 @@ class BoardListApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParameters(
-                                            parameterWithName("last").description("마지막 게시글 ID"),
+                                            parameterWithName("page").description("page 번호(1페이지 = 0)"),
                                             parameterWithName("sort").description("정렬 기준(최신순/조회순)"),
                                             parameterWithName("search").description("검색 조건(제목/내용/작성자)"),
                                             parameterWithName("word").description("검색어")
@@ -201,14 +202,14 @@ class BoardListApiControllerTest extends ControllerTest {
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
             given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
-            doReturn(getBoardListResponse())
+            doReturn(getCustomBoardListResponse())
                     .when(boardListService)
-                    .getBoardList(USER_ID, LAST_USER_ID, SORT_BY_TIME, SEARCH_TYPE, SEARCH_WORD);
+                    .getBoardList(USER_ID, PAGE, SORT_BY_TIME, SEARCH_TYPE, SEARCH_WORD);
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
-                    .param("last", String.valueOf(LAST_USER_ID))
+                    .param("page", String.valueOf(PAGE))
                     .param("sort", SORT_BY_TIME)
                     .param("search", SEARCH_TYPE)
                     .param("word", SEARCH_WORD)
@@ -226,20 +227,23 @@ class BoardListApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParameters(
-                                            parameterWithName("last").description("마지막 게시글 ID"),
+                                            parameterWithName("page").description("page 번호(1페이지 = 0)"),
                                             parameterWithName("sort").description("정렬 기준(최신순/조회순)"),
                                             parameterWithName("search").description("검색 조건(제목/내용/작성자)"),
                                             parameterWithName("word").description("검색어")
                                     ),
                                     responseFields(
-                                            fieldWithPath("total").type(JsonFieldType.NUMBER).description("전체 게시글 수"),
-                                            fieldWithPath("boardListResponse[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
-                                            fieldWithPath("boardListResponse[].title").type(JsonFieldType.STRING).description("게시글 제목"),
-                                            fieldWithPath("boardListResponse[].content").type(JsonFieldType.STRING).description("내용 미리보기"),
-                                            fieldWithPath("boardListResponse[].hit").type(JsonFieldType.NUMBER).description("조회 수"),
-                                            fieldWithPath("boardListResponse[].createdDate").type(JsonFieldType.STRING).description("게시글 최초 등록 시간"),
-                                            fieldWithPath("boardListResponse[].comment").type(JsonFieldType.NUMBER).description("댓글 수"),
-                                            fieldWithPath("boardListResponse[].like").type(JsonFieldType.NUMBER).description("좋아요 수")
+                                            fieldWithPath("pageInfo.totalPages").type(JsonFieldType.NUMBER).description("총 페이지 수"),
+                                            fieldWithPath("pageInfo.totalElements").type(JsonFieldType.NUMBER).description("전체 게시글 수"),
+                                            fieldWithPath("pageInfo.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부(마지막 페이지인 경우만 false)"),
+                                            fieldWithPath("pageInfo.numberOfElements").type(JsonFieldType.NUMBER).description("현재 페이지 게시글 수"),
+                                            fieldWithPath("boardList[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                                            fieldWithPath("boardList[].title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                            fieldWithPath("boardList[].content").type(JsonFieldType.STRING).description("내용 미리보기"),
+                                            fieldWithPath("boardList[].hit").type(JsonFieldType.NUMBER).description("조회 수"),
+                                            fieldWithPath("boardList[].createdDate").type(JsonFieldType.STRING).description("게시글 최초 등록 시간"),
+                                            fieldWithPath("boardList[].comment").type(JsonFieldType.NUMBER).description("댓글 수"),
+                                            fieldWithPath("boardList[].likes").type(JsonFieldType.NUMBER).description("좋아요 수")
                                     )
                             )
                     );
@@ -250,7 +254,7 @@ class BoardListApiControllerTest extends ControllerTest {
     @DisplayName("내가 쓴 글 목록 조회 API [GET /api/boards/my]")
     class myBoardList {
         private static final String BASE_URL = "/api/boards/my";
-        private static final Long LAST_USER_ID = -1L;
+        private static final int PAGE = 0;
         private static final Long USER_ID = 1L;
 
         @Test
@@ -259,7 +263,7 @@ class BoardListApiControllerTest extends ControllerTest {
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
-                    .param("last", String.valueOf(LAST_USER_ID))
+                    .param("page", String.valueOf(PAGE))
                     .param("sort", SORT_BY_TIME)
                     .param("search", SEARCH_TYPE)
                     .param("word", SEARCH_WORD);
@@ -282,7 +286,7 @@ class BoardListApiControllerTest extends ControllerTest {
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestParameters(
-                                            parameterWithName("last").description("마지막 게시글 ID"),
+                                            parameterWithName("page").description("page 번호(1페이지 = 0)"),
                                             parameterWithName("sort").description("정렬 기준(최신순/조회순)"),
                                             parameterWithName("search").description("검색 조건(제목/내용)"),
                                             parameterWithName("word").description("검색어")
@@ -302,12 +306,12 @@ class BoardListApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(BoardErrorCode.NOT_FOUND_SORT_CONDITION))
                     .when(boardListService)
-                    .getMyBoardList(anyLong(), eq(LAST_USER_ID), eq(INVALID_SORT), eq(SEARCH_TYPE), eq(SEARCH_WORD));
+                    .getMyBoardList(anyLong(), eq(PAGE), eq(INVALID_SORT), eq(SEARCH_TYPE), eq(SEARCH_WORD));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
-                    .param("last", String.valueOf(LAST_USER_ID))
+                    .param("page", String.valueOf(PAGE))
                     .param("sort", INVALID_SORT)
                     .param("search", SEARCH_TYPE)
                     .param("word", SEARCH_WORD)
@@ -334,7 +338,7 @@ class BoardListApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParameters(
-                                            parameterWithName("last").description("마지막 게시글 ID"),
+                                            parameterWithName("page").description("page 번호(1페이지 = 0)"),
                                             parameterWithName("sort").description("정렬 기준(최신순/조회순)"),
                                             parameterWithName("search").description("검색 조건(제목/내용)"),
                                             parameterWithName("word").description("검색어")
@@ -354,12 +358,12 @@ class BoardListApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(BoardErrorCode.NOT_FOUND_SEARCH_TYPE))
                     .when(boardListService)
-                    .getMyBoardList(anyLong(), eq(LAST_USER_ID), eq(SORT_BY_TIME), eq(INVALID_SEARCH), eq(SEARCH_WORD));
+                    .getMyBoardList(anyLong(), eq(PAGE), eq(SORT_BY_TIME), eq(INVALID_SEARCH), eq(SEARCH_WORD));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
-                    .param("last", String.valueOf(LAST_USER_ID))
+                    .param("page", String.valueOf(PAGE))
                     .param("sort", SORT_BY_TIME)
                     .param("search", INVALID_SEARCH)
                     .param("word", SEARCH_WORD)
@@ -386,7 +390,7 @@ class BoardListApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParameters(
-                                            parameterWithName("last").description("마지막 게시글 ID"),
+                                            parameterWithName("page").description("page 번호(1페이지 = 0)"),
                                             parameterWithName("sort").description("정렬 기준(최신순/조회순)"),
                                             parameterWithName("search").description("검색 조건(제목/내용)"),
                                             parameterWithName("word").description("검색어")
@@ -406,14 +410,14 @@ class BoardListApiControllerTest extends ControllerTest {
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
             given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
-            doReturn(getBoardListResponse())
+            doReturn(getCustomBoardListResponse())
                     .when(boardListService)
-                    .getMyBoardList(USER_ID, LAST_USER_ID, SORT_BY_TIME, SEARCH_TYPE, SEARCH_WORD);
+                    .getMyBoardList(USER_ID, PAGE, SORT_BY_TIME, SEARCH_TYPE, SEARCH_WORD);
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
-                    .param("last", String.valueOf(LAST_USER_ID))
+                    .param("page", String.valueOf(PAGE))
                     .param("sort", SORT_BY_TIME)
                     .param("search", SEARCH_TYPE)
                     .param("word", SEARCH_WORD)
@@ -431,20 +435,23 @@ class BoardListApiControllerTest extends ControllerTest {
                                             headerWithName(AUTHORIZATION).description("Access Token")
                                     ),
                                     requestParameters(
-                                            parameterWithName("last").description("마지막 게시글 ID"),
+                                            parameterWithName("page").description("page 번호(1페이지 = 0)"),
                                             parameterWithName("sort").description("정렬 기준(최신순/조회순)"),
                                             parameterWithName("search").description("검색 조건(제목/내용)"),
                                             parameterWithName("word").description("검색어")
                                     ),
                                     responseFields(
-                                            fieldWithPath("total").type(JsonFieldType.NUMBER).description("전체 게시글 수"),
-                                            fieldWithPath("boardListResponse[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
-                                            fieldWithPath("boardListResponse[].title").type(JsonFieldType.STRING).description("게시글 제목"),
-                                            fieldWithPath("boardListResponse[].content").type(JsonFieldType.STRING).description("내용 미리보기"),
-                                            fieldWithPath("boardListResponse[].hit").type(JsonFieldType.NUMBER).description("조회 수"),
-                                            fieldWithPath("boardListResponse[].createdDate").type(JsonFieldType.STRING).description("게시글 최초 등록 시간"),
-                                            fieldWithPath("boardListResponse[].comment").type(JsonFieldType.NUMBER).description("댓글 수"),
-                                            fieldWithPath("boardListResponse[].like").type(JsonFieldType.NUMBER).description("좋아요 수")
+                                            fieldWithPath("pageInfo.totalPages").type(JsonFieldType.NUMBER).description("총 페이지 수"),
+                                            fieldWithPath("pageInfo.totalElements").type(JsonFieldType.NUMBER).description("전체 게시글 수"),
+                                            fieldWithPath("pageInfo.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부(마지막 페이지인 경우만 false)"),
+                                            fieldWithPath("pageInfo.numberOfElements").type(JsonFieldType.NUMBER).description("현재 페이지 게시글 수"),
+                                            fieldWithPath("boardList[].id").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                                            fieldWithPath("boardList[].title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                            fieldWithPath("boardList[].content").type(JsonFieldType.STRING).description("내용 미리보기"),
+                                            fieldWithPath("boardList[].hit").type(JsonFieldType.NUMBER).description("조회 수"),
+                                            fieldWithPath("boardList[].createdDate").type(JsonFieldType.STRING).description("게시글 최초 등록 시간"),
+                                            fieldWithPath("boardList[].comment").type(JsonFieldType.NUMBER).description("댓글 수"),
+                                            fieldWithPath("boardList[].likes").type(JsonFieldType.NUMBER).description("좋아요 수")
                                     )
                             )
                     );
@@ -563,15 +570,20 @@ class BoardListApiControllerTest extends ControllerTest {
         }
     }
 
-    private BoardListResponse getBoardListResponse() {
-        return new BoardListResponse(
-                4,
-                List.of(
-                        new BoardList(1L, BOARD_0.getTitle(), BOARD_0.getContent(), 1, LocalDateTime.now(), 0, 0),
-                        new BoardList(2L, BOARD_1.getTitle(), BOARD_1.getContent(), 2, LocalDateTime.now(), 0, 0),
-                        new BoardList(3L, BOARD_2.getTitle(), BOARD_2.getContent(), 3, LocalDateTime.now(), 0, 0),
-                        new BoardList(4L, BOARD_3.getTitle(), BOARD_3.getContent(), 4, LocalDateTime.now(), 0, 0)
-                )
-        );
+    private List<BoardList> createBoardListResponses() {
+        List<BoardList> boardLists = new ArrayList<>();
+        boardLists.add(new BoardList(1L, BOARD_0.getTitle(), BOARD_0.getContent(), 1, LocalDateTime.now(), 0, 0));
+        boardLists.add(new BoardList(2L, BOARD_1.getTitle(), BOARD_1.getContent(), 2, LocalDateTime.now(), 0, 0));
+        boardLists.add(new BoardList(3L, BOARD_2.getTitle(), BOARD_2.getContent(), 3, LocalDateTime.now(), 0, 0));
+        boardLists.add(new BoardList(4L, BOARD_3.getTitle(), BOARD_3.getContent(), 4, LocalDateTime.now(), 0, 0));
+        return boardLists;
+    }
+
+    private CustomBoardListResponse.CustomPageable createCustomPageable() {
+        return new CustomBoardListResponse.CustomPageable(1, 4, false, 4);
+    }
+
+    private CustomBoardListResponse getCustomBoardListResponse() {
+        return new CustomBoardListResponse<>(createCustomPageable(), createBoardListResponses());
     }
 }

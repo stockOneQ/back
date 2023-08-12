@@ -17,7 +17,7 @@ public class BoardList {
     private final int hit;
     private final LocalDateTime createdDate;
     private final int comment;
-    private final int like;
+    private final int likes;
 
     @QueryProjection
     public BoardList(Long id, String title, String content, int hit, LocalDateTime createdDate) {
@@ -27,6 +27,6 @@ public class BoardList {
         this.hit = hit;
         this.createdDate = createdDate;
         this.comment = 0;
-        this.like = 0;
+        this.likes = 0;
     }
 }

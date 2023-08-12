@@ -106,9 +106,4 @@ public class ProductApiController {
                                                                          @RequestParam(value = "sort") String sortBy) throws IOException {
         return new BaseResponse<>(productService.getListOfLackProduct(userId, storeId, storeConditionValue, productId, sortBy));
     }
-
-    @GetMapping("/pass/routine")
-    public BaseResponse<List<GetListOfPassProductByOnlineUsersResponse>> getListOfPassProductByOnlineUsers(@ExtractPayload Long userId) {
-        return new BaseResponse<>(productService.getListOfPassProductByOnlineUsers());
-    }
 }

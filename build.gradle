@@ -76,6 +76,15 @@ dependencies {
     // Redis (add)
     implementation 'it.ozimov:embedded-redis:0.7.2'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Firebase (add)
+    implementation 'com.google.firebase:firebase-admin:9.1.1'
+
+    // Batch, Scheduler (add)
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+    testImplementation 'org.awaitility:awaitility:4.2.0'
 }
 
 ext {
