@@ -46,7 +46,7 @@ public class ShareService {
             fileUrl = fileService.uploadShareFiles(file);
 
         Share share = Share.createShare(request.title(), fileUrl, request.content(), category, business);
-        shareRepository.save(share).getId();
+        shareRepository.save(share);
     }
 
     @Transactional
@@ -78,7 +78,7 @@ public class ShareService {
         }
     }
 
-    private Share findShareById(Long shareId) {
+    public Share findShareById(Long shareId) {
         return shareRepository.findById(shareId)
                 .orElseThrow(() -> BaseException.type(ShareErrorCode.SHARE_NOT_FOUND));
     }
