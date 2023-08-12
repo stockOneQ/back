@@ -79,8 +79,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         UserFindApiController.class,
         FriendProductApiController.class,
         BusinessProductApiController.class,
-        AdminStaticApiController.class,
-        UserWithdrawApiController.class
+        AdminStaticApiController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs
@@ -180,9 +179,6 @@ public abstract class ControllerTest {
 
     @MockBean
     protected AdminStaticService adminStaticService;
-
-    @MockBean
-    protected UserWithdrawService userWithdrawService;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {

@@ -112,3 +112,12 @@ include::{snippets}/UserApi/SignUp/Supervisor/Success/request-body.adoc[]
 
 HTTP Response
 include::{snippets}/UserApi/SignUp/Supervisor/Success/http-response.adoc[]
+
+== 회원 탈퇴 API
+=== 1. 회원 탈퇴에 성공한다
+HTTP Request
+include::{snippets}/UserApi/Withdraw/Success/http-request.adoc[]
+include::{snippets}/UserApi/Withdraw/Success/request-headers.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Withdraw/Success/http-response.adoc[]

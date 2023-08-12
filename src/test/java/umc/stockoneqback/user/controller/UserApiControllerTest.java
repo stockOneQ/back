@@ -15,15 +15,19 @@ import umc.stockoneqback.user.controller.dto.request.SignUpSupervisorRequest;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
+import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 
 @DisplayName("User [Controller Layer] -> UserApiController 테스트")
@@ -644,6 +648,42 @@ class UserApiControllerTest extends ControllerTest {
                                             fieldWithPath("phoneNumber").description("전화번호"),
                                             fieldWithPath("companyName").description("회사 이름"),
                                             fieldWithPath("companyCode").description("회사 코드")
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("회원 탈퇴 API [DELETE /api/user/withdraw]")
+    class withdrawUser {
+        private static final String BASE_URL = "/api/user/withdraw";
+
+        @Test
+        @DisplayName("회원 탈퇴에 성공한다")
+        void success() throws Exception {
+            // given
+            doNothing()
+                    .when(userService)
+                    .withdrawUser(anyLong());
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .delete(BASE_URL)
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
+
+            // then
+            mockMvc.perform(requestBuilder)
+                    .andExpect(
+                            status().isOk()
+                    )
+                    .andDo(
+                            document(
+                                    "UserApi/Withdraw/Success",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
                                     )
                             )
                     );
