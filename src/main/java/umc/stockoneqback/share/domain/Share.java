@@ -4,7 +4,6 @@ import lombok.*;
 import umc.stockoneqback.business.domain.Business;
 import umc.stockoneqback.global.base.BaseTimeEntity;
 import umc.stockoneqback.global.base.Status;
-import umc.stockoneqback.user.domain.User;
 
 import javax.persistence.*;
 
