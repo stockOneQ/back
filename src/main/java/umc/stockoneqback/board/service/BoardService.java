@@ -56,6 +56,11 @@ public class BoardService {
                 .build();
     }
 
+    @Transactional
+    public void deleteByWriter(User writer) {
+        boardRepository.deleteByWriter(writer);
+    }
+
     private void validateWriter(Long boardId, Long writerId) {
         Board board = boardFindService.findById(boardId);
         if (!board.getWriter().getId().equals(writerId)) {
