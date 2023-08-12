@@ -7,15 +7,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.Status;
+import umc.stockoneqback.role.domain.store.PartTimer;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.exception.StoreErrorCode;
+import umc.stockoneqback.user.domain.User;
+import umc.stockoneqback.user.service.UserService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static umc.stockoneqback.fixture.UserFixture.ANNE;
+import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 
 @DisplayName("Store [Service Layer] -> StoreService 테스트")
 class StoreServiceTest extends ServiceTest {
+    @Autowired
+    private UserService userService;
     @Autowired
     private StoreService storeService;
 
@@ -125,6 +132,39 @@ class StoreServiceTest extends ServiceTest {
         assertThatThrownBy(() -> storeService.findByName("투썸플레이스 - 신촌점"))
                 .isInstanceOf(BaseException.class)
                 .hasMessage(StoreErrorCode.STORE_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("가게 사장님 삭제에 성공한다")
+    void deleteManager() {
+        // given
+        Long storeId = storeService.save("스타벅스 - 광화문점", "카페", "서울시 종로구");
+        userService.saveManager(ANNE.toUser(), storeId);
+
+        // when
+        Store store = storeRepository.findById(storeId).orElseThrow();
+        storeService.deleteManager(store);
+
+        // then
+        assertThat(store.getManager()).isNull();
+    }
+
+    @Test
+    @DisplayName("가게 아르바이생님 삭제에 성공한다")
+    void deletePartTimersByPartTimer() {
+        // given
+        Long storeId = storeService.save("스타벅스 - 광화문점", "카페", "서울시 종로구");
+        Store store = storeRepository.findById(storeId).orElseThrow();
+
+        Long userId = userService.savePartTimer(SAEWOO.toUser(), store.getName(), store.getCode());
+        User user = userRepository.findById(userId).orElseThrow();
+        PartTimer partTimer = partTimerRepository.findByPartTimer(user).orElseThrow();
+
+        // when
+        storeService.deletePartTimersByPartTimer(store, partTimer);
+
+        // then
+        assertThat(store.getPartTimers().getPartTimers().contains(partTimer)).isFalse();
     }
 
     private Store createStore(String name, String sector, String code, String address) {

@@ -284,6 +284,21 @@ class FriendServiceTest extends ServiceTest {
         }
     }
 
+    @Test
+    @DisplayName("현재 사용자의 Friend 전체 삭제에 성공한다")
+    void deleteAll() {
+        // given
+        User user = userFindService.findById(senderId);
+        friendService.requestFriend(senderId, receiverId);
+        friendService.acceptFriend(senderId, receiverId);
+
+        // when
+        friendService.deleteFriendByUser(user);
+
+        // then
+        assertThat(friendRepository.findById(senderId).isEmpty()).isTrue();
+    }
+
     private Store createStore(String name, String sector, String code, String address) {
         return Store.builder()
                 .name(name)

@@ -16,6 +16,8 @@ import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.service.UserFindService;
 import umc.stockoneqback.user.service.UserService;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -106,6 +108,59 @@ class BusinessServiceTest extends ServiceTest {
             User manager = userFindService.findById(managerId);
             assertThat(businessRepository.existsBySupervisorAndManager(supervisor, manager)).isFalse();
         }
+    }
+
+    @Test
+    @DisplayName("Supervisor의 Business 목록 조회에 성공한다")
+    void getBusinessBySupervisor() {
+        // given
+        User supervisor = userFindService.findById(supervisorId);
+        User manager = userFindService.findById(managerId);
+        businessService.register(supervisorId, managerId);
+
+        // when
+        List<Business> businessList = businessService.getBusinessBySupervisor(supervisor);
+
+        // then
+        assertAll(
+                () -> assertThat(businessList.size()).isEqualTo(1),
+                () -> assertThat(businessList.get(0).getSupervisor()).isEqualTo(supervisor),
+                () -> assertThat(businessList.get(0).getManager()).isEqualTo(manager)
+        );
+    }
+
+    @Test
+    @DisplayName("Manager의 Business 목록 조회에 성공한다")
+    void getBusinessByManager() {
+        // given
+        User supervisor = userFindService.findById(supervisorId);
+        User manager = userFindService.findById(managerId);
+        businessService.register(supervisorId, managerId);
+
+        // when
+        List<Business> businessList = businessService.getBusinessByManager(manager);
+
+        // then
+        assertAll(
+                () -> assertThat(businessList.size()).isEqualTo(1),
+                () -> assertThat(businessList.get(0).getSupervisor()).isEqualTo(supervisor),
+                () -> assertThat(businessList.get(0).getManager()).isEqualTo(manager)
+        );
+    }
+
+    @Test
+    @DisplayName("Business ID를 통한 Business 삭제에 성공한다")
+    void deleteAll() {
+        // given
+        User supervisor = userFindService.findById(supervisorId);
+        User manager = userFindService.findById(managerId);
+        Business business = businessRepository.save(Business.builder().supervisor(supervisor).manager(manager).build());
+
+        // when
+        businessService.deleteBusiness(business);
+
+        // then
+        assertThat(businessRepository.findById(business.getId()).isEmpty()).isTrue();
     }
 
     private Store createStore(String name, String sector, String code, String address) {

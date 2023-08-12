@@ -91,4 +91,22 @@ public class BoardServiceTest extends ServiceTest {
             );
         }
     }
+
+    @Test
+    @DisplayName("현재 사용자의 게시글 전체 삭제에 성공한다")
+    void deleteAll() {
+        // given
+        Long boardOneId = boardService.create(writer.getId(), "제목", "내용");
+        Long boardTwoId = boardService.create(writer.getId(), "제목2", "내용2");
+
+        // when
+        boardService.deleteByWriter(writer);
+
+        // then
+        assertAll(
+                () -> assertThat(boardRepository.findById(board.getId()).isEmpty()).isTrue(),
+                () -> assertThat(boardRepository.findById(boardOneId).isEmpty()).isTrue(),
+                () -> assertThat(boardRepository.findById(boardTwoId).isEmpty()).isTrue()
+        );
+    }
 }
