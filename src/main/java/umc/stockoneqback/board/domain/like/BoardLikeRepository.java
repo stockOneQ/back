@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import umc.stockoneqback.board.domain.Board;
+import umc.stockoneqback.user.domain.User;
 
 public interface BoardLikeRepository extends JpaRepository<BoardLike, Long> {
     @Modifying(flushAutomatically = true, clearAutomatically = true)
@@ -14,5 +15,7 @@ public interface BoardLikeRepository extends JpaRepository<BoardLike, Long> {
     boolean existsByUserIdAndBoardId(Long userId, Long boardId);
 
     int countByBoard(Board board);
+
+    void deleteByUser(User user);
 }
 
