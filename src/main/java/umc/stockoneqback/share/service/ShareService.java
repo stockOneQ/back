@@ -20,6 +20,8 @@ import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.service.UserFindService;
 
+import java.util.List;
+
 import static umc.stockoneqback.share.controller.dto.ShareResponse.toResponse;
 import static umc.stockoneqback.share.domain.Category.findCategoryByValue;
 
@@ -49,8 +51,7 @@ public class ShareService {
 
     @Transactional
     public void update(Long userId, Long shareId, ShareRequest request, MultipartFile file){
-        Share share = shareRepository.findById(shareId)
-                .orElseThrow(() -> BaseException.type(ShareErrorCode.SHARE_NOT_FOUND));
+        Share share = findShareById(shareId);
         validateWriter(userId, share);
 
         String fileUrl = null;
@@ -62,11 +63,24 @@ public class ShareService {
 
     @Transactional
     public ShareResponse detail(Long userId, Long shareId) {
-        Share share = shareRepository.findById(shareId)
-                .orElseThrow(() -> BaseException.type(ShareErrorCode.SHARE_NOT_FOUND));
+        Share share = findShareById(shareId);
         boolean isWriter = validateViewer(userId, share);
 
         return toResponse(share, isWriter);
+    }
+
+    @Transactional
+    public void delete(Long userId, List<Long> selectedShareId) {
+        for (Long shareId : selectedShareId) {
+            Share share = findShareById(shareId);
+            validateWriter(userId, share);
+            shareRepository.deleteById(shareId);
+        }
+    }
+
+    private Share findShareById(Long shareId) {
+        return shareRepository.findById(shareId)
+                .orElseThrow(() -> BaseException.type(ShareErrorCode.SHARE_NOT_FOUND));
     }
 
     private void validateSupervisor(Long userId) {

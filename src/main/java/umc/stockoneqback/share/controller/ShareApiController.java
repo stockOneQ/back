@@ -10,6 +10,8 @@ import umc.stockoneqback.share.controller.dto.ShareResponse;
 import umc.stockoneqback.share.service.ShareService;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,7 +21,7 @@ public class ShareApiController {
 
     @PostMapping("/{businessId}")
     public ResponseEntity<Void> create(@ExtractPayload Long userId,
-                                       @PathVariable Long businessId,
+                                       @PathVariable("businessId") Long businessId,
                                        @RequestParam(value = "category") String category,
                                        @RequestPart(value = "request") @Valid ShareRequest request,
                                        @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
@@ -27,9 +29,9 @@ public class ShareApiController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/{shareId}")
+    @PostMapping("")
     public ResponseEntity<Void> update(@ExtractPayload Long userId,
-                                       @PathVariable Long shareId,
+                                       @RequestParam("id") Long shareId,
                                        @RequestPart(value = "request") @Valid ShareRequest request,
                                        @RequestPart(value = "file", required = false) MultipartFile multipartFile) {
         shareService.update(userId, shareId, request, multipartFile);
@@ -40,5 +42,12 @@ public class ShareApiController {
     public ResponseEntity<ShareResponse> detail(@ExtractPayload Long userId,
                                                 @PathVariable Long shareId) {
         return ResponseEntity.ok(shareService.detail(userId, shareId));
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<Void> delete(@ExtractPayload Long userId,
+                                       @RequestParam List<Long> shareId) throws IOException {
+        shareService.delete(userId, shareId);
+        return ResponseEntity.ok().build();
     }
 }
