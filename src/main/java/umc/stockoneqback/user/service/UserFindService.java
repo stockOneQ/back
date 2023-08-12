@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.friend.domain.FriendStatus;
 import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.user.domain.Email;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
@@ -28,17 +29,17 @@ public class UserFindService {
     private static final int PAGE_SIZE = 6;
 
     public User findById(Long userId) {
-        return userRepository.findById(userId)
+        return userRepository.findByIdAndStatus(userId, Status.NORMAL)
                 .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
     }
 
     public User findByLoginId(String loginId) {
-        return userRepository.findByLoginId(loginId)
+        return userRepository.findByLoginIdAndStatus(loginId, Status.NORMAL)
                 .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
     }
 
     public User findByEmail(Email email) {
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailAndStatus(email, Status.NORMAL)
                 .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
     }
   

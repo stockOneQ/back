@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.role.domain.company.Company;
+import umc.stockoneqback.role.domain.store.PartTimer;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.CompanyService;
+import umc.stockoneqback.role.service.PartTimerService;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.domain.Email;
 import umc.stockoneqback.user.domain.User;
@@ -20,6 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final StoreService storeService;
     private final CompanyService companyService;
+    private final PartTimerService partTimerService;
 
     @Transactional
     public Long saveManager(User user, Long storeId) {
@@ -39,7 +43,8 @@ public class UserService {
         validateStoreCode(storeCode, store.getCode());
 
         userRepository.save(user);
-        store.updateStorePartTimers(user);
+        PartTimer partTimer = store.updateStorePartTimers(user);
+        partTimerService.savePartTimer(partTimer);
 
         return user.getId();
     }
@@ -74,13 +79,13 @@ public class UserService {
     }
 
     private void validateDuplicateLoginId(String loginId) {
-        if (userRepository.existsByLoginId(loginId)) {
+        if (userRepository.existsByLoginIdAndStatus(loginId, Status.NORMAL)) {
             throw BaseException.type(UserErrorCode.DUPLICATE_LOGIN_ID);
         }
     }
 
     private void validateDuplicateEmail(Email email) {
-        if (userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmailAndStatus(email, Status.NORMAL)) {
             throw BaseException.type(UserErrorCode.DUPLICATE_EMAIL);
         }
     }
