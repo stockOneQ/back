@@ -13,6 +13,7 @@ import umc.stockoneqback.friend.domain.FriendStatus;
 import umc.stockoneqback.friend.exception.FriendErrorCode;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.GlobalErrorCode;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.global.utils.PasswordEncoderUtils;
 import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
@@ -105,7 +106,7 @@ public class FriendProductServiceTest extends ServiceTest {
         @DisplayName("요청하는 사용자와 요청 대상이 친구 관계가 아닐 경우 API 호출에 실패한다")
         void throwExceptionByInvalidFriend() throws Exception {
             User user = userRepository.save(WIZ.toUser());
-            User friend = userRepository.findByLoginId(ELLA.toUser().getLoginId()).orElseThrow();
+            User friend = userRepository.findByLoginIdAndStatus(ELLA.toUser().getLoginId(), Status.NORMAL).orElseThrow();
 
             assertThatThrownBy(() -> friendProductService.checkRelation(user, friend.getId()))
                     .isInstanceOf(BaseException.class)
@@ -119,8 +120,8 @@ public class FriendProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("친구 가게의 제품명 검색에 성공한다")
         void success() throws IOException {
-            User user = userRepository.findByLoginId(ELLA.toUser().getLoginId()).orElseThrow();
-            User friend = userRepository.findByLoginId(ANNE.toUser().getLoginId()).orElseThrow();
+            User user = userRepository.findByLoginIdAndStatus(ELLA.toUser().getLoginId(), Status.NORMAL).orElseThrow();
+            User friend = userRepository.findByLoginIdAndStatus(ANNE.toUser().getLoginId(), Status.NORMAL).orElseThrow();
 
             List<SearchProductOthersResponse> searchProductOthersResponseList =
                     friendProductService.searchProductOthers(user.getId(), friend.getId(),
@@ -140,8 +141,8 @@ public class FriendProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("친구 가게의 분류 기준별 제품 개수 조회에 성공한다")
         void success() throws IOException {
-            User user = userRepository.findByLoginId(ELLA.toUser().getLoginId()).orElseThrow();
-            User friend = userRepository.findByLoginId(ANNE.toUser().getLoginId()).orElseThrow();
+            User user = userRepository.findByLoginIdAndStatus(ELLA.toUser().getLoginId(), Status.NORMAL).orElseThrow();
+            User friend = userRepository.findByLoginIdAndStatus(ANNE.toUser().getLoginId(), Status.NORMAL).orElseThrow();
 
             List<GetTotalProductResponse> getTotalProductResponseList =
                     friendProductService.getTotalProductOthers(user.getId(), friend.getId(), products[0].getStoreCondition().getValue());
@@ -165,8 +166,8 @@ public class FriendProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("잘못된 카테고리명이 입력되면 친구 가게의 카테고리별 제품 목록 조회에 실패한다")
         void throwExceptionByInvalidCategory() throws Exception {
-            User user = userRepository.findByLoginId(ELLA.toUser().getLoginId()).orElseThrow();
-            User friend = userRepository.findByLoginId(ANNE.toUser().getLoginId()).orElseThrow();
+            User user = userRepository.findByLoginIdAndStatus(ELLA.toUser().getLoginId(), Status.NORMAL).orElseThrow();
+            User friend = userRepository.findByLoginIdAndStatus(ANNE.toUser().getLoginId(), Status.NORMAL).orElseThrow();
 
             assertThatThrownBy(() -> friendProductService.getListOfCategoryProductOthers
                     (user.getId(), friend.getId(), products[0].getStoreCondition().getValue(), null, "Error"))
@@ -177,8 +178,8 @@ public class FriendProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("친구 가게의 카테고리별 제품 목록 조회에 성공한다")
         void success() throws IOException {
-            User user = userRepository.findByLoginId(ELLA.toUser().getLoginId()).orElseThrow();
-            User friend = userRepository.findByLoginId(ANNE.toUser().getLoginId()).orElseThrow();
+            User user = userRepository.findByLoginIdAndStatus(ELLA.toUser().getLoginId(), Status.NORMAL).orElseThrow();
+            User friend = userRepository.findByLoginIdAndStatus(ANNE.toUser().getLoginId(), Status.NORMAL).orElseThrow();
 
             List<SearchProductOthersResponse> allProductOthersResponseList = friendProductService.getListOfCategoryProductOthers
                     (user.getId(), friend.getId(), products[0].getStoreCondition().getValue(), null, "All");

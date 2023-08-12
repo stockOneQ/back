@@ -12,6 +12,7 @@ import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.GlobalErrorCode;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.global.utils.PasswordEncoderUtils;
 import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
@@ -111,7 +112,7 @@ public class BusinessProductServiceTest extends ServiceTest {
         @DisplayName("요청하는 사용자와 요청 대상이 비즈니스 관계가 아닐 경우 API 호출에 실패한다")
         void throwExceptionByInvalidFriend() throws Exception {
             User user = userRepository.save(UNKNOWN.toUser());
-            User manager = userRepository.findByLoginId(ANNE.toUser().getLoginId()).orElseThrow();
+            User manager = userRepository.findByLoginIdAndStatus(ANNE.toUser().getLoginId(), Status.NORMAL).orElseThrow();
 
             assertThatThrownBy(() -> businessProductService.checkRelation(user, manager.getId()))
                     .isInstanceOf(BaseException.class)
@@ -125,8 +126,8 @@ public class BusinessProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("사장님 가게의 제품명 검색에 성공한다")
         void success() throws IOException {
-            User user = userRepository.findByLoginId(WIZ.toUser().getLoginId()).orElseThrow();
-            User manager = userRepository.findByLoginId(ANNE.toUser().getLoginId()).orElseThrow();
+            User user = userRepository.findByLoginIdAndStatus(WIZ.toUser().getLoginId(), Status.NORMAL).orElseThrow();
+            User manager = userRepository.findByLoginIdAndStatus(ANNE.toUser().getLoginId(), Status.NORMAL).orElseThrow();
 
             List<SearchProductOthersResponse> searchProductOthersResponseList =
                     businessProductService.searchProductOthers(user.getId(), manager.getId(),
@@ -146,8 +147,8 @@ public class BusinessProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("사장님 가게의 분류 기준별 제품 개수 조회에 성공한다")
         void success() throws IOException {
-            User user = userRepository.findByLoginId(WIZ.toUser().getLoginId()).orElseThrow();
-            User manager = userRepository.findByLoginId(ANNE.toUser().getLoginId()).orElseThrow();
+            User user = userRepository.findByLoginIdAndStatus(WIZ.toUser().getLoginId(), Status.NORMAL).orElseThrow();
+            User manager = userRepository.findByLoginIdAndStatus(ANNE.toUser().getLoginId(), Status.NORMAL).orElseThrow();
 
             List<GetTotalProductResponse> getTotalProductResponseList =
                     businessProductService.getTotalProductOthers(user.getId(), manager.getId(), products[0].getStoreCondition().getValue());
@@ -171,8 +172,8 @@ public class BusinessProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("잘못된 카테고리명이 입력되면 사장님 가게의 카테고리별 제품 목록 조회에 실패한다")
         void throwExceptionByInvalidCategory() throws Exception {
-            User user = userRepository.findByLoginId(WIZ.toUser().getLoginId()).orElseThrow();
-            User manager = userRepository.findByLoginId(ANNE.toUser().getLoginId()).orElseThrow();
+            User user = userRepository.findByLoginIdAndStatus(WIZ.toUser().getLoginId(), Status.NORMAL).orElseThrow();
+            User manager = userRepository.findByLoginIdAndStatus(ANNE.toUser().getLoginId(), Status.NORMAL).orElseThrow();
 
             assertThatThrownBy(() -> businessProductService.getListOfCategoryProductOthers
                     (user.getId(), manager.getId(), products[0].getStoreCondition().getValue(), null, "Error"))
@@ -183,8 +184,8 @@ public class BusinessProductServiceTest extends ServiceTest {
         @Test
         @DisplayName("사장님 가게의 카테고리별 제품 목록 조회에 성공한다")
         void success() throws IOException {
-            User user = userRepository.findByLoginId(WIZ.toUser().getLoginId()).orElseThrow();
-            User manager = userRepository.findByLoginId(ANNE.toUser().getLoginId()).orElseThrow();
+            User user = userRepository.findByLoginIdAndStatus(WIZ.toUser().getLoginId(), Status.NORMAL).orElseThrow();
+            User manager = userRepository.findByLoginIdAndStatus(ANNE.toUser().getLoginId(), Status.NORMAL).orElseThrow();
 
             List<SearchProductOthersResponse> allProductOthersResponseList = businessProductService.getListOfCategoryProductOthers
                     (user.getId(), manager.getId(), products[0].getStoreCondition().getValue(), null, "All");
