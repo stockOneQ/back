@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.role.domain.company.Company;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.domain.User;
@@ -126,7 +127,7 @@ class UserUpdateServiceTest extends ServiceTest {
             userUpdateService.updatePassword(SAEWOO.getLoginId(), "newnew!1", TRUE);
 
             // then
-            User findUser = userRepository.findByLoginId(SAEWOO.getLoginId()).orElseThrow();
+            User findUser = userRepository.findByLoginIdAndStatus(SAEWOO.getLoginId(), Status.NORMAL).orElseThrow();
             assertThat(findUser.getPassword().isSamePassword("newnew!1", ENCODER)).isTrue();
         }
     }

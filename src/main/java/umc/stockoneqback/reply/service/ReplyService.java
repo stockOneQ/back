@@ -55,6 +55,11 @@ public class ReplyService {
         replyRepository.deleteById(replyId);
     }
 
+    @Transactional
+    public void deleteByWriter(User writer) {
+        replyRepository.deleteByWriter(writer);
+    }
+
     private void validateWriter(Long replyId, Long writerId) {
         Reply reply = replyFindService.findById(replyId);
         if (!reply.getWriter().getId().equals(writerId)) {

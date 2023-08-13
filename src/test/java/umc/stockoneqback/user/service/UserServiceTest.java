@@ -5,8 +5,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.role.domain.company.Company;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.domain.User;
@@ -21,6 +23,9 @@ import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 class UserServiceTest extends ServiceTest {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AuthService authService;
 
     private Store store;
     private Company company;
@@ -117,6 +122,24 @@ class UserServiceTest extends ServiceTest {
 
         }
 
+    }
+
+    @Test
+    @DisplayName("사용자 관련 정보를 삭제하고 사용자 개인정보의 상태를 변경한다")
+    void withdrawUser() {
+        // given
+        User user = userRepository.save(SAEWOO.toUser());
+        authService.login(SAEWOO.getLoginId(), SAEWOO.getPassword());
+
+        // when
+        userService.withdrawUser(user.getId());
+
+        // then
+        User expiredUser = userRepository.findById(user.getId()).orElseThrow();
+        assertAll(
+                () -> assertThat(expiredUser.getStatus()).isEqualTo(Status.EXPIRED),
+                () -> assertThat(tokenRepository.findByUserId(user.getId()).isEmpty()).isTrue()
+        );
     }
 
     private Store createStore(String name, String sector, String code, String address) {

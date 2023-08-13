@@ -8,6 +8,7 @@ import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.friend.domain.Friend;
 import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.user.domain.Email;
 import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.User;
@@ -36,17 +37,17 @@ public class UserFindService {
     private String relationStatus;
 
     public User findById(Long userId) {
-        return userRepository.findById(userId)
+        return userRepository.findByIdAndStatus(userId, Status.NORMAL)
                 .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
     }
 
     public User findByLoginId(String loginId) {
-        return userRepository.findByLoginId(loginId)
+        return userRepository.findByLoginIdAndStatus(loginId, Status.NORMAL)
                 .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
     }
 
     public User findByEmail(Email email) {
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailAndStatus(email, Status.NORMAL)
                 .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
     }
 

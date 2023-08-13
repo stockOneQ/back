@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.search.SearchType;
@@ -25,11 +26,21 @@ public class UserFindQueryRepositoryImpl implements UserFindQueryRepository {
         return query
                 .selectDistinct(new QFindManager(user.id, user.name, user.managerStore.name, user.phoneNumber))
                 .from(user)
-                .where(search(searchType, searchWord), user.role.eq(Role.MANAGER))
+                .innerJoin(store).on(user.managerStore.id.eq(store.id))
+                .where(search(searchType, searchWord), user.role.eq(Role.MANAGER), user.status.eq(Status.NORMAL))
                 .orderBy(user.id.asc())
                 .fetch();
     }
 
+    public List<FindManager> findUserByUserId(Long id) {
+        return query
+                .selectDistinct(new QFindManager(user.id, user.name, user.managerStore.name, user.phoneNumber))
+                .from(user)
+                .innerJoin(store).on(user.managerStore.id.eq(store.id))
+                .where(user.id.eq(id), user.status.eq(Status.NORMAL))
+                .fetch();
+    }
+      
     private BooleanExpression search(SearchType searchType, String searchWord) {
         if (searchWord == null || searchWord.isEmpty()) {
             throw BaseException.type(UserErrorCode.INPUT_VALUE_REQUIRED);

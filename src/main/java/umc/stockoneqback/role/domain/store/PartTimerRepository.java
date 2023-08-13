@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface PartTimerRepository extends JpaRepository<PartTimer, Long> {
     Optional<PartTimer> findByPartTimer(User user);
+    void deleteByPartTimer(User user);
 }

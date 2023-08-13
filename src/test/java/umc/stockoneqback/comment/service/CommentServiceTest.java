@@ -155,5 +155,19 @@ public class CommentServiceTest extends ServiceTest {
                     .hasMessage(CommentErrorCode.COMMENT_NOT_FOUND.getMessage());
         }
     }
+
+    @Test
+    @DisplayName("현재 사용자의 댓글 전체 삭제에 성공한다")
+    void deleteAll() {
+        // when
+        commentService.deleteByWriter(writer);
+
+        // then
+        assertAll(
+                () -> assertThat(commentRepository.findById(comments[0].getId()).isEmpty()).isTrue(),
+                () -> assertThat(commentRepository.findById(comments[1].getId()).isEmpty()).isTrue(),
+                () -> assertThat(commentRepository.findById(comments[2].getId()).isEmpty()).isTrue()
+        );
+    }
 }
 

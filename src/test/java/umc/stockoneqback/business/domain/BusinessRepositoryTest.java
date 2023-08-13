@@ -9,6 +9,8 @@ import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.UserFixture.*;
@@ -24,6 +26,7 @@ class BusinessRepositoryTest extends RepositoryTest {
     private User manager;
     private User supervisor;
     private User anonymous;
+    private Business business;
 
     @BeforeEach
     void setUp() {
@@ -31,7 +34,7 @@ class BusinessRepositoryTest extends RepositoryTest {
         supervisor = userRepository.save(ANNE.toUser());
         anonymous = userRepository.save(WIZ.toUser());
 
-        businessRepository.save(new Business(manager, supervisor));
+        business = businessRepository.save(new Business(manager, supervisor));
     }
 
     @Test
@@ -71,5 +74,45 @@ class BusinessRepositoryTest extends RepositoryTest {
                 () -> assertThat(businessRepository.findAll()).hasSize(0),
                 () -> assertThat(businessRepository.existsBySupervisorAndManager(supervisor, manager)).isFalse()
         );
+    }
+
+    @Test
+    @DisplayName("슈퍼바이저를 통해 Business를 조회한다")
+    void findBySupervisor() {
+        // when
+        List<Business> businessList = businessRepository.findBySupervisor(supervisor);
+
+        // then
+        assertAll(
+                () -> assertThat(businessList.size()).isEqualTo(1),
+                () -> assertThat(businessList.get(0).getSupervisor()).isEqualTo(supervisor),
+                () -> assertThat(businessList.get(0).getManager()).isEqualTo(manager),
+                () -> assertThat(businessList.get(0).getStatus()).isEqualTo(Status.NORMAL)
+        );
+    }
+
+    @Test
+    @DisplayName("매니저를 통해 Business를 조회한다")
+    void findByManager() {
+        // when
+        List<Business> businessList = businessRepository.findByManager(manager);
+
+        // then
+        assertAll(
+                () -> assertThat(businessList.size()).isEqualTo(1),
+                () -> assertThat(businessList.get(0).getSupervisor()).isEqualTo(supervisor),
+                () -> assertThat(businessList.get(0).getManager()).isEqualTo(manager),
+                () -> assertThat(businessList.get(0).getStatus()).isEqualTo(Status.NORMAL)
+        );
+    }
+
+    @Test
+    @DisplayName("Business ID를 통해 Business를 삭제한다")
+    void deleteByUser() {
+        // when
+        businessRepository.deleteById(business.getId());
+
+        // then
+        assertThat(businessRepository.findById(business.getId()).isEmpty()).isTrue();
     }
 }

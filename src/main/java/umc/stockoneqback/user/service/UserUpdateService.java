@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.user.domain.Email;
 import umc.stockoneqback.user.domain.Password;
 import umc.stockoneqback.user.domain.User;
@@ -33,7 +34,7 @@ public class UserUpdateService {
     }
 
     private void validateDuplicateLoginId(String loginId) {
-        if (userRepository.existsByLoginId(loginId)) {
+        if (userRepository.existsByLoginIdAndStatus(loginId, Status.NORMAL)) {
             throw BaseException.type(UserErrorCode.DUPLICATE_LOGIN_ID);
         }
     }

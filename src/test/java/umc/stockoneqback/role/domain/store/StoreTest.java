@@ -7,8 +7,7 @@ import umc.stockoneqback.user.domain.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static umc.stockoneqback.fixture.UserFixture.ANNE;
-import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
+import static umc.stockoneqback.fixture.UserFixture.*;
 
 @DisplayName("Store 도메인 테스트")
 class StoreTest {
@@ -60,5 +59,42 @@ class StoreTest {
                 () -> assertThat(store.getPartTimers().getPartTimers().get(0).getPartTimer().getName()).contains(SAEWOO.getName()),
                 () -> assertThat(store.getPartTimers().getPartTimers().get(1).getPartTimer().getName()).contains(ANNE.getName())
         );
+    }
+
+    @Test
+    @DisplayName("Store PartTimer 삭제에 성공한다")
+    void deleteStorePartTimers() {
+        // given
+        Store store = Store.createStore("스타벅스 - 광화문점", "카페", "서울시 중구");
+        User user1 = SAEWOO.toUser();
+        User user2 = WONI.toUser();
+        PartTimer partTimer1 = PartTimer.createPartTimer(store, user1);
+        PartTimer partTimer2 = PartTimer.createPartTimer(store, user2);
+        store.updateStorePartTimers(partTimer1);
+        store.updateStorePartTimers(partTimer2);
+
+        // when
+        store.deleteStorePartTimers(partTimer1);
+
+        // then
+        assertAll(
+                () -> assertThat(store.getPartTimers().getPartTimers().size()).isEqualTo(1),
+                () -> assertThat(store.getPartTimers().getPartTimers().get(0).getPartTimer().getName()).contains(WONI.getName())
+        );
+    }
+
+    @Test
+    @DisplayName("Store Manager 삭제에 성공한다")
+    void deleteStoreManager() {
+        // given
+        Store store = Store.createStore("스타벅스 - 광화문점", "카페", "서울시 중구");
+        User user = ANNE.toUser();
+        store.updateStoreManager(user);
+
+        // when
+        store.deleteStoreManager();
+
+        // then
+        assertThat(store.getManager()).isEqualTo(null);
     }
 }

@@ -7,6 +7,7 @@ import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.role.domain.company.Company;
 import umc.stockoneqback.role.domain.company.CompanyRepository;
 import umc.stockoneqback.role.exception.CompanyErrorCode;
+import umc.stockoneqback.user.domain.User;
 
 @Service
 @Transactional(readOnly = true)
@@ -17,5 +18,10 @@ public class CompanyService {
     public Company findByName(String companyName) {
         return companyRepository.findByName(companyName)
                 .orElseThrow(() -> BaseException.type(CompanyErrorCode.COMPANY_NOT_FOUND));
+    }
+
+    @Transactional
+    public void deleteSupervisorByUser(Company company, User user) {
+        company.deleteSupervisor(user);
     }
 }
