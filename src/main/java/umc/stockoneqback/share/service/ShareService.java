@@ -42,8 +42,9 @@ public class ShareService {
                 .orElseThrow(() -> BaseException.type(BusinessErrorCode.BUSINESS_NOT_FOUND));
 
         String fileUrl = null;
-        if (file != null)
+        if (!(file.isEmpty())){
             fileUrl = fileService.uploadShareFiles(file);
+        }
 
         Share share = Share.createShare(request.title(), fileUrl, request.content(), category, business);
         shareRepository.save(share);
@@ -55,8 +56,9 @@ public class ShareService {
         validateWriter(userId, share);
 
         String fileUrl = null;
-        if (file != null)
+        if (!(file.isEmpty())){
             fileUrl = fileService.uploadShareFiles(file);
+        }
 
         share.update(request.title(), fileUrl, request.content());
     }
