@@ -15,7 +15,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findAllByBoard(Board board);
 
-    @Query(value = "SELECT c.* FROM Comment c WHERE c.board_id = :boardId AND c.status = '정상' order by c.created_date asc ", nativeQuery = true)
+    @Query(value = "SELECT c.* FROM comment c WHERE c.board_id = :boardId AND c.status = '정상' order by c.created_date asc ", nativeQuery = true)
     Page<Comment> findCommentListOrderByTime(@Param("boardId") Long boardId, Pageable pageable);
 
     void deleteByWriter(User writer);
