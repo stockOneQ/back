@@ -33,7 +33,9 @@ import umc.stockoneqback.business.controller.BusinessProductApiController;
 import umc.stockoneqback.business.service.BusinessProductService;
 import umc.stockoneqback.business.service.BusinessService;
 import umc.stockoneqback.comment.controller.CommentApiController;
+import umc.stockoneqback.comment.controller.CommentListApiController;
 import umc.stockoneqback.comment.service.CommentFindService;
+import umc.stockoneqback.comment.service.CommentListService;
 import umc.stockoneqback.comment.service.CommentService;
 import umc.stockoneqback.friend.controller.FriendApiController;
 import umc.stockoneqback.friend.controller.FriendInformationController;
@@ -55,6 +57,9 @@ import umc.stockoneqback.role.service.CompanyService;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.share.controller.ShareApiController;
 import umc.stockoneqback.share.service.ShareService;
+import umc.stockoneqback.share.controller.ShareListApiController;
+import umc.stockoneqback.share.service.ShareListService;
+
 import umc.stockoneqback.user.controller.*;
 import umc.stockoneqback.user.service.*;
 
@@ -82,7 +87,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         FriendProductApiController.class,
         BusinessProductApiController.class,
         AdminStaticApiController.class,
-        ShareApiController.class
+        ShareApiController.class,
+        CommentListApiController.class,
+        ShareListApiController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs
@@ -185,6 +192,12 @@ public abstract class ControllerTest {
 
     @MockBean
     protected ShareService shareService;
+
+    @MockBean
+    protected CommentListService commentListService;
+    
+    @MockBean
+    protected ShareListService shareListService;
 
     @BeforeEach
     void setUp(WebApplicationContext context, RestDocumentationContextProvider provider) {

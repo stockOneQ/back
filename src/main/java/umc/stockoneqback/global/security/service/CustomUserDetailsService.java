@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.global.security.domain.CustomUserDetails;
 import umc.stockoneqback.global.security.service.dto.UserDetailsDto;
 import umc.stockoneqback.user.domain.User;
@@ -20,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
-        User user = userRepository.findByLoginId(loginId)
+        User user = userRepository.findByLoginIdAndStatus(loginId, Status.NORMAL)
                 .orElseThrow(() -> new UsernameNotFoundException(UserErrorCode.USER_NOT_FOUND.getMessage()));
 
         return new CustomUserDetails(new UserDetailsDto(user));

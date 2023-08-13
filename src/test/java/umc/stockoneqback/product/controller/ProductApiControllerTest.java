@@ -869,7 +869,7 @@ public class ProductApiControllerTest extends ControllerTest {
                                             parameterWithName("productId").description("변경할 제품 ID")
                                     ),
                                     requestParts(
-                                            partWithName("image").attributes(getInputImageFormat()).description("파일 이미지"),
+                                            partWithName("image").attributes(getInputImageFormat()).description("파일 이미지(변경 없을 시 null)"),
                                             partWithName("editProductRequest").attributes(getInputDTOFormat()).description("생성할 제품 정보 DTO")
                                     ),
                                     requestPartFields(
@@ -2062,152 +2062,6 @@ public class ProductApiControllerTest extends ControllerTest {
         }
     }
 
-    @Nested
-    @DisplayName("현재 접속중인 사용자별 유통기한 경과 제품 목록 조회 API [GET /api/product/pass/routine]")
-    class getPassProductByOnlineUsers {
-        private static final String BASE_URL = "/api/product/pass/routine";
-        private static final List<Long> onlineUserList = new ArrayList<>(List.of(1L, 5L, 7L));
-        private static final List<List<String>> passProductByOnlineUserList =
-                new ArrayList<>(List.of(List.of("사과", "배"), List.of("우유"), List.of("블루베리", "딸기", "메론")));
-
-        @Test
-        @DisplayName("refreshToken이 유효한 사용자가 DB에 없는 사용자인 case가 발생할 경우 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 실패한다")
-        void throwExceptionByInvalidUser() throws Exception {
-            // given
-            doThrow(BaseException.type(UserErrorCode.USER_NOT_FOUND))
-                    .when(productService)
-                    .getListOfPassProductByOnlineUsers();
-
-            // when
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .get(BASE_URL)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
-
-            // then
-            final UserErrorCode expectedError = UserErrorCode.USER_NOT_FOUND;
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(
-                            status().isNotFound(),
-                            jsonPath("$.status").exists(),
-                            jsonPath("$.status").value(expectedError.getStatus().value()),
-                            jsonPath("$.errorCode").exists(),
-                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
-                            jsonPath("$.message").exists(),
-                            jsonPath("$.message").value(expectedError.getMessage())
-                    )
-                    .andDo(
-                            document(
-                                    "ProductApi/GetPassByOnline/Failure/Case1",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName(AUTHORIZATION).description("Access Token")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
-                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
-                                    )
-                            )
-                    );
-        }
-
-        @Test
-        @DisplayName("유효하지 않은 역할을 가진 사용자가 존재할 경우 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 실패한다")
-        void throwExceptionByInvalidRole() throws Exception {
-            // given
-            doThrow(BaseException.type(UserErrorCode.ROLE_NOT_FOUND))
-                    .when(productService)
-                    .getListOfPassProductByOnlineUsers();
-
-            // when
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .get(BASE_URL)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
-
-            // then
-            final UserErrorCode expectedError = UserErrorCode.ROLE_NOT_FOUND;
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(
-                            status().isNotFound(),
-                            jsonPath("$.status").exists(),
-                            jsonPath("$.status").value(expectedError.getStatus().value()),
-                            jsonPath("$.errorCode").exists(),
-                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
-                            jsonPath("$.message").exists(),
-                            jsonPath("$.message").value(expectedError.getMessage())
-                    )
-                    .andDo(
-                            document(
-                                    "ProductApi/GetPassByOnline/Failure/Case2",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName(AUTHORIZATION).description("Access Token")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
-                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
-                                    )
-                            )
-                    );
-        }
-
-        @Test
-        @DisplayName("현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 성공한다")
-        void success() throws Exception {
-            // given
-            doReturn(getListOfPassProductByOnlineUsersResponse())
-                    .when(productService)
-                    .getListOfPassProductByOnlineUsers();
-
-            // when
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .get(BASE_URL)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
-
-            // then
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(
-                            status().isOk(),
-                            jsonPath("$.result[0]").exists(),
-                            jsonPath("$.result[0].userId").value(onlineUserList.get(0)),
-                            jsonPath("$.result[0].productNameList").isArray(),
-                            jsonPath("$.result[0].productNameList[0]").value(passProductByOnlineUserList.get(0).get(0)),
-                            jsonPath("$.result[0].productNameList[1]").value(passProductByOnlineUserList.get(0).get(1)),
-                            jsonPath("$.result[1]").exists(),
-                            jsonPath("$.result[1].userId").value(onlineUserList.get(1)),
-                            jsonPath("$.result[1].productNameList").isArray(),
-                            jsonPath("$.result[1].productNameList[0]").value(passProductByOnlineUserList.get(1).get(0)),
-                            jsonPath("$.result[2]").exists(),
-                            jsonPath("$.result[2].userId").value(onlineUserList.get(2)),
-                            jsonPath("$.result[2].productNameList").isArray(),
-                            jsonPath("$.result[2].productNameList[0]").value(passProductByOnlineUserList.get(2).get(0)),
-                            jsonPath("$.result[2].productNameList[1]").value(passProductByOnlineUserList.get(2).get(1)),
-                            jsonPath("$.result[2].productNameList[2]").value(passProductByOnlineUserList.get(2).get(2)),
-                            jsonPath("$.result[3]").doesNotExist()
-                    )
-                    .andDo(
-                            document(
-                                    "ProductApi/GetPassByOnline/Success",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName(AUTHORIZATION).description("Access Token")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
-                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
-                                            fieldWithPath("result[].userId").type(JsonFieldType.NUMBER).description("사용자 ID"),
-                                            fieldWithPath("result[].productNameList").type(JsonFieldType.ARRAY).description("해당 사용자의 유통기간 경과 제품명 목록")
-                                    )
-                            )
-                    );
-        }
-    }
-
     private EditProductRequest createEditProductRequest() {
         return new EditProductRequest(
                 APPLE.getName(),
@@ -2299,14 +2153,6 @@ public class ProductApiControllerTest extends ControllerTest {
         searchProductResponseList.add(new SearchProductResponse(8L, CHERRY.getName(), null));
         searchProductResponseList.add(new SearchProductResponse(6L, PINEAPPLE.getName(), null));
         return searchProductResponseList;
-    }
-
-    private List<GetListOfPassProductByOnlineUsersResponse> getListOfPassProductByOnlineUsersResponse() {
-        List<GetListOfPassProductByOnlineUsersResponse> getListOfPassProductByOnlineUsersResponseList = new ArrayList<>();
-        getListOfPassProductByOnlineUsersResponseList.add(new GetListOfPassProductByOnlineUsersResponse(1L, List.of("사과", "배")));
-        getListOfPassProductByOnlineUsersResponseList.add(new GetListOfPassProductByOnlineUsersResponse(5L, List.of("우유")));
-        getListOfPassProductByOnlineUsersResponseList.add(new GetListOfPassProductByOnlineUsersResponse(7L, List.of("블루베리", "딸기", "메론")));
-        return getListOfPassProductByOnlineUsersResponseList;
     }
 
     private GetRequiredInfoResponse getRequiredInfoResponse() {

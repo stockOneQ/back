@@ -140,5 +140,19 @@ public class ReplyServiceTest extends ServiceTest {
                     .hasMessage(ReplyErrorCode.REPLY_NOT_FOUND.getMessage());
         }
     }
+
+    @Test
+    @DisplayName("현재 사용자의 대댓글 전체 삭제에 성공한다")
+    void deleteAll() {
+        // when
+        replyService.deleteByWriter(writer);
+
+        // then
+        assertAll(
+                () -> assertThat(replyRepository.findById(replies[0].getId()).isEmpty()).isTrue(),
+                () -> assertThat(replyRepository.findById(replies[1].getId()).isEmpty()).isTrue(),
+                () -> assertThat(replyRepository.findById(replies[2].getId()).isEmpty()).isTrue()
+        );
+    }
 }
 

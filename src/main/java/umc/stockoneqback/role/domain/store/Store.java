@@ -57,7 +57,21 @@ public class Store extends BaseTimeEntity {
         manager.registerManagerStore(this);
     }
 
-    public void updateStorePartTimers(User partTimer) {
-        partTimers.addPartTimer(PartTimer.createPartTimer(this, partTimer));
+    public PartTimer updateStorePartTimers(User partTimer) {
+        PartTimer newPartTimer = PartTimer.createPartTimer(this, partTimer);
+        partTimers.addPartTimer(newPartTimer);
+        return newPartTimer;
+    }
+
+    public void updateStorePartTimers(PartTimer partTimer) {
+        partTimers.addPartTimer(partTimer);
+    }
+
+    public void deleteStorePartTimers(PartTimer partTimer) {
+        partTimers.deletePartTimer(partTimer);
+    }
+
+    public void deleteStoreManager() {
+        this.manager = null;
     }
 }

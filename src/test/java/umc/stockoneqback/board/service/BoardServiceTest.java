@@ -10,6 +10,7 @@ import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.comment.service.CommentService;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.user.domain.User;
 
 import java.time.LocalDateTime;
@@ -19,8 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
-import static umc.stockoneqback.fixture.UserFixture.ANNE;
-import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
+import static umc.stockoneqback.fixture.UserFixture.*;
 
 @DisplayName("Board [Service Layer] -> BoardService 테스트")
 public class BoardServiceTest extends ServiceTest {
@@ -35,13 +35,15 @@ public class BoardServiceTest extends ServiceTest {
 
     private User writer;
     private User not_writer;
+    private User invalid_writer;
     private Board board;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @BeforeEach
     void setup() {
-        writer = userRepository.save(SAEWOO.toUser());
-        not_writer = userRepository.save(ANNE.toUser());
+        writer = userRepository.save(ANNE.toUser());
+        not_writer = userRepository.save(SAEWOO.toUser());
+        invalid_writer = userRepository.save(WIZ.toUser()); // 매니저가 아닌 유저
         board = boardRepository.save(BOARD_0.toBoard(writer));
     }
 
@@ -57,6 +59,7 @@ public class BoardServiceTest extends ServiceTest {
                 () -> assertThat(findBoard.getWriter().getId()).isEqualTo(writer.getId()),
                 () -> assertThat(findBoard.getTitle()).isEqualTo("제목"),
                 () -> assertThat(findBoard.getContent()).isEqualTo("내용"),
+                () -> assertThat(findBoard.getHit()).isEqualTo(0),
                 () -> assertThat(findBoard.getCreatedDate().format(formatter)).isEqualTo(LocalDateTime.now().format(formatter)),
                 () -> assertThat(findBoard.getModifiedDate().format(formatter)).isEqualTo(LocalDateTime.now().format(formatter))
         );
@@ -87,6 +90,55 @@ public class BoardServiceTest extends ServiceTest {
             assertAll(
                     () -> assertThat(findBoard.getTitle()).isEqualTo("제목2"),
                     () -> assertThat(findBoard.getContent()).isEqualTo("내용2"),
+                    () -> assertThat(findBoard.getModifiedDate().format(formatter)).isEqualTo(LocalDateTime.now().format(formatter))
+            );
+        }
+    }
+
+    @Test
+    @DisplayName("현재 사용자의 게시글 전체 삭제에 성공한다")
+    void deleteAll() {
+        // given
+        Long boardOneId = boardService.create(writer.getId(), "제목", "내용");
+        Long boardTwoId = boardService.create(writer.getId(), "제목2", "내용2");
+
+        // when
+        boardService.deleteByWriter(writer);
+
+        // then
+        assertAll(
+                () -> assertThat(boardRepository.findById(board.getId()).isEmpty()).isTrue(),
+                () -> assertThat(boardRepository.findById(boardOneId).isEmpty()).isTrue(),
+                () -> assertThat(boardRepository.findById(boardTwoId).isEmpty()).isTrue()
+        );
+    }
+
+    @Nested
+    @DisplayName("게시글 상세 조회")
+    class loadBoard {
+        @Test
+        @DisplayName("유효하지 않은 권한으로 게시글 상세 조회 시 실패한다.")
+        void throwExceptionByInvalid_User_JWT() {
+            // when - then
+            assertThatThrownBy(() -> boardService.loadBoard(invalid_writer.getId(),board.getId()))
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(GlobalErrorCode.INVALID_USER_JWT.getMessage());
+        }
+
+        @Test
+        @DisplayName("게시글 상세 조회에 성공한다")
+        void success() {
+            // given
+            boardService.loadBoard(writer.getId(), board.getId());
+
+            // when
+            Board findBoard = boardFindService.findById(board.getId());
+
+            // then
+            assertAll(
+                    () -> assertThat(findBoard.getTitle()).isEqualTo("제목0"),
+                    () -> assertThat(findBoard.getContent()).isEqualTo("내용0"),
+                    () -> assertThat(findBoard.getHit()).isEqualTo(1),
                     () -> assertThat(findBoard.getModifiedDate().format(formatter)).isEqualTo(LocalDateTime.now().format(formatter))
             );
         }

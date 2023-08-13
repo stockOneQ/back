@@ -9,6 +9,7 @@
 === 1. Authorization_Header에 RefreshToken이 없으면 예외가 발생한다
 HTTP Request
 include::{snippets}/TokenReissueApi/Failure/Case1/http-request.adoc[]
+include::{snippets}/TokenReissueApi/Failure/Case1/request-fields.adoc[]
 
 HTTP Response
 include::{snippets}/TokenReissueApi/Failure/Case1/response-body.adoc[]
@@ -17,6 +18,7 @@ include::{snippets}/TokenReissueApi/Failure/Case1/response-body.adoc[]
 HTTP Request
 include::{snippets}/TokenReissueApi/Failure/Case2/http-request.adoc[]
 include::{snippets}/TokenReissueApi/Failure/Case2/request-headers.adoc[]
+include::{snippets}/TokenReissueApi/Failure/Case2/request-fields.adoc[]
 
 HTTP Response
 include::{snippets}/TokenReissueApi/Failure/Case2/response-body.adoc[]
@@ -25,14 +27,16 @@ include::{snippets}/TokenReissueApi/Failure/Case2/response-body.adoc[]
 HTTP Request
 include::{snippets}/TokenReissueApi/Failure/Case3/http-request.adoc[]
 include::{snippets}/TokenReissueApi/Failure/Case3/request-headers.adoc[]
+include::{snippets}/TokenReissueApi/Failure/Case3/request-fields.adoc[]
 
 HTTP Response
 include::{snippets}/TokenReissueApi/Failure/Case3/response-body.adoc[]
 
-=== 3. RefresToken으로 AccessToken과 RefreshToken을 재발급받는다
+=== 3. RefreshToken으로 AccessToken과 RefreshToken을 재발급받는다
 HTTP Request
 include::{snippets}/TokenReissueApi/Success/http-request.adoc[]
 include::{snippets}/TokenReissueApi/Success/request-headers.adoc[]
+include::{snippets}/TokenReissueApi/Success/request-fields.adoc[]
 
 HTTP Response
 include::{snippets}/TokenReissueApi/Success/response-body.adoc[]

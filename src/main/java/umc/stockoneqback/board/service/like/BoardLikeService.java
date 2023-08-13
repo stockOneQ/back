@@ -32,6 +32,11 @@ public class BoardLikeService {
         return boardLikeRepository.save(likeBoard).getId();
     }
 
+    @Transactional
+    public void deleteByUser(User user) {
+        boardLikeRepository.deleteByUser(user);
+    }
+
     private void validateSelfBoardLike(Long userId, Long boardId) {
         Board board = boardFindService.findById(boardId);
         if (board.getWriter().getId().equals(userId)) {

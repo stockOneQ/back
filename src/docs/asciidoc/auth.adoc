@@ -39,3 +39,13 @@ include::{snippets}/AuthApi/Logout/Success/request-headers.adoc[]
 
 HTTP Response
 include::{snippets}/AuthApi/Logout/Success/http-response.adoc[]
+
+== 초기 fcmToken 저장
+=== 1. 초기 fcmToken 저장에 성공한다
+HTTP Request
+include::{snippets}/AuthApi/SaveFcm/Success/http-request.adoc[]
+include::{snippets}/AuthApi/Logout/Success/request-headers.adoc[]
+include::{snippets}/AuthApi/SaveFcm/Success/request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/AuthApi/SaveFcm/Success/http-response.adoc[]

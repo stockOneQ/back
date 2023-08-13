@@ -55,6 +55,11 @@ public class CommentService {
         commentRepository.deleteById(commentId);
     }
 
+    @Transactional
+    public void deleteByWriter(User writer) {
+        commentRepository.deleteByWriter(writer);
+    }
+
     private void validateWriter(Long commentId, Long writerId) {
         Comment comment = commentFindService.findById(commentId);
         if (!comment.getWriter().getId().equals(writerId)) {

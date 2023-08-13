@@ -25,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static umc.stockoneqback.fixture.StoreFixture.B_CHICKEN;
 import static umc.stockoneqback.fixture.UserFixture.*;
+import static umc.stockoneqback.fixture.ShareFixture.SHARE_0;
+import static umc.stockoneqback.fixture.ShareFixture.SHARE_9;
 
 @DisplayName("Share [Service Layer] -> ShareService 테스트")
 class ShareServiceTest extends ServiceTest {
@@ -42,6 +44,11 @@ class ShareServiceTest extends ServiceTest {
     private static final String INVALID_CATEGORY = "공지";
     private final List<Long> selectedShareId = new ArrayList<>();
 
+    private User managerA;
+    private Business businessA;
+    private Share shareOne;
+    private Share shareTwo;
+
     @BeforeEach
     void setup() {
         supervisor = userRepository.save(WIZ.toUser());
@@ -53,6 +60,11 @@ class ShareServiceTest extends ServiceTest {
         share = shareRepository.save(new Share("title", "share/filepath", "content", Category.ETC, business));
         shareRequest = new ShareRequest("share test title", "share test content");
         selectedShareId.add(share.getId());
+      
+        managerA = userRepository.save(ANNE.toUser());
+        businessA = businessRepository.save(Business.builder().supervisor(supervisor).manager(managerA).build());
+        shareOne = shareRepository.save(SHARE_0.toShare(businessA));
+        shareTwo = shareRepository.save(SHARE_9.toShare(businessA));
     }
 
     @Nested
@@ -167,5 +179,18 @@ class ShareServiceTest extends ServiceTest {
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ShareErrorCode.SHARE_NOT_FOUND.getMessage());
         }
+    }
+
+    @Test
+    @DisplayName("현재 비즈니스의 Share 전체 삭제에 성공한다")
+    void deleteAll() {
+        // when
+        shareService.deleteShareByBusiness(businessA);
+
+        // then
+        assertAll(
+                () -> assertThat(shareRepository.findById(shareOne.getId()).isEmpty()).isTrue(),
+                () -> assertThat(shareRepository.findById(shareTwo.getId()).isEmpty()).isTrue()
+        );
     }
 }

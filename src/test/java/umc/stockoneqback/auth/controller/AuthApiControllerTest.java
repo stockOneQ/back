@@ -6,14 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import umc.stockoneqback.auth.controller.dto.request.LoginRequest;
+import umc.stockoneqback.auth.controller.dto.request.SaveFcmRequest;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.auth.service.dto.response.LoginResponse;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.global.base.BaseException;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -187,6 +188,48 @@ class AuthApiControllerTest extends ControllerTest {
         }
     }
 
+    @Nested
+    @DisplayName("초기 fcmToken 저장 API [POST /api/auth/fcm]")
+    class saveFcm {
+        private static final String BASE_URL = "/api/auth/fcm";
+
+        @Test
+        @DisplayName("초기 fcmToken 저장에 성공한다")
+        void success() throws Exception {
+            // given
+            doNothing()
+                    .when(authService)
+                    .saveFcm(anyLong(), anyString());
+
+            // when
+            final SaveFcmRequest request = createSaveFcmRequest();
+            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                    .post(BASE_URL)
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request))
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);;
+
+            // then
+            mockMvc.perform(requestBuilder)
+                    .andExpectAll(
+                            status().isOk()
+                    )
+                    .andDo(
+                            document(
+                                    "AuthApi/SaveFcm/Success",
+                                    preprocessRequest(prettyPrint()),
+                                    preprocessResponse(prettyPrint()),
+                                    requestHeaders(
+                                            headerWithName(AUTHORIZATION).description("Access Token")
+                                    ),
+                                    requestFields(
+                                            fieldWithPath("fcmToken").description("현재 사용자의 FCM Token")
+                                    )
+                            )
+                    );
+        }
+    }
+
     private LoginRequest createLoginRequest() {
         return new LoginRequest(SAEWOO.getEmail(), SAEWOO.getPassword());
     }
@@ -197,5 +240,9 @@ class AuthApiControllerTest extends ControllerTest {
                 SAEWOO.getLoginId(),
                 ACCESS_TOKEN,
                 REFRESH_TOKEN);
+    }
+
+    private SaveFcmRequest createSaveFcmRequest() {
+        return new SaveFcmRequest(FCM_TOKEN);
     }
 }

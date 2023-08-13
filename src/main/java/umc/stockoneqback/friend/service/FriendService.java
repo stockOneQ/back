@@ -92,6 +92,11 @@ public class FriendService {
         friendRepository.delete(friend);
     }
 
+    @Transactional
+    public void deleteFriendByUser(User user) {
+        friendRepository.deleteByUser(user);
+    }
+
     private void validateRequestStatus(Friend friend) {
         if (friend.getFriendStatus().equals(FriendStatus.REQUEST)) {
             throw BaseException.type(FriendErrorCode.STATUS_IS_REQUEST);

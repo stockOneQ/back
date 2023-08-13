@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.role.domain.store.PartTimer;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.domain.store.StoreRepository;
 import umc.stockoneqback.role.exception.StoreErrorCode;
@@ -42,5 +43,15 @@ public class StoreService {
     public Store findByUser(User user) {
         return storeRepository.findByManager(user)
                 .orElseThrow(() -> BaseException.type(StoreErrorCode.STORE_NOT_FOUND));
+    }
+
+    @Transactional
+    public void deleteManager(Store store) {
+        store.deleteStoreManager();
+    }
+
+    @Transactional
+    public void deletePartTimersByPartTimer(Store store, PartTimer partTimer) {
+        store.deleteStorePartTimers(partTimer);
     }
 }

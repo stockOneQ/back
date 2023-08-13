@@ -112,4 +112,9 @@ public class ShareService {
         if (isSupervisor) return true;
         else return false;
     }
+
+    @Transactional
+    public void deleteShareByBusiness(Business business) {
+        shareRepository.deleteByBusiness(business);
+    }
 }
