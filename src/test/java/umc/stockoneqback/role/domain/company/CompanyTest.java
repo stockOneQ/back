@@ -45,4 +45,25 @@ class CompanyTest {
                 () -> assertThat(company.getEmployees()).contains(partTimer2)
         );
     }
+
+    @Test
+    @DisplayName("Company에서 특정 슈퍼바이저를 삭제한다")
+    void deleteSupervisor() {
+        // given
+        Company company = Company.createCompany("A 납품업체", "종이컵");
+        User partTimer1 = UserFixture.SAEWOO.toUser();
+        User partTimer2 = UserFixture.ANNE.toUser();
+        company.addEmployees(partTimer1);
+        company.addEmployees(partTimer2);
+
+        // when
+        company.deleteSupervisor(partTimer1);
+
+        // then
+        assertAll(
+                () -> assertThat(company.getEmployees().size()).isEqualTo(1),
+                () -> assertThat(company.getEmployees()).doesNotContain(partTimer1),
+                () -> assertThat(company.getEmployees()).contains(partTimer2)
+        );
+    }
 }

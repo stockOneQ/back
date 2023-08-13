@@ -3,21 +3,27 @@ package umc.stockoneqback.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import umc.stockoneqback.friend.domain.FriendStatus;
+import umc.stockoneqback.business.domain.Business;
+import umc.stockoneqback.business.domain.BusinessRepository;
+import umc.stockoneqback.friend.domain.Friend;
 import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.user.domain.Email;
+import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
-import umc.stockoneqback.user.domain.search.SearchCondition;
+import umc.stockoneqback.user.domain.search.SearchType;
 import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.infra.query.dto.FindManager;
 import umc.stockoneqback.user.service.dto.response.FindManagerResponse;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
-import static umc.stockoneqback.user.domain.search.SearchCondition.getSearchConditionByValue;
+import static umc.stockoneqback.user.domain.search.SearchType.findBusinessSearchTypeByValue;
+import static umc.stockoneqback.user.domain.search.SearchType.findFriendSearchTypeByValue;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,47 +31,102 @@ import static umc.stockoneqback.user.domain.search.SearchCondition.getSearchCond
 public class UserFindService {
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
-    private static final int PAGE_SIZE = 6;
+    private final BusinessRepository businessRepository;
+
+    private static final int PAGE_SIZE = 7;
+    private String relationStatus;
 
     public User findById(Long userId) {
-        return userRepository.findById(userId)
+        return userRepository.findByIdAndStatus(userId, Status.NORMAL)
                 .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
     }
 
     public User findByLoginId(String loginId) {
-        return userRepository.findByLoginId(loginId)
+        return userRepository.findByLoginIdAndStatus(loginId, Status.NORMAL)
                 .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
     }
 
     public User findByEmail(Email email) {
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailAndStatus(email, Status.NORMAL)
                 .orElseThrow(() -> BaseException.type(UserErrorCode.USER_NOT_FOUND));
     }
-  
-    public FindManagerResponse findManager(Long userId, String searchConditionValue, Long lastUserId, String searchWord) {
-        List<FindManager> user = userRepository.findUserByUserId(userId);
-        List<FindManager> friendUsers = friendRepository.findReceiversByUserId(userId, FriendStatus.ACCEPT);
-        friendUsers.addAll(user);
 
-        SearchCondition searchCondition = getSearchConditionByValue(searchConditionValue);
-        List<FindManager> findUsers = null;
-        switch (searchCondition) {
-            case NAME -> findUsers = userRepository.findManagersByName(searchWord);
-            case STORE -> findUsers = userRepository.findManagersByStoreName(searchWord);
-            case ADDRESS -> findUsers = userRepository.findManagersByAddress(searchWord);
-        }
-        List<FindManager> searchedUsers = filterFindUsers(friendUsers, findUsers);
+    public FindManagerResponse findFriendManagers(Long userId, Long lastUserId, String searchTypeValue, String searchWord) {
+        User user = findById(userId);
+        if (user.getRole() != Role.MANAGER)
+            throw BaseException.type(UserErrorCode.USER_NOT_ALLOWED);
 
-        int lastIndex = getLastIndex(searchedUsers, lastUserId);
-        return configPaging(searchedUsers, lastIndex, PAGE_SIZE);
+        SearchType searchType = findFriendSearchTypeByValue(searchTypeValue);
+        List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(searchType, searchWord);
+        List<FindManager> findManagers = updateFriendStatus(userId, managersBySearchType);
+
+        int lastIndex = getLastIndex(findManagers, lastUserId);
+        return configPaging(findManagers, lastIndex, PAGE_SIZE);
     }
 
-    private List<FindManager> filterFindUsers(List<FindManager> friendUsers, List<FindManager> findUsers) {
-        List<FindManager> searchedUsers = findUsers.stream()
-                .filter(result ->
-                        friendUsers.stream().noneMatch(target -> result.getPhoneNumber().equals(target.getPhoneNumber())))
-                .collect(Collectors.toList());
-        return searchedUsers;
+    private List<FindManager> updateFriendStatus(Long userId, List<FindManager> searchedManager) {
+        List<FindManager> updateManagerList = new ArrayList<>();
+
+        for (FindManager findManager : searchedManager) {
+            Long findUserId = findManager.getId();
+            Optional<Friend> findFriend = friendRepository.findBySenderIdAndReceiverId(userId, findUserId);
+            Optional<Friend> findFriendReverse = friendRepository.findBySenderIdAndReceiverId(findUserId, userId);
+
+            if (!findFriend.isEmpty())
+                relationStatus = findFriend.get().getFriendStatus().getValue();
+            else {
+                if (!findFriendReverse.isEmpty())
+                    relationStatus = findFriendReverse.get().getFriendStatus().getValue();
+                else relationStatus = "친구 아님";
+            }
+
+            FindManager findManagers = FindManager.builder()
+                    .id(findManager.getId())
+                    .name(findManager.getName())
+                    .storeName(findManager.getStoreName())
+                    .phoneNumber(findManager.getPhoneNumber())
+                    .relationStatus(relationStatus)
+                    .build();
+            updateManagerList.add(findManagers);
+        }
+        return updateManagerList;
+    }
+
+    public FindManagerResponse findBusinessManagers(Long userId, Long lastUserId, String searchTypeValue, String searchWord) {
+        User user = findById(userId);
+        if (user.getRole() != Role.SUPERVISOR)
+            throw BaseException.type(UserErrorCode.USER_NOT_ALLOWED);
+
+        SearchType searchType = findBusinessSearchTypeByValue(searchTypeValue);
+        List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(searchType, searchWord);
+        List<FindManager> findManagers = updateBusinessStatus(userId, managersBySearchType);
+
+        int lastIndex = getLastIndex(findManagers, lastUserId);
+        return configPaging(findManagers, lastIndex, PAGE_SIZE);
+    }
+
+    private List<FindManager> updateBusinessStatus(Long supervisorId, List<FindManager> searchedManager) {
+        List<FindManager> updateManagerList = new ArrayList<>();
+
+        for (FindManager findManager : searchedManager) {
+            Long managerId = findManager.getId();
+            Optional<Business> findBusiness = businessRepository.findBySupervisorIdAndManagerId(supervisorId, managerId);
+
+            if (findBusiness.isPresent())
+                relationStatus = findBusiness.get().getStatus().getValue();
+            else
+                relationStatus = "소멸";
+
+            FindManager findManagers = FindManager.builder()
+                    .id(findManager.getId())
+                    .name(findManager.getName())
+                    .storeName(findManager.getStoreName())
+                    .phoneNumber(findManager.getPhoneNumber())
+                    .relationStatus(relationStatus)
+                    .build();
+            updateManagerList.add(findManagers);
+        }
+        return updateManagerList;
     }
 
     private int getLastIndex(List<FindManager> searchedUsers, Long lastUserId) {

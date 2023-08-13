@@ -10,6 +10,8 @@ import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.service.UserFindService;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -41,6 +43,21 @@ public class BusinessService {
         validateNotExist(supervisor, manager);
 
         businessRepository.deleteBySupervisorAndManager(supervisor, manager);
+    }
+
+    @Transactional
+    public List<Business> getBusinessBySupervisor(User supervisor) {
+        return businessRepository.findBySupervisor(supervisor);
+    }
+
+    @Transactional
+    public List<Business> getBusinessByManager(User manager) {
+        return businessRepository.findByManager(manager);
+    }
+
+    @Transactional
+    public void deleteBusiness(Business business) {
+        businessRepository.deleteById(business.getId());
     }
 
     void validateNotExist(User supervisor, User manager) {

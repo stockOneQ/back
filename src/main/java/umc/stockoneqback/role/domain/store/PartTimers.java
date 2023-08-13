@@ -24,4 +24,8 @@ public class PartTimers {
     public void addPartTimer(PartTimer partTimer) {
         this.partTimers.add(partTimer);
     }
+
+    public void deletePartTimer(PartTimer partTimer) {
+        this.partTimers.remove(partTimer);
+    }
 }

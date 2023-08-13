@@ -99,4 +99,17 @@ public class BoardLikeServiceTest extends ServiceTest {
             assertThat(boardLikeRepository.existsByUserIdAndBoardId(user2.getId(), board.getId())).isFalse();
         }
     }
+
+    @Test
+    @DisplayName("게시글좋아요 삭제에 성공한다")
+    void success() {
+        // given
+        boardLikeService.register(user2.getId(), board.getId());
+
+        // when
+        boardLikeService.deleteByUser(user2);
+
+        // then
+        assertThat(boardLikeRepository.existsByUserIdAndBoardId(user2.getId(), board.getId())).isFalse();
+    }
 }

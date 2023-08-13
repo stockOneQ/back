@@ -2,10 +2,8 @@ package umc.stockoneqback.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import umc.stockoneqback.global.annotation.ExtractPayload;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.controller.dto.request.SignUpManagerRequest;
 import umc.stockoneqback.user.controller.dto.request.SignUpPartTimerRequest;
@@ -40,6 +38,12 @@ public class UserApiController {
     public ResponseEntity<Void> signUpSupervisor(@RequestBody @Valid SignUpSupervisorRequest request) {
         Long savedUserId = userService.saveSupervisor(request.toUser(), request.companyName(), request.companyCode());
 
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<Void> withdrawUser(@ExtractPayload Long userId) {
+        userService.withdrawUser(userId);
         return ResponseEntity.ok().build();
     }
 }

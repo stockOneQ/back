@@ -49,4 +49,8 @@ public class Company extends BaseTimeEntity {
         user.registerCompany(this);
         this.employees.add(user);
     }
+
+    public void deleteSupervisor(User user) {
+        this.employees.remove(user);
+    }
 }

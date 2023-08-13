@@ -44,4 +44,25 @@ class PartTimersTest {
                         .contains(user1, user2)
         );
     }
+
+    @Test
+    @DisplayName("PartTimer를 삭제한다")
+    void deletePartTimer() {
+        // given
+        PartTimers partTimers = PartTimers.createPartTimers();
+        PartTimer partTimer1 = PartTimer.createPartTimer(store, user1);
+        PartTimer partTimer2 = PartTimer.createPartTimer(store, user2);
+        partTimers.addPartTimer(partTimer1);
+        partTimers.addPartTimer(partTimer2);
+
+        // when
+        partTimers.deletePartTimer(partTimer1);
+
+        // then
+        assertAll(
+                () -> assertThat(partTimers.getPartTimers()).hasSize(1),
+                () -> assertThat(partTimers.getPartTimers()).doesNotContain(partTimer1),
+                () -> assertThat(partTimers.getPartTimers()).contains(partTimer2)
+        );
+    }
 }
