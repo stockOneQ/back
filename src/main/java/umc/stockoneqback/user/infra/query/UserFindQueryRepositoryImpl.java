@@ -26,18 +26,8 @@ public class UserFindQueryRepositoryImpl implements UserFindQueryRepository {
         return query
                 .selectDistinct(new QFindManager(user.id, user.name, user.managerStore.name, user.phoneNumber))
                 .from(user)
-                .innerJoin(store).on(user.managerStore.id.eq(store.id))
                 .where(search(searchType, searchWord), user.role.eq(Role.MANAGER), user.status.eq(Status.NORMAL))
                 .orderBy(user.id.asc())
-                .fetch();
-    }
-
-    public List<FindManager> findUserByUserId(Long id) {
-        return query
-                .selectDistinct(new QFindManager(user.id, user.name, user.managerStore.name, user.phoneNumber))
-                .from(user)
-                .innerJoin(store).on(user.managerStore.id.eq(store.id))
-                .where(user.id.eq(id), user.status.eq(Status.NORMAL))
                 .fetch();
     }
       

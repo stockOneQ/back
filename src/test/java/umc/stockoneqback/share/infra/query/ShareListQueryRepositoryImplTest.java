@@ -41,7 +41,7 @@ class ShareListQueryRepositoryImplTest extends RepositoryTest {
     private Business business;
     private static final Category ANNOUNCEMENT = Category.ANNOUNCEMENT;
     private static final SearchType TITLE = SearchType.TITLE;
-    private static final String SEARCH_WORD = "제목:";
+    private static final String SEARCH_WORD = "제목";
     List<Share> shareList = new ArrayList<>();
 
     @BeforeEach
@@ -64,12 +64,15 @@ class ShareListQueryRepositoryImplTest extends RepositoryTest {
 
         // then
         assertAll(
-                () -> assertThat(findShareList.getPageInfo().getNumberOfElements()).isEqualTo(2),
+                () -> assertThat(findShareList.getPageInfo().getNumberOfElements()).isEqualTo(5),
                 () -> assertThat(findShareList.getPageInfo().getTotalPages()).isEqualTo(1),
                 () -> assertThat(findShareList.getPageInfo().getPageSize()).isEqualTo(6),
                 () -> assertThat(findShareList.getPageInfo().getPageNumber()).isEqualTo(0),
-                () -> assertThat(findShareList.getShareList().get(0).getTitle()).isEqualTo(shareList.get(3).getTitle()),
-                () -> assertThat(findShareList.getShareList().get(1).getTitle()).isEqualTo(shareList.get(0).getTitle())
+                () -> assertThat(findShareList.getShareList().get(0).getTitle()).isEqualTo(shareList.get(4).getTitle()),
+                () -> assertThat(findShareList.getShareList().get(1).getTitle()).isEqualTo(shareList.get(3).getTitle()),
+                () -> assertThat(findShareList.getShareList().get(2).getTitle()).isEqualTo(shareList.get(2).getTitle()),
+                () -> assertThat(findShareList.getShareList().get(3).getTitle()).isEqualTo(shareList.get(1).getTitle()),
+                () -> assertThat(findShareList.getShareList().get(4).getTitle()).isEqualTo(shareList.get(0).getTitle())
         );
     }
 }

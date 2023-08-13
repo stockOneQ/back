@@ -73,9 +73,6 @@ public class ServiceTest {
     @Autowired
     protected FcmTokenRedisRepository fcmTokenRedisRepository;
 
-    @Autowired
-    protected ShareRepository shareRepository;
-
     public void flushAndClear() {
         databaseCleaner.flushAndClear();
     }
