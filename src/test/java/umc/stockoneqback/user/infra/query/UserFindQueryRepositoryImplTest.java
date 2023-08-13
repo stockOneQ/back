@@ -9,6 +9,7 @@ import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.domain.store.StoreRepository;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
+import umc.stockoneqback.user.domain.search.SearchType;
 import umc.stockoneqback.user.infra.query.dto.FindManager;
 
 import java.util.List;
@@ -28,6 +29,9 @@ class UserFindQueryRepositoryImplTest extends RepositoryTest {
 
     private final Store[] storeList = new Store[5];
     private final User[] userList = new User[9];
+    private final SearchType SEARCH_TYPE_NAME = SearchType.NAME;
+    private final SearchType SEARCH_TYPE_STORE = SearchType.STORE;
+    private final SearchType SEARCH_TYPE_ADDRESS = SearchType.ADDRESS;
     private final static String SEARCH_NAME = "아";
     private final static String SEARCH_STORE = "과일";
     private final static String SEARCH_ADDRESS = "경기도";
@@ -59,9 +63,9 @@ class UserFindQueryRepositoryImplTest extends RepositoryTest {
 
     @Test
     @DisplayName("주어진 값이 이름에 포함되어 있는 매니저인 유저를 검색한다")
-    void findManagersByName() {
+    void findManagersBySearchTypeName() {
         // when - then
-        List<FindManager> findManagers = userRepository.findManagersByName(SEARCH_NAME);
+        List<FindManager> findManagers = userRepository.findManagersBySearchType(SEARCH_TYPE_NAME, SEARCH_NAME);
 
         assertAll(
                 () -> assertThat(findManagers.size() == 1),
@@ -74,9 +78,9 @@ class UserFindQueryRepositoryImplTest extends RepositoryTest {
 
     @Test
     @DisplayName("주어진 값이 가게 이름(상호명)에 포함되어 있는 매니저인 유저를 검색한다")
-    void findManagersByStoreName() {
+    void findManagersBySearchTypeStore() {
         // when - then
-        List<FindManager> findManagers = userRepository.findManagersByStoreName(SEARCH_STORE);
+        List<FindManager> findManagers = userRepository.findManagersBySearchType(SEARCH_TYPE_STORE, SEARCH_STORE);
 
         for (int i = 0; i < findManagers.size(); i++) {
             FindManager findManager = findManagers.get(i);
@@ -93,9 +97,9 @@ class UserFindQueryRepositoryImplTest extends RepositoryTest {
 
     @Test
     @DisplayName("주어진 값이 지역명에 포함되어 있는 매니저인 유저를 검색한다")
-    void findManagersByAddress() {
+    void findManagersBySearchTypeAddress() {
         // when - then
-        List<FindManager> findManagers = userRepository.findManagersByAddress(SEARCH_ADDRESS);
+        List<FindManager> findManagers = userRepository.findManagersBySearchType(SEARCH_TYPE_ADDRESS, SEARCH_ADDRESS);
 
         for (int i = 0; i < findManagers.size(); i++) {
             FindManager findManager = findManagers.get(i);
