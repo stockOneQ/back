@@ -1,6 +1,10 @@
 package umc.stockoneqback.comment.domain;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.user.domain.User;
 
@@ -10,6 +14,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     int countByBoard(Board board);
 
     List<Comment> findAllByBoard(Board board);
+
+    @Query(value = "SELECT c.* FROM Comment c WHERE c.board_id = :boardId AND c.status = '정상' order by c.created_date asc ", nativeQuery = true)
+    Page<Comment> findCommentListOrderByTime(@Param("boardId") Long boardId, Pageable pageable);
 
     void deleteByWriter(User writer);
 }

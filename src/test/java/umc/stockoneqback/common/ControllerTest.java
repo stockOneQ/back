@@ -33,7 +33,9 @@ import umc.stockoneqback.business.controller.BusinessProductApiController;
 import umc.stockoneqback.business.service.BusinessProductService;
 import umc.stockoneqback.business.service.BusinessService;
 import umc.stockoneqback.comment.controller.CommentApiController;
+import umc.stockoneqback.comment.controller.CommentListApiController;
 import umc.stockoneqback.comment.service.CommentFindService;
+import umc.stockoneqback.comment.service.CommentListService;
 import umc.stockoneqback.comment.service.CommentService;
 import umc.stockoneqback.friend.controller.FriendApiController;
 import umc.stockoneqback.friend.controller.FriendInformationController;
@@ -82,6 +84,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         FriendProductApiController.class,
         BusinessProductApiController.class,
         AdminStaticApiController.class,
+        CommentListApiController.class,
         ShareListApiController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
@@ -183,6 +186,9 @@ public abstract class ControllerTest {
     @MockBean
     protected AdminStaticService adminStaticService;
 
+    @MockBean
+    protected CommentListService commentListService;
+    
     @MockBean
     protected ShareListService shareListService;
 
