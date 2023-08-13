@@ -42,8 +42,8 @@ public class Share extends BaseTimeEntity {
         this.file = file;
         this.content = content;
         this.category = category;
-        this.status = Status.NORMAL;
         this.business = business;
+        this.status = Status.NORMAL;
     }
 
     public static Share createShare(String title, String file, String content, Category category, Business business) {

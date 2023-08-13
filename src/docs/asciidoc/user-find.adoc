@@ -1,0 +1,139 @@
+= 매니저 검색 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== ! API, 쿼리스트링, 응답 필드 설명 !
+=== 1. 친구 찾기 API (기능 명세서 6.1)
+==== [GET /api/user/friend?search=&word=&last=]
+|===
+|쿼리스트링|설명
+
+|search
+|검색 조건을 의미합니다. [이름/상호명/지역명]으로 검색할 수 있습니다.
+default value는 이름입니다.
+|word
+|검색어를 의미합니다. null 값은 허용하지 않습니다.
+|last
+|페이지네이션을 위한 값입니다.
+한 페이지에서 조회되는 유저 중, 가장 마지막 유저의 id (searchedUser[].id) 값입니다.
+default value는 -1입니다.
+|===
+
+|===
+|응답 필드|설명
+
+|searchedUser[].relationStatus
+|해당 유저와 현재 로그인 한 유저의 친구 관계 상태를 의미합니다.
+(1) 친구인 경우 [친구 수락],
+(2) 한 쪽이 친구 요청을 한 상태인 경우 [친구 요청],
+(3) 친구가 아닐 경우 [친구 아님]
+|===
+
+=== 2. 점주 찾기 API (기능 명세서 9.3)
+==== [GET /api/user/business?search=&word=&last=]
+|===
+|쿼리스트링|설명
+
+|search
+|검색 조건을 의미합니다. [이름/상호명]으로 검색할 수 있습니다.
+default value는 이름입니다.
+|word
+|검색어를 의미합니다. null 값은 허용하지 않습니다.
+|last
+|페이지네이션을 위한 값입니다.
+한 페이지에서 조회되는 유저 중, 가장 마지막 유저의 id (searchedUser[].id) 값입니다.
+default value는 -1입니다.
+|===
+
+|===
+|응답 필드|설명
+
+|searchedUser[].relationStatus
+|해당 유저(매니저)와 현재 로그인 한 유저(슈퍼바이저)의 비즈니스 관계 상태를 의미합니다.
+(1) 이미 비즈니스 관계인 경우 [정상],
+(2) 비즈니스 관계가 아닌 경우 [소멸]
+|===
+
+== 친구 찾기 API
+=== 1. Authorization Header에 AccessToken이 없으면 친구 찾기에 실패한다
+HTTP Request
+include::{snippets}/UserApi/Find/Friend/Failure/Case1/http-request.adoc[]
+include::{snippets}/UserApi/Find/Friend/Failure/Case1/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Find/Friend/Failure/Case1/http-response.adoc[]
+include::{snippets}/UserApi/Find/Friend/Failure/Case1/response-fields.adoc[]
+
+=== 2. 유효하지 않은 검색 조건이라면 친구 찾기에 실패한다
+HTTP Request
+include::{snippets}/UserApi/Find/Friend/Failure/Case2/http-request.adoc[]
+include::{snippets}/UserApi/Find/Friend/Failure/Case2/request-headers.adoc[]
+include::{snippets}/UserApi/Find/Friend/Failure/Case2/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Find/Friend/Failure/Case2/http-response.adoc[]
+include::{snippets}/UserApi/Find/Friend/Failure/Case2/response-fields.adoc[]
+
+=== 3. 검색어를 입력하지 않았다면 친구 찾기에 실패한다
+HTTP Request
+include::{snippets}/UserApi/Find/Friend/Failure/Case3/http-request.adoc[]
+include::{snippets}/UserApi/Find/Friend/Failure/Case3/request-headers.adoc[]
+include::{snippets}/UserApi/Find/Friend/Failure/Case3/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Find/Friend/Failure/Case3/http-response.adoc[]
+include::{snippets}/UserApi/Find/Friend/Failure/Case3/response-fields.adoc[]
+
+=== 4. 검색 조건에 따른 친구 찾기에 성공한다
+HTTP Request
+include::{snippets}/UserApi/Find/Friend/Success/http-request.adoc[]
+include::{snippets}/UserApi/Find/Friend/Success/request-headers.adoc[]
+include::{snippets}/UserApi/Find/Friend/Success/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Find/Friend/Success/http-response.adoc[]
+include::{snippets}/UserApi/Find/Friend/Success/response-fields.adoc[]
+
+
+== 점주 찾기 API
+=== 1. Authorization Header에 AccessToken이 없으면 점주 찾기에 실패한다
+HTTP Request
+include::{snippets}/UserApi/Find/Business/Failure/Case1/http-request.adoc[]
+include::{snippets}/UserApi/Find/Business/Failure/Case1/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Find/Business/Failure/Case1/http-response.adoc[]
+include::{snippets}/UserApi/Find/Business/Failure/Case1/response-fields.adoc[]
+
+=== 2. 유효하지 않은 검색 조건이라면 점주 찾기에 실패한다
+HTTP Request
+include::{snippets}/UserApi/Find/Business/Failure/Case2/http-request.adoc[]
+include::{snippets}/UserApi/Find/Business/Failure/Case2/request-headers.adoc[]
+include::{snippets}/UserApi/Find/Business/Failure/Case2/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Find/Business/Failure/Case2/http-response.adoc[]
+include::{snippets}/UserApi/Find/Business/Failure/Case2/response-fields.adoc[]
+
+=== 3. 검색어를 입력하지 않았다면 점주 찾기에 실패한다
+HTTP Request
+include::{snippets}/UserApi/Find/Business/Failure/Case3/http-request.adoc[]
+include::{snippets}/UserApi/Find/Business/Failure/Case3/request-headers.adoc[]
+include::{snippets}/UserApi/Find/Business/Failure/Case3/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Find/Business/Failure/Case3/http-response.adoc[]
+include::{snippets}/UserApi/Find/Business/Failure/Case3/response-fields.adoc[]
+
+=== 4. 검색 조건에 따른 점주 찾기에 성공한다
+HTTP Request
+include::{snippets}/UserApi/Find/Business/Success/http-request.adoc[]
+include::{snippets}/UserApi/Find/Business/Success/request-headers.adoc[]
+include::{snippets}/UserApi/Find/Business/Success/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/UserApi/Find/Business/Success/http-response.adoc[]
+include::{snippets}/UserApi/Find/Business/Success/response-fields.adoc[]

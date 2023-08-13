@@ -68,6 +68,9 @@ public class ServiceTest {
     protected StaticFARedisRepository staticFARedisRepository;
 
     @Autowired
+    protected ShareRepository shareRepository;
+
+    @Autowired
     protected FcmTokenRedisRepository fcmTokenRedisRepository;
 
     @Autowired
