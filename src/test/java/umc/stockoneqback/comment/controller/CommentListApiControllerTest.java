@@ -31,7 +31,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static umc.stockoneqback.fixture.CommentFixture.*;
-import static umc.stockoneqback.fixture.ReplyFixture.REPLY_0;
+import static umc.stockoneqback.fixture.ReplyFixture.*;
 import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 import static umc.stockoneqback.fixture.UserFixture.ANNE;
@@ -147,10 +147,9 @@ class CommentListApiControllerTest extends ControllerTest {
     private List<ReplyListResponse> createReplyListResponses() {
         List<ReplyListResponse> replyLists = new ArrayList<>();
         replyLists.add(new ReplyListResponse(1L, null, REPLY_0.getContent(), LocalDateTime.now(), ELLA.getLoginId(), ELLA.getName()));
-        replyLists.add(new ReplyListResponse(1L, null, REPLY_0.getContent(), LocalDateTime.now(), ELLA.getLoginId(), ELLA.getName()));
-        replyLists.add(new ReplyListResponse(1L, null, REPLY_0.getContent(), LocalDateTime.now(), ELLA.getLoginId(), ELLA.getName()));
-        replyLists.add(new ReplyListResponse(1L, null, REPLY_0.getContent(), LocalDateTime.now(), ELLA.getLoginId(), ELLA.getName()));
-        replyLists.add(new ReplyListResponse(1L, null, REPLY_0.getContent(), LocalDateTime.now(), ELLA.getLoginId(), ELLA.getName()));
+        replyLists.add(new ReplyListResponse(2L, null, REPLY_1.getContent(), LocalDateTime.now(), ELLA.getLoginId(), ELLA.getName()));
+        replyLists.add(new ReplyListResponse(3L, null, REPLY_2.getContent(), LocalDateTime.now(), ELLA.getLoginId(), ELLA.getName()));
+        replyLists.add(new ReplyListResponse(4L, null, REPLY_3.getContent(), LocalDateTime.now(), ELLA.getLoginId(), ELLA.getName()));
         return replyLists;
     }
 
