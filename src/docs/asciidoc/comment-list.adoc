@@ -1,0 +1,28 @@
+= Comment, Reply 게시글별 전체 댓글 목록 조회 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== 게시글별 전체 댓글 목록 조회
+=== 1. Authorization Header에 AccessToken이 없으면 게시글별 전체 댓글 목록 조회에 실패한다
+HTTP Request
+include::{snippets}/CommentApi/List/All/Failure/Case1/http-request.adoc[]
+include::{snippets}/CommentApi/List/All/Failure/Case1/path-parameters.adoc[]
+include::{snippets}/CommentApi/List/All/Failure/Case1/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/CommentApi/List/All/Failure/Case1/http-response.adoc[]
+include::{snippets}/CommentApi/List/All/Failure/Case1/response-fields.adoc[]
+
+==== 2. 게시글별 전체 댓글 목록 조회에 성공한다
+HTTP Request
+include::{snippets}/CommentApi/Create/Success/http-request.adoc[]
+include::{snippets}/CommentApi/Create/Success/request-headers.adoc[]
+include::{snippets}/CommentApi/List/All/Success/path-parameters.adoc[]
+include::{snippets}/CommentApi/List/All/Success/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/CommentApi/List/All/Success/http-response.adoc[]
+include::{snippets}/CommentApi/List/All/Success/response-fields.adoc[]
