@@ -1,0 +1,214 @@
+= 커넥트 - 자료 게시글 등록, 수정, 삭제, 상세조회 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+== ! API 관련 설명 !
+=== 1. 글 등록
+==== [POST /api/share/{businessId}?category=?]
+|===
+|입력 값|설명
+
+|businessId
+|글 등록 버튼을 누르기 전,
+유저 셀렉트박스에서 선택된 유저와 현재 로그인 한 유저의 비즈니스 관계 id를 의미합니다.
+유저 셀렉트박스 api의 response field 중 userBusinessId에 해당하는 값입니다.
+
+|category
+|Connect - 자료 페이지의 카테고리들을 의미합니다.
+[공지사항/레시피/행사내용/기타]의 4가지 값만 허용합니다.
+(원칙적으로 쿼리스트링(?category=?)으로 값을 넘기게끔 되어있으나, form-data에 넘겨주셔도 됩니다.)
+
+|request
+|글 등록 시, 해당 글의 title(제목)과 content(내용)을 받기 위한 멀티파트 값입니다.
+[Content-Type: application/json]으로 지정해야 합니다.
+
+|file
+|글 등록 시, 해당 글의 첨부파일을 받기 위한 멀티파트 값입니다.
+현재는 단일 첨부만 가능합니다.
+[Content-Type: multipart/form-data]으로 지정해야 합니다.
+|===
+
+=== 2. 글 수정
+==== [POST /api/share?id=?]
+|===
+|입력 값|설명
+
+|id
+|해당 글의 id 값을 의미합니다.
+(원칙적으로 쿼리스트링(?id=)으로 값을 넘기게끔 되어있으나, form-data에 넘겨주셔도 됩니다.)
+
+|request
+|글 수정 시, 해당 글의 title(제목)과 content(내용)을 받기 위한 멀티파트 값입니다.
+[Content-Type: application/json]으로 지정해야 합니다.
+
+|file
+|글 등록 시, 해당 글의 첨부파일을 받기 위한 멀티파트 값입니다.
+현재는 단일 첨부만 가능합니다.
+[Content-Type: multipart/form-data]으로 지정해야 합니다.
+|===
+
+=== 3. 글 상세조회
+==== [GET /api/share/{shareId}]
+|===
+|입력 값|설명
+
+|share
+|해당 글의 id 값을 의미합니다.
+|===
+|===
+|반환 값|설명
+
+|file
+|파일이 있는 경우, file 경로가 넘어갑니다.
+|isWriter
+|작성자 여부 (작성자가 맞을 경우 true, 아니면 false로 넘어갑니다.)
+|===
+
+=== 4. 글 삭제
+==== [DELETE /api/share]
+|===
+|입력 값|설명
+
+|shareId
+|선택된 글들의 id를 의미합니다.
+여러 글이 선택 되었을 경우, 리스트 형식으로 받습니다. (ex. 1,2,3)
+|===
+
+
+== 커넥트 자료 글 등록 API
+=== 1. Authorization Header에 AccessToken이 없으면 글 등록에 실패한다
+HTTP Request
+include::{snippets}/ShareApi/Create/Failure/Case1/http-request.adoc[]
+include::{snippets}/ShareApi/Create/Failure/Case1/path-parameters.adoc[]
+include::{snippets}/ShareApi/Create/Failure/Case1/request-parameters.adoc[]
+include::{snippets}/ShareApi/Create/Failure/Case1/request-parts.adoc[]
+include::{snippets}/ShareApi/Create/Failure/Case1/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/Create/Failure/Case1/http-response.adoc[]
+include::{snippets}/ShareApi/Create/Failure/Case1/response-fields.adoc[]
+
+=== 2. 유효하지 않은 카테고리라면 글을 등록할 수 없다
+HTTP Request
+include::{snippets}/ShareApi/Create/Failure/Case2/http-request.adoc[]
+include::{snippets}/ShareApi/Create/Failure/Case2/request-headers.adoc[]
+include::{snippets}/ShareApi/Create/Failure/Case2/path-parameters.adoc[]
+include::{snippets}/ShareApi/Create/Failure/Case2/request-parameters.adoc[]
+include::{snippets}/ShareApi/Create/Failure/Case2/request-parts.adoc[]
+include::{snippets}/ShareApi/Create/Failure/Case2/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/Create/Failure/Case2/http-response.adoc[]
+include::{snippets}/ShareApi/Create/Failure/Case2/response-fields.adoc[]
+
+=== 3. 게시글 등록에 성공한다
+HTTP Request
+include::{snippets}/ShareApi/Create/Success/http-request.adoc[]
+include::{snippets}/ShareApi/Create/Success/request-headers.adoc[]
+include::{snippets}/ShareApi/Create/Success/path-parameters.adoc[]
+include::{snippets}/ShareApi/Create/Success/request-parameters.adoc[]
+include::{snippets}/ShareApi/Create/Success/request-parts.adoc[]
+include::{snippets}/ShareApi/Create/Success/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/Create/Success/http-response.adoc[]
+
+
+== 커넥트 자료 글 수정 API
+=== 1. Authorization Header에 AccessToken이 없으면 글 수정에 실패한다
+HTTP Request
+include::{snippets}/ShareApi/Update/Failure/Case1/http-request.adoc[]
+include::{snippets}/ShareApi/Update/Failure/Case1/request-parameters.adoc[]
+include::{snippets}/ShareApi/Update/Failure/Case1/request-parts.adoc[]
+include::{snippets}/ShareApi/Update/Failure/Case1/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/Update/Failure/Case1/http-response.adoc[]
+include::{snippets}/ShareApi/Update/Failure/Case1/response-fields.adoc[]
+
+=== 2. 게시글 작성자가 아니라면 수정에 실패한다
+HTTP Request
+include::{snippets}/ShareApi/Update/Failure/Case2/http-request.adoc[]
+include::{snippets}/ShareApi/Update/Failure/Case2/request-headers.adoc[]
+include::{snippets}/ShareApi/Update/Failure/Case2/request-parameters.adoc[]
+include::{snippets}/ShareApi/Update/Failure/Case2/request-parts.adoc[]
+include::{snippets}/ShareApi/Update/Failure/Case2/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/Update/Failure/Case2/http-response.adoc[]
+include::{snippets}/ShareApi/Update/Failure/Case2/response-fields.adoc[]
+
+=== 3. 게시글 수정에 성공한다
+HTTP Request
+include::{snippets}/ShareApi/Update/Success/http-request.adoc[]
+include::{snippets}/ShareApi/Update/Success/request-headers.adoc[]
+include::{snippets}/ShareApi/Update/Success/request-parameters.adoc[]
+include::{snippets}/ShareApi/Update/Success/request-parts.adoc[]
+include::{snippets}/ShareApi/Update/Success/request-part-request-fields.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/Update/Success/http-response.adoc[]
+
+
+== 커넥트 자료 글 상세조회 API
+=== 1. Authorization Header에 AccessToken이 없으면 글 상세조회에 실패한다
+HTTP Request
+include::{snippets}/ShareApi/Detail/Failure/Case1/http-request.adoc[]
+include::{snippets}/ShareApi/Detail/Failure/Case1/path-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/Detail/Failure/Case1/http-response.adoc[]
+include::{snippets}/ShareApi/Detail/Failure/Case1/response-fields.adoc[]
+
+=== 2. 글의 작성자와 비즈니스 관계에 있지 않은 사용자는 상세조회에 실패한다
+HTTP Request
+include::{snippets}/ShareApi/Detail/Failure/Case2/http-request.adoc[]
+include::{snippets}/ShareApi/Detail/Failure/Case2/request-headers.adoc[]
+include::{snippets}/ShareApi/Detail/Failure/Case2/path-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/Detail/Failure/Case2/http-response.adoc[]
+include::{snippets}/ShareApi/Detail/Failure/Case2/response-fields.adoc[]
+
+=== 3. 게시글 상세조회에 성공한다
+HTTP Request
+include::{snippets}/ShareApi/Detail/Success/http-request.adoc[]
+include::{snippets}/ShareApi/Detail/Success/request-headers.adoc[]
+include::{snippets}/ShareApi/Detail/Success/path-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/Detail/Success/http-response.adoc[]
+include::{snippets}/ShareApi/Detail/Success/response-fields.adoc[]
+
+
+== 커넥트 자료 글 삭제 API
+=== 1. Authorization Header에 AccessToken이 없으면 글 삭제에 실패한다
+HTTP Request
+include::{snippets}/ShareApi/Delete/Failure/Case1/http-request.adoc[]
+include::{snippets}/ShareApi/Delete/Failure/Case1/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/Delete/Failure/Case1/http-response.adoc[]
+include::{snippets}/ShareApi/Delete/Failure/Case1/response-fields.adoc[]
+
+=== 2. 다른 사람의 게시글은 삭제할 수 없다
+HTTP Request
+include::{snippets}/ShareApi/Delete/Failure/Case2/http-request.adoc[]
+include::{snippets}/ShareApi/Delete/Failure/Case2/request-headers.adoc[]
+include::{snippets}/ShareApi/Delete/Failure/Case2/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/Delete/Failure/Case2/http-response.adoc[]
+include::{snippets}/ShareApi/Delete/Failure/Case2/response-fields.adoc[]
+
+=== 3. 게시글 삭제에 성공한다
+HTTP Request
+include::{snippets}/ShareApi/Delete/Success/http-request.adoc[]
+include::{snippets}/ShareApi/Delete/Success/request-headers.adoc[]
+include::{snippets}/ShareApi/Delete/Success/request-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/ShareApi/Delete/Success/http-response.adoc[]

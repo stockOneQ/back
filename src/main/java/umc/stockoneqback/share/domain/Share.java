@@ -32,12 +32,12 @@ public class Share extends BaseTimeEntity {
     @Convert(converter = Status.StatusConverter.class)
     private Status status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "business_id")
     private Business business;
 
     @Builder
-    private Share (String title, String file, String content, Category category, Business business) {
+    public Share(String title, String file, String content, Category category, Business business) {
         this.title = title;
         this.file = file;
         this.content = content;
@@ -48,5 +48,11 @@ public class Share extends BaseTimeEntity {
 
     public static Share createShare(String title, String file, String content, Category category, Business business) {
         return new Share(title, file, content, category, business);
+    }
+
+    public void update(String title, String file, String content) {
+        this.title = title;
+        this.file = file;
+        this.content = content;
     }
 }
