@@ -89,7 +89,7 @@ class CommentListApiControllerTest extends ControllerTest {
         }
 
         @Test
-        @DisplayName("댓글 목록 조회(최신순)에 성공한다")
+        @DisplayName("댓글 목록 조회(등록순)에 성공한다")
         void success() throws Exception{
             // given
             given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);

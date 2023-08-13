@@ -75,7 +75,7 @@ class ReplyListServiceTest extends ServiceTest {
         }
 
         @Test
-        @DisplayName("대댓글 목록 조회(최신순)에 성공한다")
+        @DisplayName("대댓글 목록 조회(작성순)에 성공한다")
         void success() throws IOException {
             // when
             List<ReplyListResponse> replyListResponse = replyListService.getReplyList(writer.getId(), comment.getId());
