@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.RepositoryTest;
 import umc.stockoneqback.global.base.Status;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,12 +19,14 @@ import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 class UserRepositoryTest extends RepositoryTest {
     @Autowired
     private UserRepository userRepository;
+
     private User saewoo;
+    private User anne;
 
     @BeforeEach
     void setUp() {
         saewoo = userRepository.save(SAEWOO.toUser());
-        userRepository.save(ANNE.toUser());
+        anne = userRepository.save(ANNE.toUser());
         userRepository.save(WIZ.toUser());
         userRepository.save(WONI.toUser());
     }
@@ -131,13 +134,35 @@ class UserRepositoryTest extends RepositoryTest {
     @Test
     @DisplayName("사용자를 소멸 상태로 변경한다")
     void expireById() {
-        // given
+        // when
         userRepository.expireById(saewoo.getId());
 
-        // when
+        // then
         Optional<User> user = userRepository.findByLoginIdAndStatus(saewoo.getLoginId(), Status.NORMAL);
+        assertThat(user.isEmpty()).isTrue();
+    }
+
+    @Test
+    @DisplayName("1년이 지난 소멸 상태의 사용자를 모두 삭제한다")
+    void deleteModifiedOverYearAndExpireUser() {
+        // given
+        userRepository.expireById(saewoo.getId());
+        userRepository.expireById(anne.getId());
+
+        LocalDate overTwoYear = LocalDate.now().minusYears(2);
+        userRepository.updateModifiedDateById(saewoo.getId(), overTwoYear);
+        userRepository.updateModifiedDateById(anne.getId(), overTwoYear);
+
+        // when
+        LocalDate overYear = LocalDate.now().minusYears(1);
+        userRepository.deleteModifiedOverYearAndExpireUser(overYear);
 
         // then
-        assertThat(user.isEmpty()).isTrue();
+        Optional<User> findSaewoo = userRepository.findById(saewoo.getId());
+        Optional<User> findAnne = userRepository.findById(anne.getId());
+        assertAll(
+                () -> assertThat(findSaewoo.isEmpty()).isTrue(),
+                () -> assertThat(findAnne.isEmpty()).isTrue()
+        );
     }
 }

@@ -14,6 +14,9 @@ import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -140,6 +143,22 @@ class UserServiceTest extends ServiceTest {
                 () -> assertThat(expiredUser.getStatus()).isEqualTo(Status.EXPIRED),
                 () -> assertThat(tokenRepository.findByUserId(user.getId()).isEmpty()).isTrue()
         );
+    }
+
+    @Test
+    @DisplayName("1년이 지난 탈퇴한 사용자의 개인정보를 완전히 삭제한다")
+    void deleteUser() {
+        // given
+        User user = userRepository.save(SAEWOO.toUser());
+        userService.withdrawUser(user.getId());
+        userRepository.updateModifiedDateById(user.getId(), LocalDate.now().minusYears(2));
+
+        // when
+        userService.deleteUser();
+
+        // then
+        Optional<User> findUser = userRepository.findById(user.getId());
+        assertThat(findUser.isEmpty()).isTrue();
     }
 
     private Store createStore(String name, String sector, String code, String address) {
