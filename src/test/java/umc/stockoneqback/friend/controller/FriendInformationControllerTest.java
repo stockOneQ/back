@@ -7,7 +7,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.common.ControllerTest;
-import umc.stockoneqback.friend.domain.FriendStatus;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.friend.infra.query.dto.response.FriendInformation;
 import umc.stockoneqback.friend.service.dto.FriendAssembler;
 
@@ -297,9 +297,9 @@ class FriendInformationControllerTest extends ControllerTest {
     private FriendAssembler getAcceptFriendAssembler() {
         return new FriendAssembler(
                 List.of(
-                        new FriendInformation(1L, "홍길동", "스타벅스 광화문점", "01012345678", FriendStatus.ACCEPT, LocalDateTime.now()),
-                        new FriendInformation(2L, "이순신", "투썸플레이스 강남역점", "01023456789", FriendStatus.ACCEPT, LocalDateTime.now()),
-                        new FriendInformation(3L, "김철수", "커피빈 홍대입구역점", "01034567890", FriendStatus.ACCEPT, LocalDateTime.now())
+                        new FriendInformation(1L, "홍길동", "스타벅스 광화문점", "01012345678", RelationStatus.ACCEPT, LocalDateTime.now()),
+                        new FriendInformation(2L, "이순신", "투썸플레이스 강남역점", "01023456789", RelationStatus.ACCEPT, LocalDateTime.now()),
+                        new FriendInformation(3L, "김철수", "커피빈 홍대입구역점", "01034567890", RelationStatus.ACCEPT, LocalDateTime.now())
                 )
         );
     }
@@ -307,9 +307,9 @@ class FriendInformationControllerTest extends ControllerTest {
     private FriendAssembler getRequestFriendAssembler() {
         return new FriendAssembler(
                 List.of(
-                        new FriendInformation(1L, "홍길동", "스타벅스 광화문점", "01012345678", FriendStatus.REQUEST, LocalDateTime.now()),
-                        new FriendInformation(2L, "이순신", "투썸플레이스 강남역점", "01023456789", FriendStatus.REQUEST, LocalDateTime.now()),
-                        new FriendInformation(3L, "김철수", "커피빈 홍대입구역점", "01034567890", FriendStatus.REQUEST, LocalDateTime.now())
+                        new FriendInformation(1L, "홍길동", "스타벅스 광화문점", "01012345678", RelationStatus.REQUEST, LocalDateTime.now()),
+                        new FriendInformation(2L, "이순신", "투썸플레이스 강남역점", "01023456789", RelationStatus.REQUEST, LocalDateTime.now()),
+                        new FriendInformation(3L, "김철수", "커피빈 홍대입구역점", "01034567890", RelationStatus.REQUEST, LocalDateTime.now())
                 )
         );
     }

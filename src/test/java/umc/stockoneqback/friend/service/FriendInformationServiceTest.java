@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.friend.domain.Friend;
-import umc.stockoneqback.friend.domain.FriendStatus;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.friend.infra.query.dto.response.FriendInformation;
 import umc.stockoneqback.friend.service.dto.FriendAssembler;
 import umc.stockoneqback.role.domain.store.Store;
@@ -63,10 +63,10 @@ class FriendInformationServiceTest extends ServiceTest {
     void getFriends() {
         // given
         for (int i = 9; i >= 5; i--) {
-            friendRepository.save(Friend.createFriend(userList[0], userList[i], FriendStatus.ACCEPT));
+            friendRepository.save(Friend.createFriend(userList[0], userList[i], RelationStatus.ACCEPT));
         }
         for (int i = 4; i >= 1; i--) {
-            friendRepository.save(Friend.createFriend(userList[i], userList[0], FriendStatus.ACCEPT));
+            friendRepository.save(Friend.createFriend(userList[i], userList[0], RelationStatus.ACCEPT));
         }
 
         // when - then
@@ -80,7 +80,7 @@ class FriendInformationServiceTest extends ServiceTest {
                     () -> assertThat(friend.getId()).isEqualTo(user.getId()),
                     () -> assertThat(friend.getName()).isEqualTo(user.getName()),
                     () -> assertThat(friend.getStoreName()).isEqualTo(user.getManagerStore().getName()),
-                    () -> assertThat(friend.getFriendStatus()).isEqualTo(FriendStatus.ACCEPT.getValue())
+                    () -> assertThat(friend.getRelationStatus()).isEqualTo(RelationStatus.ACCEPT.getValue())
             );
         }
     }
@@ -90,7 +90,7 @@ class FriendInformationServiceTest extends ServiceTest {
     void getWaitingFriends() {
         // given
         for (int i = 9; i >= 1; i--) {
-            friendRepository.save(Friend.createFriend(userList[0], userList[i], FriendStatus.REQUEST));
+            friendRepository.save(Friend.createFriend(userList[0], userList[i], RelationStatus.REQUEST));
         }
 
         // when - then
@@ -104,7 +104,7 @@ class FriendInformationServiceTest extends ServiceTest {
                     () -> assertThat(friend.getId()).isEqualTo(user.getId()),
                     () -> assertThat(friend.getName()).isEqualTo(user.getName()),
                     () -> assertThat(friend.getStoreName()).isEqualTo(user.getManagerStore().getName()),
-                    () -> assertThat(friend.getFriendStatus()).isEqualTo(FriendStatus.REQUEST.getValue())
+                    () -> assertThat(friend.getRelationStatus()).isEqualTo(RelationStatus.REQUEST.getValue())
             );
         }
     }
@@ -114,7 +114,7 @@ class FriendInformationServiceTest extends ServiceTest {
     void getRequestedFriends() {
         // given
         for (int i = 2; i >= 1; i--) {
-            friendRepository.save(Friend.createFriend(userList[i], userList[0], FriendStatus.REQUEST));
+            friendRepository.save(Friend.createFriend(userList[i], userList[0], RelationStatus.REQUEST));
         }
 
         // when - then
@@ -128,7 +128,7 @@ class FriendInformationServiceTest extends ServiceTest {
                     () -> assertThat(friend.getId()).isEqualTo(user.getId()),
                     () -> assertThat(friend.getName()).isEqualTo(user.getName()),
                     () -> assertThat(friend.getStoreName()).isEqualTo(user.getManagerStore().getName()),
-                    () -> assertThat(friend.getFriendStatus()).isEqualTo(FriendStatus.REQUEST.getValue())
+                    () -> assertThat(friend.getRelationStatus()).isEqualTo(RelationStatus.REQUEST.getValue())
             );
         }
     }

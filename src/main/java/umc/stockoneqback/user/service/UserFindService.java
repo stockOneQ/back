@@ -8,6 +8,7 @@ import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.friend.domain.Friend;
 import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.user.domain.Email;
 import umc.stockoneqback.user.domain.Role;
@@ -34,7 +35,7 @@ public class UserFindService {
     private final BusinessRepository businessRepository;
 
     private static final int PAGE_SIZE = 7;
-    private String relationStatus;
+    private static String relationStatus;
 
     public User findById(Long userId) {
         return userRepository.findByIdAndStatus(userId, Status.NORMAL)
@@ -58,13 +59,13 @@ public class UserFindService {
 
         SearchType searchType = findFriendSearchTypeByValue(searchTypeValue);
         List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(searchType, searchWord);
-        List<FindManager> findManagers = updateFriendStatus(userId, managersBySearchType);
+        List<FindManager> findManagers = updateFriendRelationStatus(userId, managersBySearchType);
 
         int lastIndex = getLastIndex(findManagers, lastUserId);
         return configPaging(findManagers, lastIndex, PAGE_SIZE);
     }
 
-    private List<FindManager> updateFriendStatus(Long userId, List<FindManager> searchedManager) {
+    private List<FindManager> updateFriendRelationStatus(Long userId, List<FindManager> searchedManager) {
         List<FindManager> updateManagerList = new ArrayList<>();
 
         for (FindManager findManager : searchedManager) {
@@ -73,11 +74,11 @@ public class UserFindService {
             Optional<Friend> findFriendReverse = friendRepository.findBySenderIdAndReceiverId(findUserId, userId);
 
             if (!findFriend.isEmpty())
-                relationStatus = findFriend.get().getFriendStatus().getValue();
+                relationStatus = findFriend.get().getRelationStatus().getValue();
             else {
                 if (!findFriendReverse.isEmpty())
-                    relationStatus = findFriendReverse.get().getFriendStatus().getValue();
-                else relationStatus = "친구 아님";
+                    relationStatus = findFriendReverse.get().getRelationStatus().getValue();
+                else relationStatus = RelationStatus.IRRELEVANT.getValue();
             }
 
             FindManager findManagers = FindManager.builder()
@@ -99,13 +100,13 @@ public class UserFindService {
 
         SearchType searchType = findBusinessSearchTypeByValue(searchTypeValue);
         List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(searchType, searchWord);
-        List<FindManager> findManagers = updateBusinessStatus(userId, managersBySearchType);
+        List<FindManager> findManagers = updateBusinessRelationStatus(userId, managersBySearchType);
 
         int lastIndex = getLastIndex(findManagers, lastUserId);
         return configPaging(findManagers, lastIndex, PAGE_SIZE);
     }
 
-    private List<FindManager> updateBusinessStatus(Long supervisorId, List<FindManager> searchedManager) {
+    private List<FindManager> updateBusinessRelationStatus(Long supervisorId, List<FindManager> searchedManager) {
         List<FindManager> updateManagerList = new ArrayList<>();
 
         for (FindManager findManager : searchedManager) {
@@ -113,9 +114,9 @@ public class UserFindService {
             Optional<Business> findBusiness = businessRepository.findBySupervisorIdAndManagerId(supervisorId, managerId);
 
             if (findBusiness.isPresent())
-                relationStatus = findBusiness.get().getStatus().getValue();
+                relationStatus = findBusiness.get().getRelationStatus().getValue();
             else
-                relationStatus = "소멸";
+                relationStatus = RelationStatus.IRRELEVANT.getValue();
 
             FindManager findManagers = FindManager.builder()
                     .id(findManager.getId())

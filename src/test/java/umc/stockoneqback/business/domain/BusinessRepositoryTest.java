@@ -59,7 +59,7 @@ class BusinessRepositoryTest extends RepositoryTest {
         assertAll(
                 () -> assertThat(findBusiness.getSupervisor()).isEqualTo(supervisor),
                 () -> assertThat(findBusiness.getManager()).isEqualTo(manager),
-                () -> assertThat(findBusiness.getStatus()).isEqualTo(Status.NORMAL)
+                () -> assertThat(findBusiness.getRelationStatus()).isEqualTo(Status.NORMAL)
         );
     }
 
@@ -87,7 +87,7 @@ class BusinessRepositoryTest extends RepositoryTest {
                 () -> assertThat(businessList.size()).isEqualTo(1),
                 () -> assertThat(businessList.get(0).getSupervisor()).isEqualTo(supervisor),
                 () -> assertThat(businessList.get(0).getManager()).isEqualTo(manager),
-                () -> assertThat(businessList.get(0).getStatus()).isEqualTo(Status.NORMAL)
+                () -> assertThat(businessList.get(0).getRelationStatus()).isEqualTo(Status.NORMAL)
         );
     }
 
@@ -102,7 +102,7 @@ class BusinessRepositoryTest extends RepositoryTest {
                 () -> assertThat(businessList.size()).isEqualTo(1),
                 () -> assertThat(businessList.get(0).getSupervisor()).isEqualTo(supervisor),
                 () -> assertThat(businessList.get(0).getManager()).isEqualTo(manager),
-                () -> assertThat(businessList.get(0).getStatus()).isEqualTo(Status.NORMAL)
+                () -> assertThat(businessList.get(0).getRelationStatus()).isEqualTo(Status.NORMAL)
         );
     }
 

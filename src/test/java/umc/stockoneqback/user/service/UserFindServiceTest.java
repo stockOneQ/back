@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.business.domain.Business;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.friend.domain.Friend;
-import umc.stockoneqback.friend.domain.FriendStatus;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.role.domain.store.Store;
@@ -75,8 +75,8 @@ class UserFindServiceTest extends ServiceTest {
         @DisplayName("검색 조건과 검색어에 따른 매니저 검색에 성공한다")
         void success() {
             // given
-            friendRepository.save(Friend.createFriend(userList[1], userList[2], FriendStatus.ACCEPT));
-            friendRepository.save(Friend.createFriend(userList[0], userList[1], FriendStatus.REQUEST));
+            friendRepository.save(Friend.createFriend(userList[1], userList[2], RelationStatus.ACCEPT));
+            friendRepository.save(Friend.createFriend(userList[0], userList[1], RelationStatus.REQUEST));
 
             // when
             FindManagerResponse findManagerResponse = userFindService.findFriendManagers(
@@ -92,12 +92,12 @@ class UserFindServiceTest extends ServiceTest {
                     () -> assertThat(findManager1.getName()).isEqualTo(userList[0].getName()),
                     () -> assertThat(findManager1.getStoreName()).isEqualTo(userList[0].getManagerStore().getName()),
                     () -> assertThat(findManager1.getPhoneNumber()).isEqualTo(userList[0].getPhoneNumber()),
-                    () -> assertThat(findManager1.getRelationStatus()).isEqualTo(FriendStatus.REQUEST.getValue()),
+                    () -> assertThat(findManager1.getRelationStatus()).isEqualTo(RelationStatus.REQUEST.getValue()),
                     () -> assertThat(findManager2.getId()).isEqualTo(userList[2].getId()),
                     () -> assertThat(findManager2.getName()).isEqualTo(userList[2].getName()),
                     () -> assertThat(findManager2.getStoreName()).isEqualTo(userList[2].getManagerStore().getName()),
                     () -> assertThat(findManager2.getPhoneNumber()).isEqualTo(userList[2].getPhoneNumber()),
-                    () -> assertThat(findManager2.getRelationStatus()).isEqualTo(FriendStatus.ACCEPT.getValue())
+                    () -> assertThat(findManager2.getRelationStatus()).isEqualTo(RelationStatus.ACCEPT.getValue())
             );
         }
     }

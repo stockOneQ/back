@@ -9,6 +9,7 @@ import umc.stockoneqback.business.exception.BusinessErrorCode;
 import umc.stockoneqback.business.infra.query.dto.FilteredBusinessUser;
 import umc.stockoneqback.business.infra.query.dto.FindBusinessUser;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.share.domain.Category;
 import umc.stockoneqback.share.domain.SearchType;
@@ -56,9 +57,8 @@ public class ShareListService {
 
         switch (role) {
             case MANAGER -> {
-                Business findBusiness = businessRepository.findByIdAndManager(selectedBusinessId, user)
+                businessRepository.findByIdAndManager(selectedBusinessId, user)
                         .orElseThrow(() -> BaseException.type(BusinessErrorCode.BUSINESS_NOT_FOUND));
-                validateBusiness(findBusiness);
                 return getShareListResponse(selectedBusinessId, page, category, searchType, searchWord);
             }
             case PART_TIMER -> {
@@ -66,9 +66,8 @@ public class ShareListService {
                 return getShareListResponse(selectedBusinessId, page, category, searchType, searchWord);
             }
             case SUPERVISOR -> {
-                Business findBusiness = businessRepository.findByIdAndSupervisor(selectedBusinessId, user)
+                businessRepository.findByIdAndSupervisor(selectedBusinessId, user)
                         .orElseThrow(() -> BaseException.type(BusinessErrorCode.BUSINESS_NOT_FOUND));
-                validateBusiness(findBusiness);
                 return getShareListResponse(selectedBusinessId, page, category, searchType, searchWord);
             }
             default -> {
@@ -94,12 +93,6 @@ public class ShareListService {
             }
         }
         if(!flag) throw BaseException.type(ShareErrorCode.NOT_FILTERED_USER);
-    }
-
-    private void validateBusiness(Business findBusiness) {
-        if (findBusiness.getStatus() == Status.EXPIRED) {
-            throw BaseException.type(ShareErrorCode.NOT_FILTERED_USER);
-        }
     }
 
     private Role classifyUser(User user) {

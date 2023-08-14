@@ -3,7 +3,7 @@ package umc.stockoneqback.friend.infra.query.dto.response;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import umc.stockoneqback.friend.domain.FriendStatus;
+import umc.stockoneqback.global.base.RelationStatus;
 
 import java.time.LocalDateTime;
 
@@ -14,16 +14,16 @@ public class FriendInformation {
     private final String name;
     private final String storeName;
     private final String phoneNumber;
-    private final String friendStatus;
+    private final String relationStatus;
     private final LocalDateTime lastModifiedDate;
 
     @QueryProjection
-    public FriendInformation(Long id, String name, String storeName, String phoneNumber, FriendStatus friendStatus, LocalDateTime lastModifiedDate) {
+    public FriendInformation(Long id, String name, String storeName, String phoneNumber, RelationStatus relationStatus, LocalDateTime lastModifiedDate) {
         this.id = id;
         this.name = name;
         this.storeName = storeName;
         this.phoneNumber = phoneNumber;
-        this.friendStatus = friendStatus.getValue();
+        this.relationStatus = relationStatus.getValue();
         this.lastModifiedDate = lastModifiedDate;
     }
 }

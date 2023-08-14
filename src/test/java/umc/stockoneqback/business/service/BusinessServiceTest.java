@@ -77,7 +77,7 @@ class BusinessServiceTest extends ServiceTest {
             assertAll(
                     () -> assertThat(findBusiness.getSupervisor()).isEqualTo(supervisor),
                     () -> assertThat(findBusiness.getManager()).isEqualTo(manager),
-                    () -> assertThat(findBusiness.getStatus()).isEqualTo(Status.NORMAL)
+                    () -> assertThat(findBusiness.getRelationStatus()).isEqualTo(Status.NORMAL)
             );
         }
     }
