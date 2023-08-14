@@ -22,11 +22,11 @@ public class UserFindQueryRepositoryImpl implements UserFindQueryRepository {
     private final JPAQueryFactory query;
 
     @Override
-    public List<FindManager> findManagersBySearchType(SearchType searchType, String searchWord) {
+    public List<FindManager> findManagersBySearchType(Long userId, SearchType searchType, String searchWord) {
         return query
                 .selectDistinct(new QFindManager(user.id, user.name, user.managerStore.name, user.phoneNumber))
                 .from(user)
-                .where(search(searchType, searchWord), user.role.eq(Role.MANAGER), user.status.eq(Status.NORMAL))
+                .where(search(searchType, searchWord), user.role.eq(Role.MANAGER), user.status.eq(Status.NORMAL), user.id.ne(userId))
                 .orderBy(user.id.asc())
                 .fetch();
     }

@@ -58,7 +58,7 @@ public class UserFindService {
             throw BaseException.type(UserErrorCode.USER_NOT_ALLOWED);
 
         SearchType searchType = findFriendSearchTypeByValue(searchTypeValue);
-        List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(searchType, searchWord);
+        List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(userId, searchType, searchWord);
         List<FindManager> findManagers = updateFriendRelationStatus(userId, managersBySearchType);
 
         int lastIndex = getLastIndex(findManagers, lastUserId);
@@ -99,7 +99,7 @@ public class UserFindService {
             throw BaseException.type(UserErrorCode.USER_NOT_ALLOWED);
 
         SearchType searchType = findBusinessSearchTypeByValue(searchTypeValue);
-        List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(searchType, searchWord);
+        List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(userId, searchType, searchWord);
         List<FindManager> findManagers = updateBusinessRelationStatus(userId, managersBySearchType);
 
         int lastIndex = getLastIndex(findManagers, lastUserId);
