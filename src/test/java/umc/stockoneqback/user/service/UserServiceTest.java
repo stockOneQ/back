@@ -147,14 +147,14 @@ class UserServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("1년이 지난 탈퇴한 사용자의 개인정보를 완전히 삭제한다")
-    void deleteUser() {
+    void deleteExpiredUser() {
         // given
         User user = userRepository.save(SAEWOO.toUser());
         userService.withdrawUser(user.getId());
         userRepository.updateModifiedDateById(user.getId(), LocalDate.now().minusYears(2));
 
         // when
-        userService.deleteUser();
+        userService.deleteExpiredUser();
 
         // then
         Optional<User> findUser = userRepository.findById(user.getId());

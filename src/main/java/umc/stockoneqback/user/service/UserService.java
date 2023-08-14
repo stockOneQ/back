@@ -130,7 +130,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser() {
+    public void deleteExpiredUser() {
         LocalDate overYear = LocalDate.now().minusYears(1);
         userRepository.deleteModifiedOverYearAndExpireUser(overYear);
     }

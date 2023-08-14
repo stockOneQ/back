@@ -11,11 +11,11 @@ import umc.stockoneqback.user.service.UserService;
 @Component
 @EnableScheduling
 @RequiredArgsConstructor
-public class DeleteUserScheduler {
+public class DeleteExpiredUserScheduler {
     private final UserService userService;
 
     @Scheduled(cron = "0 0 0 * * *")
-    public void deleteUser() {
-        userService.deleteUser();
+    public void deleteExpiredUser() {
+        userService.deleteExpiredUser();
     }
 }

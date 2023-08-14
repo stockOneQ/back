@@ -22,13 +22,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.UserFixture.*;
 
 @Import(EmbeddedRedisConfig.class)
-@DisplayName("User [Config Layer] -> DeleteUserScheduler 테스트")
+@DisplayName("User [Config Layer] -> DeleteExpiredUserScheduler 테스트")
 @SpringBootTest(
         properties = {
                 "schedules.cron.reward.publish=0/2 * * * * ?",
         }
 )
-public class DeleteUserSchedulerTest {
+public class DeleteExpiredUserSchedulerTest {
+    @Autowired
+    private DeleteExpiredUserScheduler deleteExpiredUserScheduler;
+
     @Autowired
     private UserService userService;
 
@@ -60,7 +63,7 @@ public class DeleteUserSchedulerTest {
         @DisplayName("특정 시간마다 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 성공한다")
         void success() throws Exception {
             // when
-            userService.deleteUser();
+            deleteExpiredUserScheduler.deleteExpiredUser();
 
             // then
             Awaitility.await()
