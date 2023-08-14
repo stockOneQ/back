@@ -11,7 +11,9 @@ import org.springframework.context.annotation.Import;
 import umc.stockoneqback.auth.domain.FcmToken;
 import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.auth.service.TokenService;
+import umc.stockoneqback.common.DatabaseCleaner;
 import umc.stockoneqback.common.EmbeddedRedisConfig;
+import umc.stockoneqback.common.RedisCleaner;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.domain.ProductRepository;
@@ -39,6 +41,12 @@ import static umc.stockoneqback.fixture.UserFixture.ANNE;
 )
 public class PassProductBatchSchedulerTest {
     @Autowired
+    private DatabaseCleaner databaseCleaner;
+
+    @Autowired
+    private RedisCleaner redisCleaner;
+    
+    @Autowired
     private AuthService authService;
 
     @Autowired
@@ -64,6 +72,9 @@ public class PassProductBatchSchedulerTest {
 
     @BeforeEach
     void setup() {
+        databaseCleaner.execute();
+        redisCleaner.flushAll();
+
         zStore = storeRepository.save(Z_YEONGTONG.toStore());
         USER_ID = userService.saveManager(ANNE.toUser(), zStore.getId());
         authService.login(ANNE.getLoginId(), ANNE.getPassword());

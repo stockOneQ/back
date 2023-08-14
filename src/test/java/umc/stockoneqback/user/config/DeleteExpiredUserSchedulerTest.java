@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import umc.stockoneqback.common.DatabaseCleaner;
 import umc.stockoneqback.common.EmbeddedRedisConfig;
+import umc.stockoneqback.common.RedisCleaner;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
 import umc.stockoneqback.user.service.UserService;
@@ -30,6 +32,12 @@ import static umc.stockoneqback.fixture.UserFixture.*;
 )
 public class DeleteExpiredUserSchedulerTest {
     @Autowired
+    private DatabaseCleaner databaseCleaner;
+
+    @Autowired
+    private RedisCleaner redisCleaner;
+
+    @Autowired
     private DeleteExpiredUserScheduler deleteExpiredUserScheduler;
 
     @Autowired
@@ -44,6 +52,9 @@ public class DeleteExpiredUserSchedulerTest {
 
     @BeforeEach
     void setup() {
+        databaseCleaner.execute();
+        redisCleaner.flushAll();
+
         saewoo = userRepository.save(SAEWOO.toUser());
         woni = userRepository.save(WONI.toUser());
         bob = userRepository.save(BOB.toUser());
