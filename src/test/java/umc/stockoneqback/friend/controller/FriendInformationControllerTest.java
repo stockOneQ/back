@@ -7,9 +7,9 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.common.ControllerTest;
-import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.friend.infra.query.dto.response.FriendInformation;
 import umc.stockoneqback.friend.service.dto.FriendAssembler;
+import umc.stockoneqback.global.base.RelationStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -112,7 +112,7 @@ class FriendInformationControllerTest extends ControllerTest {
                                             fieldWithPath("friends[].name").description("친구 이름"),
                                             fieldWithPath("friends[].storeName").description("친구 가게 이름"),
                                             fieldWithPath("friends[].phoneNumber").description("친구 연락처"),
-                                            fieldWithPath("friends[].friendStatus").description("친구 상태 ['친구 요청', '친구 수락']"),
+                                            fieldWithPath("friends[].relationStatus").description("친구 상태 ['친구 요청', '친구 수락']"),
                                             fieldWithPath("friends[].lastModifiedDate").description("친구 상태 마지막 수정 시간")
                                     )
                             )
@@ -199,7 +199,7 @@ class FriendInformationControllerTest extends ControllerTest {
                                             fieldWithPath("friends[].name").description("친구 이름"),
                                             fieldWithPath("friends[].storeName").description("친구 가게 이름"),
                                             fieldWithPath("friends[].phoneNumber").description("친구 연락처"),
-                                            fieldWithPath("friends[].friendStatus").description("친구 상태 ['친구 요청', '친구 수락']"),
+                                            fieldWithPath("friends[].relationStatus").description("친구 상태 ['친구 요청', '친구 수락']"),
                                             fieldWithPath("friends[].lastModifiedDate").description("친구 상태 마지막 수정 시간")
                                     )
                             )
@@ -286,7 +286,7 @@ class FriendInformationControllerTest extends ControllerTest {
                                             fieldWithPath("friends[].name").description("친구 이름"),
                                             fieldWithPath("friends[].storeName").description("친구 가게 이름"),
                                             fieldWithPath("friends[].phoneNumber").description("친구 연락처"),
-                                            fieldWithPath("friends[].friendStatus").description("친구 상태 ['친구 요청', '친구 수락']"),
+                                            fieldWithPath("friends[].relationStatus").description("친구 상태 ['친구 요청', '친구 수락']"),
                                             fieldWithPath("friends[].lastModifiedDate").description("친구 상태 마지막 수정 시간")
                                     )
                             )

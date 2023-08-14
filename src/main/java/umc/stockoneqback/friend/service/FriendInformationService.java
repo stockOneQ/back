@@ -22,8 +22,8 @@ public class FriendInformationService {
     private static final int REQUESTED_FRIENDS_PAGE_SIZE = 6;
 
     public FriendAssembler getFriends(Long userId, Long lastUserId) {
-        List<FriendInformation> receivers = friendRepository.findReceiversByUserIdAndFriendStatus(userId, RelationStatus.ACCEPT);
-        List<FriendInformation> senders = friendRepository.findSendersByUserIdAndFriendStatus(userId, RelationStatus.ACCEPT);
+        List<FriendInformation> receivers = friendRepository.findReceiversByUserIdAndRelationStatus(userId, RelationStatus.ACCEPT);
+        List<FriendInformation> senders = friendRepository.findSendersByUserIdAndRelationStatus(userId, RelationStatus.ACCEPT);
 
         List<FriendInformation> friends = new ArrayList<>(receivers);
         friends.addAll(senders);
@@ -34,14 +34,14 @@ public class FriendInformationService {
     }
 
     public FriendAssembler getWaitingFriends(Long userId, Long lastUserId) {
-        List<FriendInformation> receivers = friendRepository.findReceiversByUserIdAndFriendStatus(userId, RelationStatus.REQUEST);
+        List<FriendInformation> receivers = friendRepository.findReceiversByUserIdAndRelationStatus(userId, RelationStatus.REQUEST);
 
         int lastIndex = getLastIndex(receivers, lastUserId);
         return getFriendAssembler(receivers, lastIndex, WAITING_FRIENDS_PAGE_SIZE);
     }
 
     public FriendAssembler getRequestedFriends(Long userId, Long lastUserId) {
-        List<FriendInformation> senders = friendRepository.findSendersByUserIdAndFriendStatus(userId, RelationStatus.REQUEST);
+        List<FriendInformation> senders = friendRepository.findSendersByUserIdAndRelationStatus(userId, RelationStatus.REQUEST);
 
         int lastIndex = getLastIndex(senders, lastUserId);
         return getFriendAssembler(senders, lastIndex, REQUESTED_FRIENDS_PAGE_SIZE);

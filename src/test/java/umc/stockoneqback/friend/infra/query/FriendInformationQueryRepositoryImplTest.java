@@ -66,14 +66,14 @@ class FriendInformationQueryRepositoryImplTest extends RepositoryTest {
 
     @Test
     @DisplayName("유저 ID 및 Friend 상태를 통해서 유저가 친구를 신청한 유저의 리스트를 조회한다 (LastModified 최신순 정렬)")
-    void findReceiversByUserIdAndFriendStatus() {
+    void findReceiversByUserIdAndRelationStatus() {
         // given
         for (int i = 9; i >= 1; i--) {
             friendRepository.save(Friend.createFriend(userList[0], userList[i], RelationStatus.REQUEST));
         }
 
         // when - then
-        List<FriendInformation> receivers = friendRepository.findReceiversByUserIdAndFriendStatus(userList[0].getId(), RelationStatus.REQUEST);
+        List<FriendInformation> receivers = friendRepository.findReceiversByUserIdAndRelationStatus(userList[0].getId(), RelationStatus.REQUEST);
 
         for (int i = 0; i < receivers.size(); i++) {
             FriendInformation receiver = receivers.get(i);
@@ -90,14 +90,14 @@ class FriendInformationQueryRepositoryImplTest extends RepositoryTest {
 
     @Test
     @DisplayName("유저 ID 및 Friend 상태를 통해서 유저에게 친구를 신청한 유저의 리스트를 조회한다 (LastModified 최신순 정렬)")
-    void findSendersByUserIdAndFriendStatus() {
+    void findSendersByUserIdAndRelationStatus() {
         // given
         for (int i = 9; i >= 1; i--) {
             friendRepository.save(Friend.createFriend(userList[i], userList[0], RelationStatus.REQUEST));
         }
 
         // when - then
-        List<FriendInformation> senders = friendRepository.findSendersByUserIdAndFriendStatus(userList[0].getId(), RelationStatus.REQUEST);
+        List<FriendInformation> senders = friendRepository.findSendersByUserIdAndRelationStatus(userList[0].getId(), RelationStatus.REQUEST);
 
         for (int i = 0; i < senders.size(); i++) {
             FriendInformation sender = senders.get(i);

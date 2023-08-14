@@ -9,7 +9,7 @@ import umc.stockoneqback.business.domain.Business;
 import umc.stockoneqback.business.exception.BusinessErrorCode;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.global.base.Status;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.role.domain.company.Company;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.domain.User;
@@ -77,7 +77,7 @@ class BusinessServiceTest extends ServiceTest {
             assertAll(
                     () -> assertThat(findBusiness.getSupervisor()).isEqualTo(supervisor),
                     () -> assertThat(findBusiness.getManager()).isEqualTo(manager),
-                    () -> assertThat(findBusiness.getRelationStatus()).isEqualTo(Status.NORMAL)
+                    () -> assertThat(findBusiness.getRelationStatus()).isEqualTo(RelationStatus.ACCEPT)
             );
         }
     }

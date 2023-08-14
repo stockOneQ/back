@@ -20,7 +20,7 @@ public class FriendInformationQueryRepositoryImpl implements FriendInformationQu
     private static final QFriend friend = new QFriend("friend");
 
     @Override
-    public List<FriendInformation> findReceiversByUserIdAndFriendStatus(Long userId, RelationStatus relationStatus) {
+    public List<FriendInformation> findReceiversByUserIdAndRelationStatus(Long userId, RelationStatus relationStatus) {
         return query
                 .selectDistinct(new QFriendInformation(friend.receiver.id, friend.receiver.name, friend.receiver.managerStore.name, friend.receiver.phoneNumber, friend.relationStatus, friend.modifiedDate))
                 .from(friend)
@@ -32,7 +32,7 @@ public class FriendInformationQueryRepositoryImpl implements FriendInformationQu
     }
 
     @Override
-    public List<FriendInformation> findSendersByUserIdAndFriendStatus(Long userId, RelationStatus relationStatus) {
+    public List<FriendInformation> findSendersByUserIdAndRelationStatus(Long userId, RelationStatus relationStatus) {
         return query
                 .selectDistinct(new QFriendInformation(friend.sender.id, friend.sender.name, friend.sender.managerStore.name, friend.sender.phoneNumber, friend.relationStatus, friend.modifiedDate))
                 .from(friend)
