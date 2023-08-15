@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.stockoneqback.global.base.BaseTimeEntity;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.user.domain.User;
 
 import javax.persistence.*;
@@ -26,21 +27,21 @@ public class Friend extends BaseTimeEntity {
     @JoinColumn(name = "receiver_id")
     private User receiver;
 
-    @Convert(converter = FriendStatus.FriendConverter.class)
-    private FriendStatus friendStatus;
+    @Convert(converter = RelationStatus.RelationConverter.class)
+    private RelationStatus relationStatus;
 
     @Builder
-    public Friend(User sender, User receiver, FriendStatus friendStatus) {
+    public Friend(User sender, User receiver, RelationStatus relationStatus) {
         this.sender = sender;
         this.receiver = receiver;
-        this.friendStatus = friendStatus;
+        this.relationStatus = relationStatus;
     }
 
-    public static Friend createFriend(User sender, User receiver, FriendStatus friendStatus) {
-        return new Friend(sender, receiver, friendStatus);
+    public static Friend createFriend(User sender, User receiver, RelationStatus relationStatus) {
+        return new Friend(sender, receiver, relationStatus);
     }
 
     public void acceptFriend() {
-        this.friendStatus = FriendStatus.ACCEPT;
+        this.relationStatus = RelationStatus.ACCEPT;
     }
 }

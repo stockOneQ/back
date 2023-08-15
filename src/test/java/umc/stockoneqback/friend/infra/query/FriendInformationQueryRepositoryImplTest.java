@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.RepositoryTest;
 import umc.stockoneqback.friend.domain.Friend;
-import umc.stockoneqback.friend.domain.FriendStatus;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.friend.infra.query.dto.response.FriendInformation;
 import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.role.domain.store.Store;
@@ -66,14 +66,14 @@ class FriendInformationQueryRepositoryImplTest extends RepositoryTest {
 
     @Test
     @DisplayName("유저 ID 및 Friend 상태를 통해서 유저가 친구를 신청한 유저의 리스트를 조회한다 (LastModified 최신순 정렬)")
-    void findReceiversByUserIdAndFriendStatus() {
+    void findReceiversByUserIdAndRelationStatus() {
         // given
         for (int i = 9; i >= 1; i--) {
-            friendRepository.save(Friend.createFriend(userList[0], userList[i], FriendStatus.REQUEST));
+            friendRepository.save(Friend.createFriend(userList[0], userList[i], RelationStatus.REQUEST));
         }
 
         // when - then
-        List<FriendInformation> receivers = friendRepository.findReceiversByUserIdAndFriendStatus(userList[0].getId(), FriendStatus.REQUEST);
+        List<FriendInformation> receivers = friendRepository.findReceiversByUserIdAndRelationStatus(userList[0].getId(), RelationStatus.REQUEST);
 
         for (int i = 0; i < receivers.size(); i++) {
             FriendInformation receiver = receivers.get(i);
@@ -83,21 +83,21 @@ class FriendInformationQueryRepositoryImplTest extends RepositoryTest {
                     () -> assertThat(receiver.getId()).isEqualTo(user.getId()),
                     () -> assertThat(receiver.getName()).isEqualTo(user.getName()),
                     () -> assertThat(receiver.getStoreName()).isEqualTo(user.getManagerStore().getName()),
-                    () -> assertThat(receiver.getFriendStatus()).isEqualTo(FriendStatus.REQUEST.getValue())
+                    () -> assertThat(receiver.getRelationStatus()).isEqualTo(RelationStatus.REQUEST.getValue())
             );
         }
     }
 
     @Test
     @DisplayName("유저 ID 및 Friend 상태를 통해서 유저에게 친구를 신청한 유저의 리스트를 조회한다 (LastModified 최신순 정렬)")
-    void findSendersByUserIdAndFriendStatus() {
+    void findSendersByUserIdAndRelationStatus() {
         // given
         for (int i = 9; i >= 1; i--) {
-            friendRepository.save(Friend.createFriend(userList[i], userList[0], FriendStatus.REQUEST));
+            friendRepository.save(Friend.createFriend(userList[i], userList[0], RelationStatus.REQUEST));
         }
 
         // when - then
-        List<FriendInformation> senders = friendRepository.findSendersByUserIdAndFriendStatus(userList[0].getId(), FriendStatus.REQUEST);
+        List<FriendInformation> senders = friendRepository.findSendersByUserIdAndRelationStatus(userList[0].getId(), RelationStatus.REQUEST);
 
         for (int i = 0; i < senders.size(); i++) {
             FriendInformation sender = senders.get(i);
@@ -107,7 +107,7 @@ class FriendInformationQueryRepositoryImplTest extends RepositoryTest {
                     () -> assertThat(sender.getId()).isEqualTo(user.getId()),
                     () -> assertThat(sender.getName()).isEqualTo(user.getName()),
                     () -> assertThat(sender.getStoreName()).isEqualTo(user.getManagerStore().getName()),
-                    () -> assertThat(sender.getFriendStatus()).isEqualTo(FriendStatus.REQUEST.getValue())
+                    () -> assertThat(sender.getRelationStatus()).isEqualTo(RelationStatus.REQUEST.getValue())
             );
         }
     }

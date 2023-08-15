@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.RepositoryTest;
 import umc.stockoneqback.friend.repository.FriendRepository;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
 
@@ -29,8 +30,8 @@ public class FriendRepositoryTest extends RepositoryTest {
         user = userRepository.save(ANNE.toUser());
         friend1 = userRepository.save(ELLA.toUser());
         friend2 = userRepository.save(MIKE.toUser());
-        friendRepository.save(Friend.createFriend(user, friend1, FriendStatus.ACCEPT));
-        friendRepository.save(Friend.createFriend(user, friend2, FriendStatus.ACCEPT));
+        friendRepository.save(Friend.createFriend(user, friend1, RelationStatus.ACCEPT));
+        friendRepository.save(Friend.createFriend(user, friend2, RelationStatus.ACCEPT));
     }
 
     @Test
