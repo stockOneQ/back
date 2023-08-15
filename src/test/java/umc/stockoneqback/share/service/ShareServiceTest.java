@@ -95,7 +95,7 @@ class ShareServiceTest extends ServiceTest {
             shareService.create(supervisor.getId(), business.getId(), CATEGORY, shareRequest, null);
 
             // then
-            Share findShare = shareRepository.findAll().get(1);
+            Share findShare = shareRepository.findAll().get(3);
             assertAll(
                     () -> assertThat(findShare.getTitle()).isEqualTo(shareRequest.title()),
                     () -> assertThat(findShare.getFile()).isEqualTo(null),
