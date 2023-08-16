@@ -22,8 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -472,31 +471,33 @@ public class BusinessProductApiControllerTest extends ControllerTest {
     }
 
     @Nested
-    @DisplayName("사장님 가게의 특정 정렬 기준을 만족하는 전체 제품 조회 API [GET /api/business/product/all]")
+    @DisplayName("사장님 가게의 특정 정렬 기준 및 탐색 조건을 만족하는 제품 리스트 조회 API [GET /api/business/product/page]")
     class getAllProductOthers {
-        private static final String BASE_URL = "/api/business/product/all";
+        private static final String BASE_URL = "/api/business/product/page";
         private static final String STORE_CONDITION = "상온";
         private static final Long MANAGER_ID = 2L;
-        private static final String CATEGORY = "All";
+        private static final String SEARCH_CONDITION = "전체";
+        private static final Long PRODUCT_ID = -1L;
         private static final List<ProductFixture> productFixtureList = new ArrayList<>(
                 Stream.of(PERSIMMON, TANGERINE, DURIAN, MANGO, MELON,
                         BANANA, PEAR, PEACH, BLUEBERRY).collect(Collectors.toList())
         );
 
         @Test
-        @DisplayName("사장님 가게의 특정 정렬 기준을 만족하는 전체 제품 조회에 성공한다")
+        @DisplayName("사장님 가게의 특정 정렬 기준 및 탐색 조건을 만족하는 제품 리스트 조회에 성공한다")
         void success() throws Exception {
             // given
-            doReturn(searchAllProductOthersResponse())
+            doReturn(searchProductOthersPageResponse())
                     .when(businessProductService)
-                    .getListOfCategoryProductOthers(anyLong(), eq(MANAGER_ID), eq(STORE_CONDITION), isNull(), eq(CATEGORY));
+                    .getListOfSearchProductOthers(anyLong(), eq(MANAGER_ID), eq(STORE_CONDITION), anyLong(), eq(SEARCH_CONDITION));
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL)
                     .param("manager", String.valueOf(MANAGER_ID))
                     .param("condition", STORE_CONDITION)
-                    .param("last", (String) null)
+                    .param("search", SEARCH_CONDITION)
+                    .param("last", String.valueOf(PRODUCT_ID))
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
@@ -534,7 +535,7 @@ public class BusinessProductApiControllerTest extends ControllerTest {
                     )
                     .andDo(
                             document(
-                                    "BusinessProductApi/GetAll/Success",
+                                    "BusinessProductApi/GetPage/Success",
                                     preprocessRequest(prettyPrint()),
                                     preprocessResponse(prettyPrint()),
                                     requestHeaders(
@@ -543,223 +544,8 @@ public class BusinessProductApiControllerTest extends ControllerTest {
                                     requestParameters(
                                             parameterWithName("manager").description("요청한 사장님 ID"),
                                             parameterWithName("condition").description("현재 설정된 보관방법"),
-                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
-                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
-                                            fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
-                                            fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
-                                            fieldWithPath("result[].stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
-                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).description("제품 이미지").optional()
-                                    )
-                            )
-                    );
-        }
-    }
-
-    @Nested
-    @DisplayName("사장님 가게의 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회 API [GET /api/business/product/pass]")
-    class getPassProductOthers {
-        private static final String BASE_URL = "/api/business/product/pass";
-        private static final String STORE_CONDITION = "상온";
-        private static final Long MANAGER_ID = 2L;
-        private static final String CATEGORY = "Pass";
-        private static final List<ProductFixture> productFixtureList = new ArrayList<>(
-                Stream.of(PERSIMMON, GRAPE).collect(Collectors.toList())
-        );
-
-        @Test
-        @DisplayName("친구 가게의 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 성공한다")
-        void success() throws Exception {
-            // given
-            doReturn(searchPassProductOthersResponse())
-                    .when(businessProductService)
-                    .getListOfCategoryProductOthers(anyLong(), eq(MANAGER_ID), eq(STORE_CONDITION), isNull(), eq(CATEGORY));
-
-            // when
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .get(BASE_URL)
-                    .param("manager", String.valueOf(MANAGER_ID))
-                    .param("condition", STORE_CONDITION)
-                    .param("last", (String) null)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
-
-            // then
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(
-                            status().isOk(),
-                            jsonPath("$.result[0]").exists(),
-                            jsonPath("$.result[0].name").value(productFixtureList.get(0).getName()),
-                            jsonPath("$.result[0].stockQuant").value(productFixtureList.get(0).getStockQuant()),
-                            jsonPath("$.result[1]").exists(),
-                            jsonPath("$.result[1].name").value(productFixtureList.get(1).getName()),
-                            jsonPath("$.result[1].stockQuant").value(productFixtureList.get(1).getStockQuant()),
-                            jsonPath("$.result[2]").doesNotExist()
-                    )
-                    .andDo(
-                            document(
-                                    "BusinessProductApi/GetPass/Success",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName(AUTHORIZATION).description("Access Token")
-                                    ),
-                                    requestParameters(
-                                            parameterWithName("manager").description("요청한 사장님 ID"),
-                                            parameterWithName("condition").description("현재 설정된 보관방법"),
-                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
-                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
-                                            fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
-                                            fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
-                                            fieldWithPath("result[].stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
-                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).description("제품 이미지").optional()
-                                    )
-                            )
-                    );
-        }
-    }
-
-    @Nested
-    @DisplayName("사장님 가게의 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회 API [GET /api/business/product/close]")
-    class getCloseProductOthers {
-        private static final String BASE_URL = "/api/business/product/close";
-        private static final String STORE_CONDITION = "상온";
-        private static final Long MANAGER_ID = 2L;
-        private static final String CATEGORY = "Close";
-        private static final List<ProductFixture> productFixtureList = new ArrayList<>(
-                Stream.of(DURIAN, MELON, APPLE, PLUM, CHERRY).collect(Collectors.toList())
-        );
-
-        @Test
-        @DisplayName("친구 가게의 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 성공한다")
-        void success() throws Exception {
-            // given
-            doReturn(searchCloseProductOthersResponse())
-                    .when(businessProductService)
-                    .getListOfCategoryProductOthers(anyLong(), eq(MANAGER_ID), eq(STORE_CONDITION), isNull(), eq(CATEGORY));
-
-            // when
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .get(BASE_URL)
-                    .param("manager", String.valueOf(MANAGER_ID))
-                    .param("condition", STORE_CONDITION)
-                    .param("last", (String) null)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
-
-            // then
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(
-                            status().isOk(),
-                            jsonPath("$.result[0]").exists(),
-                            jsonPath("$.result[0].name").value(productFixtureList.get(0).getName()),
-                            jsonPath("$.result[0].stockQuant").value(productFixtureList.get(0).getStockQuant()),
-                            jsonPath("$.result[1]").exists(),
-                            jsonPath("$.result[1].name").value(productFixtureList.get(1).getName()),
-                            jsonPath("$.result[1].stockQuant").value(productFixtureList.get(1).getStockQuant()),
-                            jsonPath("$.result[2]").exists(),
-                            jsonPath("$.result[2].name").value(productFixtureList.get(2).getName()),
-                            jsonPath("$.result[2].stockQuant").value(productFixtureList.get(2).getStockQuant()),
-                            jsonPath("$.result[3]").exists(),
-                            jsonPath("$.result[3].name").value(productFixtureList.get(3).getName()),
-                            jsonPath("$.result[3].stockQuant").value(productFixtureList.get(3).getStockQuant()),
-                            jsonPath("$.result[4]").exists(),
-                            jsonPath("$.result[4].name").value(productFixtureList.get(4).getName()),
-                            jsonPath("$.result[4].stockQuant").value(productFixtureList.get(4).getStockQuant()),
-                            jsonPath("$.result[5]").doesNotExist()
-                    )
-                    .andDo(
-                            document(
-                                    "BusinessProductApi/GetClose/Success",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName(AUTHORIZATION).description("Access Token")
-                                    ),
-                                    requestParameters(
-                                            parameterWithName("manager").description("요청한 사장님 ID"),
-                                            parameterWithName("condition").description("현재 설정된 보관방법"),
-                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
-                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
-                                            fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
-                                            fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
-                                            fieldWithPath("result[].stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
-                                            fieldWithPath("result[].image").type(JsonFieldType.ARRAY).description("제품 이미지").optional()
-                                    )
-                            )
-                    );
-        }
-    }
-
-    @Nested
-    @DisplayName("사장님 가게의 특정 정렬 기준을 만족하는 재고 부족 제품 조회 API [GET /api/business/product/lack]")
-    class getLackProductOthers {
-        private static final String BASE_URL = "/api/business/product/lack";
-        private static final String STORE_CONDITION = "상온";
-        private static final Long MANAGER_ID = 2L;
-        private static final String CATEGORY = "Lack";
-        private static final List<ProductFixture> productFixtureList = new ArrayList<>(
-                Stream.of(PEAR, PEACH, APPLE, CHERRY, PINEAPPLE).collect(Collectors.toList())
-        );
-
-        @Test
-        @DisplayName("사장님 가게의 특정 정렬 기준을 만족하는 재고 부족 제품 조회에 성공한다")
-        void success() throws Exception{
-            // given
-            doReturn(searchLackProductOthersResponse())
-                    .when(businessProductService)
-                    .getListOfCategoryProductOthers(anyLong(), eq(MANAGER_ID), eq(STORE_CONDITION), isNull(), eq(CATEGORY));
-
-            // when
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .get(BASE_URL)
-                    .param("manager", String.valueOf(MANAGER_ID))
-                    .param("condition", STORE_CONDITION)
-                    .param("last", (String) null)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
-
-            // then
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(
-                            status().isOk(),
-                            jsonPath("$.result[0]").exists(),
-                            jsonPath("$.result[0].name").value(productFixtureList.get(0).getName()),
-                            jsonPath("$.result[0].stockQuant").value(productFixtureList.get(0).getStockQuant()),
-                            jsonPath("$.result[1]").exists(),
-                            jsonPath("$.result[1].name").value(productFixtureList.get(1).getName()),
-                            jsonPath("$.result[1].stockQuant").value(productFixtureList.get(1).getStockQuant()),
-                            jsonPath("$.result[2]").exists(),
-                            jsonPath("$.result[2].name").value(productFixtureList.get(2).getName()),
-                            jsonPath("$.result[2].stockQuant").value(productFixtureList.get(2).getStockQuant()),
-                            jsonPath("$.result[3]").exists(),
-                            jsonPath("$.result[3].name").value(productFixtureList.get(3).getName()),
-                            jsonPath("$.result[3].stockQuant").value(productFixtureList.get(3).getStockQuant()),
-                            jsonPath("$.result[4]").exists(),
-                            jsonPath("$.result[4].name").value(productFixtureList.get(4).getName()),
-                            jsonPath("$.result[4].stockQuant").value(productFixtureList.get(4).getStockQuant()),
-                            jsonPath("$.result[5]").doesNotExist()
-                    )
-                    .andDo(
-                            document(
-                                    "BusinessProductApi/GetLack/Success",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName(AUTHORIZATION).description("Access Token")
-                                    ),
-                                    requestParameters(
-                                            parameterWithName("manager").description("요청한 사장님 ID"),
-                                            parameterWithName("condition").description("현재 설정된 보관방법"),
-                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 불필요)")
+                                            parameterWithName("search").description("현재 설정된 탐색 조건"),
+                                            parameterWithName("last").description("마지막 제품 ID(첫 요청 때에는 -1)")
                                     ),
                                     responseFields(
                                             fieldWithPath("status").type(JsonFieldType.STRING).description("HTTP 상태 코드"),
@@ -792,7 +578,7 @@ public class BusinessProductApiControllerTest extends ControllerTest {
         return getTotalProductResponseList;
     }
 
-    private List<SearchProductOthersResponse> searchAllProductOthersResponse() {
+    private List<SearchProductOthersResponse> searchProductOthersPageResponse() {
         List<SearchProductOthersResponse> searchProductOthersResponseList = new ArrayList<>();
         searchProductOthersResponseList.add(new SearchProductOthersResponse(16L, PERSIMMON.getName(), PERSIMMON.getStockQuant(), null));
         searchProductOthersResponseList.add(new SearchProductOthersResponse(15L, TANGERINE.getName(), TANGERINE.getStockQuant(), null));
@@ -803,33 +589,6 @@ public class BusinessProductApiControllerTest extends ControllerTest {
         searchProductOthersResponseList.add(new SearchProductOthersResponse(17L, PEAR.getName(), PEAR.getStockQuant(), null));
         searchProductOthersResponseList.add(new SearchProductOthersResponse(13L, PEACH.getName(), PEACH.getStockQuant(), null));
         searchProductOthersResponseList.add(new SearchProductOthersResponse(11L, BLUEBERRY.getName(), BLUEBERRY.getStockQuant(), null));
-        return searchProductOthersResponseList;
-    }
-
-    private List<SearchProductOthersResponse> searchPassProductOthersResponse() {
-        List<SearchProductOthersResponse> searchProductOthersResponseList = new ArrayList<>();
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(16L, PERSIMMON.getName(), PERSIMMON.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(7L, GRAPE.getName(), GRAPE.getStockQuant(), null));
-        return searchProductOthersResponseList;
-    }
-
-    private List<SearchProductOthersResponse> searchCloseProductOthersResponse() {
-        List<SearchProductOthersResponse> searchProductOthersResponseList = new ArrayList<>();
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(4L, DURIAN.getName(), DURIAN.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(9L, MELON.getName(), MELON.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(1L, APPLE.getName(), APPLE.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(14L, PLUM.getName(), PLUM.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(8L, CHERRY.getName(), CHERRY.getStockQuant(), null));
-        return searchProductOthersResponseList;
-    }
-
-    private List<SearchProductOthersResponse> searchLackProductOthersResponse() {
-        List<SearchProductOthersResponse> searchProductOthersResponseList = new ArrayList<>();
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(17L, PEAR.getName(), PEAR.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(13L, PEACH.getName(), PEACH.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(1L, APPLE.getName(), APPLE.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(8L, CHERRY.getName(), CHERRY.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(6L, PINEAPPLE.getName(), PINEAPPLE.getStockQuant(), null));
         return searchProductOthersResponseList;
     }
 }
