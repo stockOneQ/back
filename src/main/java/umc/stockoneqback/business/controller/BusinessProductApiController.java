@@ -35,35 +35,12 @@ public class BusinessProductApiController {
         return new BaseResponse<>(businessProductService.getTotalProductOthers(supervisorId, managerId, storeConditionValue));
     }
 
-    @GetMapping("/all")
-    public BaseResponse<List<SearchProductOthersResponse>> getListOfAllProductOthers(@ExtractPayload Long supervisorId,
+    @GetMapping("/page")
+    public BaseResponse<List<SearchProductOthersResponse>> getListOfSearchConditionProductOthers(@ExtractPayload Long supervisorId,
                                                                                      @RequestParam(value = "manager") Long managerId,
                                                                                      @RequestParam(value = "condition") String storeConditionValue,
-                                                                                     @RequestParam(value = "last", required = false) Long productId) throws IOException {
-        return new BaseResponse<>(businessProductService.getListOfCategoryProductOthers(supervisorId, managerId, storeConditionValue, productId, "All"));
-    }
-
-    @GetMapping("/pass")
-    public BaseResponse<List<SearchProductOthersResponse>> getListOfPassProductOthers(@ExtractPayload Long supervisorId,
-                                                                                      @RequestParam(value = "manager") Long managerId,
-                                                                                      @RequestParam(value = "condition") String storeConditionValue,
-                                                                                      @RequestParam(value = "last", required = false) Long productId) throws IOException {
-        return new BaseResponse<>(businessProductService.getListOfCategoryProductOthers(supervisorId, managerId, storeConditionValue, productId, "Pass"));
-    }
-
-    @GetMapping("/close")
-    public BaseResponse<List<SearchProductOthersResponse>> getListOfCloseProductOthers(@ExtractPayload Long supervisorId,
-                                                                                       @RequestParam(value = "manager") Long managerId,
-                                                                                       @RequestParam(value = "condition") String storeConditionValue,
-                                                                                       @RequestParam(value = "last", required = false) Long productId) throws IOException {
-        return new BaseResponse<>(businessProductService.getListOfCategoryProductOthers(supervisorId, managerId, storeConditionValue, productId, "Close"));
-    }
-
-    @GetMapping("/lack")
-    public BaseResponse<List<SearchProductOthersResponse>> getListOfLackProductOthers(@ExtractPayload Long supervisorId,
-                                                                                      @RequestParam(value = "manager") Long managerId,
-                                                                                      @RequestParam(value = "condition") String storeConditionValue,
-                                                                                      @RequestParam(value = "last", required = false) Long productId) throws IOException {
-        return new BaseResponse<>(businessProductService.getListOfCategoryProductOthers(supervisorId, managerId, storeConditionValue, productId, "Lack"));
+                                                                                     @RequestParam(value = "search") String searchConditionValue,
+                                                                                     @RequestParam(value = "last", defaultValue = "-1", required = false) Long productId) throws IOException {
+        return new BaseResponse<>(businessProductService.getListOfSearchProductOthers(supervisorId, managerId, storeConditionValue, productId, searchConditionValue));
     }
 }

@@ -71,39 +71,13 @@ public class ProductApiController {
         return new BaseResponse<>(productService.getTotalProduct(userId, storeId, storeConditionValue));
     }
 
-    @GetMapping("/all")
-    public BaseResponse<List<SearchProductResponse>> getListOfAllProduct(@ExtractPayload Long userId,
-                                                                         @RequestParam(value = "store") Long storeId,
-                                                                          @RequestParam(value = "condition") String storeConditionValue,
-                                                                          @RequestParam(value = "last", required = false) Long productId,
-                                                                          @RequestParam(value = "sort") String sortBy) throws IOException {
-        return new BaseResponse<>(productService.getListOfAllProduct(userId, storeId, storeConditionValue, productId, sortBy));
-    }
-
-    @GetMapping("/pass")
-    public BaseResponse<List<SearchProductResponse>> getListOfPassProduct(@ExtractPayload Long userId,
-                                                                          @RequestParam(value = "store") Long storeId,
-                                                                         @RequestParam(value = "condition") String storeConditionValue,
-                                                                         @RequestParam(value = "last", required = false) Long productId,
-                                                                         @RequestParam(value = "sort") String sortBy) throws IOException {
-        return new BaseResponse<>(productService.getListOfPassProduct(userId, storeId, storeConditionValue, productId, sortBy));
-    }
-
-    @GetMapping("/close")
-    public BaseResponse<List<SearchProductResponse>> getListOfCloseProduct(@ExtractPayload Long userId,
-                                                                           @RequestParam(value = "store") Long storeId,
-                                                                         @RequestParam(value = "condition") String storeConditionValue,
-                                                                         @RequestParam(value = "last", required = false) Long productId,
-                                                                         @RequestParam(value = "sort") String sortBy) throws IOException {
-        return new BaseResponse<>(productService.getListOfCloseProduct(userId, storeId, storeConditionValue, productId, sortBy));
-    }
-
-    @GetMapping("/lack")
-    public BaseResponse<List<SearchProductResponse>> getListOfLackProduct(@ExtractPayload Long userId,
-                                                                          @RequestParam(value = "store") Long storeId,
-                                                                         @RequestParam(value = "condition") String storeConditionValue,
-                                                                         @RequestParam(value = "last", required = false) Long productId,
-                                                                         @RequestParam(value = "sort") String sortBy) throws IOException {
-        return new BaseResponse<>(productService.getListOfLackProduct(userId, storeId, storeConditionValue, productId, sortBy));
+    @GetMapping("/page")
+    public BaseResponse<List<SearchProductResponse>> getListOfSearchConditionProduct(@ExtractPayload Long userId,
+                                                                                     @RequestParam(value = "store") Long storeId,
+                                                                                     @RequestParam(value = "condition") String storeConditionValue,
+                                                                                     @RequestParam(value = "search") String searchConditionValue,
+                                                                                     @RequestParam(value = "last", defaultValue = "-1", required = false) Long productId,
+                                                                                     @RequestParam(value = "sort") String sortConditionValue) throws IOException {
+        return new BaseResponse<>(productService.getListOfSearchProduct(userId, storeId, storeConditionValue, searchConditionValue, productId, sortConditionValue));
     }
 }

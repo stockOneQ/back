@@ -35,35 +35,12 @@ public class FriendProductApiController {
         return new BaseResponse<>(friendProductService.getTotalProductOthers(userId, friendId, storeConditionValue));
     }
 
-    @GetMapping("/all")
-    public BaseResponse<List<SearchProductOthersResponse>> getListOfAllProductOthers(@ExtractPayload Long userId,
+    @GetMapping("/page")
+    public BaseResponse<List<SearchProductOthersResponse>> getListOfSearchConditionProductOthers(@ExtractPayload Long userId,
                                                                                @RequestParam(value = "friend") Long friendId,
                                                                          @RequestParam(value = "condition") String storeConditionValue,
-                                                                         @RequestParam(value = "last", required = false) Long productId) throws IOException {
-        return new BaseResponse<>(friendProductService.getListOfCategoryProductOthers(userId, friendId, storeConditionValue, productId, "All"));
-    }
-
-    @GetMapping("/pass")
-    public BaseResponse<List<SearchProductOthersResponse>> getListOfPassProductOthers(@ExtractPayload Long userId,
-                                                                                @RequestParam(value = "friend") Long friendId,
-                                                                                @RequestParam(value = "condition") String storeConditionValue,
-                                                                                @RequestParam(value = "last", required = false) Long productId) throws IOException {
-        return new BaseResponse<>(friendProductService.getListOfCategoryProductOthers(userId, friendId, storeConditionValue, productId, "Pass"));
-    }
-
-    @GetMapping("/close")
-    public BaseResponse<List<SearchProductOthersResponse>> getListOfCloseProductOthers(@ExtractPayload Long userId,
-                                                                                 @RequestParam(value = "friend") Long friendId,
-                                                                                 @RequestParam(value = "condition") String storeConditionValue,
-                                                                                 @RequestParam(value = "last", required = false) Long productId) throws IOException {
-        return new BaseResponse<>(friendProductService.getListOfCategoryProductOthers(userId, friendId, storeConditionValue, productId, "Close"));
-    }
-
-    @GetMapping("/lack")
-    public BaseResponse<List<SearchProductOthersResponse>> getListOfLackProductOthers(@ExtractPayload Long userId,
-                                                                                @RequestParam(value = "friend") Long friendId,
-                                                                                @RequestParam(value = "condition") String storeConditionValue,
-                                                                                @RequestParam(value = "last", required = false) Long productId) throws IOException {
-        return new BaseResponse<>(friendProductService.getListOfCategoryProductOthers(userId, friendId, storeConditionValue, productId, "Lack"));
+                                                                         @RequestParam(value = "search") String searchConditionValue,
+                                                                         @RequestParam(value = "last", defaultValue = "-1", required = false) Long productId) throws IOException {
+        return new BaseResponse<>(friendProductService.getListOfSearchProductOthers(userId, friendId, storeConditionValue, productId, searchConditionValue));
     }
 }
