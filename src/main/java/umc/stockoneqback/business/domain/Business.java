@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.stockoneqback.global.base.BaseTimeEntity;
-import umc.stockoneqback.global.base.Status;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.user.domain.User;
 
 import javax.persistence.*;
@@ -27,13 +27,13 @@ public class Business extends BaseTimeEntity {
     @JoinColumn(name = "supervisor_id")
     private User supervisor;
 
-    @Convert(converter = Status.StatusConverter.class)
-    private Status status;
+    @Convert(converter = RelationStatus.RelationConverter.class)
+    private RelationStatus relationStatus;
 
     @Builder
     public Business(User manager, User supervisor) {
         this.manager = manager;
         this.supervisor = supervisor;
-        this.status = Status.NORMAL;
+        this.relationStatus = RelationStatus.ACCEPT;
     }
 }

@@ -9,7 +9,7 @@ import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.friend.domain.Friend;
-import umc.stockoneqback.friend.domain.FriendStatus;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.friend.exception.FriendErrorCode;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.GlobalErrorCode;
@@ -68,7 +68,7 @@ public class FriendProductServiceTest extends ServiceTest {
 
         User user = userRepository.findById(USER_ID).orElseThrow();
         User friend = userRepository.findById(FRIEND_ID).orElseThrow();
-        friendRepository.save(Friend.createFriend(user, friend, FriendStatus.ACCEPT));
+        friendRepository.save(Friend.createFriend(user, friend, RelationStatus.ACCEPT));
     }
 
     @Nested

@@ -349,7 +349,8 @@ public class BoardApiControllerTest extends ControllerTest {
                                             fieldWithPath("likes").type(JsonFieldType.NUMBER).description("상세조회한 좋아요수"),
                                             fieldWithPath("createdDate").type(JsonFieldType.STRING).description("상세조회한 등록일"),
                                             fieldWithPath("writerId").type(JsonFieldType.STRING).description("상세조회한 작성자Id"),
-                                            fieldWithPath("writerName").type(JsonFieldType.STRING).description("상세조회한 작성자이름")
+                                            fieldWithPath("writerName").type(JsonFieldType.STRING).description("상세조회한 작성자이름"),
+                                            fieldWithPath("alreadyLike").type(JsonFieldType.BOOLEAN).description("상세조회한 작성자의 게시글 좋아요 여부")
                                     )
                             )
                     );
@@ -364,7 +365,7 @@ public class BoardApiControllerTest extends ControllerTest {
     private BoardResponse loadBoardResponse() {
         return new BoardResponse(1L, BOARD_0.getTitle(), BOARD_0.getContent(), BOARD_0.getHit(), 0,
                 LocalDate.of(2023, 7, 22).atTime(1, 1) ,
-                SAEWOO.getLoginId(), SAEWOO.getName());
+                SAEWOO.getLoginId(), SAEWOO.getName(), false);
     }
 }
 

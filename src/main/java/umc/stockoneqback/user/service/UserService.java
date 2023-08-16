@@ -25,6 +25,7 @@ import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -126,6 +127,12 @@ public class UserService {
         }
         authService.logout(userId);
         userRepository.expireById(userId);
+    }
+
+    @Transactional
+    public void deleteExpiredUser() {
+        LocalDate overYear = LocalDate.now().minusYears(1);
+        userRepository.deleteModifiedOverYearAndExpireUser(overYear);
     }
 
     private void deleteInfoByManager(User manager) {

@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.friend.domain.Friend;
-import umc.stockoneqback.friend.domain.FriendStatus;
 import umc.stockoneqback.friend.exception.FriendErrorCode;
 import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.exception.UserErrorCode;
@@ -31,7 +31,7 @@ public class FriendService {
         validateManager(receiver);
         validateAlreadyFriend(sender, receiver);
 
-        return friendRepository.save(Friend.createFriend(sender, receiver, FriendStatus.REQUEST)).getId();
+        return friendRepository.save(Friend.createFriend(sender, receiver, RelationStatus.REQUEST)).getId();
     }
 
     private void validateSameUser(Long senderId, Long receiverId) {
@@ -77,7 +77,7 @@ public class FriendService {
     }
 
     private void validateAcceptStatus(Friend friend) {
-        if (friend.getFriendStatus().equals(FriendStatus.ACCEPT)) {
+        if (friend.getRelationStatus().equals(RelationStatus.ACCEPT)) {
             throw BaseException.type(FriendErrorCode.STATUS_IS_ACCEPT);
         }
     }
@@ -98,7 +98,7 @@ public class FriendService {
     }
 
     private void validateRequestStatus(Friend friend) {
-        if (friend.getFriendStatus().equals(FriendStatus.REQUEST)) {
+        if (friend.getRelationStatus().equals(RelationStatus.REQUEST)) {
             throw BaseException.type(FriendErrorCode.STATUS_IS_REQUEST);
         }
     }

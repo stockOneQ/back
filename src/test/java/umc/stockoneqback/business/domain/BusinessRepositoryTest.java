@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.RepositoryTest;
-import umc.stockoneqback.global.base.Status;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
 
@@ -59,7 +59,7 @@ class BusinessRepositoryTest extends RepositoryTest {
         assertAll(
                 () -> assertThat(findBusiness.getSupervisor()).isEqualTo(supervisor),
                 () -> assertThat(findBusiness.getManager()).isEqualTo(manager),
-                () -> assertThat(findBusiness.getStatus()).isEqualTo(Status.NORMAL)
+                () -> assertThat(findBusiness.getRelationStatus()).isEqualTo(RelationStatus.ACCEPT)
         );
     }
 
@@ -87,7 +87,7 @@ class BusinessRepositoryTest extends RepositoryTest {
                 () -> assertThat(businessList.size()).isEqualTo(1),
                 () -> assertThat(businessList.get(0).getSupervisor()).isEqualTo(supervisor),
                 () -> assertThat(businessList.get(0).getManager()).isEqualTo(manager),
-                () -> assertThat(businessList.get(0).getStatus()).isEqualTo(Status.NORMAL)
+                () -> assertThat(businessList.get(0).getRelationStatus()).isEqualTo(RelationStatus.ACCEPT)
         );
     }
 
@@ -102,7 +102,7 @@ class BusinessRepositoryTest extends RepositoryTest {
                 () -> assertThat(businessList.size()).isEqualTo(1),
                 () -> assertThat(businessList.get(0).getSupervisor()).isEqualTo(supervisor),
                 () -> assertThat(businessList.get(0).getManager()).isEqualTo(manager),
-                () -> assertThat(businessList.get(0).getStatus()).isEqualTo(Status.NORMAL)
+                () -> assertThat(businessList.get(0).getRelationStatus()).isEqualTo(RelationStatus.ACCEPT)
         );
     }
 

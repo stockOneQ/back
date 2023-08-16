@@ -4,8 +4,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.search.SearchType;
 import umc.stockoneqback.user.exception.UserErrorCode;
@@ -22,11 +22,11 @@ public class UserFindQueryRepositoryImpl implements UserFindQueryRepository {
     private final JPAQueryFactory query;
 
     @Override
-    public List<FindManager> findManagersBySearchType(SearchType searchType, String searchWord) {
+    public List<FindManager> findManagersBySearchType(Long userId, SearchType searchType, String searchWord) {
         return query
                 .selectDistinct(new QFindManager(user.id, user.name, user.managerStore.name, user.phoneNumber))
                 .from(user)
-                .where(search(searchType, searchWord), user.role.eq(Role.MANAGER), user.status.eq(Status.NORMAL))
+                .where(search(searchType, searchWord), user.role.eq(Role.MANAGER), user.status.eq(Status.NORMAL), user.id.ne(userId))
                 .orderBy(user.id.asc())
                 .fetch();
     }

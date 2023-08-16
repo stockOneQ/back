@@ -226,7 +226,7 @@ class UserFindApiControllerTest extends ControllerTest {
                                             fieldWithPath("searchedUser[].name").type(JsonFieldType.STRING).description("유저 이름"),
                                             fieldWithPath("searchedUser[].storeName").type(JsonFieldType.STRING).description("유저 가게 이름"),
                                             fieldWithPath("searchedUser[].phoneNumber").type(JsonFieldType.STRING).description("유저 연락처"),
-                                            fieldWithPath("searchedUser[].relationStatus").type(JsonFieldType.STRING).description("해당 유저와의 친구 상태(친구 수락/친구 요청/친구 아님)")
+                                            fieldWithPath("searchedUser[].relationStatus").type(JsonFieldType.STRING).description("해당 유저와의 친구 상태(수락/요청/무관)")
                                     )
                             )
                     );
@@ -424,7 +424,7 @@ class UserFindApiControllerTest extends ControllerTest {
                                             fieldWithPath("searchedUser[].name").type(JsonFieldType.STRING).description("유저 이름"),
                                             fieldWithPath("searchedUser[].storeName").type(JsonFieldType.STRING).description("유저 가게 이름"),
                                             fieldWithPath("searchedUser[].phoneNumber").type(JsonFieldType.STRING).description("유저 연락처"),
-                                            fieldWithPath("searchedUser[].relationStatus").type(JsonFieldType.STRING).description("해당 유저와의 비즈니스 상태(정상/소멸)")
+                                            fieldWithPath("searchedUser[].relationStatus").type(JsonFieldType.STRING).description("해당 유저와의 비즈니스 상태(수락/무관)")
                                     )
                             )
                     );
@@ -434,9 +434,9 @@ class UserFindApiControllerTest extends ControllerTest {
     private FindManagerResponse getFindFriendManagerResponse() {
         return new FindManagerResponse(
                 List.of(
-                        new FindManager(2L, "강동원", "스타벅스 강동역점", "01012345678", "친구 수락"),
-                        new FindManager(3L, "이동욱", "스타벅스 동대입구역점", "01098765432", "친구 요청"),
-                        new FindManager(5L, "신동엽", "스타벅스 동성로점", "01013572468", "친구 아님")
+                        new FindManager(2L, "강동원", "스타벅스 강동역점", "01012345678", "수락"),
+                        new FindManager(3L, "이동욱", "스타벅스 동대입구역점", "01098765432", "요청"),
+                        new FindManager(5L, "신동엽", "스타벅스 동성로점", "01013572468", "무관")
                 )
         );
     }
@@ -444,9 +444,9 @@ class UserFindApiControllerTest extends ControllerTest {
     private FindManagerResponse getFindBusinessManagerResponse() {
         return new FindManagerResponse(
                 List.of(
-                        new FindManager(2L, "강동원", "스타벅스 강동역점", "01012345678", "정상"),
-                        new FindManager(3L, "이동욱", "스타벅스 동대입구역점", "01098765432", "정상"),
-                        new FindManager(5L, "신동엽", "스타벅스 동성로점", "01013572468", "소멸")
+                        new FindManager(2L, "강동원", "스타벅스 강동역점", "01012345678", "수락"),
+                        new FindManager(3L, "이동욱", "스타벅스 동대입구역점", "01098765432", "수락"),
+                        new FindManager(5L, "신동엽", "스타벅스 동성로점", "01013572468", "무관")
                 )
         );
     }

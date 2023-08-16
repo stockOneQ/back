@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.friend.domain.Friend;
-import umc.stockoneqback.friend.domain.FriendStatus;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.friend.exception.FriendErrorCode;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.role.domain.company.Company;
@@ -101,7 +101,7 @@ class FriendServiceTest extends ServiceTest {
             assertAll(
                     () -> assertThat(findFriend.getSender()).isEqualTo(sender),
                     () -> assertThat(findFriend.getReceiver()).isEqualTo(receiver),
-                    () -> assertThat(findFriend.getFriendStatus()).isEqualTo(FriendStatus.REQUEST)
+                    () -> assertThat(findFriend.getRelationStatus()).isEqualTo(RelationStatus.REQUEST)
             );
         }
     }
@@ -192,7 +192,7 @@ class FriendServiceTest extends ServiceTest {
             assertAll(
                     () -> assertThat(findFriend.getSender()).isEqualTo(sender),
                     () -> assertThat(findFriend.getReceiver()).isEqualTo(receiver),
-                    () -> assertThat(findFriend.getFriendStatus()).isEqualTo(FriendStatus.ACCEPT)
+                    () -> assertThat(findFriend.getRelationStatus()).isEqualTo(RelationStatus.ACCEPT)
             );
         }
     }

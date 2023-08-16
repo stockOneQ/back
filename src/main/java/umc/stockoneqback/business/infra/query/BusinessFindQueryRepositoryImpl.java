@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.business.infra.query.dto.FilteredBusinessUser;
 import umc.stockoneqback.business.infra.query.dto.FindBusinessUser;
 import umc.stockoneqback.business.infra.query.dto.QFindBusinessUser;
-import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.role.domain.store.QPartTimer;
 
 import java.util.List;
@@ -26,16 +25,14 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
         List<FindBusinessUser> shareLists = query
                 .selectDistinct(new QFindBusinessUser(business.id, business.supervisor.id, business.supervisor.name))
                 .from(business)
-                .where(business.status.eq(Status.NORMAL),
-                        business.manager.id.eq(managerId))
+                .where(business.manager.id.eq(managerId))
                 .orderBy(business.id.asc())
                 .fetch();
 
         JPAQuery<Long> countQuery = query
                 .select(business.countDistinct())
                 .from(business)
-                .where(business.status.eq(Status.NORMAL),
-                        business.manager.id.eq(managerId))
+                .where(business.manager.id.eq(managerId))
                 ;
 
         return new FilteredBusinessUser<>(countQuery.fetchOne(), shareLists);
@@ -48,8 +45,7 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
                 .from(business)
                 .innerJoin(store).on(store.manager.id.eq(business.manager.id))
                 .innerJoin(partTimer).on(partTimer.store.id.eq(store.id))
-                .where(business.status.eq(Status.NORMAL),
-                        partTimer.partTimer.id.eq(partTimerId))
+                .where(partTimer.partTimer.id.eq(partTimerId))
                 .orderBy(business.id.asc())
                 .fetch();
 
@@ -58,8 +54,7 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
                 .from(business)
                 .innerJoin(store).on(store.manager.id.eq(business.manager.id))
                 .innerJoin(partTimer).on(partTimer.store.id.eq(store.id))
-                .where(business.status.eq(Status.NORMAL),
-                        partTimer.partTimer.id.eq(partTimerId))
+                .where(partTimer.partTimer.id.eq(partTimerId))
                 ;
 
         return new FilteredBusinessUser<>(countQuery.fetchOne(), shareLists);
@@ -70,16 +65,14 @@ public class BusinessFindQueryRepositoryImpl implements BusinessFindQueryReposit
         List<FindBusinessUser> shareLists = query
                 .selectDistinct(new QFindBusinessUser(business.id, business.manager.id, business.manager.name))
                 .from(business)
-                .where(business.status.eq(Status.NORMAL),
-                        business.supervisor.id.eq(supervisorId))
+                .where(business.supervisor.id.eq(supervisorId))
                 .orderBy(business.id.asc())
                 .fetch();
 
         JPAQuery<Long> countQuery = query
                 .select(business.countDistinct())
                 .from(business)
-                .where(business.status.eq(Status.NORMAL),
-                        business.supervisor.id.eq(supervisorId))
+                .where(business.supervisor.id.eq(supervisorId))
                 ;
 
         return new FilteredBusinessUser<>(countQuery.fetchOne(), shareLists);
