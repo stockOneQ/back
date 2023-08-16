@@ -50,10 +50,15 @@ class ShareListQueryRepositoryImplTest extends RepositoryTest {
         supervisor = userRepository.save(WIZ.toUser());
         business = businessRepository.save(new Business(manager, supervisor));
 
-        for (ShareFixture shareFixture : ShareFixture.values())
-            shareList.add(shareFixture.toShare(business));
-
-        shareRepository.saveAll(shareList);
+        for (ShareFixture shareFixture : ShareFixture.values()) {
+            try {
+                shareList.add(shareFixture.toShare(business));
+                shareRepository.save(shareFixture.toShare(business));
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Test
