@@ -14,7 +14,16 @@
 |냉동
 |상온
 |===
-=== 2. sort
+=== 2. search
+|===
+|입력값
+
+|전체
+|유통기한 경과
+|유통기한 임박
+|재고 부족
+|===
+=== 3. sort
 |===
 |입력값
 
@@ -276,201 +285,66 @@ include::{snippets}/ProductApi/GetTotal/Success/request-parameters.adoc[]
 include::{snippets}/ProductApi/GetTotal/Success/http-response.adoc[]
 include::{snippets}/ProductApi/GetTotal/Success/response-fields.adoc[]
 
-== 특정 정렬 기준을 만족하는 전체 제품 조회 (x.2.1)
-=== 1. 유효하지 않은 가게 ID를 입력받으면 특정 정렬 기준을 만족하는 전체 제품 조회에 실패한다
+== 특정 정렬 기준 및 탐색 조건을 만족하는 제품 리스트 조회 (x.2.1, x.2.3, x.2.4, x.2.5)
+=== 1. 유효하지 않은 가게 ID를 입력받으면 특정 정렬 기준 및 탐색 조건을 만족하는 제품 리스트 조회에 실패한다
 ==== HTTP Request
-include::{snippets}/ProductApi/GetAll/Failure/Case1/http-request.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case1/http-request.adoc[]
 Request Header
-include::{snippets}/ProductApi/GetAll/Failure/Case1/request-headers.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case1/request-headers.adoc[]
 Request Parameter
-include::{snippets}/ProductApi/GetAll/Failure/Case1/request-parameters.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case1/request-parameters.adoc[]
 
 ==== HTTP Response
-include::{snippets}/ProductApi/GetAll/Failure/Case1/http-response.adoc[]
-include::{snippets}/ProductApi/GetAll/Failure/Case1/response-fields.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case1/http-response.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case1/response-fields.adoc[]
 
-=== 2. 유효하지 않은 보관 방법을 입력받으면 특정 정렬 기준을 만족하는 전체 제품 조회에 실패한다
+=== 2. 유효하지 않은 보관 방법을 입력받으면 특정 정렬 기준 및 탐색 조건을 만족하는 제품 리스트 조회에 실패한다
 ==== HTTP Request
-include::{snippets}/ProductApi/GetAll/Failure/Case2/http-request.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case2/http-request.adoc[]
 Request Header
-include::{snippets}/ProductApi/GetAll/Failure/Case2/request-headers.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case2/request-headers.adoc[]
 Request Parameter
-include::{snippets}/ProductApi/GetAll/Failure/Case2/request-parameters.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case2/request-parameters.adoc[]
 
 ==== HTTP Response
-include::{snippets}/ProductApi/GetAll/Failure/Case2/http-response.adoc[]
-include::{snippets}/ProductApi/GetAll/Failure/Case2/response-fields.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case2/http-response.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case2/response-fields.adoc[]
 
-=== 3. 유효하지 않은 정렬 방식을 입력받으면 특정 정렬 기준을 만족하는 전체 제품 조회에 실패한다
+=== 3. 유효하지 않은 탐색 조건을 입력받으면 특정 정렬 기준 및 탐색 조건을 만족하는 제품 리스트 조회에 실패한다
 ==== HTTP Request
-include::{snippets}/ProductApi/GetAll/Failure/Case3/http-request.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case3/http-request.adoc[]
 Request Header
-include::{snippets}/ProductApi/GetAll/Failure/Case3/request-headers.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case3/request-headers.adoc[]
 Request Parameter
-include::{snippets}/ProductApi/GetAll/Failure/Case3/request-parameters.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case3/request-parameters.adoc[]
 
 ==== HTTP Response
-include::{snippets}/ProductApi/GetAll/Failure/Case3/http-response.adoc[]
-include::{snippets}/ProductApi/GetAll/Failure/Case3/response-fields.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case3/http-response.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case3/response-fields.adoc[]
 
-=== 4. 특정 정렬 기준을 만족하는 전체 제품 조회에 성공한다
+=== 4. 유효하지 않은 정렬 방식을 입력받으면 특정 정렬 기준 및 탐색 조건을 만족하는 제품 리스트 조회에 실패한다
 ==== HTTP Request
-include::{snippets}/ProductApi/GetAll/Success/http-request.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case4/http-request.adoc[]
 Request Header
-include::{snippets}/ProductApi/GetAll/Success/request-headers.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case4/request-headers.adoc[]
 Request Parameter
-include::{snippets}/ProductApi/GetAll/Success/request-parameters.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case4/request-parameters.adoc[]
 
 ==== HTTP Response
-include::{snippets}/ProductApi/GetAll/Success/http-response.adoc[]
-include::{snippets}/ProductApi/GetAll/Success/response-fields.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case4/http-response.adoc[]
+include::{snippets}/ProductApi/GetPage/Failure/Case4/response-fields.adoc[]
 
-== 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회 (x.2.3)
-=== 1. 유효하지 않은 가게 ID를 입력받으면 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 실패한다
+=== 5. 특정 정렬 기준 및 탐색 조건을 만족하는 제품 리스트 조회에 성공한다
 ==== HTTP Request
-include::{snippets}/ProductApi/GetPass/Failure/Case1/http-request.adoc[]
+include::{snippets}/ProductApi/GetPage/Success/http-request.adoc[]
 Request Header
-include::{snippets}/ProductApi/GetPass/Failure/Case1/request-headers.adoc[]
+include::{snippets}/ProductApi/GetPage/Success/request-headers.adoc[]
 Request Parameter
-include::{snippets}/ProductApi/GetPass/Failure/Case1/request-parameters.adoc[]
+include::{snippets}/ProductApi/GetPage/Success/request-parameters.adoc[]
 
 ==== HTTP Response
-include::{snippets}/ProductApi/GetPass/Failure/Case1/http-response.adoc[]
-include::{snippets}/ProductApi/GetPass/Failure/Case1/response-fields.adoc[]
-
-=== 2. 유효하지 않은 보관 방법을 입력받으면 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 실패한다
-==== HTTP Request
-include::{snippets}/ProductApi/GetPass/Failure/Case2/http-request.adoc[]
-Request Header
-include::{snippets}/ProductApi/GetPass/Failure/Case2/request-headers.adoc[]
-Request Parameter
-include::{snippets}/ProductApi/GetPass/Failure/Case2/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/ProductApi/GetPass/Failure/Case2/http-response.adoc[]
-include::{snippets}/ProductApi/GetPass/Failure/Case2/response-fields.adoc[]
-
-=== 3. 유효하지 않은 정렬 방식을 입력받으면 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 실패한다
-==== HTTP Request
-include::{snippets}/ProductApi/GetPass/Failure/Case3/http-request.adoc[]
-Request Header
-include::{snippets}/ProductApi/GetPass/Failure/Case3/request-headers.adoc[]
-Request Parameter
-include::{snippets}/ProductApi/GetPass/Failure/Case3/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/ProductApi/GetPass/Failure/Case3/http-response.adoc[]
-include::{snippets}/ProductApi/GetPass/Failure/Case3/response-fields.adoc[]
-
-=== 4. 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 성공한다
-==== HTTP Request
-include::{snippets}/ProductApi/GetPass/Success/http-request.adoc[]
-Request Header
-include::{snippets}/ProductApi/GetPass/Success/request-headers.adoc[]
-Request Parameter
-include::{snippets}/ProductApi/GetPass/Success/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/ProductApi/GetPass/Success/http-response.adoc[]
-include::{snippets}/ProductApi/GetPass/Success/response-fields.adoc[]
-
-== 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회 (x.2.4)
-=== 1. 유효하지 않은 가게 ID를 입력받으면 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 실패한다
-==== HTTP Request
-include::{snippets}/ProductApi/GetClose/Failure/Case1/http-request.adoc[]
-Request Header
-include::{snippets}/ProductApi/GetClose/Failure/Case1/request-headers.adoc[]
-Request Parameter
-include::{snippets}/ProductApi/GetClose/Failure/Case1/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/ProductApi/GetClose/Failure/Case1/http-response.adoc[]
-include::{snippets}/ProductApi/GetClose/Failure/Case1/response-fields.adoc[]
-
-=== 2. 유효하지 않은 보관 방법을 입력받으면 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 실패한다
-==== HTTP Request
-include::{snippets}/ProductApi/GetClose/Failure/Case2/http-request.adoc[]
-Request Header
-include::{snippets}/ProductApi/GetClose/Failure/Case2/request-headers.adoc[]
-Request Parameter
-include::{snippets}/ProductApi/GetClose/Failure/Case2/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/ProductApi/GetClose/Failure/Case2/http-response.adoc[]
-include::{snippets}/ProductApi/GetClose/Failure/Case2/response-fields.adoc[]
-
-=== 3. 유효하지 않은 정렬 방식을 입력받으면 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 실패한다
-==== HTTP Request
-include::{snippets}/ProductApi/GetClose/Failure/Case3/http-request.adoc[]
-Request Header
-include::{snippets}/ProductApi/GetClose/Failure/Case3/request-headers.adoc[]
-Request Parameter
-include::{snippets}/ProductApi/GetClose/Failure/Case3/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/ProductApi/GetClose/Failure/Case3/http-response.adoc[]
-include::{snippets}/ProductApi/GetClose/Failure/Case3/response-fields.adoc[]
-
-=== 4. 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 성공한다
-==== HTTP Request
-include::{snippets}/ProductApi/GetClose/Success/http-request.adoc[]
-Request Header
-include::{snippets}/ProductApi/GetClose/Success/request-headers.adoc[]
-Request Parameter
-include::{snippets}/ProductApi/GetClose/Success/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/ProductApi/GetClose/Success/http-response.adoc[]
-include::{snippets}/ProductApi/GetClose/Success/response-fields.adoc[]
-
-== 특정 정렬 기준을 만족하는 재고 부족 제품 조회 (x.2.5)
-=== 1. 유효하지 않은 가게 ID를 입력받으면 특정 정렬 기준을 만족하는 재고 부족 제품 조회에 실패한다
-==== HTTP Request
-include::{snippets}/ProductApi/GetLack/Failure/Case1/http-request.adoc[]
-Request Header
-include::{snippets}/ProductApi/GetLack/Failure/Case1/request-headers.adoc[]
-Request Parameter
-include::{snippets}/ProductApi/GetLack/Failure/Case1/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/ProductApi/GetLack/Failure/Case1/http-response.adoc[]
-include::{snippets}/ProductApi/GetLack/Failure/Case1/response-fields.adoc[]
-
-=== 2. 유효하지 않은 보관 방법을 입력받으면 특정 정렬 기준을 만족하는 재고 부족 제품 조회에 실패한다
-==== HTTP Request
-include::{snippets}/ProductApi/GetLack/Failure/Case2/http-request.adoc[]
-Request Header
-include::{snippets}/ProductApi/GetLack/Failure/Case2/request-headers.adoc[]
-Request Parameter
-include::{snippets}/ProductApi/GetLack/Failure/Case2/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/ProductApi/GetLack/Failure/Case2/http-response.adoc[]
-include::{snippets}/ProductApi/GetLack/Failure/Case2/response-fields.adoc[]
-
-=== 3. 유효하지 않은 정렬 방식을 입력받으면 특정 정렬 기준을 만족하는 재고 부족 제품 조회에 실패한다
-==== HTTP Request
-include::{snippets}/ProductApi/GetLack/Failure/Case3/http-request.adoc[]
-Request Header
-include::{snippets}/ProductApi/GetLack/Failure/Case3/request-headers.adoc[]
-Request Parameter
-include::{snippets}/ProductApi/GetLack/Failure/Case3/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/ProductApi/GetLack/Failure/Case3/http-response.adoc[]
-include::{snippets}/ProductApi/GetLack/Failure/Case3/response-fields.adoc[]
-
-=== 4. 특정 정렬 기준을 만족하는 재고 부족 제품 조회에 성공한다
-==== HTTP Request
-include::{snippets}/ProductApi/GetLack/Success/http-request.adoc[]
-Request Header
-include::{snippets}/ProductApi/GetLack/Success/request-headers.adoc[]
-Request Parameter
-include::{snippets}/ProductApi/GetLack/Success/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/ProductApi/GetLack/Success/http-response.adoc[]
-include::{snippets}/ProductApi/GetLack/Success/response-fields.adoc[]
+include::{snippets}/ProductApi/GetPage/Success/http-response.adoc[]
+include::{snippets}/ProductApi/GetPage/Success/response-fields.adoc[]
 
 == 현재 접속중인 사용자별 유통기한 경과 제품 목록 푸시 알림 (x.3)
 === 1. 현재 접속중인 사용자별 유통기한 경과 제품 목록 푸시 알림에 성공한다
