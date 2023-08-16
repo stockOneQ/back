@@ -7,7 +7,6 @@ import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
-import umc.stockoneqback.product.exception.ProductErrorCode;
 import umc.stockoneqback.product.service.ProductOthersService;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.StoreService;
@@ -48,26 +47,12 @@ public class BusinessProductService {
     }
 
     @Transactional
-    public List<SearchProductOthersResponse> getListOfCategoryProductOthers
-            (Long supervisorId, Long managerId, String storeConditionValue, Long productId, String category) throws IOException {
+    public List<SearchProductOthersResponse> getListOfSearchProductOthers
+            (Long supervisorId, Long managerId, String storeConditionValue, Long productId, String searchConditionValue) throws IOException {
         User supervisor = isSupervisor(supervisorId);
         User manager = checkRelation(supervisor, managerId);
         Store managerStore = storeService.findByUser(manager);
-        switch (category) {
-            case "All" -> {
-                return productOthersService.getListOfAllProductOthers(managerStore, storeConditionValue, productId);
-            }
-            case "Pass" -> {
-                return productOthersService.getListOfPassProductOthers(managerStore, storeConditionValue, productId);
-            }
-            case "Close" -> {
-                return productOthersService.getListOfCloseProductOthers(managerStore, storeConditionValue, productId);
-            }
-            case "Lack" -> {
-                return productOthersService.getListOfLackProductOthers(managerStore, storeConditionValue, productId);
-            }
-        }
-        throw BaseException.type(ProductErrorCode.NOT_FOUND_CATEGORY);
+        return productOthersService.getListOfSearchProductOthers(managerStore, storeConditionValue, searchConditionValue, productId);
     }
 
     User isSupervisor(Long userId) {
