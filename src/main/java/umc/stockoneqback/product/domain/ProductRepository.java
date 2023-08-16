@@ -3,6 +3,7 @@ package umc.stockoneqback.product.domain;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import umc.stockoneqback.product.infra.query.FindProductQueryRepository;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.domain.User;
 
@@ -10,13 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductRepository extends JpaRepository<Product, Long> {
-    @Query(value = "SELECT p.* FROM product p WHERE p.status = '정상' AND p.store = :store " +
-            "AND p.store_condition = :storeCondition AND p.name LIKE %:name% ORDER BY p.name", nativeQuery = true)
-    List<Product> findProductByName(@Param("store") Store store,
-                                    @Param("storeCondition") String storeCondition,
-                                    @Param("name") String productName);
-
+public interface ProductRepository extends JpaRepository<Product, Long>, FindProductQueryRepository {
     @Query(value = "SELECT p.* FROM product p WHERE p.status = '정상' AND p.store = :store " +
             "AND p.store_condition = :storeCondition AND p.name = :name", nativeQuery = true)
     Optional<Product> isExistProductByName(@Param("store") Store store,
