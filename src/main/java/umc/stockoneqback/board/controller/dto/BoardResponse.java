@@ -20,6 +20,8 @@ public record BoardResponse(
 
         String writerId,
 
-        String writerName
+        String writerName,
+
+        boolean alreadyLike
 ) {
 }

@@ -54,6 +54,7 @@ public class BoardService {
                 .createdDate(board.getCreatedDate())
                 .writerId(board.getWriter().getLoginId())
                 .writerName(board.getWriter().getName())
+                .alreadyLike(AlreadyBoardLike(userId, boardId))
                 .build();
     }
 
@@ -79,5 +80,12 @@ public class BoardService {
         else if (user.getRole() == Role.MANAGER) {
             return;
         }
+    }
+
+    private boolean AlreadyBoardLike(Long userId, Long boardId) {
+        if (boardLikeRepository.existsByUserIdAndBoardId(userId, boardId)) {
+            return true;
+        }
+        return false;
     }
 }

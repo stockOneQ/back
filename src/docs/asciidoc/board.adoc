@@ -57,6 +57,7 @@ include::{snippets}/BoardApi/Update/Success/http-response.adoc[]
 === 1. Authorization Header에 AccessToken이 없으면 게시글 좋아요 등록에 실패한다
 HTTP Request
 include::{snippets}/BoardApi/Like/Cancel/Failure/Case1/http-request.adoc[]
+include::{snippets}/BoardApi/Like/Cancel/Failure/Case1/path-parameters.adoc[]
 
 HTTP Response
 include::{snippets}/BoardApi/Like/Register/Failure/Case1/http-response.adoc[]
