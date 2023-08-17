@@ -14,6 +14,15 @@
 |냉동
 |상온
 |===
+=== 2. search
+|===
+|입력값
+
+|전체
+|유통기한 경과
+|유통기한 임박
+|재고 부족
+|===
 
 == 공통 예외
 === 1. 권한이 없는 사용자가 FriendProduct API를 호출한 경우 API 호출에 실패한다
@@ -114,54 +123,15 @@ include::{snippets}/FriendProductApi/GetTotal/Success/request-parameters.adoc[]
 include::{snippets}/FriendProductApi/GetTotal/Success/http-response.adoc[]
 include::{snippets}/FriendProductApi/GetTotal/Success/response-fields.adoc[]
 
-== 친구 가게의 특정 정렬 기준을 만족하는 전체 제품 조회 (6.6.4)
-=== 1. 친구 가게의 특정 정렬 기준을 만족하는 전체 제품 조회에 성공한다
+== 친구 가게의 특정 정렬 기준 및 탐색 조건을 만족하는 제품 리스트 조회 (6.6.4 ~ 6.6.7)
+=== 1. 친구 가게의 특정 정렬 기준 및 탐색 조건을 만족하는 제품 리스트 조회에 성공한다
 ==== HTTP Request
-include::{snippets}/FriendProductApi/GetAll/Success/http-request.adoc[]
+include::{snippets}/FriendProductApi/GetPage/Success/http-request.adoc[]
 Request Header
-include::{snippets}/FriendProductApi/GetAll/Success/request-headers.adoc[]
+include::{snippets}/FriendProductApi/GetPage/Success/request-headers.adoc[]
 Request Parameter
-include::{snippets}/FriendProductApi/GetAll/Success/request-parameters.adoc[]
+include::{snippets}/FriendProductApi/GetPage/Success/request-parameters.adoc[]
 
 ==== HTTP Response
-include::{snippets}/FriendProductApi/GetAll/Success/http-response.adoc[]
-include::{snippets}/FriendProductApi/GetAll/Success/response-fields.adoc[]
-
-== 친구 가게의 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회 (6.6.5)
-=== 1. 친구 가게의 특정 정렬 기준을 만족하는 유통기한 경과 제품 조회에 성공한다
-==== HTTP Request
-include::{snippets}/FriendProductApi/GetPass/Success/http-request.adoc[]
-Request Header
-include::{snippets}/FriendProductApi/GetPass/Success/request-headers.adoc[]
-Request Parameter
-include::{snippets}/FriendProductApi/GetPass/Success/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/FriendProductApi/GetPass/Success/http-response.adoc[]
-include::{snippets}/FriendProductApi/GetPass/Success/response-fields.adoc[]
-
-== 친구 가게의 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회 (6.6.6)
-=== 1. 친구 가게의 특정 정렬 기준을 만족하는 유통기한 임박 제품 조회에 성공한다
-==== HTTP Request
-include::{snippets}/FriendProductApi/GetClose/Success/http-request.adoc[]
-Request Header
-include::{snippets}/FriendProductApi/GetClose/Success/request-headers.adoc[]
-Request Parameter
-include::{snippets}/FriendProductApi/GetClose/Success/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/FriendProductApi/GetClose/Success/http-response.adoc[]
-include::{snippets}/FriendProductApi/GetClose/Success/response-fields.adoc[]
-
-== 친구 가게의 특정 정렬 기준을 만족하는 재고 부족 제품 조회 (6.6.7)
-=== 1. 친구 가게의 특정 정렬 기준을 만족하는 재고 부족 제품 조회에 성공한다
-==== HTTP Request
-include::{snippets}/FriendProductApi/GetLack/Success/http-request.adoc[]
-Request Header
-include::{snippets}/FriendProductApi/GetLack/Success/request-headers.adoc[]
-Request Parameter
-include::{snippets}/FriendProductApi/GetLack/Success/request-parameters.adoc[]
-
-==== HTTP Response
-include::{snippets}/FriendProductApi/GetLack/Success/http-response.adoc[]
-include::{snippets}/FriendProductApi/GetLack/Success/response-fields.adoc[]
+include::{snippets}/FriendProductApi/GetPage/Success/http-response.adoc[]
+include::{snippets}/FriendProductApi/GetPage/Success/response-fields.adoc[]

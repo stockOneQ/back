@@ -51,29 +51,15 @@ public class FriendProductService {
     }
 
     @Transactional
-    public List<SearchProductOthersResponse> getListOfCategoryProductOthers(Long userId,
+    public List<SearchProductOthersResponse> getListOfSearchProductOthers(Long userId,
                                                                             Long friendId,
                                                                             String storeConditionValue,
                                                                             Long productId,
-                                                                            String category) throws IOException {
+                                                                            String searchConditionValue) throws IOException {
         User manager = isManager(userId);
         User friend = checkRelation(manager, friendId);
         Store friendStore = storeService.findByUser(friend);
-        switch (category) {
-            case "All" -> {
-                return productOthersService.getListOfAllProductOthers(friendStore, storeConditionValue, productId);
-            }
-            case "Pass" -> {
-                return productOthersService.getListOfPassProductOthers(friendStore, storeConditionValue, productId);
-            }
-            case "Close" -> {
-                return productOthersService.getListOfCloseProductOthers(friendStore, storeConditionValue, productId);
-            }
-            case "Lack" -> {
-                return productOthersService.getListOfLackProductOthers(friendStore, storeConditionValue, productId);
-            }
-        }
-        throw BaseException.type(ProductErrorCode.NOT_FOUND_CATEGORY);
+        return productOthersService.getListOfSearchProductOthers(friendStore, storeConditionValue, searchConditionValue, productId);
     }
 
     User isManager(Long userId) {

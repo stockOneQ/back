@@ -10,15 +10,13 @@ import umc.stockoneqback.auth.service.TokenService;
 import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.GlobalErrorCode;
-import umc.stockoneqback.product.domain.Product;
-import umc.stockoneqback.product.domain.ProductRepository;
-import umc.stockoneqback.product.domain.SortCondition;
-import umc.stockoneqback.product.domain.StoreCondition;
+import umc.stockoneqback.product.domain.*;
 import umc.stockoneqback.product.dto.response.GetRequiredInfoResponse;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.LoadProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductResponse;
 import umc.stockoneqback.product.exception.ProductErrorCode;
+import umc.stockoneqback.product.infra.query.dto.FindProductPage;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.PartTimerService;
 import umc.stockoneqback.role.service.StoreService;
@@ -100,7 +98,7 @@ public class ProductService {
         Store store = storeService.findById(storeId);
         checkRequestIdHasRequestStore(userId, store);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
-        List<Product> searchProductUrlList = findProductAllByName(store, storeCondition, productName);
+        List<FindProductPage> searchProductUrlList = findProductAllByName(store, storeCondition, productName);
         return convertUrlToResponse(searchProductUrlList);
     }
 
@@ -130,93 +128,16 @@ public class ProductService {
     }
 
     @Transactional
-    public List<SearchProductResponse> getListOfAllProduct
-            (Long userId, Long storeId, String storeConditionValue, Long productId, String sortBy) throws IOException {
+    public List<SearchProductResponse> getListOfSearchProduct
+            (Long userId, Long storeId, String storeConditionValue, String searchConditionValue, Long productId, String sortConditionValue) throws IOException {
         Product product = configPaging(productId);
-        SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
+        SortCondition sortCondition = SortCondition.findSortConditionByValue(sortConditionValue);
         Store store = storeService.findById(storeId);
         checkRequestIdHasRequestStore(userId, store);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
-        List<Product> searchProductUrlList = new ArrayList<>();
-        switch (sortCondition) {
-            case NAME -> {
-                searchProductUrlList = productRepository.findPageOfAllOrderByName
-                        (store, storeCondition.getValue(), product.getName(), PAGE_SIZE);
-            }
-            case ORDER_FREQUENCY -> {
-                searchProductUrlList = productRepository.findPageOfAllOrderByOrderFreq
-                        (store, storeCondition.getValue(), product.getName(), product.getOrderFreq(), PAGE_SIZE);
-            }
-        }
-        return convertUrlToResponse(searchProductUrlList);
-    }
-
-    @Transactional
-    public List<SearchProductResponse> getListOfPassProduct
-            (Long userId, Long storeId, String storeConditionValue, Long productId, String sortBy) throws IOException {
-        Product product = configPaging(productId);
-        SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
-        Store store = storeService.findById(storeId);
-        checkRequestIdHasRequestStore(userId, store);
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
-        LocalDate currentDate = LocalDate.now();
-        List<Product> searchProductUrlList = new ArrayList<>();
-        switch (sortCondition) {
-            case NAME -> {
-                searchProductUrlList = productRepository.findPageOfPassOrderByName
-                        (store, storeCondition.getValue(), product.getName(), PAGE_SIZE, currentDate);
-            }
-            case ORDER_FREQUENCY -> {
-                searchProductUrlList = productRepository.findPageOfPassOrderByOrderFreq
-                        (store, storeCondition.getValue(), product.getName(), product.getOrderFreq(), PAGE_SIZE, currentDate);
-            }
-        }
-        return convertUrlToResponse(searchProductUrlList);
-    }
-
-    @Transactional
-    public List<SearchProductResponse> getListOfCloseProduct
-            (Long userId, Long storeId, String storeConditionValue, Long productId, String sortBy) throws IOException {
-        Product product = configPaging(productId);
-        SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
-        Store store = storeService.findById(storeId);
-        checkRequestIdHasRequestStore(userId, store);
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
-        LocalDate currentDate = LocalDate.now();
-        LocalDate standardDate = currentDate.plusDays(3);
-        List<Product> searchProductUrlList = new ArrayList<>();
-        switch (sortCondition) {
-            case NAME -> {
-                searchProductUrlList = productRepository.findPageOfCloseOrderByName
-                        (store, storeCondition.getValue(), product.getName(), PAGE_SIZE, currentDate, standardDate);
-            }
-            case ORDER_FREQUENCY -> {
-                searchProductUrlList = productRepository.findPageOfCloseOrderByOrderFreq
-                        (store, storeCondition.getValue(), product.getName(), product.getOrderFreq(), PAGE_SIZE, currentDate, standardDate);
-            }
-        }
-        return convertUrlToResponse(searchProductUrlList);
-    }
-
-    @Transactional
-    public List<SearchProductResponse> getListOfLackProduct
-            (Long userId, Long storeId, String storeConditionValue, Long productId, String sortBy) throws IOException {
-        Product product = configPaging(productId);
-        SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
-        Store store = storeService.findById(storeId);
-        checkRequestIdHasRequestStore(userId, store);
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
-        List<Product> searchProductUrlList = new ArrayList<>();
-        switch (sortCondition) {
-            case NAME -> {
-                searchProductUrlList = productRepository.findPageOfLackOrderByName
-                        (store, storeCondition.getValue(), product.getName(), PAGE_SIZE);
-            }
-            case ORDER_FREQUENCY -> {
-                searchProductUrlList = productRepository.findPageOfLackOrderByOrderFreq
-                        (store, storeCondition.getValue(), product.getName(), product.getOrderFreq(), PAGE_SIZE);
-            }
-        }
+        SearchCondition searchCondition = SearchCondition.findSearchConditionByValue(searchConditionValue);
+        List<FindProductPage> searchProductUrlList = productRepository.findPageOfSearchConditionOrderBySortCondition
+                (store, storeCondition, searchCondition, sortCondition, product.getName(), product.getOrderFreq(), PAGE_SIZE);
         return convertUrlToResponse(searchProductUrlList);
     }
 
@@ -250,8 +171,8 @@ public class ProductService {
             throw BaseException.type(ProductErrorCode.DUPLICATE_PRODUCT);
     }
 
-    List<Product> findProductAllByName(Store store, StoreCondition storeCondition, String productName) {
-        List<Product> searchProductUrlList = productRepository.findProductByName(store, storeCondition.getValue(), productName);
+    List<FindProductPage> findProductAllByName(Store store, StoreCondition storeCondition, String productName) {
+        List<FindProductPage> searchProductUrlList = productRepository.findProductByName(store, storeCondition, productName);
         if (searchProductUrlList.isEmpty())
             throw BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT);
         return searchProductUrlList;
@@ -278,14 +199,14 @@ public class ProductService {
     }
 
     Product configPaging(Long productId) {
-        if (productId == null)
+        if (productId == -1)
             return new Product();
         return findProductById(productId);
     }
 
-    private List<SearchProductResponse> convertUrlToResponse(List<Product> searchProductUrlList) throws IOException {
+    private List<SearchProductResponse> convertUrlToResponse(List<FindProductPage> searchProductUrlList) throws IOException {
         List<SearchProductResponse> searchProductResponseList = new ArrayList<>();
-        for (Product searchProductUrl : searchProductUrlList) {
+        for (FindProductPage searchProductUrl : searchProductUrlList) {
             byte[] image = getImageOrElseNull(searchProductUrl.getImageUrl());
             SearchProductResponse searchProductResponse = SearchProductResponse.builder()
                     .id(searchProductUrl.getId())

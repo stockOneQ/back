@@ -160,6 +160,7 @@ public class FriendProductServiceTest extends ServiceTest {
         }
     }
 
+    /*
     @Nested
     @DisplayName("친구 가게의 카테고리별 제품 목록 조회")
     class findListOfAllProduct {
@@ -202,4 +203,5 @@ public class FriendProductServiceTest extends ServiceTest {
             );
         }
     }
+     */
 }

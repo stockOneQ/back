@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.RepositoryTest;
 import umc.stockoneqback.fixture.ProductFixture;
+import umc.stockoneqback.product.infra.query.dto.FindProductPage;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.domain.store.StoreRepository;
 
@@ -36,7 +37,7 @@ public class ProductRepositoryTest extends RepositoryTest {
     @DisplayName("입력된 이름을 포함하는 모든 제품 목록을 반환한다")
     void findProductByName() {
         Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
-        List<Product> result = productRepository.findProductByName(zStore, StoreCondition.ROOM.getValue(), "리");
+        List<FindProductPage> result = productRepository.findProductByName(zStore, StoreCondition.ROOM, "리");
 
         assertAll(
                 () -> assertThat(result.get(0).getName()).isEqualTo("두리안"),
