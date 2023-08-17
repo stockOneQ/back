@@ -37,4 +37,11 @@ public class BoardApiController {
                                                    @PathVariable Long boardId) throws IOException {
         return ResponseEntity.ok(boardService.loadBoard(userId, boardId));
     }
+
+    @PutMapping("/{boardId}/hit")
+    public ResponseEntity<Void> updateHit(@ExtractPayload Long userId,
+                                          @PathVariable Long boardId){
+        boardService.updateHit(userId, boardId);
+        return ResponseEntity.ok().build();
+    }
 }
