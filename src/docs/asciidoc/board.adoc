@@ -14,7 +14,7 @@ HTTP Response
 include::{snippets}/BoardApi/Create/Failure/Case1/http-response.adoc[]
 include::{snippets}/BoardApi/Create/Failure/Case1/response-fields.adoc[]
 
-==== 2. 게시글 등록에 성공한다
+=== 2. 게시글 등록에 성공한다
 HTTP Request
 include::{snippets}/BoardApi/Create/Success/http-request.adoc[]
 include::{snippets}/BoardApi/Create/Success/request-headers.adoc[]
@@ -51,8 +51,8 @@ HTTP Response
 include::{snippets}/BoardApi/Update/Success/http-response.adoc[]
 
 
-= Board Like 등록 / 취소 API
 
+= Board Like 등록 / 취소 API
 == 게시글 좋아요 등록
 === 1. Authorization Header에 AccessToken이 없으면 게시글 좋아요 등록에 실패한다
 HTTP Request
@@ -83,9 +83,7 @@ HTTP Response
 include::{snippets}/BoardApi/Like/Register/Failure/Case3/http-response.adoc[]
 include::{snippets}/BoardApi/Like/Register/Failure/Case3/response-fields.adoc[]
 
-
-
-==== 4. 게시글 좋아요 등록에 성공한다
+=== 4. 게시글 좋아요 등록에 성공한다
 HTTP Request
 include::{snippets}/BoardApi/Like/Register/Success/http-request.adoc[]
 include::{snippets}/BoardApi/Like/Register/Success/request-headers.adoc[]
@@ -93,6 +91,7 @@ include::{snippets}/BoardApi/Like/Register/Success/path-parameters.adoc[]
 
 HTTP Response
 include::{snippets}/BoardApi/Like/Register/Success/http-response.adoc[]
+
 
 == 게시글 좋아요 취소
 === 1. Authorization Header에 AccessToken이 없으면 게시글 좋아요 취소에 실패한다
@@ -122,6 +121,9 @@ include::{snippets}/BoardApi/Like/Register/Failure/Case3/path-parameters.adoc[]
 HTTP Response
 include::{snippets}/BoardApi/Like/Cancel/Success/http-response.adoc[]
 
+
+
+
 = Board 상세조회 API
 
 == 게시글 상세조회
@@ -135,7 +137,7 @@ HTTP Response
 include::{snippets}/BoardApi/Detail/Failure/Case1/http-response.adoc[]
 include::{snippets}/BoardApi/Detail/Failure/Case1/response-fields.adoc[]
 
-==== 2. 게시글 상세조회에 성공한다
+=== 2. 게시글 상세조회에 성공한다
 HTTP Request
 include::{snippets}/BoardApi/Detail/Success/http-request.adoc[]
 include::{snippets}/BoardApi/Detail/Success/request-headers.adoc[]
@@ -144,4 +146,29 @@ include::{snippets}/BoardApi/Detail/Failure/Case1/path-parameters.adoc[]
 HTTP Response
 include::{snippets}/BoardApi/Detail/Success/http-response.adoc[]
 include::{snippets}/BoardApi/Detail/Success/response-fields.adoc[]
+
+
+
+
+= Board 조회수 증가 API
+
+== 게시글 조회수 증가
+=== 1. 유효하지 않은 권한으로 게시글 조회수 증가 시 실패한다
+HTTP Request
+include::{snippets}/BoardApi/Update/Hit/Failure/Case1/http-request.adoc[]
+include::{snippets}/BoardApi/Update/Hit/Failure/Case1/request-headers.adoc[]
+include::{snippets}/BoardApi/Update/Hit/Failure/Case1/path-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/BoardApi/Update/Hit/Failure/Case1/http-response.adoc[]
+include::{snippets}/BoardApi/Update/Hit/Failure/Case1/response-fields.adoc[]
+
+=== 2. 게시글 조회수 증가에 성공한다
+HTTP Request
+include::{snippets}/BoardApi/Update/Hit/Success/http-request.adoc[]
+include::{snippets}/BoardApi/Update/Hit/Success/request-headers.adoc[]
+include::{snippets}/BoardApi/Update/Hit/Success/path-parameters.adoc[]
+
+HTTP Response
+include::{snippets}/BoardApi/Update/Hit/Success/http-response.adoc[]
 
