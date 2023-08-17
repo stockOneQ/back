@@ -44,7 +44,6 @@ public class BoardService {
     public BoardResponse loadBoard(Long userId, Long boardId) {
         Board board = boardFindService.findById(boardId);
         validateUser(userId);
-        board.updateHit();
         return BoardResponse.builder()
                 .id(board.getId())
                 .title(board.getTitle())
@@ -56,6 +55,13 @@ public class BoardService {
                 .writerName(board.getWriter().getName())
                 .alreadyLike(AlreadyBoardLike(userId, boardId))
                 .build();
+    }
+
+    @Transactional
+    public void updateHit(Long userId, Long boardId) {
+        Board board = boardFindService.findById(boardId);
+        validateUser(userId);
+        board.updateHit();
     }
 
     @Transactional

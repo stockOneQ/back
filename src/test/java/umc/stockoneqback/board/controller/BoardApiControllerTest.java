@@ -356,6 +356,95 @@ public class BoardApiControllerTest extends ControllerTest {
                     );
 
         }
+
+        @Nested
+        @DisplayName("게시글 조회수 증가 API [PUT /api/boards/{boardId}/hit]")
+        class updateHit {
+            private static final String BASE_URL = "/api/boards/{boardId}/hit";
+            private static final Long USER_ID = 1L;
+            private static final Long BOARD_ID = 2L;
+
+            @Test
+            @DisplayName("유효하지 않은 권한으로 게시글 조회수 증가 시 실패한다")
+            void throwExceptionInvalid_User_JWT() throws Exception {
+                // given
+                doThrow(BaseException.type(GlobalErrorCode.INVALID_USER_JWT))
+                        .when(boardService)
+                        .updateHit(anyLong(), anyLong());
+
+                // when
+                MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                        .put(BASE_URL, BOARD_ID)
+                        .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
+
+
+                // then
+                final GlobalErrorCode expectedError = GlobalErrorCode.INVALID_USER_JWT;
+                mockMvc.perform(requestBuilder)
+                        .andExpectAll(
+                                status().isForbidden(),
+                                jsonPath("$.status").exists(),
+                                jsonPath("$.status").value(expectedError.getStatus().value()),
+                                jsonPath("$.errorCode").exists(),
+                                jsonPath("$.errorCode").value(expectedError.getErrorCode()),
+                                jsonPath("$.message").exists(),
+                                jsonPath("$.message").value(expectedError.getMessage())
+                        )
+                        .andDo(
+                                document(
+                                        "BoardApi/Update/Hit/Failure/Case1",
+                                        preprocessRequest(prettyPrint()),
+                                        preprocessResponse(prettyPrint()),
+                                        requestHeaders(
+                                                headerWithName(AUTHORIZATION).description("Access Token")
+                                        ),
+                                        pathParameters(
+                                                parameterWithName("boardId").description("조회수를 증가할 게시글 ID")
+                                        ),
+                                        responseFields(
+                                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                                fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
+                                                fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
+                                        )
+                                )
+                        );
+            }
+
+            @Test
+            @DisplayName("게시글조회수 증가에 성공한다")
+            void success() throws Exception {
+                // given
+                given(jwtTokenProvider.isTokenValid(anyString())).willReturn(true);
+                given(jwtTokenProvider.getId(anyString())).willReturn(USER_ID);
+                doNothing()
+                        .when(boardService)
+                        .updateHit(anyLong(), anyLong());
+
+                // when
+                MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                        .put(BASE_URL, BOARD_ID)
+                        .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
+
+                // then
+                mockMvc.perform(requestBuilder)
+                        .andExpectAll(
+                                status().isOk()
+                        )
+                        .andDo(
+                                document(
+                                        "BoardApi/Update/Hit/Success",
+                                        preprocessRequest(prettyPrint()),
+                                        preprocessResponse(prettyPrint()),
+                                        requestHeaders(
+                                                headerWithName(AUTHORIZATION).description("Access Token")
+                                        ),
+                                        pathParameters(
+                                                parameterWithName("boardId").description("조회수를 증가할 게시글 ID(PK)")
+                                        )
+                                )
+                        );
+            }
+        }
     }
 
     private BoardRequest createBoardRequest() {

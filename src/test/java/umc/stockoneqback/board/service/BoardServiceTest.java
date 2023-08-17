@@ -138,9 +138,35 @@ public class BoardServiceTest extends ServiceTest {
             assertAll(
                     () -> assertThat(findBoard.getTitle()).isEqualTo("제목0"),
                     () -> assertThat(findBoard.getContent()).isEqualTo("내용0"),
-                    () -> assertThat(findBoard.getHit()).isEqualTo(1),
+                    () -> assertThat(findBoard.getHit()).isEqualTo(0),
                     () -> assertThat(findBoard.getModifiedDate().format(formatter)).isEqualTo(LocalDateTime.now().format(formatter))
             );
+        }
+    }
+
+    @Nested
+    @DisplayName("게시글 조회수 증가")
+    class updateView {
+        @Test
+        @DisplayName("유효하지 않은 권한으로 게시글 조회수 증가 시 실패한다.")
+        void throwExceptionByInvalid_User_JWT() {
+            // when - then
+            assertThatThrownBy(() -> boardService.updateHit(invalid_writer.getId(),board.getId()))
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(GlobalErrorCode.INVALID_USER_JWT.getMessage());
+        }
+
+        @Test
+        @DisplayName("게시글 조회수 증가에 성공한다")
+        void success() {
+            // given
+            boardService.updateHit(writer.getId(), board.getId());
+
+            // when
+            Board findBoard = boardFindService.findById(board.getId());
+
+            // then
+            assertThat(findBoard.getHit()).isEqualTo(1);
         }
     }
 }
