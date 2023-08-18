@@ -7,8 +7,7 @@ import umc.stockoneqback.global.base.BaseException;
 import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
-import umc.stockoneqback.product.exception.ProductErrorCode;
-import umc.stockoneqback.product.service.ProductOthersService;
+import umc.stockoneqback.product.service.ProductFindOthersService;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.domain.Role;
@@ -26,7 +25,7 @@ import java.util.List;
 public class FriendProductService {
     private final UserFindService userFindService;
     private final StoreService storeService;
-    private final ProductOthersService productOthersService;
+    private final ProductFindOthersService productFindOthersService;
     private final FriendService friendService;
 
     @Transactional
@@ -37,7 +36,7 @@ public class FriendProductService {
         User manager = isManager(userId);
         User friend = checkRelation(manager, friendId);
         Store friendStore = storeService.findByUser(friend);
-        return productOthersService.searchProductOthers(friendStore, storeConditionValue, productName);
+        return productFindOthersService.searchProductOthers(friendStore, storeConditionValue, productName);
     }
 
     @Transactional
@@ -47,7 +46,7 @@ public class FriendProductService {
         User manager = isManager(userId);
         User friend = checkRelation(manager, friendId);
         Store friendStore = storeService.findByUser(friend);
-        return productOthersService.getTotalProductOthers(friendStore, storeConditionValue);
+        return productFindOthersService.getTotalProductOthers(friendStore, storeConditionValue);
     }
 
     @Transactional
@@ -59,7 +58,7 @@ public class FriendProductService {
         User manager = isManager(userId);
         User friend = checkRelation(manager, friendId);
         Store friendStore = storeService.findByUser(friend);
-        return productOthersService.getListOfSearchProductOthers(friendStore, storeConditionValue, searchConditionValue, productId);
+        return productFindOthersService.getListOfSearchProductOthers(friendStore, storeConditionValue, searchConditionValue, productId);
     }
 
     User isManager(Long userId) {

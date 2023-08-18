@@ -29,8 +29,6 @@ import static umc.stockoneqback.product.domain.QProduct.product;
 public class FindProductQueryRepositoryImpl implements FindProductQueryRepository {
     private final JPAQueryFactory query;
 
-    /*"SELECT p.* FROM product p WHERE p.status = '정상' AND p.store = :store " +
-            "AND p.store_condition = :storeCondition AND p.name LIKE %:name% ORDER BY p.name"*/
     @Override
     public List<FindProductPage> findProductByName(Store store, StoreCondition storeCondition, String productName) {
         return query.selectDistinct(new QFindProductPage(product.id, product.name, product.imageUrl, product.stockQuant))

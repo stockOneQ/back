@@ -10,14 +10,13 @@ import umc.stockoneqback.product.infra.query.dto.FindProductPage;
 import umc.stockoneqback.role.domain.store.Store;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class ProductOthersService {
+public class ProductFindOthersService {
     private final ProductRepository productRepository;
     private final ProductService productService;
     private static final Integer PAGE_SIZE = 9;

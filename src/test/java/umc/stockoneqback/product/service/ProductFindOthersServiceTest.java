@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
 import static umc.stockoneqback.fixture.UserFixture.ANNE;
 
-@DisplayName("Product [Service Layer] -> ProductOthersService 테스트")
-public class ProductOthersServiceTest extends ServiceTest {
+@DisplayName("Product [Service Layer] -> ProductFindOthersService 테스트")
+public class ProductFindOthersServiceTest extends ServiceTest {
     @Autowired
-    private ProductOthersService productOthersService;
+    private ProductFindOthersService productFindOthersService;
 
     @Autowired
     private UserService userService;
@@ -58,7 +58,7 @@ public class ProductOthersServiceTest extends ServiceTest {
             String errorStoreCondition = "조회수";
 
             assertThrows(NullPointerException.class, () -> {
-                productOthersService.getTotalProductOthers(zStore, errorStoreCondition);
+                productFindOthersService.getTotalProductOthers(zStore, errorStoreCondition);
             });
         }
     }
@@ -71,7 +71,7 @@ public class ProductOthersServiceTest extends ServiceTest {
         void success() throws IOException {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             List<SearchProductOthersResponse> searchProductOthersResponseList =
-                    productOthersService.searchProductOthers(zStore, products[0].getStoreCondition().getValue(), products[0].getName());
+                    productFindOthersService.searchProductOthers(zStore, products[0].getStoreCondition().getValue(), products[0].getName());
 
             assertAll(
                     () -> assertThat(searchProductOthersResponseList.get(0).id()).isEqualTo(products[0].getId()),
@@ -89,7 +89,7 @@ public class ProductOthersServiceTest extends ServiceTest {
         void success() {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             List<GetTotalProductResponse> getTotalProductResponseList =
-                    productOthersService.getTotalProductOthers(zStore, products[0].getStoreCondition().getValue());
+                    productFindOthersService.getTotalProductOthers(zStore, products[0].getStoreCondition().getValue());
 
             assertAll(
                     () -> assertThat(getTotalProductResponseList.get(0).name()).isEqualTo("Total"),
@@ -112,7 +112,7 @@ public class ProductOthersServiceTest extends ServiceTest {
         @DisplayName("전체 제품 목록 조회에 성공한다")
         void success() throws IOException {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
-            List<SearchProductOthersResponse> productOthersResponseList = productOthersService.getListOfAllProductOthers
+            List<SearchProductOthersResponse> productOthersResponseList = productFindOthersService.getListOfAllProductOthers
                     (zStore, products[0].getStoreCondition().getValue(), null);
 
             assertAll(
@@ -131,7 +131,7 @@ public class ProductOthersServiceTest extends ServiceTest {
         @DisplayName("유통기한이 경과한 제품 목록 조회에 성공한다")
         void success() throws IOException {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
-            List<SearchProductOthersResponse> productOthersResponseList = productOthersService.getListOfPassProductOthers
+            List<SearchProductOthersResponse> productOthersResponseList = productFindOthersService.getListOfPassProductOthers
                     (zStore, products[0].getStoreCondition().getValue(), null);
 
             assertAll(
@@ -149,7 +149,7 @@ public class ProductOthersServiceTest extends ServiceTest {
         @DisplayName("유통기한이 임박한 제품 목록 조회에 성공한다")
         void success() throws IOException {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
-            List<SearchProductOthersResponse> productOthersResponseList = productOthersService.getListOfCloseProductOthers
+            List<SearchProductOthersResponse> productOthersResponseList = productFindOthersService.getListOfCloseProductOthers
                     (zStore, products[0].getStoreCondition().getValue(), null);
 
             assertAll(
@@ -168,7 +168,7 @@ public class ProductOthersServiceTest extends ServiceTest {
         @DisplayName("재고가 부족한 제품 목록 조회에 성공한다")
         void success() throws IOException {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
-            List<SearchProductOthersResponse> productOthersResponseList = productOthersService.getListOfLackProductOthers
+            List<SearchProductOthersResponse> productOthersResponseList = productFindOthersService.getListOfLackProductOthers
                     (zStore, products[0].getStoreCondition().getValue(), null);
 
             assertAll(
