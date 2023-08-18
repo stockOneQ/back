@@ -33,6 +33,7 @@ public class AuthService {
         return new LoginResponse(
                 user.getId(),
                 user.getLoginId(),
+                user.getName(),
                 accessToken,
                 refreshToken
         );
