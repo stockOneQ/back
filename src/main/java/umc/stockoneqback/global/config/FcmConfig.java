@@ -16,37 +16,37 @@ import java.util.List;
 
 @Configuration
 public class FcmConfig {
-    @Value("${TYPE}")
+    @Value("${firebase.type}")
     private String type;
-    @Value("${PROJECT_ID}")
+    @Value("${firebase.project_id}")
     private String projectId;
-    @Value("${PRIVATE_KEY_ID}")
+    @Value("${firebase.private_key_id}")
     private String privateKeyId;
-    @Value("${PRIVATE_KEY}")
+    @Value("${firebase.private_key}")
     private String privateKey;
-    @Value("${CLIENT_EMAIL}")
+    @Value("${firebase.client_email}")
     private String clientEmail;
-    @Value("${CLIENT_ID}")
+    @Value("${firebase.client_id}")
     private String clientId;
-    @Value("${AUTH_URI}")
+    @Value("${firebase.auth_uri}")
     private String authUri;
-    @Value("${TOKEN_URI}")
+    @Value("${firebase.token_uri}")
     private String tokenUri;
-    @Value("${AUTH_PROVIDER_X509_CERT_URL}")
+    @Value("${firebase.auth_provider_x509_cert_url}")
     private String authProviderCertUrl;
-    @Value("${CLIENT_X509_CERT_URL}")
+    @Value("${firebase.client_x509_cert_url}")
     private String clientCertUrl;
-    @Value("${UNIVERSE_DOMAIN}")
+    @Value("${firebase.universe_domain}")
     private String universeDomain;
-
-    private final List<String> keys = List.of("type", "project_id", "private_key_id", "private_key",
-            "client_email", "client_id", "auth_uri", "token_uri", "auth_provider_x509_cert_url", "client_x509_cert_url", "universe_domain");
-    private final List<String> values = List.of(type, projectId, privateKeyId, privateKey, clientEmail, clientId, authUri,
-            tokenUri, authProviderCertUrl, clientCertUrl, universeDomain);
 
     @Bean
     public FirebaseMessaging initialize() throws IOException {
-        InputStream refreshToken = convertYmlToJson();
+        final List<String> keys = List.of("type", "project_id", "private_key_id", "private_key",
+                "client_email", "client_id", "auth_uri", "token_uri", "auth_provider_x509_cert_url", "client_x509_cert_url", "universe_domain");
+        final List<String> values = List.of(type, projectId, privateKeyId, privateKey, clientEmail, clientId, authUri,
+                tokenUri, authProviderCertUrl, clientCertUrl, universeDomain);
+
+        InputStream refreshToken = convertYmlToJson(keys, values);
 
         FirebaseApp firebaseApp = null;
         List<FirebaseApp> firebaseAppList = FirebaseApp.getApps();
@@ -69,7 +69,7 @@ public class FcmConfig {
         return FirebaseMessaging.getInstance(firebaseApp);
     }
 
-    private InputStream convertYmlToJson() {
+    private InputStream convertYmlToJson(List<String> keys, List<String> values) {
         JsonObject jsonConfig = new JsonObject();
         for (int i = 0; i < keys.size(); i++)
             jsonConfig.addProperty(keys.get(i), values.get(i));
