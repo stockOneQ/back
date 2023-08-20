@@ -8,11 +8,16 @@ import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 public class FcmConfig {
@@ -73,6 +78,7 @@ public class FcmConfig {
         JsonObject jsonConfig = new JsonObject();
         for (int i = 0; i < keys.size(); i++)
             jsonConfig.addProperty(keys.get(i), values.get(i));
+
         return new ByteArrayInputStream(jsonConfig.toString().getBytes());
     }
 }
