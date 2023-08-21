@@ -41,8 +41,6 @@ public class FcmConfig {
 
     @Bean
     public FirebaseMessaging initialize() throws IOException {
-        privateKey = "-----BEGIN PRIVATE KEY-----\n" + privateKey + "-----END PRIVATE KEY-----\n";
-
         final List<String> keys = List.of("type", "project_id", "private_key_id", "private_key",
                 "client_email", "client_id", "auth_uri", "token_uri", "auth_provider_x509_cert_url", "client_x509_cert_url", "universe_domain");
         final List<String> values = List.of(type, projectId, privateKeyId, privateKey.replace("\\n", "\n"), clientEmail, clientId, authUri,

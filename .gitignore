@@ -41,3 +41,4 @@ out/
 src/main/resources/secret.yml
 src/test/resources/secret.yml
 src/main/resources/firebase/*.yml
+.env

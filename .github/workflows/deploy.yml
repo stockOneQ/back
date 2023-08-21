@@ -1,32 +1,8 @@
-name: Github Actions Workflow
+name: Github Actions Workflow - StockOneQ Back
 
 on:
   push:
     branches: [ feature/#117 ]
-
-env:
-  CODE_DEPLOY_APPLICATION_NAME: stockoneq-codedeploy
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: stockoneq-codedeploy-group
-  RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
-  RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
-  S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-  S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
-  S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-  JWT_SECRET: ${{ secrets.JWT_SECRET }}
-  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-  PUBLIC_IP: ${{ secrets.PUBLIC_IP }}
-  TYPE: ${{ secrets.TYPE }}
-  PROJECT_ID: ${{ secrets.PROJECT_ID }}
-  PRIVATE_KEY_ID: ${{ secrets.PRIVATE_KEY_ID }}
-  PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-  CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
-  CLIENT_ID: ${{ secrets.CLIENT_ID }}
-  AUTH_URI: ${{ secrets.AUTH_URI }}
-  TOKEN_URI: ${{ secrets.TOKEN_URI }}
-  AUTH_PROVIDER_X509_CERT_URL: ${{ secrets.AUTH_PROVIDER_X509_CERT_URL }}
-  CLIENT_X509_CERT_URL: ${{ secrets.CLIENT_X509_CERT_URL }}
-  UNIVERSE_DOMAIN: ${{ secrets.UNIVERSE_DOMAIN }}
 
 jobs:
   build:
@@ -45,9 +21,6 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
 
-#      - name: Build with Gradle
-#        run: ./gradlew clean build
-#        shell: bash
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
@@ -82,7 +55,7 @@ jobs:
         run: |
           aws deploy create-deployment \
           --deployment-config-name CodeDeployDefault.AllAtOnce \
-          --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-          --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+          --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
+          --deployment-group-name ${{ secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
           --file-exists-behavior OVERWRITE \
           --s3-location bucket=stockoneq-back-jar-2,bundleType=zip,key=$GITHUB_SHA.zip
