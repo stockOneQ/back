@@ -18,8 +18,8 @@ public class BusinessListService {
     private static final int SUPERVISOR_PAGE_SIZE = 8;
     private static final int MANAGER_PAGE_SIZE = 7;
 
-    public BusinessListResponse getSupervisors(Long userId, Long lastUserId) {
-        List<BusinessList> supervisors = businessRepository.findSupervisorByManagerIdAndRelationStatus(userId, RelationStatus.ACCEPT);
+    public BusinessListResponse getSupervisors(Long userId, Long lastUserId, String search) {
+        List<BusinessList> supervisors = businessRepository.findSupervisorByManagerIdAndRelationStatus(userId, RelationStatus.ACCEPT, search);
 
         int lastIndex = getLastIndex(supervisors, lastUserId);
         return configPaging(supervisors, lastIndex, SUPERVISOR_PAGE_SIZE);

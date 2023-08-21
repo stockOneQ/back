@@ -1,5 +1,6 @@
 package umc.stockoneqback.business.infra.query;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,7 @@ public class BusinessListQueryRepositoryImpl implements BusinessListQueryReposit
     private final JPAQueryFactory query;
 
     @Override
-    public List<BusinessList> findSupervisorByManagerIdAndRelationStatus(Long managerId, RelationStatus relationStatus) {
+    public List<BusinessList> findSupervisorByManagerIdAndRelationStatus(Long managerId, RelationStatus relationStatus, String search) {
         return query
                 .selectDistinct(new QBusinessList(
                         business.supervisor.id,
@@ -29,7 +30,7 @@ public class BusinessListQueryRepositoryImpl implements BusinessListQueryReposit
                         business.modifiedDate))
                 .from(business)
                 .innerJoin(user).on(business.supervisor.id.eq(user.id))
-                .where(business.manager.id.eq(managerId), business.relationStatus.eq(relationStatus))
+                .where(business.manager.id.eq(managerId), business.relationStatus.eq(relationStatus), searchSupervisor(search))
                 .orderBy(business.modifiedDate.desc())
                 .fetch();
     }
@@ -49,5 +50,13 @@ public class BusinessListQueryRepositoryImpl implements BusinessListQueryReposit
                 .where(business.supervisor.id.eq(supervisorId), business.relationStatus.eq(relationStatus))
                 .orderBy(business.modifiedDate.desc())
                 .fetch();
+    }
+
+    private BooleanExpression searchSupervisor(String searchWord) {
+        if (searchWord == null || searchWord.isEmpty()) {
+            return null;
+        } else {
+            return business.supervisor.name.contains(searchWord);
+        }
     }
 }

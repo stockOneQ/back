@@ -18,8 +18,9 @@ public class BusinessListApiController {
 
     @GetMapping("/supervisors")
     public ResponseEntity<BusinessListResponse> getSupervisors(@ExtractPayload Long userId,
-                                                               @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastUserId) {
-        BusinessListResponse response = businessListService.getSupervisors(userId, lastUserId);
+                                                               @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastUserId,
+                                                               @RequestParam(value = "search", required = false, defaultValue = "") String search) {
+        BusinessListResponse response = businessListService.getSupervisors(userId, lastUserId, search);
         return ResponseEntity.ok(response);
     }
 
