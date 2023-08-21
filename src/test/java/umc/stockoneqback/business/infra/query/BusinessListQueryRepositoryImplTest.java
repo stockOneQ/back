@@ -1,26 +1,38 @@
-package umc.stockoneqback.business.service;
+package umc.stockoneqback.business.infra.query;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.business.domain.Business;
+import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.business.infra.query.dto.BusinessList;
-import umc.stockoneqback.business.service.dto.BusinessListResponse;
-import umc.stockoneqback.common.ServiceTest;
+import umc.stockoneqback.common.RepositoryTest;
+import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.role.domain.company.Company;
+import umc.stockoneqback.role.domain.company.CompanyRepository;
 import umc.stockoneqback.role.domain.store.Store;
+import umc.stockoneqback.role.domain.store.StoreRepository;
 import umc.stockoneqback.user.domain.User;
+import umc.stockoneqback.user.domain.UserRepository;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.StoreFixture.*;
 import static umc.stockoneqback.fixture.UserFixture.*;
 
-@DisplayName("Business [Service Layer] -> BusinessListService 테스트")
-class BusinessListServiceTest extends ServiceTest {
+@DisplayName("Business [Repository Layer] -> BusinessListQueryRepository 테스트")
+class BusinessListQueryRepositoryImplTest extends RepositoryTest {
     @Autowired
-    private BusinessListService businessListService;
+    private BusinessRepository businessRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private StoreRepository storeRepository;
+    @Autowired
+    private CompanyRepository companyRepository;
 
     private static Company company;
     private final User[] managerList = new User[3];
@@ -58,34 +70,29 @@ class BusinessListServiceTest extends ServiceTest {
 
     @Test
     @DisplayName("해당 매니저와 연결된 슈퍼바이저 목록을 조회한다")
-    void getSupervisors() {
-        // when - then
-        BusinessListResponse supervisors = businessListService.getSupervisors(managerList[0].getId(), Long.valueOf(-1), SEARCH);
+    void findSupervisorByManagerIdAndRelationStatus() {
+        // given - when
+        List<BusinessList> supervisors = businessRepository.findSupervisorByManagerIdAndRelationStatus(managerList[2].getId(), RelationStatus.ACCEPT, SEARCH);
 
+        // then
         assertAll(
-                () -> assertThat(supervisors.userList().size()).isEqualTo(1),
-                () -> assertThat(supervisors.userList().get(0).getName()).isEqualTo(supervisorList[0].getName()),
-                () -> assertThat(supervisors.userList().get(0).getStoreCoName()).isEqualTo(supervisorList[0].getCompany().getName())
+                () -> assertThat(supervisors.size()).isEqualTo(1),
+                () -> assertThat(supervisors.get(0).getName()).isEqualTo(supervisorList[0].getName())
         );
     }
 
     @Test
     @DisplayName("해당 슈퍼바이저와 연결된 점주 목록을 조회한다")
-    void getManagers() {
-        // when - then
-        BusinessListResponse managers = businessListService.getManagers(supervisorList[1].getId(), Long.valueOf(-1));
+    void findManagerBySupervisorIdAndRelationStatus() {
+        // given - when
+        List<BusinessList> managers = businessRepository.findManagerBySupervisorIdAndRelationStatus(supervisorList[0].getId(), RelationStatus.ACCEPT);
 
-        int size = managers.userList().size();
-        for (int i = 0; i < size; i++) {
-            BusinessList manager = managers.userList().get(i);
-            User user = managerList[size - i - 1];
-
-            assertAll(
-                    () -> assertThat(manager.getId()).isEqualTo(user.getId()),
-                    () -> assertThat(manager.getName()).isEqualTo(user.getName()),
-                    () -> assertThat(manager.getStoreCoName()).isEqualTo(user.getManagerStore().getName()),
-                    () -> assertThat(manager.getPhoneNumber()).isEqualTo(user.getPhoneNumber())
-            );
-        }
+        // then
+        assertAll(
+                () -> assertThat(managers.size()).isEqualTo(3),
+                () -> assertThat(managers.get(0).getName()).isEqualTo(managerList[2].getName()),
+                () -> assertThat(managers.get(1).getName()).isEqualTo(managerList[1].getName()),
+                () -> assertThat(managers.get(2).getName()).isEqualTo(managerList[0].getName())
+        );
     }
 }
