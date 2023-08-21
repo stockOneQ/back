@@ -39,7 +39,7 @@ jobs:
           -PTOKEN_URI=${{ secrets.TOKEN_URI }} \
           -PAUTH_PROVIDER_X509_CERT_URL=${{ secrets.AUTH_PROVIDER_X509_CERT_URL }} \
           -PCLIENT_X509_CERT_URL=${{ secrets.CLIENT_X509_CERT_URL }} \
-          -PUNIVERSE_DOMAIN=${{ secrets.UNIVERSE_DOMAIN
+          -PUNIVERSE_DOMAIN=${{ secrets.UNIVERSE_DOMAIN }}
 
       - name: Make Directory for deliver
         run: mkdir deploy && mkdir deploy/scripts
