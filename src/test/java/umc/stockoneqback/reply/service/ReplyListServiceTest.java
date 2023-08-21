@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
-import static umc.stockoneqback.fixture.CommentFixture.*;
+import static umc.stockoneqback.fixture.CommentFixture.COMMENT_0;
 import static umc.stockoneqback.fixture.ReplyFixture.*;
 import static umc.stockoneqback.fixture.UserFixture.ANNE;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
