@@ -10,8 +10,6 @@ import umc.stockoneqback.global.base.RelationStatus;
 import java.util.List;
 
 import static umc.stockoneqback.business.domain.QBusiness.business;
-import static umc.stockoneqback.role.domain.company.QCompany.company;
-import static umc.stockoneqback.role.domain.store.QStore.store;
 import static umc.stockoneqback.user.domain.QUser.user;
 
 @Transactional(readOnly = true)
@@ -36,18 +34,19 @@ public class BusinessListQueryRepositoryImpl implements BusinessListQueryReposit
                 .fetch();
     }
 
-    public List<BusinessList> findSupervisorByManagerIdAndRelationStatusf(Long managerId, RelationStatus relationStatus) {
+    @Override
+    public List<BusinessList> findManagerBySupervisorIdAndRelationStatus(Long supervisorId, RelationStatus relationStatus) {
         return query
                 .selectDistinct(new QBusinessList(
-                        business.id,
-                        business.supervisor.name,
-                        business.supervisor.managerStore.name,
-                        business.supervisor.phoneNumber,
+                        business.manager.id,
+                        business.manager.name,
+                        business.manager.managerStore.name,
+                        business.manager.phoneNumber,
                         business.relationStatus,
                         business.modifiedDate))
                 .from(business)
-                .innerJoin(user).on(business.supervisor.id.eq(user.id))
-                .where(business.manager.id.eq(managerId), business.relationStatus.eq(relationStatus))
+                .innerJoin(user).on(business.manager.id.eq(user.id))
+                .where(business.supervisor.id.eq(supervisorId), business.relationStatus.eq(relationStatus))
                 .orderBy(business.modifiedDate.desc())
                 .fetch();
     }

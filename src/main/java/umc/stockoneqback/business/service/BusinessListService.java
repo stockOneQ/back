@@ -7,7 +7,6 @@ import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.business.infra.query.dto.BusinessList;
 import umc.stockoneqback.business.service.dto.BusinessListResponse;
 import umc.stockoneqback.global.base.RelationStatus;
-import umc.stockoneqback.user.service.dto.response.FindManagerResponse;
 
 import java.util.List;
 
@@ -19,11 +18,18 @@ public class BusinessListService {
     private static final int SUPERVISOR_PAGE_SIZE = 8;
     private static final int MANAGER_PAGE_SIZE = 7;
 
-    public BusinessListResponse getSupervisor(Long userId, Long lastUserId) {
+    public BusinessListResponse getSupervisors(Long userId, Long lastUserId) {
         List<BusinessList> supervisors = businessRepository.findSupervisorByManagerIdAndRelationStatus(userId, RelationStatus.ACCEPT);
 
         int lastIndex = getLastIndex(supervisors, lastUserId);
         return configPaging(supervisors, lastIndex, SUPERVISOR_PAGE_SIZE);
+    }
+
+    public BusinessListResponse getManagers(Long userId, Long lastUserId) {
+        List<BusinessList> managers = businessRepository.findManagerBySupervisorIdAndRelationStatus(userId, RelationStatus.ACCEPT);
+
+        int lastIndex = getLastIndex(managers, lastUserId);
+        return configPaging(managers, lastIndex, MANAGER_PAGE_SIZE);
     }
 
     private int getLastIndex(List<BusinessList> supervisors, Long lastUserId) {
@@ -35,10 +41,10 @@ public class BusinessListService {
         );
     }
 
-    private BusinessListResponse configPaging(List<BusinessList> searchedUsers, int lastIndex, int size) {
-        if (lastIndex + 1 + size >= searchedUsers.size()) {
-            return new BusinessListResponse(searchedUsers.subList(lastIndex + 1, searchedUsers.size()));
+    private BusinessListResponse configPaging(List<BusinessList> users, int lastIndex, int size) {
+        if (lastIndex + 1 + size >= users.size()) {
+            return new BusinessListResponse(users.subList(lastIndex + 1, users.size()));
         }
-        return new BusinessListResponse(searchedUsers.subList(lastIndex + 1, lastIndex + 1 + size));
+        return new BusinessListResponse(users.subList(lastIndex + 1, lastIndex + 1 + size));
     }
 }

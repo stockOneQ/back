@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import umc.stockoneqback.business.service.BusinessListService;
-import umc.stockoneqback.business.service.BusinessService;
 import umc.stockoneqback.business.service.dto.BusinessListResponse;
-import umc.stockoneqback.friend.service.dto.FriendAssembler;
 import umc.stockoneqback.global.annotation.ExtractPayload;
 
 @RestController
@@ -19,9 +17,16 @@ public class BusinessListApiController {
     private final BusinessListService businessListService;
 
     @GetMapping("/supervisors")
-    public ResponseEntity<BusinessListResponse> getFriends(@ExtractPayload Long userId,
-                                                           @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastUserId) {
-        BusinessListResponse response = businessListService.getSupervisor(userId, lastUserId);
+    public ResponseEntity<BusinessListResponse> getSupervisors(@ExtractPayload Long userId,
+                                                               @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastUserId) {
+        BusinessListResponse response = businessListService.getSupervisors(userId, lastUserId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/managers")
+    public ResponseEntity<BusinessListResponse> getManagers(@ExtractPayload Long userId,
+                                                            @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastUserId) {
+        BusinessListResponse response = businessListService.getManagers(userId, lastUserId);
         return ResponseEntity.ok(response);
     }
 }

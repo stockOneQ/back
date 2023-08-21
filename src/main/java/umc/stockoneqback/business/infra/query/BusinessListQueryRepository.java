@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface BusinessListQueryRepository {
     List<BusinessList> findSupervisorByManagerIdAndRelationStatus(Long managerId, RelationStatus relationStatus);
+    List<BusinessList> findManagerBySupervisorIdAndRelationStatus(Long managerId, RelationStatus relationStatus);
 }
