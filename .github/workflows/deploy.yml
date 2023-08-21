@@ -1,0 +1,106 @@
+name: Github Actions Workflow
+
+on:
+  push:
+    branches: [ feature/#117 ]
+
+env:
+  CODE_DEPLOY_APPLICATION_NAME: stockoneq-codedeploy
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: stockoneq-codedeploy-group
+  RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
+  RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+  S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+  S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+  S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  PUBLIC_IP: ${{ secrets.PUBLIC_IP }}
+  TYPE: ${{ secrets.TYPE }}
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  PRIVATE_KEY_ID: ${{ secrets.PRIVATE_KEY_ID }}
+  PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+  CLIENT_EMAIL: ${{ secrets.CLIENT_EMAIL }}
+  CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  AUTH_URI: ${{ secrets.AUTH_URI }}
+  TOKEN_URI: ${{ secrets.TOKEN_URI }}
+  AUTH_PROVIDER_X509_CERT_URL: ${{ secrets.AUTH_PROVIDER_X509_CERT_URL }}
+  CLIENT_X509_CERT_URL: ${{ secrets.CLIENT_X509_CERT_URL }}
+  UNIVERSE_DOMAIN: ${{ secrets.UNIVERSE_DOMAIN }}
+
+jobs:
+  build:
+    name: StockOneQ CI & CD
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+
+      - name: Build with Gradle
+        run: |
+          ./gradlew build \
+            -PRDS_USERNAME=$RDS_USERNAME \
+            -PRDS_PASSWORD=$RDS_PASSWORD \
+            -PS3_BUCKET_NAME=$S3_BUCKET_NAME \
+            -PS3_ACCESS_KEY=$S3_ACCESS_KEY \
+            -PS3_SECRET_KEY=$S3_SECRET_KEY \
+            -PJWT_SECRET=$JWT_SECRET \
+            -PAWS_ACCESS_KEY=$AWS_ACCESS_KEY \
+            -PAWS_SECRET_KEY=$AWS_SECRET_KEY \
+            -PPUBLIC_IP=$PUBLIC_IP \
+            -PTYPE=$TYPE \
+            -PPROJECT_ID=$PROJECT_ID \
+            -PPRIVATE_KEY_ID=$PRIVATE_KEY_ID \
+            -PPRIVATE_KEY=$PRIVATE_KEY \
+            -PCLIENT_EMAIL=$CLIENT_EMAIL \
+            -PCLIENT_ID=$CLIENT_ID \
+            -PAUTH_URI=$AUTH_URI \
+            -PTOKEN_URI=$TOKEN_URI \
+            -PAUTH_PROVIDER_X509_CERT_URL=$AUTH_PROVIDER_X509_CERT_URL \
+            -PCLIENT_X509_CERT_URL=$CLIENT_X509_CERT_URL \
+            -PUNIVERSE_DOMAIN=$UNIVERSE_DOMAIN
+
+        shell: bash
+
+      - name: Make Directory for deliver
+        run: mkdir deploy && mkdir deploy/scripts
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Copy Jar
+        run: cp ./build/libs/*.jar ./deploy/
+
+      - name: Copy script
+        run: cp ./scripts/*.sh ./deploy/scripts/
+
+      - name: Copy appspec.yml
+        run: cp ./appspec.yml ./deploy/
+
+      - name: Make zip file
+        run: zip -r -qq -j ./$GITHUB_SHA.zip ./deploy
+
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://stockoneq-back-jar-2/$GITHUB_SHA.zip
+
+      - name: Code Deploy
+        run: |
+          aws deploy create-deployment \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+          --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+          --file-exists-behavior OVERWRITE \
+          --s3-location bucket=stockoneq-back-jar-2,bundleType=zip,key=$GITHUB_SHA.zip
