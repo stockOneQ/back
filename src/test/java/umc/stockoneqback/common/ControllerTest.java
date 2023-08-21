@@ -56,10 +56,9 @@ import umc.stockoneqback.reply.service.ReplyService;
 import umc.stockoneqback.role.service.CompanyService;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.share.controller.ShareApiController;
-import umc.stockoneqback.share.service.ShareService;
 import umc.stockoneqback.share.controller.ShareListApiController;
 import umc.stockoneqback.share.service.ShareListService;
-
+import umc.stockoneqback.share.service.ShareService;
 import umc.stockoneqback.user.controller.*;
 import umc.stockoneqback.user.service.*;
 

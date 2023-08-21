@@ -47,7 +47,7 @@ jobs:
         shell: bash
 
       - name: Build with Gradle
-        run: ./gradlew build -x test asciidoctor
+        run: ./gradlew clean build
 
       - name: Make Directory for deliver
         run: mkdir deploy && mkdir deploy/scripts
