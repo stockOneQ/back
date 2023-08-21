@@ -68,6 +68,7 @@ jobs:
             -PAUTH_PROVIDER_X509_CERT_URL=$AUTH_PROVIDER_X509_CERT_URL \
             -PCLIENT_X509_CERT_URL=$CLIENT_X509_CERT_URL \
             -PUNIVERSE_DOMAIN=$UNIVERSE_DOMAIN
+        shell: bash
 
       - name: Make Directory for deliver
         run: mkdir deploy && mkdir deploy/scripts
