@@ -45,30 +45,15 @@ jobs:
         shell: bash
 
       - name: Build with Gradle
-        run: |
-          ./gradlew build \
-            -PPUBLIC_IP=$PUBLIC_IP \
-            -PRDS_HOST=$RDS_HOST \
-            -PRDS_USERNAME=$RDS_USERNAME \
-            -PRDS_PASSWORD=$RDS_PASSWORD \
-            -PS3_BUCKET_NAME=$S3_BUCKET_NAME \
-            -PS3_ACCESS_KEY=$S3_ACCESS_KEY \
-            -PS3_SECRET_KEY=$S3_SECRET_KEY \
-            -PJWT_SECRET=$JWT_SECRET \
-            -PAWS_ACCESS_KEY=$AWS_ACCESS_KEY \
-            -PAWS_SECRET_KEY=$AWS_SECRET_KEY \
-            -PTYPE=$TYPE \
-            -PPROJECT_ID=$PROJECT_ID \
-            -PPRIVATE_KEY_ID=$PRIVATE_KEY_ID \
-            -PPRIVATE_KEY=$PRIVATE_KEY \
-            -PCLIENT_EMAIL=$CLIENT_EMAIL \
-            -PCLIENT_ID=$CLIENT_ID \
-            -PAUTH_URI=$AUTH_URI \
-            -PTOKEN_URI=$TOKEN_URI \
-            -PAUTH_PROVIDER_X509_CERT_URL=$AUTH_PROVIDER_X509_CERT_URL \
-            -PCLIENT_X509_CERT_URL=$CLIENT_X509_CERT_URL \
-            -PUNIVERSE_DOMAIN=$UNIVERSE_DOMAIN
-        shell: bash
+        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        with:
+          arguments: build
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Test with Gradle
+        run: ./gradlew test
 
       - name: Make Directory for deliver
         run: mkdir deploy && mkdir deploy/scripts
