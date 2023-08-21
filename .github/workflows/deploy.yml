@@ -2,7 +2,7 @@ name: Github Actions Workflow
 
 on:
   push:
-    branches: [ feature/#117 ]
+    branches: [ main ]
 
 env:
   CODE_DEPLOY_APPLICATION_NAME: stockoneq-codedeploy
