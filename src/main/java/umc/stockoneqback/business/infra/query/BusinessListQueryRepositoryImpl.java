@@ -26,7 +26,6 @@ public class BusinessListQueryRepositoryImpl implements BusinessListQueryReposit
                         business.supervisor.name,
                         business.supervisor.company.name,
                         business.supervisor.phoneNumber,
-                        business.relationStatus,
                         business.modifiedDate))
                 .from(business)
                 .innerJoin(user).on(business.supervisor.id.eq(user.id))
@@ -43,7 +42,6 @@ public class BusinessListQueryRepositoryImpl implements BusinessListQueryReposit
                         business.manager.name,
                         business.manager.managerStore.name,
                         business.manager.phoneNumber,
-                        business.relationStatus,
                         business.modifiedDate))
                 .from(business)
                 .innerJoin(user).on(business.manager.id.eq(user.id))
