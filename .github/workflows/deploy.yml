@@ -41,7 +41,7 @@ jobs:
           distribution: 'zulu'
 
       - name: Build with Gradle
-        run: ./gradlew clean build -x test
+        run: ./gradlew bootJar
 
       - name: Make Directory for deliver
         run: mkdir deploy && mkdir deploy/scripts
