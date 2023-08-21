@@ -18,10 +18,6 @@ spring:
         format_sql: true
         default_batch_fetch_size: 50
 
-  config:
-    import:
-      - classpath:secret.yml
-
   redis:
     lettuce:
       pool:
@@ -31,9 +27,28 @@ spring:
     port: 16379
     host: localhost
 
+  config:
+    import:
+      - application-firebase.yml
+
 logging:
   level:
     com:
       amazonaws:
         util:
           EC2MetadataUtils: error
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET_NAME}
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ${S3_ACCESS_KEY}
+      secretKey: ${S3_SECRET_KEY}
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-validity: 2592000
+  refresh-token-validity: 2592000
