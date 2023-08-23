@@ -70,7 +70,7 @@ public class ProductFindServiceTest extends ServiceTest {
     @DisplayName("공통 예외")
     class commonError {
         @Test
-        @DisplayName("권한이 없는 사용자가 Product API를 호출한 경우 API 호출에 실패한다")
+        @DisplayName("권한이 없는 사용자가 Product 서비스를 호출한 경우 서비스 호출에 실패한다")
         void throwExceptionByUnauthorizedUser() throws Exception {
             User supervisor = WIZ.toUser();
             userRepository.save(supervisor);
@@ -80,7 +80,7 @@ public class ProductFindServiceTest extends ServiceTest {
         }
 
         @Test
-        @DisplayName("입력된 사용자가 입력된 가게 소속이 아닌 경우 API 호출에 실패한다")
+        @DisplayName("입력된 사용자가 입력된 가게 소속이 아닌 경우 서비스 호출에 실패한다")
         void throwExceptionByConflictUserAndStore() throws Exception {
             Store zStore2 = storeRepository.save(Z_SIHEUNG.toStore());
             Long USER2_ID = userService.saveManager(ELLA.toUser(), zStore2.getId());
@@ -90,7 +90,7 @@ public class ProductFindServiceTest extends ServiceTest {
         }
 
         @Test
-        @DisplayName("입력된 사용자가 유효하지 않은 역할을 가지고 있는 경우 API 호출에 실패한다")
+        @DisplayName("입력된 사용자가 유효하지 않은 역할을 가지고 있는 경우 서비스 호출에 실패한다")
         void throwExceptionByInvalidUser() throws Exception {
             User user = userRepository.save(User.createUser(Email.from("a@naver.com"), "a", Password.encrypt("secure123!", ENCODER),
                     "a", LocalDate.of(2001, 1, 1), "010-0000-0000", null));
