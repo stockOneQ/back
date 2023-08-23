@@ -2,7 +2,7 @@ package umc.stockoneqback.user.domain.search;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.global.utils.EnumStandard;
 import umc.stockoneqback.user.exception.UserErrorCode;
 

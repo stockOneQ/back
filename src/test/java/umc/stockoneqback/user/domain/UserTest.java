@@ -3,9 +3,9 @@ package umc.stockoneqback.user.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.global.base.GlobalErrorCode;
 import umc.stockoneqback.global.base.Status;
+import umc.stockoneqback.global.exception.BaseException;
+import umc.stockoneqback.global.exception.GlobalErrorCode;
 import umc.stockoneqback.global.utils.EnumConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;

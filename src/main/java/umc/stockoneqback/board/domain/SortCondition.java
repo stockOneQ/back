@@ -3,7 +3,7 @@ package umc.stockoneqback.board.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import umc.stockoneqback.board.exception.BoardErrorCode;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.global.utils.EnumStandard;
 
 import java.util.HashMap;

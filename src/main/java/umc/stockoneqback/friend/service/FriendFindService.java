@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.friend.domain.Friend;
 import umc.stockoneqback.friend.exception.FriendErrorCode;
 import umc.stockoneqback.friend.repository.FriendRepository;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 
 @Service
 @Transactional(readOnly = true)

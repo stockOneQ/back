@@ -6,8 +6,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import umc.stockoneqback.global.exception.ErrorCode;
 
-import static umc.stockoneqback.global.base.GlobalErrorCode.SUCCESS;
+import static umc.stockoneqback.global.exception.GlobalErrorCode.SUCCESS;
 
 @Getter
 @AllArgsConstructor

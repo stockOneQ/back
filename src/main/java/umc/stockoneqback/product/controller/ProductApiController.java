@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.global.annotation.ExtractPayload;
 import umc.stockoneqback.global.base.BaseResponse;
-import umc.stockoneqback.global.base.GlobalErrorCode;
+import umc.stockoneqback.global.exception.GlobalErrorCode;
 import umc.stockoneqback.product.dto.request.EditProductRequest;
 import umc.stockoneqback.product.dto.response.GetRequiredInfoResponse;
 import umc.stockoneqback.product.dto.response.LoadProductResponse;

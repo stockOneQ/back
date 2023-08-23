@@ -52,3 +52,7 @@ jwt:
   secret: ${JWT_SECRET}
   access-token-validity: 2592000
   refresh-token-validity: 2592000
+
+discord:
+  webhookId: ${DISCORD_WEBHOOK_ID}
+  webhookToken: ${DISCORD_WEBHOOK_TOKEN}

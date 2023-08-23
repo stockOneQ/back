@@ -8,7 +8,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.common.ControllerTest;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.user.controller.dto.request.FindLoginIdRequest;
 import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.service.dto.response.LoginIdResponse;

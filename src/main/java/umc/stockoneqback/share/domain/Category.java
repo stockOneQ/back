@@ -2,7 +2,7 @@ package umc.stockoneqback.share.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.global.utils.EnumConverter;
 import umc.stockoneqback.global.utils.EnumStandard;
 import umc.stockoneqback.share.exception.ShareErrorCode;
