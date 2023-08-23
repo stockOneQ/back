@@ -9,7 +9,7 @@ import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.business.infra.query.dto.BusinessList;
 import umc.stockoneqback.business.service.dto.BusinessListResponse;
 import umc.stockoneqback.common.ControllerTest;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
 import java.time.LocalDateTime;

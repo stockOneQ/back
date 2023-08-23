@@ -33,10 +33,9 @@ public class ApiGlobalExceptionHandler {
     private String DISCORD_WEBHOOK_TOKEN;
 
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity<ErrorResponse> applicationException(BaseException e, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> applicationException(BaseException e) {
         ErrorCode code = e.getCode();
         logging(code);
-        sendDiscordAlertErrorLog(e.getCode(), request);
 
         return ResponseEntity
                 .status(code.getStatus())
@@ -198,6 +197,6 @@ public class ApiGlobalExceptionHandler {
             }
         }
 
-        return null;
+        return -1L;
     }
 }
