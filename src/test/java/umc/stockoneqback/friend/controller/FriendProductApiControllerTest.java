@@ -473,7 +473,7 @@ public class FriendProductApiControllerTest extends ControllerTest {
 
     @Nested
     @DisplayName("친구 가게의 특정 정렬 기준 및 탐색 조건을 만족하는 제품 리스트 조회 API [GET /api/friend/product/page]")
-    class getAllProductOthers {
+    class getSearchProductOthers {
         private static final String BASE_URL = "/api/friend/product/page";
         private static final String STORE_CONDITION = "상온";
         private static final Long FRIEND_ID = 2L;

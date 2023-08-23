@@ -7,7 +7,7 @@ import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.global.exception.GlobalErrorCode;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
-import umc.stockoneqback.product.service.ProductOthersService;
+import umc.stockoneqback.product.service.ProductFindOthersService;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.domain.Role;
@@ -25,7 +25,7 @@ import java.util.List;
 public class BusinessProductService {
     private final UserFindService userFindService;
     private final StoreService storeService;
-    private final ProductOthersService productOthersService;
+    private final ProductFindOthersService productFindOthersService;
     private final BusinessService businessService;
 
     @Transactional
@@ -34,7 +34,7 @@ public class BusinessProductService {
         User supervisor = isSupervisor(supervisorId);
         User manager = checkRelation(supervisor, managerId);
         Store managerStore = storeService.findByUser(manager);
-        return productOthersService.searchProductOthers(managerStore, storeConditionValue, productName);
+        return productFindOthersService.searchProductOthers(managerStore, storeConditionValue, productName);
     }
 
     @Transactional
@@ -43,7 +43,7 @@ public class BusinessProductService {
         User supervisor = isSupervisor(supervisorId);
         User manager = checkRelation(supervisor, managerId);
         Store managerStore = storeService.findByUser(manager);
-        return productOthersService.getTotalProductOthers(managerStore, storeConditionValue);
+        return productFindOthersService.getTotalProductOthers(managerStore, storeConditionValue);
     }
 
     @Transactional
@@ -52,7 +52,7 @@ public class BusinessProductService {
         User supervisor = isSupervisor(supervisorId);
         User manager = checkRelation(supervisor, managerId);
         Store managerStore = storeService.findByUser(manager);
-        return productOthersService.getListOfSearchProductOthers(managerStore, storeConditionValue, searchConditionValue, productId);
+        return productFindOthersService.getListOfSearchProductOthers(managerStore, storeConditionValue, searchConditionValue, productId);
     }
 
     User isSupervisor(Long userId) {

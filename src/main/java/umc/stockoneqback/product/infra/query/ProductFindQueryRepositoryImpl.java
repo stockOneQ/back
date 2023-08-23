@@ -12,8 +12,8 @@ import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.product.domain.SearchCondition;
 import umc.stockoneqback.product.domain.SortCondition;
 import umc.stockoneqback.product.domain.StoreCondition;
-import umc.stockoneqback.product.infra.query.dto.FindProductPage;
-import umc.stockoneqback.product.infra.query.dto.QFindProductPage;
+import umc.stockoneqback.product.infra.query.dto.ProductFindPage;
+import umc.stockoneqback.product.infra.query.dto.QProductFindPage;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
@@ -26,14 +26,12 @@ import static umc.stockoneqback.product.domain.QProduct.product;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class FindProductQueryRepositoryImpl implements FindProductQueryRepository {
+public class ProductFindQueryRepositoryImpl implements ProductFindQueryRepository {
     private final JPAQueryFactory query;
 
-    /*"SELECT p.* FROM product p WHERE p.status = '정상' AND p.store = :store " +
-            "AND p.store_condition = :storeCondition AND p.name LIKE %:name% ORDER BY p.name"*/
     @Override
-    public List<FindProductPage> findProductByName(Store store, StoreCondition storeCondition, String productName) {
-        return query.selectDistinct(new QFindProductPage(product.id, product.name, product.imageUrl, product.stockQuant))
+    public List<ProductFindPage> findProductByName(Store store, StoreCondition storeCondition, String productName) {
+        return query.selectDistinct(new QProductFindPage(product.id, product.name, product.imageUrl, product.stockQuant))
                 .from(product)
                 .where(product.store.eq(store), product.storeCondition.eq(storeCondition), product.status.eq(Status.NORMAL),
                         product.name.contains(productName))
@@ -42,10 +40,10 @@ public class FindProductQueryRepositoryImpl implements FindProductQueryRepositor
     }
 
     @Override
-    public List<FindProductPage> findPageOfSearchConditionOrderBySortCondition
+    public List<ProductFindPage> findPageOfSearchConditionOrderBySortCondition
             (Store store, StoreCondition storeCondition, SearchCondition searchCondition,
              SortCondition sortCondition, String productName, Long orderFreq, Integer pageSize) {
-        return query.selectDistinct(new QFindProductPage(product.id, product.name, product.imageUrl, product.stockQuant))
+        return query.selectDistinct(new QProductFindPage(product.id, product.name, product.imageUrl, product.stockQuant))
                 .from(product)
                 .where(product.store.eq(store), product.storeCondition.eq(storeCondition), product.status.eq(Status.NORMAL),
                         getWhereQueryBySearchCondition(searchCondition),
