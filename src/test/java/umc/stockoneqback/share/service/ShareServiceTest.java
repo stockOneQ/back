@@ -23,10 +23,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static umc.stockoneqback.fixture.StoreFixture.B_CHICKEN;
-import static umc.stockoneqback.fixture.UserFixture.*;
 import static umc.stockoneqback.fixture.ShareFixture.SHARE_0;
 import static umc.stockoneqback.fixture.ShareFixture.SHARE_9;
+import static umc.stockoneqback.fixture.StoreFixture.B_CHICKEN;
+import static umc.stockoneqback.fixture.UserFixture.*;
 
 @DisplayName("Share [Service Layer] -> ShareService 테스트")
 class ShareServiceTest extends ServiceTest {

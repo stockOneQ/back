@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests()
+                    .antMatchers("/profile").permitAll()
                     .antMatchers("/api/auth/login").permitAll()
                     .antMatchers("/api/user/sign-up/manager").permitAll()
                     .antMatchers("/api/user/sign-up/part-timer").permitAll()

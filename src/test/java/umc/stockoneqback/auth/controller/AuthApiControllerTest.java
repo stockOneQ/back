@@ -109,8 +109,9 @@ class AuthApiControllerTest extends ControllerTest {
                                             fieldWithPath("password").description("비밀번호")
                                     ),
                                     responseFields(
-                                            fieldWithPath("userId").description("로그인한 사용자의 ID (PK)"),
+                                            fieldWithPath("userId").description("로그인한 사용자 ID (PK)"),
                                             fieldWithPath("loginId").description("로그인 아이디"),
+                                            fieldWithPath("name").description("로그인 사용자 이름"),
                                             fieldWithPath("accessToken").description("발급된 Access Token"),
                                             fieldWithPath("refreshToken").description("발급된 Refresh Token")
                                     )
@@ -207,7 +208,7 @@ class AuthApiControllerTest extends ControllerTest {
                     .post(BASE_URL)
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request))
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);;
+                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
             mockMvc.perform(requestBuilder)
@@ -238,6 +239,7 @@ class AuthApiControllerTest extends ControllerTest {
         return new LoginResponse(
                 1L,
                 SAEWOO.getLoginId(),
+                SAEWOO.getName(),
                 ACCESS_TOKEN,
                 REFRESH_TOKEN);
     }
