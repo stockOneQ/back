@@ -9,7 +9,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.common.ControllerTest;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.share.controller.dto.ShareRequest;
 import umc.stockoneqback.share.controller.dto.ShareResponse;
 import umc.stockoneqback.share.exception.ShareErrorCode;

@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.comment.service.CommentFindService;
 import umc.stockoneqback.file.service.FileService;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.reply.domain.Reply;
 import umc.stockoneqback.reply.domain.ReplyRepository;
 import umc.stockoneqback.reply.exception.ReplyErrorCode;

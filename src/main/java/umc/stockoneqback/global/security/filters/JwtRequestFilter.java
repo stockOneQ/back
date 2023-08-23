@@ -7,8 +7,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
-import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.global.base.GlobalErrorCode;
+import umc.stockoneqback.global.exception.BaseException;
+import umc.stockoneqback.global.exception.GlobalErrorCode;
 import umc.stockoneqback.global.security.domain.CustomUserDetails;
 import umc.stockoneqback.global.security.service.dto.UserDetailsDto;
 import umc.stockoneqback.user.domain.User;

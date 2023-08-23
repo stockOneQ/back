@@ -10,7 +10,7 @@ import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.comment.domain.CommentRepository;
 import umc.stockoneqback.comment.exception.CommentErrorCode;
 import umc.stockoneqback.file.service.FileService;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.service.UserFindService;
 

@@ -9,7 +9,7 @@ import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.comment.exception.CommentErrorCode;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.reply.service.ReplyService;
 import umc.stockoneqback.user.domain.User;
 

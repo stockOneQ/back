@@ -13,7 +13,7 @@ import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.comment.controller.dto.CommentRequest;
 import umc.stockoneqback.comment.exception.CommentErrorCode;
 import umc.stockoneqback.common.ControllerTest;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 
 import java.nio.charset.StandardCharsets;
 

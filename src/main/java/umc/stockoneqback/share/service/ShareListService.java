@@ -7,7 +7,7 @@ import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.business.exception.BusinessErrorCode;
 import umc.stockoneqback.business.infra.query.dto.FilteredBusinessUser;
 import umc.stockoneqback.business.infra.query.dto.FindBusinessUser;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.share.domain.Category;
 import umc.stockoneqback.share.domain.SearchType;
 import umc.stockoneqback.share.exception.ShareErrorCode;

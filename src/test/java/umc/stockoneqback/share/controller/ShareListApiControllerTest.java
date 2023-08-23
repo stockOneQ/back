@@ -10,7 +10,7 @@ import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.business.infra.query.dto.FilteredBusinessUser;
 import umc.stockoneqback.business.infra.query.dto.FindBusinessUser;
 import umc.stockoneqback.common.ControllerTest;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.share.exception.ShareErrorCode;
 import umc.stockoneqback.share.infra.query.dto.CustomShareListPage;
 import umc.stockoneqback.share.infra.query.dto.ShareList;

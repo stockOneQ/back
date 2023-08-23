@@ -3,7 +3,7 @@ package umc.stockoneqback.user.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
 import javax.persistence.Column;

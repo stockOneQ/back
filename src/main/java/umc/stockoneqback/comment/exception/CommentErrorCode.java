@@ -3,7 +3,7 @@ package umc.stockoneqback.comment.exception;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import umc.stockoneqback.global.base.ErrorCode;
+import umc.stockoneqback.global.exception.ErrorCode;
 
 @Getter
 @RequiredArgsConstructor

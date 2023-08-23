@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.comment.service.CommentFindService;
 import umc.stockoneqback.file.service.FileService;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.reply.controller.dto.ReplyListResponse;
 import umc.stockoneqback.reply.domain.Reply;
 import umc.stockoneqback.reply.domain.ReplyRepository;

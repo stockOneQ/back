@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.file.config.S3MockConfig;
 import umc.stockoneqback.file.utils.exception.FileErrorCode;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -217,7 +217,7 @@ class FileServiceTest extends ServiceTest {
             String fileKey = fileService.uploadBoardFiles(file);
 
             // when
-            byte[] responseByBytes = fileService.downloadToResponseDto(fileKey);
+            fileService.downloadToResponseDto(fileKey);
             ResponseEntity<byte[]> downloadResponse = fileService.download(fileKey);
 
             // then

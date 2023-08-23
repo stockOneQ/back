@@ -7,7 +7,7 @@ import umc.stockoneqback.comment.controller.dto.CommentListResponse;
 import umc.stockoneqback.comment.controller.dto.CustomCommentListResponse;
 import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.reply.domain.Reply;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.exception.UserErrorCode;

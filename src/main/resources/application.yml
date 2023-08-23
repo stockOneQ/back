@@ -14,7 +14,7 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        show_sql: true
+        show_sql: false
         format_sql: true
         default_batch_fetch_size: 50
 
@@ -49,3 +49,7 @@ jwt:
   secret: ${JWT_SECRET}
   access-token-validity: 2592000
   refresh-token-validity: 2592000
+
+discord:
+  webhookId: ${DISCORD_WEBHOOK_ID}
+  webhookToken: ${DISCORD_WEBHOOK_TOKEN}

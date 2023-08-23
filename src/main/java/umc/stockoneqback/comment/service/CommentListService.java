@@ -13,7 +13,7 @@ import umc.stockoneqback.comment.controller.dto.CustomCommentListResponse;
 import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.comment.domain.CommentRepository;
 import umc.stockoneqback.file.service.FileService;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.reply.controller.dto.ReplyListResponse;
 import umc.stockoneqback.reply.service.ReplyListService;
 import umc.stockoneqback.user.domain.Role;

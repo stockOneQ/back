@@ -9,8 +9,8 @@ import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.comment.service.CommentService;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.global.base.GlobalErrorCode;
+import umc.stockoneqback.global.exception.BaseException;
+import umc.stockoneqback.global.exception.GlobalErrorCode;
 import umc.stockoneqback.user.domain.User;
 
 import java.time.LocalDateTime;
