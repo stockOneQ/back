@@ -1,9 +1,7 @@
 package umc.stockoneqback.business.infra.query.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import umc.stockoneqback.global.base.RelationStatus;
 
 import java.time.LocalDateTime;
 
