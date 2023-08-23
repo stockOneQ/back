@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.fixture.ProductFixture;
-import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.global.base.GlobalErrorCode;
+import umc.stockoneqback.global.exception.BaseException;
+import umc.stockoneqback.global.exception.GlobalErrorCode;
 import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.domain.SearchCondition;
 import umc.stockoneqback.product.domain.SortCondition;
@@ -71,7 +71,7 @@ public class ProductFindServiceTest extends ServiceTest {
     class commonError {
         @Test
         @DisplayName("권한이 없는 사용자가 Product 서비스를 호출한 경우 서비스 호출에 실패한다")
-        void throwExceptionByUnauthorizedUser() throws Exception {
+        void throwExceptionByUnauthorizedUser() {
             User supervisor = WIZ.toUser();
             userRepository.save(supervisor);
             assertThatThrownBy(() -> productService.getRequiredInfo(supervisor.getId()))
@@ -81,7 +81,7 @@ public class ProductFindServiceTest extends ServiceTest {
 
         @Test
         @DisplayName("입력된 사용자가 입력된 가게 소속이 아닌 경우 서비스 호출에 실패한다")
-        void throwExceptionByConflictUserAndStore() throws Exception {
+        void throwExceptionByConflictUserAndStore() {
             Store zStore2 = storeRepository.save(Z_SIHEUNG.toStore());
             Long USER2_ID = userService.saveManager(ELLA.toUser(), zStore2.getId());
             assertThatThrownBy(() -> productFindService.getTotalProduct(USER2_ID, zStore.getId(), "상온"))
@@ -91,7 +91,7 @@ public class ProductFindServiceTest extends ServiceTest {
 
         @Test
         @DisplayName("입력된 사용자가 유효하지 않은 역할을 가지고 있는 경우 서비스 호출에 실패한다")
-        void throwExceptionByInvalidUser() throws Exception {
+        void throwExceptionByInvalidUser() {
             User user = userRepository.save(User.createUser(Email.from("a@naver.com"), "a", Password.encrypt("secure123!", ENCODER),
                     "a", LocalDate.of(2001, 1, 1), "010-0000-0000", null));
 
