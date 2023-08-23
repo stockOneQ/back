@@ -58,6 +58,8 @@ nohup java -DPUBLIC_IP=$PUBLIC_IP \
      -DAUTH_PROVIDER_X509_CERT_URL=$AUTH_PROVIDER_X509_CERT_URL \
      -DCLIENT_X509_CERT_URL=$CLIENT_X509_CERT_URL \
      -DUNIVERSE_DOMAIN=$UNIVERSE_DOMAIN \
+     -DDISCORD_WEBHOOK_ID=$DISCORD_WEBHOOK_ID \
+     -DDISCORD_WEBHOOK_TOKEN=$DISCORD_WEBHOOK_TOKEN \
      -Dspring.config.location=classpath:/application.yml,classpath:/application-$IDLE_PROFILE.yml,classpath:/application-firebase.yml \
      -Dspring.profiles.active=$IDLE_PROFILE \
      -jar /home/ec2-user/app/stockoneq/StockOneQ.jar > /home/ec2-user/app/stockoneq/nohup.out 2>&1 &
