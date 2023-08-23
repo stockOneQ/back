@@ -1,4 +1,4 @@
-package umc.stockoneqback.global.base;
+package umc.stockoneqback.global.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

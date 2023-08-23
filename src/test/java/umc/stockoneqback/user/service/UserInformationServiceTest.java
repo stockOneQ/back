@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.fixture.StoreFixture;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.domain.Email;
 import umc.stockoneqback.user.domain.User;

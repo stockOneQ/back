@@ -11,8 +11,8 @@ import umc.stockoneqback.board.controller.dto.BoardRequest;
 import umc.stockoneqback.board.controller.dto.BoardResponse;
 import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.common.ControllerTest;
-import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.global.base.GlobalErrorCode;
+import umc.stockoneqback.global.exception.BaseException;
+import umc.stockoneqback.global.exception.GlobalErrorCode;
 
 import java.time.LocalDate;
 

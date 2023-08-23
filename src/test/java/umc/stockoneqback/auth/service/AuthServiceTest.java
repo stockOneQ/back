@@ -8,7 +8,7 @@ import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.auth.service.dto.response.LoginResponse;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.role.domain.store.Store;
 
 import java.util.Optional;
@@ -35,7 +35,7 @@ class AuthServiceTest extends ServiceTest {
 
         @BeforeEach
         void setup() {
-            Long storeId = storeRepository.save(createStore("스타벅스 - 광화문점", "카페", "ABC123", "서울시 종로구")).getId();
+            storeRepository.save(createStore("스타벅스 - 광화문점", "카페", "ABC123", "서울시 종로구"));
             userId = userRepository.save(SAEWOO.toUser()).getId();
         }
 
@@ -77,7 +77,7 @@ class AuthServiceTest extends ServiceTest {
 
         @BeforeEach
         void setup() {
-            Long storeId = storeRepository.save(createStore("스타벅스 - 광화문점", "카페", "ABC123", "서울시 종로구")).getId();
+            storeRepository.save(createStore("스타벅스 - 광화문점", "카페", "ABC123", "서울시 종로구"));
             userId = userRepository.save(SAEWOO.toUser()).getId();
         }
 

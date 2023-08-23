@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.comment.domain.CommentRepository;
 import umc.stockoneqback.comment.exception.CommentErrorCode;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 
 @Service
 @Transactional(readOnly = true)

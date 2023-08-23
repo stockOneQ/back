@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -30,17 +30,17 @@ public class JwtTokenProvider {
     }
 
 
-    public String createAccessToken(Long memberId) {
-        return createToken(memberId, accessTokenValidityInMilliseconds);
+    public String createAccessToken(Long userId) {
+        return createToken(userId, accessTokenValidityInMilliseconds);
     }
 
-    public String createRefreshToken(Long memberId) {
-        return createToken(memberId, refreshTokenValidityInMilliseconds);
+    public String createRefreshToken(Long userId) {
+        return createToken(userId, refreshTokenValidityInMilliseconds);
     }
 
-    private String createToken(Long memberId, long validityInMilliseconds) {
+    private String createToken(Long userId, long validityInMilliseconds) {
         Claims claims = Jwts.claims();
-        claims.put("id", memberId);
+        claims.put("id", userId);
 
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime tokenValidity = now.plusSeconds(validityInMilliseconds);

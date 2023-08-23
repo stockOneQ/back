@@ -8,7 +8,7 @@ import umc.stockoneqback.business.domain.Business;
 import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.business.exception.BusinessErrorCode;
 import umc.stockoneqback.file.service.FileService;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.share.controller.dto.ShareRequest;
 import umc.stockoneqback.share.controller.dto.ShareResponse;
 import umc.stockoneqback.share.domain.Category;

@@ -8,7 +8,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.friend.exception.FriendErrorCode;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
 import static org.mockito.ArgumentMatchers.anyLong;

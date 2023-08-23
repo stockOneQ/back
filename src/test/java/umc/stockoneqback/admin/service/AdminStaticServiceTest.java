@@ -11,8 +11,8 @@ import umc.stockoneqback.admin.dto.request.AddFARequest;
 import umc.stockoneqback.common.EmbeddedRedisConfig;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.fixture.UserFixture;
-import umc.stockoneqback.global.base.BaseException;
-import umc.stockoneqback.global.base.GlobalErrorCode;
+import umc.stockoneqback.global.exception.BaseException;
+import umc.stockoneqback.global.exception.GlobalErrorCode;
 
 import java.util.Arrays;
 import java.util.List;

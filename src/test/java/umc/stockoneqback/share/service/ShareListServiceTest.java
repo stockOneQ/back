@@ -11,7 +11,7 @@ import umc.stockoneqback.business.infra.query.dto.FilteredBusinessUser;
 import umc.stockoneqback.business.infra.query.dto.FindBusinessUser;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.fixture.ShareFixture;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.role.domain.store.PartTimer;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.share.domain.Share;

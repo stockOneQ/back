@@ -7,7 +7,7 @@ import umc.stockoneqback.file.dto.UploadRequest;
 import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.file.utils.exception.FileErrorCode;
 import umc.stockoneqback.global.annotation.ExtractPayload;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 
 import javax.validation.Valid;
 import java.io.IOException;

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.business.domain.Business;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.share.controller.dto.ShareRequest;
 import umc.stockoneqback.share.domain.Category;

@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.board.exception.BoardErrorCode;
-import umc.stockoneqback.global.base.BaseException;
+import umc.stockoneqback.global.exception.BaseException;
 
 @Service
 @Transactional(readOnly = true)
