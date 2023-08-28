@@ -161,7 +161,7 @@ class StoreServiceTest extends ServiceTest {
         PartTimer partTimer = partTimerRepository.findByPartTimer(user).orElseThrow();
 
         // when
-        storeService.deletePartTimersByPartTimer(store, partTimer);
+        storeService.deletePartTimer(store, partTimer);
 
         // then
         assertThat(store.getPartTimers().getPartTimers().contains(partTimer)).isFalse();

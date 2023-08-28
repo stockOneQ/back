@@ -22,7 +22,6 @@ public class TokenReissueService {
 
         String newAccessToken = jwtTokenProvider.createAccessToken(userId);
         String newRefreshToken = jwtTokenProvider.createRefreshToken(userId);
-
         tokenService.reissueRefreshTokenByRtrPolicy(userId, newRefreshToken);
 
         tokenService.saveFcmToken(userId, fcmToken);

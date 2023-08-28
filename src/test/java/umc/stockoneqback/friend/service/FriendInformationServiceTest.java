@@ -54,7 +54,7 @@ class FriendInformationServiceTest extends ServiceTest {
         userList[9] = userRepository.save(OLIVIA.toUser());
 
         for (int i = 0; i < 10; i++) {
-            storeList[i].updateStoreManager(userList[i]);
+            storeList[i].updateManager(userList[i]);
         }
     }
 
@@ -70,7 +70,7 @@ class FriendInformationServiceTest extends ServiceTest {
         }
 
         // when - then
-        FriendAssembler friendAssembler = friendInformationService.getFriends(userList[0].getId(), Long.valueOf(-1));
+        FriendAssembler friendAssembler = friendInformationService.getFriends(userList[0].getId(), -1L);
         assertThat(friendAssembler.friends().size()).isLessThanOrEqualTo(FRIENDS_PAGE_SIZE);
         for (int i = 0; i < friendAssembler.friends().size(); i++) {
             FriendInformation friend = friendAssembler.friends().get(i);
@@ -94,7 +94,7 @@ class FriendInformationServiceTest extends ServiceTest {
         }
 
         // when - then
-        FriendAssembler friendAssembler = friendInformationService.getWaitingFriends(userList[0].getId(), Long.valueOf(-1));
+        FriendAssembler friendAssembler = friendInformationService.getWaitingFriends(userList[0].getId(), -1L);
         assertThat(friendAssembler.friends().size()).isLessThanOrEqualTo(WAITING_FRIENDS_PAGE_SIZE);
         for (int i = 0; i < friendAssembler.friends().size(); i++) {
             FriendInformation friend = friendAssembler.friends().get(i);
@@ -118,7 +118,7 @@ class FriendInformationServiceTest extends ServiceTest {
         }
 
         // when - then
-        FriendAssembler friendAssembler = friendInformationService.getRequestedFriends(userList[0].getId(), Long.valueOf(-1));
+        FriendAssembler friendAssembler = friendInformationService.getRequestedFriends(userList[0].getId(), -1L);
         assertThat(friendAssembler.friends().size()).isLessThanOrEqualTo(REQUESTED_FRIENDS_PAGE_SIZE);
         for (int i = 0; i < friendAssembler.friends().size(); i++) {
             FriendInformation friend = friendAssembler.friends().get(i);

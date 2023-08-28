@@ -7,21 +7,17 @@ import umc.stockoneqback.comment.controller.dto.CommentListResponse;
 import umc.stockoneqback.comment.controller.dto.CustomCommentListResponse;
 import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.reply.domain.Reply;
 import umc.stockoneqback.user.domain.User;
-import umc.stockoneqback.user.exception.UserErrorCode;
 
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
 import static umc.stockoneqback.fixture.CommentFixture.*;
 import static umc.stockoneqback.fixture.ReplyFixture.*;
 import static umc.stockoneqback.fixture.UserFixture.ANNE;
-import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 
 @DisplayName("Comment [Service Layer] -> CommentListService 테스트")
 class CommentListServiceTest extends ServiceTest {
@@ -78,18 +74,6 @@ class CommentListServiceTest extends ServiceTest {
     @Nested
     @DisplayName("전체 댓글 조회")
     class allCommentList {
-        @Test
-        @DisplayName("매니저가 아닌 유저라면 댓글 목록 조회 시 실패한다")
-        void throwUserIsNotManager() {
-            // given
-            User invalidUser = userRepository.save(SAEWOO.toUser());
-
-            // when - then
-            assertThatThrownBy(() -> commentListService.getCommentList(invalidUser.getId(), board.getId(), 0))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(UserErrorCode.USER_IS_NOT_MANAGER.getMessage());
-        }
-
         @Test
         @DisplayName("댓글 목록 조회에 성공한다")
         void success() throws IOException {

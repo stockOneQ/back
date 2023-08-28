@@ -55,10 +55,10 @@ class UserFindQueryRepositoryImplTest extends RepositoryTest {
         userList[8] = userRepository.save(OLIVIA.toUser());
 
         for (int i = 0; i < 5; i++) {
-            storeList[i].updateStoreManager(userList[i]);
+            storeList[i].updateManager(userList[i]);
         }
-        storeList[0].updateStorePartTimers(userList[5]);
-        storeList[1].updateStorePartTimers(userList[7]);
+        storeList[0].updatePartTimer(userList[5]);
+        storeList[1].updatePartTimer(userList[7]);
     }
 
     @Test
@@ -68,7 +68,7 @@ class UserFindQueryRepositoryImplTest extends RepositoryTest {
         List<FindManager> findManagers = userRepository.findManagersBySearchType(userList[4].getId(), SEARCH_TYPE_NAME, SEARCH_NAME);
 
         assertAll(
-                () -> assertThat(findManagers.size() == 1),
+                () -> assertThat(findManagers.size()).isEqualTo(1),
                 () -> assertThat(findManagers.get(0).getName()).isEqualTo(userList[3].getName()),
                 () -> assertThat(findManagers.get(0).getId()).isEqualTo(userList[3].getId()),
                 () -> assertThat(findManagers.get(0).getStoreName()).isEqualTo(userList[3].getManagerStore().getName()),

@@ -9,15 +9,12 @@ import umc.stockoneqback.business.domain.Business;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.friend.domain.Friend;
 import umc.stockoneqback.global.base.RelationStatus;
-import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.domain.User;
-import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.infra.query.dto.FindManager;
 import umc.stockoneqback.user.service.dto.response.FindManagerResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.StoreFixture.*;
 import static umc.stockoneqback.fixture.UserFixture.*;
@@ -51,25 +48,13 @@ class UserFindServiceTest extends ServiceTest {
         userList[4] = userRepository.save(UNKNOWN.toUser());
 
         for (int i = 0; i < 5; i++) {
-            storeList[i].updateStoreManager(userList[i]);
+            storeList[i].updateManager(userList[i]);
         }
     }
 
     @Nested
     @DisplayName("친구 찾기(매니저 검색)")
     class findFriendManagers {
-        @Test
-        @DisplayName("Role이 매니저가 아닌 유저라면 친구 찾기에 실패한다")
-        void throwExceptionByUserNotAllowed() {
-            // given
-            User invalidUser = userRepository.save(TONY.toUser());
-
-            // when - then
-            assertThatThrownBy(() -> userFindService.findFriendManagers(invalidUser.getId(), Long.valueOf(-1), SEARCH_TYPE_NAME, SEARCH_NAME))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(UserErrorCode.USER_NOT_ALLOWED.getMessage());
-        }
-
         @Test
         @DisplayName("검색 조건과 검색어에 따른 매니저 검색에 성공한다")
         void success() {
@@ -79,7 +64,11 @@ class UserFindServiceTest extends ServiceTest {
 
             // when
             FindManagerResponse findManagerResponse = userFindService.findFriendManagers(
-                    userList[1].getId(), Long.valueOf(-1), SEARCH_TYPE_ADDRESS, SEARCH_ADDRESS);
+                    userList[1].getId(),
+                    -1L,
+                    SEARCH_TYPE_ADDRESS,
+                    SEARCH_ADDRESS
+            );
 
             // then
             assertThat(findManagerResponse.searchedUser().size()).isEqualTo(2);
@@ -105,18 +94,6 @@ class UserFindServiceTest extends ServiceTest {
     @DisplayName("점주 찾기(매니저 검색)")
     class findBusinessManagers {
         @Test
-        @DisplayName("Role이 슈퍼바이저가 아닌 유저라면 점주 찾기에 실패한다")
-        void throwExceptionByUserNotAllowed() {
-            // given
-            User invalidUser = userRepository.save(LILY.toUser());
-
-            // when - then
-            assertThatThrownBy(() -> userFindService.findBusinessManagers(invalidUser.getId(), Long.valueOf(-1), SEARCH_TYPE_NAME, SEARCH_NAME))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(UserErrorCode.USER_NOT_ALLOWED.getMessage());
-        }
-
-        @Test
         @DisplayName("검색 조건과 검색어에 따른 매니저 검색에 성공한다")
         void success() {
             // given
@@ -125,13 +102,12 @@ class UserFindServiceTest extends ServiceTest {
 
             // when
             FindManagerResponse findManagerResponse = userFindService.findBusinessManagers(
-                    supervisor.getId(), Long.valueOf(-1), SEARCH_TYPE_STORE, SEARCH_STORE);
+                    supervisor.getId(), -1L, SEARCH_TYPE_STORE, SEARCH_STORE);
 
             // then
-            assertThat(findManagerResponse.searchedUser().size()).isEqualTo(2);
-
             FindManager findManager1 = findManagerResponse.searchedUser().get(0);
             FindManager findManager2 = findManagerResponse.searchedUser().get(1);
+            assertThat(findManagerResponse.searchedUser().size()).isEqualTo(2);
             assertAll(
                     () -> assertThat(findManager1.getId()).isEqualTo(userList[0].getId()),
                     () -> assertThat(findManager1.getName()).isEqualTo(userList[0].getName()),

@@ -9,10 +9,8 @@ import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.friend.domain.Friend;
-import umc.stockoneqback.friend.exception.FriendErrorCode;
 import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.global.base.Status;
-import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
@@ -24,11 +22,11 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.StoreFixture.Z_SIHEUNG;
 import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
-import static umc.stockoneqback.fixture.UserFixture.*;
+import static umc.stockoneqback.fixture.UserFixture.ANNE;
+import static umc.stockoneqback.fixture.UserFixture.ELLA;
 
 @DisplayName("Friend [Service Layer] -> FriendProductService 테스트")
 public class FriendProductServiceTest extends ServiceTest {
@@ -65,21 +63,6 @@ public class FriendProductServiceTest extends ServiceTest {
         User user = userRepository.findById(USER_ID).orElseThrow();
         User friend = userRepository.findById(FRIEND_ID).orElseThrow();
         friendRepository.save(Friend.createFriend(user, friend, RelationStatus.ACCEPT));
-    }
-
-    @Nested
-    @DisplayName("공통 예외")
-    class commonError {
-        @Test
-        @DisplayName("요청하는 사용자와 요청 대상이 친구 관계가 아닐 경우 API 호출에 실패한다")
-        void throwExceptionByInvalidFriend() {
-            User user = userRepository.save(WIZ.toUser());
-            User friend = userRepository.findByLoginIdAndStatus(ELLA.toUser().getLoginId(), Status.NORMAL).orElseThrow();
-
-            assertThatThrownBy(() -> friendProductService.checkRelation(user, friend.getId()))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(FriendErrorCode.FRIEND_NOT_FOUND.getMessage());
-        }
     }
 
     @Nested

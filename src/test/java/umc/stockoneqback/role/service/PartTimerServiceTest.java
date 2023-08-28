@@ -41,7 +41,7 @@ public class PartTimerServiceTest extends ServiceTest {
     @DisplayName("사용자 관련 정보를 삭제하고 사용자 개인정보의 상태를 변경한다")
     void withdrawUser() {
         // when
-        partTimerService.deleteByUser(user);
+        partTimerService.deletePartTimer(user);
         Store findStore = storeService.findById(store.getId());
 
         // then

@@ -36,7 +36,7 @@ class StoreTest {
         User manager = SAEWOO.toUser();
 
         // when
-        store.updateStoreManager(manager);
+        store.updateManager(manager);
 
         // then
         assertThat(store.getManager()).isEqualTo(manager);
@@ -51,8 +51,8 @@ class StoreTest {
         // when
         User user1 = SAEWOO.toUser();
         User user2 = ANNE.toUser();
-        store.updateStorePartTimers(user1);
-        store.updateStorePartTimers(user2);
+        store.updatePartTimer(user1);
+        store.updatePartTimer(user2);
 
         assertAll(
                 () -> assertThat(store.getPartTimers().getPartTimers().size()).isEqualTo(2),
@@ -70,11 +70,11 @@ class StoreTest {
         User user2 = WONI.toUser();
         PartTimer partTimer1 = PartTimer.createPartTimer(store, user1);
         PartTimer partTimer2 = PartTimer.createPartTimer(store, user2);
-        store.updateStorePartTimers(partTimer1);
-        store.updateStorePartTimers(partTimer2);
+        store.updatePartTimer(partTimer1);
+        store.updatePartTimer(partTimer2);
 
         // when
-        store.deleteStorePartTimers(partTimer1);
+        store.deletePartTimer(partTimer1);
 
         // then
         assertAll(
@@ -89,10 +89,10 @@ class StoreTest {
         // given
         Store store = Store.createStore("스타벅스 - 광화문점", "카페", "서울시 중구");
         User user = ANNE.toUser();
-        store.updateStoreManager(user);
+        store.updateManager(user);
 
         // when
-        store.deleteStoreManager();
+        store.deleteManager();
 
         // then
         assertThat(store.getManager()).isEqualTo(null);

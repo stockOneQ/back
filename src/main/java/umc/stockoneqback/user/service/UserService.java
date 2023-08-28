@@ -52,7 +52,7 @@ public class UserService {
 
         Store store = storeService.findById(storeId);
         userRepository.save(user);
-        store.updateStoreManager(user);
+        store.updateManager(user);
 
         return user.getId();
     }
@@ -64,7 +64,7 @@ public class UserService {
         validateStoreCode(storeCode, store.getCode());
 
         userRepository.save(user);
-        PartTimer partTimer = store.updateStorePartTimers(user);
+        PartTimer partTimer = store.updatePartTimer(user);
         partTimerService.savePartTimer(partTimer);
 
         return user.getId();
@@ -115,15 +115,9 @@ public class UserService {
     public void withdrawUser(Long userId) {
         User user = userFindService.findById(userId);
         switch (user.getRole()) {
-            case MANAGER -> {
-                deleteInfoByManager(user);
-            }
-            case PART_TIMER -> {
-                deleteInfoByPartTimer(user);
-            }
-            case SUPERVISOR -> {
-                deleteInfoBySupervisor(user);
-            }
+            case MANAGER -> deleteInfoByManager(user);
+            case PART_TIMER -> deleteInfoByPartTimer(user);
+            case SUPERVISOR -> deleteInfoBySupervisor(user);
         }
         authService.logout(userId);
         userRepository.expireById(userId);
@@ -147,13 +141,13 @@ public class UserService {
     }
 
     private void deleteInfoByPartTimer(User partTimer) {
-        partTimerService.deleteByUser(partTimer);
+        partTimerService.deletePartTimer(partTimer);
     }
 
     private void deleteInfoBySupervisor(User supervisor) {
         List<Business> businessList = businessService.getBusinessBySupervisor(supervisor);
         deleteBusinessWithShare(businessList);
-        companyService.deleteSupervisorByUser(supervisor.getCompany(), supervisor);
+        companyService.deleteSupervisor(supervisor.getCompany(), supervisor);
     }
 
     private void deleteBusinessWithShare(List<Business> businessList) {

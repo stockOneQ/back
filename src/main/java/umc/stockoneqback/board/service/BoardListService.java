@@ -37,9 +37,9 @@ public class BoardListService {
     private final UserFindService userFindService;
 
     @Transactional
-    public CustomBoardListResponse<BoardList> getBoardList(Long userId, int page, String sortBy, String searchBy, String searchWord) throws IOException {
+    public CustomBoardListResponse<BoardList> getBoardList(Long userId, int page, String sortBy,
+                                                           String searchBy, String searchWord) {
         User user = userFindService.findById(userId);
-        validateManager(user);
 
         SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
         SearchType searchType = SearchType.findSearchTypeByValue(searchBy);
@@ -55,7 +55,8 @@ public class BoardListService {
     }
 
     @Transactional
-    public CustomBoardListResponse<BoardList> getMyBoardList(Long userId, int page, String sortBy, String searchBy, String searchWord) throws IOException {
+    public CustomBoardListResponse<BoardList> getMyBoardList(Long userId, int page, String sortBy,
+                                                             String searchBy, String searchWord) {
         User user = userFindService.findById(userId);
         validateUser(user);
 
@@ -80,7 +81,7 @@ public class BoardListService {
         }
     }
 
-    private List<BoardList> getSortedBoardList(CustomBoardListResponse<BoardList> boardLists) throws IOException {
+    private List<BoardList> getSortedBoardList(CustomBoardListResponse<BoardList> boardLists) {
         List<BoardList> boardList1 = boardLists.getBoardList();
         List<BoardList> boardListResponseList = new ArrayList<>();
 
@@ -122,12 +123,6 @@ public class BoardListService {
             content = contentPreview.concat("...");
         }
         return content;
-    }
-
-    private void validateManager(User user) {
-        if (user.getRole() != Role.MANAGER) {
-            throw BaseException.type(UserErrorCode.USER_IS_NOT_MANAGER);
-        }
     }
 
     private void validateWriter(Long boardId, Long writerId) {

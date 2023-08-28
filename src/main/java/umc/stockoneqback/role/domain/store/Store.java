@@ -52,26 +52,26 @@ public class Store extends BaseTimeEntity {
         return new Store(name, sector, generateRandomCode(), address);
     }
 
-    public void updateStoreManager(User manager) {
+    public void updateManager(User manager) {
         this.manager = manager;
         manager.registerManagerStore(this);
     }
 
-    public PartTimer updateStorePartTimers(User partTimer) {
+    public PartTimer updatePartTimer(User partTimer) {
         PartTimer newPartTimer = PartTimer.createPartTimer(this, partTimer);
         partTimers.addPartTimer(newPartTimer);
         return newPartTimer;
     }
 
-    public void updateStorePartTimers(PartTimer partTimer) {
+    public void updatePartTimer(PartTimer partTimer) {
         partTimers.addPartTimer(partTimer);
     }
 
-    public void deleteStorePartTimers(PartTimer partTimer) {
+    public void deletePartTimer(PartTimer partTimer) {
         partTimers.deletePartTimer(partTimer);
     }
 
-    public void deleteStoreManager() {
+    public void deleteManager() {
         this.manager = null;
     }
 }

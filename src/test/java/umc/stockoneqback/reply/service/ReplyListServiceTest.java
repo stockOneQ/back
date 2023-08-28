@@ -5,23 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.reply.controller.dto.ReplyListResponse;
 import umc.stockoneqback.reply.domain.Reply;
 import umc.stockoneqback.user.domain.User;
-import umc.stockoneqback.user.exception.UserErrorCode;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
 import static umc.stockoneqback.fixture.CommentFixture.COMMENT_0;
 import static umc.stockoneqback.fixture.ReplyFixture.*;
 import static umc.stockoneqback.fixture.UserFixture.ANNE;
-import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 
 @DisplayName("Reply [Service Layer] -> ReplyListService 테스트")
 class ReplyListServiceTest extends ServiceTest {
@@ -61,19 +57,7 @@ class ReplyListServiceTest extends ServiceTest {
 
     @Nested
     @DisplayName("전체 대댓글 조회")
-    class allReplyList {
-        @Test
-        @DisplayName("매니저가 아닌 유저라면 대댓글 목록 조회 시 실패한다")
-        void throwUserIsNotManager() {
-            // given
-            User invalidUser = userRepository.save(SAEWOO.toUser());
-
-            // when - then
-            assertThatThrownBy(() -> replyListService.getReplyList(invalidUser.getId(), comment.getId()))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(UserErrorCode.USER_IS_NOT_MANAGER.getMessage());
-        }
-
+    class getReplyList {
         @Test
         @DisplayName("대댓글 목록 조회(작성순)에 성공한다")
         void success() throws IOException {

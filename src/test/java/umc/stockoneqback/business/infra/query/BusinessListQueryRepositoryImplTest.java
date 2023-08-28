@@ -57,7 +57,7 @@ class BusinessListQueryRepositoryImplTest extends RepositoryTest {
         company = companyRepository.save(new Company("CafeCompany", "카페", "QWE987"));
 
         for (int i = 0; i < 3; i++) {
-            storeList[i].updateStoreManager(managerList[i]);
+            storeList[i].updateManager(managerList[i]);
             supervisorList[i].registerCompany(company);
             businessRepository.save(new Business(managerList[i], supervisorList[0]));
             Thread.sleep(1);

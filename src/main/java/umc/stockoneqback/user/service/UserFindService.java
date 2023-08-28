@@ -6,12 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.business.domain.Business;
 import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.friend.domain.Friend;
-import umc.stockoneqback.friend.repository.FriendRepository;
+import umc.stockoneqback.friend.domain.FriendRepository;
 import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.user.domain.Email;
-import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
 import umc.stockoneqback.user.domain.search.SearchType;
@@ -53,10 +52,6 @@ public class UserFindService {
     }
 
     public FindManagerResponse findFriendManagers(Long userId, Long lastUserId, String searchTypeValue, String searchWord) {
-        User user = findById(userId);
-        if (user.getRole() != Role.MANAGER)
-            throw BaseException.type(UserErrorCode.USER_NOT_ALLOWED);
-
         SearchType searchType = findFriendSearchTypeByValue(searchTypeValue);
         List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(userId, searchType, searchWord);
         List<FindManager> findManagers = updateFriendRelationStatus(userId, managersBySearchType);
@@ -73,12 +68,15 @@ public class UserFindService {
             Optional<Friend> findFriend = friendRepository.findBySenderIdAndReceiverId(userId, findUserId);
             Optional<Friend> findFriendReverse = friendRepository.findBySenderIdAndReceiverId(findUserId, userId);
 
-            if (!findFriend.isEmpty())
+            if (!findFriend.isPresent())
                 relationStatus = findFriend.get().getRelationStatus().getValue();
             else {
-                if (!findFriendReverse.isEmpty())
+                if (!findFriendReverse.isPresent()) {
                     relationStatus = findFriendReverse.get().getRelationStatus().getValue();
-                else relationStatus = RelationStatus.IRRELEVANT.getValue();
+
+                } else {
+                    relationStatus = RelationStatus.IRRELEVANT.getValue();
+                }
             }
 
             FindManager findManagers = FindManager.builder()
@@ -94,10 +92,6 @@ public class UserFindService {
     }
 
     public FindManagerResponse findBusinessManagers(Long userId, Long lastUserId, String searchTypeValue, String searchWord) {
-        User user = findById(userId);
-        if (user.getRole() != Role.SUPERVISOR)
-            throw BaseException.type(UserErrorCode.USER_NOT_ALLOWED);
-
         SearchType searchType = findBusinessSearchTypeByValue(searchTypeValue);
         List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(userId, searchType, searchWord);
         List<FindManager> findManagers = updateBusinessRelationStatus(userId, managersBySearchType);

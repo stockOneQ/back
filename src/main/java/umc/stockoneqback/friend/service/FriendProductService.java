@@ -22,43 +22,43 @@ public class FriendProductService {
     private final StoreService storeService;
     private final ProductOthersService productOthersService;
     private final FriendService friendService;
+    private final FriendFindService friendFindService;
 
     @Transactional
-    public List<SearchProductOthersResponse> searchProductOthers(Long userId,
-                                                                 Long friendId,
-                                                                 String storeConditionValue,
+    public List<SearchProductOthersResponse> searchProductOthers(Long userId1, Long userId2, String storeConditionValue,
                                                                  String productName) throws IOException {
-        User manager = userFindService.findById(userId);
-        User friend = checkRelation(manager, friendId);
-        Store friendStore = storeService.findByUser(friend);
-        return productOthersService.searchProductOthers(friendStore, storeConditionValue, productName);
+        User user1 = userFindService.findById(userId1);
+        User user2 = userFindService.findById(userId2);
+
+        friendService.validateNotFriend(user1, user2);
+        friendService.validateRequestStatus(friendFindService.findByUserId(userId1, userId2));
+
+        Store user2Store = storeService.findByUser(user2);
+        return productOthersService.searchProductOthers(user2Store, storeConditionValue, productName);
     }
 
     @Transactional
-    public List<GetTotalProductResponse> getTotalProductOthers(Long userId,
-                                                               Long friendId,
-                                                               String storeConditionValue) {
-        User manager = userFindService.findById(userId);
-        User friend = checkRelation(manager, friendId);
-        Store friendStore = storeService.findByUser(friend);
-        return productOthersService.getTotalProductOthers(friendStore, storeConditionValue);
+    public List<GetTotalProductResponse> getTotalProductOthers(Long userId1, Long userId2, String storeConditionValue) {
+        User user1 = userFindService.findById(userId1);
+        User user2 = userFindService.findById(userId2);
+
+        friendService.validateNotFriend(user1, user2);
+        friendService.validateRequestStatus(friendFindService.findByUserId(userId1, userId2));
+
+        Store user2Store = storeService.findByUser(user2);
+        return productOthersService.getTotalProductOthers(user2Store, storeConditionValue);
     }
 
     @Transactional
-    public List<SearchProductOthersResponse> getListOfSearchProductOthers(Long userId,
-                                                                          Long friendId,
-                                                                          String storeConditionValue,
-                                                                          Long productId,
-                                                                          String searchConditionValue) throws IOException {
-        User manager = userFindService.findById(userId);
-        User friend = checkRelation(manager, friendId);
-        Store friendStore = storeService.findByUser(friend);
-        return productOthersService.getListOfSearchProductOthers(friendStore, storeConditionValue, searchConditionValue, productId);
-    }
+    public List<SearchProductOthersResponse> getListOfSearchProductOthers(Long userId1, Long userId2, String storeConditionValue,
+                                                                          Long productId, String searchConditionValue) throws IOException {
+        User user1 = userFindService.findById(userId1);
+        User user2 = userFindService.findById(userId2);
 
-    public User checkRelation(User user, Long friendId) {
-        User friend = userFindService.findById(friendId);
-        friendService.validateNotFriend(user, friend);
-        return friend;
+        friendService.validateNotFriend(user1, user2);
+        friendService.validateRequestStatus(friendFindService.findByUserId(userId1, userId2));
+
+        Store user2Store = storeService.findByUser(user2);
+        return productOthersService.getListOfSearchProductOthers(user2Store, storeConditionValue, searchConditionValue, productId);
     }
 }

@@ -21,7 +21,7 @@ public class CompanyService {
     }
 
     @Transactional
-    public void deleteSupervisorByUser(Company company, User user) {
+    public void deleteSupervisor(Company company, User user) {
         company.deleteSupervisor(user);
     }
 }

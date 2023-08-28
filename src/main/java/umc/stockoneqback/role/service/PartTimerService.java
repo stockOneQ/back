@@ -29,12 +29,12 @@ public class PartTimerService {
     }
 
     @Transactional
-    public void deleteByUser(User user) {
+    public void deletePartTimer(User user) {
         Optional<PartTimer> partTimer = partTimerRepository.findByPartTimer(user);
         if (partTimer.isEmpty())
             return;
 
-        storeService.deletePartTimersByPartTimer(partTimer.get().getStore(), partTimer.get());
+        storeService.deletePartTimer(partTimer.get().getStore(), partTimer.get());
         partTimerRepository.deleteByPartTimer(user);
     }
 }

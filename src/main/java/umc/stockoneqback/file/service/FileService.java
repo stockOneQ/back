@@ -17,6 +17,7 @@ import umc.stockoneqback.global.exception.BaseException;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Slf4j
@@ -29,7 +30,7 @@ public class FileService {
     private static final String COMMENT = "comment";
     private static final String REPLY = "reply";
 
-    private final AmazonS3 amazonS3; // aws s3 client
+    private final AmazonS3 amazonS3;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -118,7 +119,7 @@ public class FileService {
         httpHeaders.setContentLength(bytes.length);
         String[] arr = fileKey.split("/");
         String type = arr[arr.length - 1];
-        String fileName = URLEncoder.encode(type, "UTF-8").replaceAll("\\+", "%20");
+        String fileName = URLEncoder.encode(type, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
         httpHeaders.setContentDispositionFormData("attachment", fileName); // 파일 이름 지정
 
         return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);

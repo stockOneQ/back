@@ -1,4 +1,4 @@
-package umc.stockoneqback.friend.repository;
+package umc.stockoneqback.friend.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,7 +14,8 @@ import java.util.Optional;
 public interface FriendRepository extends JpaRepository<Friend, Long>, FriendInformationQueryRepository, FriendFindQueryRepository {
     Optional<Friend> findBySenderIdAndReceiverId(Long senderId, Long receiverId);
     boolean existsBySenderAndReceiver(User sender, User receiver);
+
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query(value = "DELETE FROM friend WHERE sender_id = :user OR receiver_id = :user", nativeQuery = true)
-    void deleteByUser(@Param("user") User user);
+    void deleteFriendByUser(@Param("user") User user);
 }

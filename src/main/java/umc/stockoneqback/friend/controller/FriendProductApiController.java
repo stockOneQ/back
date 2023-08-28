@@ -23,11 +23,11 @@ public class FriendProductApiController {
 
     @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/search")
-    public BaseResponse<List<SearchProductOthersResponse>> searchProductOthers(@ExtractPayload Long userId,
-                                                                               @RequestParam(value = "friend") Long friendId,
+    public BaseResponse<List<SearchProductOthersResponse>> searchProductOthers(@ExtractPayload Long userId1,
+                                                                               @RequestParam(value = "friend") Long userId2,
                                                                                @RequestParam(value = "condition") String storeConditionValue,
                                                                                @RequestParam(value = "name") String productName) throws IOException {
-        return new BaseResponse<>(friendProductService.searchProductOthers(userId, friendId, storeConditionValue, productName));
+        return new BaseResponse<>(friendProductService.searchProductOthers(userId1, userId2, storeConditionValue, productName));
     }
 
     @PreAuthorize("hasRole('MANAGER')")

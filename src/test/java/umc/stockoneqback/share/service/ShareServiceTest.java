@@ -14,7 +14,6 @@ import umc.stockoneqback.share.domain.Category;
 import umc.stockoneqback.share.domain.Share;
 import umc.stockoneqback.share.exception.ShareErrorCode;
 import umc.stockoneqback.user.domain.User;
-import umc.stockoneqback.user.exception.UserErrorCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,6 @@ class ShareServiceTest extends ServiceTest {
 
     private User supervisor;
     private User manager;
-    private User partTimer;
     private Store store;
     private Business business;
     private Share share;
@@ -53,9 +51,8 @@ class ShareServiceTest extends ServiceTest {
     void setup() {
         supervisor = userRepository.save(WIZ.toUser());
         manager = userRepository.save(UNKNOWN.toUser());
-        partTimer = userRepository.save(LILY.toUser());
         store = storeRepository.save(B_CHICKEN.toStore());
-        store.updateStoreManager(manager);
+        store.updateManager(manager);
         business = businessRepository.save(new Business(manager, supervisor));
         share = shareRepository.save(new Share("title", "share/filepath", "content", Category.ETC, business));
         shareRequest = new ShareRequest("share test title", "share test content");
@@ -70,15 +67,6 @@ class ShareServiceTest extends ServiceTest {
     @Nested
     @DisplayName("게시글 등록")
     class create {
-        @Test
-        @DisplayName("슈퍼바이저가 아니라면 게시글을 등록할 수 없다")
-        void throwExceptionByUserNotAllowed() {
-            // when - then
-            assertThatThrownBy(() -> shareService.create(manager.getId(), business.getId(), CATEGORY, shareRequest, null))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(UserErrorCode.USER_NOT_ALLOWED.getMessage());
-        }
-
         @Test
         @DisplayName("유효한 카테고리가 아니라면 게시글을 등록할 수 없다")
         void throwExceptionByNotFoundCategory() {
@@ -125,7 +113,7 @@ class ShareServiceTest extends ServiceTest {
             shareService.update(supervisor.getId(), share.getId(), shareRequest, null);
 
             // when
-            Share findShare = shareRepository.findById(share.getId()).get();
+            Share findShare = shareRepository.findById(share.getId()).orElseThrow();
 
             // then
             assertAll(
@@ -139,15 +127,6 @@ class ShareServiceTest extends ServiceTest {
     @Nested
     @DisplayName("게시글 상세조회")
     class detail {
-        @Test
-        @DisplayName("게시글 작성자와 비즈니스 관계가 없다면 조회할 수 없다")
-        void throwExceptionByNotAWriter() {
-            // when - then
-            assertThatThrownBy(() -> shareService.detail(partTimer.getId(), share.getId()))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(ShareErrorCode.USER_NOT_ALLOWED.getMessage());
-        }
-
         @Test
         @DisplayName("게시글 상세조회에 성공한다")
         void success() {
