@@ -34,19 +34,16 @@ public class FileService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    // 게시글 작성 시 첨부파일 업로드
     public String uploadBoardFiles(MultipartFile file) {
         validateFileExists(file);
         return uploadFile(BOARD, file);
     }
 
-    // 자료 공유 첨부파일 업로드
     public String uploadShareFiles(MultipartFile file) {
         validateFileExists(file);
         return uploadFile(SHARE, file);
     }
 
-    // 제품 사진 업로드
     public String uploadProductFiles(MultipartFile file) {
         validateFileExists(file);
         validateContentType(file);
@@ -70,14 +67,12 @@ public class FileService {
         return uploadFile(REPLY, file);
     }
 
-    // 파일 존재 여부 검증
     private void validateFileExists(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw BaseException.type(FileErrorCode.EMPTY_FILE);
         }
     }
 
-    // upload to S3
     private String uploadFile(String dir, MultipartFile file) {
         String fileKey = createFilePath(dir, file.getOriginalFilename());
 
@@ -95,13 +90,11 @@ public class FileService {
             throw BaseException.type(FileErrorCode.S3_UPLOAD_FAILED);
         }
 
-        // if it has to be used
         String fullFileUrl = amazonS3.getUrl(bucket, fileKey).toString();
 
         return fileKey;
     }
 
-    // uuid 사용하여 fileKey(파일명) 생성
     private String createFilePath(String dir, String originalFileName) {
         String uuidName = UUID.randomUUID() + "_" + originalFileName;
 
@@ -115,7 +108,6 @@ public class FileService {
         };
     }
 
-    // download
     public ResponseEntity<byte[]> download(String fileKey) throws IOException {
         S3Object s3object = amazonS3.getObject(new GetObjectRequest(bucket, fileKey));
         S3ObjectInputStream objectInputStream = s3object.getObjectContent();

@@ -2,6 +2,7 @@ package umc.stockoneqback.comment.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.comment.controller.dto.CommentRequest;
@@ -16,6 +17,7 @@ import javax.validation.Valid;
 public class CommentApiController {
     private final CommentService commentService;
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/{boardId}")
     public ResponseEntity<Void> create(@ExtractPayload Long writerId, @PathVariable Long boardId,
                                        @RequestPart(value = "request")  @Valid CommentRequest request,
@@ -24,6 +26,7 @@ public class CommentApiController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PatchMapping("/{commentId}")
     public ResponseEntity<Void> update(@ExtractPayload Long writerId, @PathVariable Long commentId,
                                        @RequestPart(value = "request")  @Valid CommentRequest request,
@@ -32,6 +35,7 @@ public class CommentApiController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> delete(@ExtractPayload Long writerId, @PathVariable Long commentId) {
         commentService.delete(writerId, commentId);

@@ -190,7 +190,7 @@ public abstract class ControllerTest {
     protected UserFAService userFAService;
 
     @MockBean
-    protected AdminStaticService adminStaticService;
+    protected AdminStaticService AdminStaticService;
 
     @MockBean
     protected ShareService shareService;

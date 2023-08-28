@@ -2,6 +2,7 @@ package umc.stockoneqback.friend.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ import umc.stockoneqback.global.annotation.ExtractPayload;
 public class FriendInformationController {
     private final FriendInformationService friendInformationService;
 
+    @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("")
     public ResponseEntity<FriendAssembler> getFriends(@ExtractPayload Long userId,
                                                       @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastUserId) {
@@ -23,6 +25,7 @@ public class FriendInformationController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/waiting")
     public ResponseEntity<FriendAssembler> getWaitingFriends(@ExtractPayload Long userId,
                                                            @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastUserId) {
@@ -30,6 +33,7 @@ public class FriendInformationController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/requested")
     public ResponseEntity<FriendAssembler> getRequestedFriends(@ExtractPayload Long userId,
                                                              @RequestParam(value = "last", required = false, defaultValue = "-1") Long lastUserId) {

@@ -2,6 +2,7 @@ package umc.stockoneqback.auth.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,12 +27,14 @@ public class AuthApiController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PART_TIMER', 'SUPERVISOR')")
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@ExtractPayload Long userId) {
         authService.logout(userId);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PART_TIMER', 'SUPERVISOR')")
     @PostMapping("/fcm")
     public ResponseEntity<Void> saveFcm(@ExtractPayload Long userId,
                                         @RequestBody @Valid SaveFcmRequest saveFcmRequest) {

@@ -65,7 +65,7 @@ public class ServiceTest {
     protected BoardLikeRepository boardLikeRepository;
 
     @Autowired
-    protected StaticFARedisRepository staticFARedisRepository;
+    protected StaticFARedisRepository StaticFARedisRepository;
 
     @Autowired
     protected ShareRepository shareRepository;

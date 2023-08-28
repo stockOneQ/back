@@ -2,6 +2,7 @@ package umc.stockoneqback.reply.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.global.annotation.ExtractPayload;
@@ -16,6 +17,7 @@ import javax.validation.Valid;
 public class ReplyApiController {
     private final ReplyService replyService;
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/{commentId}")
     public ResponseEntity<Void> create(@ExtractPayload Long writerId, @PathVariable Long commentId,
                                        @RequestPart(value = "request")  @Valid ReplyRequest request,
@@ -24,6 +26,7 @@ public class ReplyApiController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PatchMapping("/{replyId}")
     public ResponseEntity<Void> update(@ExtractPayload Long writerId, @PathVariable Long replyId,
                                        @RequestPart(value = "request")  @Valid ReplyRequest request,
@@ -32,6 +35,7 @@ public class ReplyApiController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/{replyId}")
     public ResponseEntity<Void> delete(@ExtractPayload Long writerId, @PathVariable Long replyId) {
         replyService.delete(writerId, replyId);

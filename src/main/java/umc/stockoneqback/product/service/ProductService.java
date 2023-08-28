@@ -47,14 +47,15 @@ public class ProductService {
     @Transactional
     public GetRequiredInfoResponse getRequiredInfo(Long userId) {
         User user = userFindService.findById(userId);
-        Store store;
-        if (user.getRole() == Role.SUPERVISOR)
-            throw BaseException.type(GlobalErrorCode.INVALID_USER);
-        else if (user.getRole() == Role.MANAGER) {
+        Store store = null;
+
+        if (user.getRole() == Role.MANAGER) {
             store = storeService.findByUser(user);
-        } else if (user.getRole() == Role.PART_TIMER) {
+        }
+        if (user.getRole() == Role.PART_TIMER) {
             store = partTimerService.findByUser(user).getStore();
-        } else throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
+        }
+
         return new GetRequiredInfoResponse(userId, store.getId());
     }
 

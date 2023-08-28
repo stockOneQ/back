@@ -11,21 +11,19 @@ import umc.stockoneqback.admin.dto.request.AddFARequest;
 import umc.stockoneqback.common.EmbeddedRedisConfig;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.fixture.UserFixture;
-import umc.stockoneqback.global.exception.BaseException;
-import umc.stockoneqback.global.exception.GlobalErrorCode;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Import(EmbeddedRedisConfig.class)
 @DisplayName("Admin [Service Layer] -> AdminStaticService 테스트")
 public class AdminStaticServiceTest extends ServiceTest {
     @Autowired
-    private AdminStaticService adminStaticService;
+    private AdminStaticService AdminStaticService;
+
     private final List<String> questionList = Arrays.asList(
             "Q1. 슈퍼바이저가 다른 프랜차이즈로 이직할 경우 회원정보는 어떻게 변경하나요?",
             "Q2. 알바생이랑 슈퍼바이저는 어떤 기능을 사용할 수 있나요?"
@@ -35,33 +33,19 @@ public class AdminStaticServiceTest extends ServiceTest {
             "A2. 알바생은 사장님과 동일하게 Home(재고 관리), Connect, 마이페이지 메뉴를 이용할 수 있고, " +
                     "슈퍼바이저는 Connect와 마이페이지 메뉴를 이용할 수 있습니다."
     );
+
     private static Long ADMIN_ID;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         ADMIN_ID = userRepository.save(UserFixture.ADMIN.toUser()).getId();
-        staticFARedisRepository.deleteAll();
+
+        StaticFARedisRepository.deleteAll();
         for (int i = 0; i < questionList.size(); i++) {
-            staticFARedisRepository.save(StaticFA.builder()
+            StaticFARedisRepository.save(StaticFA.builder()
                     .id(questionList.get(i))
                     .answer(answerList.get(i))
                     .build());
-        }
-    }
-
-    @Nested
-    @DisplayName("공통 예외")
-    class commonError {
-        private final String QUESTION = "Q2. 알바생이랑 슈퍼바이저는 어떤 기능을 사용할 수 있나요?";
-
-        @Test
-        @DisplayName("권한이 없는 사용자가 Admin API를 호출한 경우 API 호출에 실패한다")
-        void throwExceptionByUnauthorizedUser() {
-            Long UNAUTHORIZED_ID = userRepository.save(UserFixture.WIZ.toUser()).getId();
-
-            assertThatThrownBy(() -> adminStaticService.deleteFA(UNAUTHORIZED_ID, QUESTION))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(GlobalErrorCode.NOT_FOUND.getMessage());
         }
     }
 
@@ -76,9 +60,9 @@ public class AdminStaticServiceTest extends ServiceTest {
         @DisplayName("F&A 추가에 성공한다")
         void success() {
             AddFARequest addFARequest = new AddFARequest(List.of(new AddFARequest.AddFAKeyValue(QUESTION, ANSWER)));
-            adminStaticService.addFA(ADMIN_ID, addFARequest);
+            AdminStaticService.addFA(addFARequest);
 
-            StaticFA staticFA = staticFARedisRepository.findById(QUESTION).orElseThrow();
+            StaticFA staticFA = StaticFARedisRepository.findById(QUESTION).orElseThrow();
 
             assertAll(
                     () -> assertThat(staticFA.getId()).isEqualTo(QUESTION),
@@ -97,14 +81,14 @@ public class AdminStaticServiceTest extends ServiceTest {
         @Test
         @DisplayName("F&A 삭제에 성공한다")
         void success() {
-            adminStaticService.deleteFA(ADMIN_ID, QUESTION);
+            AdminStaticService.deleteFA(QUESTION);
 
-            List<StaticFA> staticFAList = staticFARedisRepository.findAll();
+            List<StaticFA> staticFAList = StaticFARedisRepository.findAll();
 
             assertThat(staticFAList).doesNotContain(StaticFA.builder()
-                                                            .id(QUESTION)
-                                                            .answer(ANSWER)
-                                                            .build());
+                    .id(QUESTION)
+                    .answer(ANSWER)
+                    .build());
         }
     }
 }

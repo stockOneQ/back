@@ -2,6 +2,7 @@ package umc.stockoneqback.auth.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +21,10 @@ import javax.validation.Valid;
 public class TokenReissueApiController {
     private final TokenReissueService tokenReissueService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PART_TIMER', 'SUPERVISOR')")
     @PostMapping
-    public ResponseEntity<TokenResponse> reissueTokens(@ExtractPayload Long userId, @ExtractToken String refreshToken,
+    public ResponseEntity<TokenResponse> reissueTokens(@ExtractPayload Long userId,
+                                                       @ExtractToken String refreshToken,
                                                        @RequestBody @Valid SaveFcmRequest saveFcmRequest) {
         TokenResponse tokenResponse = tokenReissueService.reissueTokens(userId, refreshToken, saveFcmRequest.fcmToken());
         return ResponseEntity.ok(tokenResponse);

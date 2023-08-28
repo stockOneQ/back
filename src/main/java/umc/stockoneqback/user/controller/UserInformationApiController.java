@@ -2,6 +2,7 @@ package umc.stockoneqback.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,7 @@ public class UserInformationApiController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'PART_TIMER', 'SUPERVISOR')")
     @GetMapping("/information")
     public ResponseEntity<UserInformationResponse> getInformation(@ExtractPayload Long userId) {
         UserInformationResponse response = userInformationService.getInformation(userId);

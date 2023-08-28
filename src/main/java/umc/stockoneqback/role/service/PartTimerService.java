@@ -25,7 +25,7 @@ public class PartTimerService {
 
     public PartTimer findByUser(User user) {
         return partTimerRepository.findByPartTimer(user)
-                .orElseThrow(() -> BaseException.type(PartTimerErrorCode.PARTTIMER_NOT_FOUND));
+                .orElseThrow(() -> BaseException.type(PartTimerErrorCode.PART_TIMER_NOT_FOUND));
     }
 
     @Transactional

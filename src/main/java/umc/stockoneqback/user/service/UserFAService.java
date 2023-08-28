@@ -16,11 +16,11 @@ import static java.util.Comparator.comparing;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserFAService {
-    private final StaticFARedisRepository staticFARedisRepository;
+    private final StaticFARedisRepository StaticFARedisRepository;
 
     @Transactional
     public List<GetFAResponse> getFA() {
-        List<StaticFA> staticFAList = staticFARedisRepository.findAll();
+        List<StaticFA> staticFAList = StaticFARedisRepository.findAll();
         staticFAList.sort(comparing(StaticFA::getId));
         List<GetFAResponse> getFAResponseList = new ArrayList<>();
         for (StaticFA staticFA: staticFAList) {

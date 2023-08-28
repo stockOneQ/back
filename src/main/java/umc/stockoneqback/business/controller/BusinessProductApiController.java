@@ -1,6 +1,7 @@
 package umc.stockoneqback.business.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,7 @@ import java.util.List;
 public class BusinessProductApiController {
     private final BusinessProductService businessProductService;
 
+    @PreAuthorize("hasRole('SUPERVISOR')")
     @GetMapping("/search")
     public BaseResponse<List<SearchProductOthersResponse>> searchProductOthers(@ExtractPayload Long supervisorId,
                                                                                @RequestParam(value = "manager") Long managerId,
@@ -28,6 +30,7 @@ public class BusinessProductApiController {
         return new BaseResponse<>(businessProductService.searchProductOthers(supervisorId, managerId, storeConditionValue, productName));
     }
 
+    @PreAuthorize("hasRole('SUPERVISOR')")
     @GetMapping("/count")
     public BaseResponse<List<GetTotalProductResponse>> getTotalProductOthers(@ExtractPayload Long supervisorId,
                                                                              @RequestParam(value = "manager") Long managerId,
@@ -35,12 +38,13 @@ public class BusinessProductApiController {
         return new BaseResponse<>(businessProductService.getTotalProductOthers(supervisorId, managerId, storeConditionValue));
     }
 
+    @PreAuthorize("hasRole('SUPERVISOR')")
     @GetMapping("/page")
     public BaseResponse<List<SearchProductOthersResponse>> getListOfSearchConditionProductOthers(@ExtractPayload Long supervisorId,
-                                                                                     @RequestParam(value = "manager") Long managerId,
-                                                                                     @RequestParam(value = "condition") String storeConditionValue,
-                                                                                     @RequestParam(value = "search") String searchConditionValue,
-                                                                                     @RequestParam(value = "last", defaultValue = "-1", required = false) Long productId) throws IOException {
+                                                                                                 @RequestParam(value = "manager") Long managerId,
+                                                                                                 @RequestParam(value = "condition") String storeConditionValue,
+                                                                                                 @RequestParam(value = "search") String searchConditionValue,
+                                                                                                 @RequestParam(value = "last", defaultValue = "-1", required = false) Long productId) throws IOException {
         return new BaseResponse<>(businessProductService.getListOfSearchProductOthers(supervisorId, managerId, storeConditionValue, productId, searchConditionValue));
     }
 }

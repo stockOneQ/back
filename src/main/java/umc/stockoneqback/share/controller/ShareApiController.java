@@ -2,6 +2,7 @@ package umc.stockoneqback.share.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.global.annotation.ExtractPayload;
@@ -19,6 +20,7 @@ import java.util.List;
 public class ShareApiController {
     private final ShareService shareService;
 
+    @PreAuthorize("hasRole('SUPERVISOR')")
     @PostMapping("/{businessId}")
     public ResponseEntity<Void> create(@ExtractPayload Long userId,
                                        @PathVariable("businessId") Long businessId,
@@ -29,6 +31,7 @@ public class ShareApiController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('SUPERVISOR')")
     @PostMapping("")
     public ResponseEntity<Void> update(@ExtractPayload Long userId,
                                        @RequestParam("id") Long shareId,
@@ -38,12 +41,14 @@ public class ShareApiController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'PART_TIMER', 'SUPERVISOR')")
     @GetMapping("/{shareId}")
     public ResponseEntity<ShareResponse> detail(@ExtractPayload Long userId,
                                                 @PathVariable Long shareId) {
         return ResponseEntity.ok(shareService.detail(userId, shareId));
     }
 
+    @PreAuthorize("hasRole('SUPERVISOR')")
     @DeleteMapping("")
     public ResponseEntity<Void> delete(@ExtractPayload Long userId,
                                        @RequestParam List<Long> shareId) throws IOException {

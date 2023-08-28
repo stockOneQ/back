@@ -14,7 +14,8 @@ import umc.stockoneqback.global.exception.GlobalErrorCode;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -57,8 +58,8 @@ public class AdminStaticApiControllerTest extends ControllerTest {
         void throwExceptionByUnauthorizedUser() throws Exception {
             // given
             doThrow(BaseException.type(GlobalErrorCode.NOT_FOUND))
-                    .when(adminStaticService)
-                    .deleteFA(anyLong(), anyString());
+                    .when(AdminStaticService)
+                    .deleteFA(anyString());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -109,8 +110,8 @@ public class AdminStaticApiControllerTest extends ControllerTest {
         void success() throws Exception {
             // given
             doNothing()
-                    .when(adminStaticService)
-                    .addFA(anyLong(), any());
+                    .when(AdminStaticService)
+                    .addFA(any());
 
             // when
             final AddFARequest addFARequest = createAddFARequest();
@@ -153,8 +154,8 @@ public class AdminStaticApiControllerTest extends ControllerTest {
         void success() throws Exception {
             // given
             doNothing()
-                    .when(adminStaticService)
-                    .deleteFA(anyLong(), anyString());
+                    .when(AdminStaticService)
+                    .deleteFA(anyString());
 
             // when
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders

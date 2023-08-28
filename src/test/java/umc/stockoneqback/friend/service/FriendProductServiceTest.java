@@ -13,20 +13,14 @@ import umc.stockoneqback.friend.exception.FriendErrorCode;
 import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.global.exception.BaseException;
-import umc.stockoneqback.global.exception.GlobalErrorCode;
-import umc.stockoneqback.global.utils.PasswordEncoderUtils;
 import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
 import umc.stockoneqback.role.domain.store.Store;
-import umc.stockoneqback.user.domain.Email;
-import umc.stockoneqback.user.domain.Password;
 import umc.stockoneqback.user.domain.User;
-import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.service.UserService;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,9 +43,12 @@ public class FriendProductServiceTest extends ServiceTest {
 
     private final ProductFixture[] productFixtures = ProductFixture.values();
     private final Product[] products = new Product[17];
+
     private static Long FRIEND_ID;
-    private static Store zStore;
+
     private static Long USER_ID;
+
+    private static Store zStore;
     private static Store userStore;
 
     @BeforeEach
@@ -74,36 +71,8 @@ public class FriendProductServiceTest extends ServiceTest {
     @DisplayName("공통 예외")
     class commonError {
         @Test
-        @DisplayName("요청하는 사용자가 사장이 아닌 다른 역할일 경우 API 호출에 실패한다")
-        void throwExceptionByInvalidRole() throws Exception {
-            User user = userRepository.save(WIZ.toUser());
-
-            assertThatThrownBy(() -> friendProductService.isManager(user.getId()))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(GlobalErrorCode.INVALID_USER.getMessage());
-        }
-
-        @Test
-        @DisplayName("요청하는 사용자가 존재하지 않는 역할일 경우 API 호출에 실패한다")
-        void throwExceptionByNotFoundRole() throws Exception {
-            User invalidUser = userRepository.save(User.builder()
-                    .email(Email.from("invaliduser@google.com"))
-                    .loginId("invaliduser")
-                    .password(Password.encrypt("Secure5678!", PasswordEncoderUtils.ENCODER))
-                    .username("invaliduser1")
-                    .phoneNumber("01000001111")
-                    .birth(LocalDate.of(2000, 1, 1))
-                    .role(null)
-                    .build());
-
-            assertThatThrownBy(() -> friendProductService.isManager(invalidUser.getId()))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(UserErrorCode.ROLE_NOT_FOUND.getMessage());
-        }
-
-        @Test
         @DisplayName("요청하는 사용자와 요청 대상이 친구 관계가 아닐 경우 API 호출에 실패한다")
-        void throwExceptionByInvalidFriend() throws Exception {
+        void throwExceptionByInvalidFriend() {
             User user = userRepository.save(WIZ.toUser());
             User friend = userRepository.findByLoginIdAndStatus(ELLA.toUser().getLoginId(), Status.NORMAL).orElseThrow();
 
@@ -139,7 +108,7 @@ public class FriendProductServiceTest extends ServiceTest {
     class findTotalProduct {
         @Test
         @DisplayName("친구 가게의 분류 기준별 제품 개수 조회에 성공한다")
-        void success() throws IOException {
+        void success() {
             User user = userRepository.findByLoginIdAndStatus(ELLA.toUser().getLoginId(), Status.NORMAL).orElseThrow();
             User friend = userRepository.findByLoginIdAndStatus(ANNE.toUser().getLoginId(), Status.NORMAL).orElseThrow();
 

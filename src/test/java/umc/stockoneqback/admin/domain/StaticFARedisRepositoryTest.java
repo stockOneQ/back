@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DisplayName("Admin [Repository Layer] -> StaticFARedisRepository 테스트")
 public class StaticFARedisRepositoryTest {
     @Autowired
-    private StaticFARedisRepository staticFARedisRepository;
+    private StaticFARedisRepository StaticFARedisRepository;
     private final List<String> questionList = Arrays.asList(
                     "Q1. 슈퍼바이저가 다른 프랜차이즈로 이직할 경우 회원정보는 어떻게 변경하나요?",
                     "Q2. 알바생이랑 슈퍼바이저는 어떤 기능을 사용할 수 있나요?"
@@ -32,9 +32,9 @@ public class StaticFARedisRepositoryTest {
 
     @BeforeEach
     void setup(){
-        staticFARedisRepository.deleteAll();
+        StaticFARedisRepository.deleteAll();
         for (int i = 0; i < questionList.size(); i++) {
-            staticFARedisRepository.save(StaticFA.builder()
+            StaticFARedisRepository.save(StaticFA.builder()
                             .id(questionList.get(i))
                             .answer(answerList.get(i))
                             .build());
@@ -52,9 +52,9 @@ public class StaticFARedisRepositoryTest {
                 .answer(answer)
                 .build();
 
-        staticFARedisRepository.save(staticFA);
+        StaticFARedisRepository.save(staticFA);
 
-        StaticFA result = staticFARedisRepository.findById(question).orElseThrow();
+        StaticFA result = StaticFARedisRepository.findById(question).orElseThrow();
         assertAll(
                 () -> assertThat(result.getId()).isEqualTo(question),
                 () -> assertThat(result.getAnswer()).isEqualTo(answer)
@@ -64,7 +64,7 @@ public class StaticFARedisRepositoryTest {
     @Test
     @DisplayName("FA 내용이 모두 List로 반환되는지 확인한다")
     void getFAListOfAll() {
-        List<StaticFA> staticFAList = staticFARedisRepository.findAll();
+        List<StaticFA> staticFAList = StaticFARedisRepository.findAll();
 
         assertAll(
                 () -> assertThat(questionList).contains(staticFAList.get(0).getId()),

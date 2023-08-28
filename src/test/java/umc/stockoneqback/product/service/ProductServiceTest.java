@@ -7,14 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import umc.stockoneqback.auth.service.AuthService;
-import umc.stockoneqback.auth.service.TokenService;
 import umc.stockoneqback.common.EmbeddedRedisConfig;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.global.exception.BaseException;
-import umc.stockoneqback.global.exception.GlobalErrorCode;
 import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.LoadProductResponse;
@@ -38,7 +35,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.StoreFixture.Z_SIHEUNG;
 import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
-import static umc.stockoneqback.fixture.UserFixture.*;
+import static umc.stockoneqback.fixture.UserFixture.ANNE;
+import static umc.stockoneqback.fixture.UserFixture.ELLA;
 import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
 @Import(EmbeddedRedisConfig.class)
@@ -54,16 +52,10 @@ public class ProductServiceTest extends ServiceTest {
     private StoreService storeService;
 
     @Autowired
-    private FileService fileService;
-
-    @Autowired
     private UserFindService userFindService;
 
     @Autowired
     private AuthService authService;
-
-    @Autowired
-    private TokenService tokenService;
 
     private final ProductFixture[] productFixtures = ProductFixture.values();
     private final Product[] products = new Product[17];
@@ -85,18 +77,8 @@ public class ProductServiceTest extends ServiceTest {
     @DisplayName("공통 예외")
     class commonError {
         @Test
-        @DisplayName("권한이 없는 사용자가 Product API를 호출한 경우 API 호출에 실패한다")
-        void throwExceptionByUnauthorizedUser() throws Exception {
-            User supervisor = WIZ.toUser();
-            userRepository.save(supervisor);
-            assertThatThrownBy(() -> productService.getRequiredInfo(supervisor.getId()))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(GlobalErrorCode.INVALID_USER.getMessage());
-        }
-
-        @Test
         @DisplayName("입력된 사용자가 입력된 가게 소속이 아닌 경우 API 호출에 실패한다")
-        void throwExceptionByConflictUserAndStore() throws Exception {
+        void throwExceptionByConflictUserAndStore() {
             Store zStore2 = storeRepository.save(Z_SIHEUNG.toStore());
             Long USER2_ID = userService.saveManager(ELLA.toUser(), zStore2.getId());
             assertThatThrownBy(() -> productService.saveProduct(USER2_ID, zStore.getId(), "상온", products[16], null))
@@ -106,7 +88,7 @@ public class ProductServiceTest extends ServiceTest {
 
         @Test
         @DisplayName("입력된 사용자가 유효하지 않은 역할을 가지고 있는 경우 API 호출에 실패한다")
-        void throwExceptionByInvalidUser() throws Exception {
+        void throwExceptionByInvalidUser() {
             User user = userRepository.save(User.createUser(Email.from("a@naver.com"), "a", Password.encrypt("secure123!", ENCODER),
                     "a", LocalDate.of(2001, 1, 1), "010-0000-0000", null));
 

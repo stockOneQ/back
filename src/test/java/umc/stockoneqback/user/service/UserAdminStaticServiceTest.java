@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Import(EmbeddedRedisConfig.class)
 @DisplayName("User [Service Layer] -> UserFAService 테스트")
-public class UserFAServiceTest extends ServiceTest {
+public class UserAdminStaticServiceTest extends ServiceTest {
     @Autowired
     private UserFAService userFAService;
     private final List<String> questionList = Arrays.asList(
@@ -37,9 +37,9 @@ public class UserFAServiceTest extends ServiceTest {
 
     @BeforeEach
     void setup(){
-        staticFARedisRepository.deleteAll();
+        StaticFARedisRepository.deleteAll();
         for (int i = 0; i < questionList.size(); i++) {
-            staticFARedisRepository.save(StaticFA.builder()
+            StaticFARedisRepository.save(StaticFA.builder()
                     .id(questionList.get(i))
                     .answer(answerList.get(i))
                     .build());
