@@ -60,16 +60,18 @@ public class ProductService {
     }
 
     @Transactional
-    public void saveProduct(Long userId, Long storeId, String storeConditionValue, Product product, MultipartFile image) {
+    public Long saveProduct(Long userId, Long storeId, String storeConditionValue, Product product, MultipartFile image) {
         Store store = storeService.findById(storeId);
         checkRequestIdHasRequestStore(userId, store);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
         isExistProductByName(store, storeCondition, product.getName());
+
         String imageUrl = null;
         if (image != null)
             imageUrl = fileService.uploadProductFiles(image);
         product.saveStoreAndStoreConditionAndImageUrl(storeCondition, store, imageUrl);
-        productRepository.save(product);
+
+        return productRepository.save(product).getId();
     }
 
     @Transactional

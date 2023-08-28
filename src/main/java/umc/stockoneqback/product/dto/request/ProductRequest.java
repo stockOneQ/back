@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
-public record EditProductRequest(
+public record ProductRequest(
         @NotBlank(message = "제품명은 필수입니다.")
         @Size(max = 11, message = "제품명은 최대 11자까지 입력 가능합니다.")
         String name,

@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.global.annotation.ExtractPayload;
 import umc.stockoneqback.global.base.BaseResponse;
 import umc.stockoneqback.global.exception.GlobalErrorCode;
-import umc.stockoneqback.product.dto.request.EditProductRequest;
+import umc.stockoneqback.product.dto.request.ProductRequest;
 import umc.stockoneqback.product.dto.response.GetRequiredInfoResponse;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.LoadProductResponse;
@@ -35,8 +35,8 @@ public class ProductApiController {
                                                      @RequestParam(value = "store") Long storeId,
                                                      @RequestParam(value = "condition") String storeConditionValue,
                                                      @RequestPart(value = "image", required = false) MultipartFile multipartFile,
-                                                     @RequestPart(value = "editProductRequest") EditProductRequest editProductRequest) {
-        productService.saveProduct(userId, storeId, storeConditionValue, editProductRequest.toProduct(), multipartFile);
+                                                     @RequestPart(value = "editProductRequest") ProductRequest productRequest) {
+        productService.saveProduct(userId, storeId, storeConditionValue, productRequest.toProduct(), multipartFile);
         return new BaseResponse<>(GlobalErrorCode.CREATED);
     }
 
@@ -61,8 +61,8 @@ public class ProductApiController {
     public BaseResponse<GlobalErrorCode> editProduct(@ExtractPayload Long userId,
                                                      @PathVariable(value = "productId") Long productId,
                                                      @RequestPart(value = "image", required = false) MultipartFile multipartFile,
-                                                     @RequestPart(value = "editProductRequest") EditProductRequest editProductRequest) {
-        productService.editProduct(userId, productId, editProductRequest.toProduct(), multipartFile);
+                                                     @RequestPart(value = "editProductRequest") ProductRequest productRequest) {
+        productService.editProduct(userId, productId, productRequest.toProduct(), multipartFile);
         return new BaseResponse<>(GlobalErrorCode.SUCCESS);
     }
 

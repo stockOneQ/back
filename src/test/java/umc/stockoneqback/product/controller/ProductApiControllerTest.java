@@ -13,7 +13,7 @@ import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.global.exception.GlobalErrorCode;
-import umc.stockoneqback.product.dto.request.EditProductRequest;
+import umc.stockoneqback.product.dto.request.ProductRequest;
 import umc.stockoneqback.product.dto.response.GetRequiredInfoResponse;
 import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.dto.response.LoadProductResponse;
@@ -268,7 +268,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .saveProduct(anyLong(), anyLong(), anyString(), any(), any());
 
             // when
-            final EditProductRequest request = createEditProductRequest();
+            final ProductRequest request = createEditProductRequest();
             MockMultipartFile file = new MockMultipartFile("image", null,
                     "multipart/form-data", new byte[]{});
             MockMultipartFile mockRequest = new MockMultipartFile("editProductRequest", null,
@@ -342,7 +342,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .saveProduct(anyLong(), anyLong(), anyString(), any(), any());
 
             // when
-            final EditProductRequest request = createEditProductRequest();
+            final ProductRequest request = createEditProductRequest();
             MockMultipartFile file = new MockMultipartFile("image", null,
                     "multipart/form-data", new byte[]{});
             MockMultipartFile mockRequest = new MockMultipartFile("editProductRequest", null,
@@ -411,12 +411,12 @@ public class ProductApiControllerTest extends ControllerTest {
         @DisplayName("제품 등록에 성공한다")
         void success() throws Exception {
             // given
-            doNothing()
+            doReturn(1L)
                     .when(productService)
                     .saveProduct(anyLong(), anyLong(), anyString(), any(), any());
 
             // when
-            final EditProductRequest request = createEditProductRequest();
+            final ProductRequest request = createEditProductRequest();
             MockMultipartFile file = new MockMultipartFile("image", null,
                     "multipart/form-data", new byte[]{});
             MockMultipartFile mockRequest = new MockMultipartFile("editProductRequest", null,
@@ -758,7 +758,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .editProduct(anyLong(), anyLong(), any(), any());
 
             // when
-            final EditProductRequest request = createEditProductRequest();
+            final ProductRequest request = createEditProductRequest();
             MockMultipartFile file = new MockMultipartFile("image", null,
                     "multipart/form-data", new byte[]{});
             MockMultipartFile mockRequest = new MockMultipartFile("editProductRequest", null,
@@ -836,7 +836,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .editProduct(anyLong(), anyLong(), any(), any());
 
             // when
-            final EditProductRequest request = createEditProductRequest();
+            final ProductRequest request = createEditProductRequest();
             MockMultipartFile file = new MockMultipartFile("image", null,
                     "multipart/form-data", new byte[]{});
             MockMultipartFile mockRequest = new MockMultipartFile("editProductRequest", null,
@@ -1455,8 +1455,8 @@ public class ProductApiControllerTest extends ControllerTest {
         }
     }
 
-    private EditProductRequest createEditProductRequest() {
-        return new EditProductRequest(
+    private ProductRequest createEditProductRequest() {
+        return new ProductRequest(
                 APPLE.getName(),
                 APPLE.getPrice(),
                 APPLE.getVendor(),
