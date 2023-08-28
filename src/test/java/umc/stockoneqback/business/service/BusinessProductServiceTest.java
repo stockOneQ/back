@@ -86,7 +86,7 @@ public class BusinessProductServiceTest extends ServiceTest {
 
             assertThatThrownBy(() -> businessProductService.isSupervisor(user.getId()))
                     .isInstanceOf(BaseException.class)
-                    .hasMessage(GlobalErrorCode.INVALID_USER_JWT.getMessage());
+                    .hasMessage(GlobalErrorCode.INVALID_USER.getMessage());
         }
 
         @Test

@@ -13,6 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) {
-        throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT); // 필요한 권한이 존재하지 않는 경우 403
+        throw BaseException.type(GlobalErrorCode.INVALID_USER); // 필요한 권한이 존재하지 않는 경우 403
     }
 }

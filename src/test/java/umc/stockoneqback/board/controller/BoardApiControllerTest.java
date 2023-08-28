@@ -272,7 +272,7 @@ public class BoardApiControllerTest extends ControllerTest {
         @DisplayName("유효하지 않은 권한으로 게시글 상세 조회 시 실패한다")
         void throwExceptionInvalid_User_JWT() throws Exception {
             // given
-            doThrow(BaseException.type(GlobalErrorCode.INVALID_USER_JWT))
+            doThrow(BaseException.type(GlobalErrorCode.INVALID_USER))
                     .when(boardService)
                     .loadBoard(anyLong(), anyLong());
 
@@ -283,7 +283,7 @@ public class BoardApiControllerTest extends ControllerTest {
 
 
             // then
-            final GlobalErrorCode expectedError = GlobalErrorCode.INVALID_USER_JWT;
+            final GlobalErrorCode expectedError = GlobalErrorCode.INVALID_USER;
             mockMvc.perform(requestBuilder)
                     .andExpectAll(
                             status().isForbidden(),
@@ -368,7 +368,7 @@ public class BoardApiControllerTest extends ControllerTest {
             @DisplayName("유효하지 않은 권한으로 게시글 조회수 증가 시 실패한다")
             void throwExceptionInvalid_User_JWT() throws Exception {
                 // given
-                doThrow(BaseException.type(GlobalErrorCode.INVALID_USER_JWT))
+                doThrow(BaseException.type(GlobalErrorCode.INVALID_USER))
                         .when(boardService)
                         .updateHit(anyLong(), anyLong());
 
@@ -379,7 +379,7 @@ public class BoardApiControllerTest extends ControllerTest {
 
 
                 // then
-                final GlobalErrorCode expectedError = GlobalErrorCode.INVALID_USER_JWT;
+                final GlobalErrorCode expectedError = GlobalErrorCode.INVALID_USER;
                 mockMvc.perform(requestBuilder)
                         .andExpectAll(
                                 status().isForbidden(),

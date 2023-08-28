@@ -80,7 +80,7 @@ public class FriendProductServiceTest extends ServiceTest {
 
             assertThatThrownBy(() -> friendProductService.isManager(user.getId()))
                     .isInstanceOf(BaseException.class)
-                    .hasMessage(GlobalErrorCode.INVALID_USER_JWT.getMessage());
+                    .hasMessage(GlobalErrorCode.INVALID_USER.getMessage());
         }
 
         @Test

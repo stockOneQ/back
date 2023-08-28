@@ -122,7 +122,7 @@ public class BoardServiceTest extends ServiceTest {
             // when - then
             assertThatThrownBy(() -> boardService.loadBoard(invalid_writer.getId(),board.getId()))
                     .isInstanceOf(BaseException.class)
-                    .hasMessage(GlobalErrorCode.INVALID_USER_JWT.getMessage());
+                    .hasMessage(GlobalErrorCode.INVALID_USER.getMessage());
         }
 
         @Test
@@ -153,7 +153,7 @@ public class BoardServiceTest extends ServiceTest {
             // when - then
             assertThatThrownBy(() -> boardService.updateHit(invalid_writer.getId(),board.getId()))
                     .isInstanceOf(BaseException.class)
-                    .hasMessage(GlobalErrorCode.INVALID_USER_JWT.getMessage());
+                    .hasMessage(GlobalErrorCode.INVALID_USER.getMessage());
         }
 
         @Test

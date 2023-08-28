@@ -64,7 +64,7 @@ public class ProductApiControllerTest extends ControllerTest {
         @DisplayName("권한이 없는 사용자가 Product API를 호출한 경우 API 호출에 실패한다")
         void throwExceptionByUnauthorizedUser() throws Exception {
             // given
-            doThrow(BaseException.type(GlobalErrorCode.INVALID_USER_JWT))
+            doThrow(BaseException.type(GlobalErrorCode.INVALID_USER))
                     .when(productService)
                     .getTotalProduct(anyLong(), anyLong(), anyString());
 
@@ -76,7 +76,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
 
             // then
-            final GlobalErrorCode expectedError = GlobalErrorCode.INVALID_USER_JWT;
+            final GlobalErrorCode expectedError = GlobalErrorCode.INVALID_USER;
             mockMvc.perform(requestBuilder)
                     .andExpectAll(
                             status().isForbidden(),

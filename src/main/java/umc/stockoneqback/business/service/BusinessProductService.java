@@ -60,7 +60,7 @@ public class BusinessProductService {
         if (user.getRole() == Role.SUPERVISOR)
             return user;
         if (Arrays.stream(Role.values()).anyMatch(role -> role.equals(user.getRole())))
-            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
+            throw BaseException.type(GlobalErrorCode.INVALID_USER);
         throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
     }
 

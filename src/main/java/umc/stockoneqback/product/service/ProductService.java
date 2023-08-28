@@ -49,7 +49,7 @@ public class ProductService {
         User user = userFindService.findById(userId);
         Store store;
         if (user.getRole() == Role.SUPERVISOR)
-            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
+            throw BaseException.type(GlobalErrorCode.INVALID_USER);
         else if (user.getRole() == Role.MANAGER) {
             store = storeService.findByUser(user);
         } else if (user.getRole() == Role.PART_TIMER) {
@@ -227,7 +227,7 @@ public class ProductService {
     private void checkRequestIdHasRequestStore(Long userId, Store store) {
         User user = userFindService.findById(userId);
         if (user.getRole() == Role.SUPERVISOR)
-            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
+            throw BaseException.type(GlobalErrorCode.INVALID_USER);
         else if (user.getRole() == Role.MANAGER) {
             if (storeService.findByUser(user) == store)
                 return;
@@ -242,7 +242,7 @@ public class ProductService {
     private void checkRequestIdHasRequestProduct(Long userId, Product product) {
         User user = userFindService.findById(userId);
         if (user.getRole() == Role.SUPERVISOR)
-            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
+            throw BaseException.type(GlobalErrorCode.INVALID_USER);
         else if (user.getRole() == Role.MANAGER) {
             if (storeService.findByUser(user) == product.getStore())
                 return;

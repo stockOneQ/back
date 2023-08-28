@@ -29,7 +29,7 @@ public enum GlobalErrorCode implements ErrorCode {
     INVALID_JWT(HttpStatus.UNAUTHORIZED, "REQUEST_003", "유효하지 않은 JWT입니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "REQUEST_004", "JWT 토큰이 일치하지 않습니다"),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "REQUEST_005", "자격 증명이 이루어지지 않았습니다."),
-    INVALID_USER_JWT(HttpStatus.FORBIDDEN,"REQUEST_006","권한이 없는 유저의 접근입니다."),
+    INVALID_USER(HttpStatus.FORBIDDEN,"REQUEST_006","권한이 없는 유저의 접근입니다."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "REQUEST_007", "잘못된 접근입니다."),
     REQUEST_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "REQUEST_008", "만료된 접근입니다."),
     NOT_SUPPORTED_URI_ERROR(HttpStatus.NOT_FOUND, "REQUEST_009", "지원하지 않는 URL입니다."),

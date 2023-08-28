@@ -91,7 +91,7 @@ public class ProductServiceTest extends ServiceTest {
             userRepository.save(supervisor);
             assertThatThrownBy(() -> productService.getRequiredInfo(supervisor.getId()))
                     .isInstanceOf(BaseException.class)
-                    .hasMessage(GlobalErrorCode.INVALID_USER_JWT.getMessage());
+                    .hasMessage(GlobalErrorCode.INVALID_USER.getMessage());
         }
 
         @Test

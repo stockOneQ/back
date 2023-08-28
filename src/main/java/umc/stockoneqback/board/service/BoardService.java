@@ -79,9 +79,9 @@ public class BoardService {
     private void validateUser(Long userId) {
         User user = userFindService.findById(userId);
         if (user.getRole() == Role.SUPERVISOR)
-            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
+            throw BaseException.type(GlobalErrorCode.INVALID_USER);
         else if (user.getRole() == Role.PART_TIMER) {
-            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
+            throw BaseException.type(GlobalErrorCode.INVALID_USER);
         }
         else if (user.getRole() == Role.MANAGER) {
             return;
