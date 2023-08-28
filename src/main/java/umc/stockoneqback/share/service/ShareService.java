@@ -15,7 +15,6 @@ import umc.stockoneqback.share.domain.Category;
 import umc.stockoneqback.share.domain.Share;
 import umc.stockoneqback.share.exception.ShareErrorCode;
 import umc.stockoneqback.share.repository.ShareRepository;
-import umc.stockoneqback.user.service.UserFindService;
 
 import java.util.List;
 

@@ -21,7 +21,6 @@ import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.service.UserFindService;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +38,6 @@ public class BoardListService {
     @Transactional
     public CustomBoardListResponse<BoardList> getBoardList(Long userId, int page, String sortBy,
                                                            String searchBy, String searchWord) {
-        User user = userFindService.findById(userId);
-
         SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
         SearchType searchType = SearchType.findSearchTypeByValue(searchBy);
 

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.exception.BoardErrorCode;
-import umc.stockoneqback.comment.service.CommentService;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.user.domain.User;
@@ -19,7 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
-import static umc.stockoneqback.fixture.UserFixture.*;
+import static umc.stockoneqback.fixture.UserFixture.ANNE;
+import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 
 @DisplayName("Board [Service Layer] -> BoardService 테스트")
 public class BoardServiceTest extends ServiceTest {

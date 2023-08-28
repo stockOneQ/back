@@ -5,7 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.RepositoryTest;
-import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
@@ -38,7 +37,7 @@ public class FriendRepositoryTest extends RepositoryTest {
     @DisplayName("회원 ID를 통해 해당 회원의 친구를 모두 삭제한다")
     void deleteByUser() {
         // when
-        friendRepository.deleteByUser(user);
+        friendRepository.deleteFriendByUser(user);
 
         // then
         assertThat(friendRepository.findAll().isEmpty()).isTrue();

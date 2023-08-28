@@ -68,10 +68,10 @@ public class UserFindService {
             Optional<Friend> findFriend = friendRepository.findBySenderIdAndReceiverId(userId, findUserId);
             Optional<Friend> findFriendReverse = friendRepository.findBySenderIdAndReceiverId(findUserId, userId);
 
-            if (!findFriend.isPresent())
+            if (!findFriend.isEmpty())
                 relationStatus = findFriend.get().getRelationStatus().getValue();
             else {
-                if (!findFriendReverse.isPresent()) {
+                if (!findFriendReverse.isEmpty()) {
                     relationStatus = findFriendReverse.get().getRelationStatus().getValue();
 
                 } else {

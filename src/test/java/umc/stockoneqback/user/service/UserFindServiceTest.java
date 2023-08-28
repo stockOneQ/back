@@ -71,11 +71,10 @@ class UserFindServiceTest extends ServiceTest {
             );
 
             // then
-            assertThat(findManagerResponse.searchedUser().size()).isEqualTo(2);
-
             FindManager findManager1 = findManagerResponse.searchedUser().get(0);
             FindManager findManager2 = findManagerResponse.searchedUser().get(1);
             assertAll(
+                    () -> assertThat(findManagerResponse.searchedUser().size()).isEqualTo(2),
                     () -> assertThat(findManager1.getId()).isEqualTo(userList[0].getId()),
                     () -> assertThat(findManager1.getName()).isEqualTo(userList[0].getName()),
                     () -> assertThat(findManager1.getStoreName()).isEqualTo(userList[0].getManagerStore().getName()),
@@ -107,8 +106,8 @@ class UserFindServiceTest extends ServiceTest {
             // then
             FindManager findManager1 = findManagerResponse.searchedUser().get(0);
             FindManager findManager2 = findManagerResponse.searchedUser().get(1);
-            assertThat(findManagerResponse.searchedUser().size()).isEqualTo(2);
             assertAll(
+                    () -> assertThat(findManagerResponse.searchedUser().size()).isEqualTo(2),
                     () -> assertThat(findManager1.getId()).isEqualTo(userList[0].getId()),
                     () -> assertThat(findManager1.getName()).isEqualTo(userList[0].getName()),
                     () -> assertThat(findManager1.getStoreName()).isEqualTo(userList[0].getManagerStore().getName()),
