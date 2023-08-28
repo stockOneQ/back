@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.product.domain.*;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
 import umc.stockoneqback.product.infra.query.dto.FindProductPage;
+import umc.stockoneqback.product.service.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.response.SearchProductOthersResponse;
 import umc.stockoneqback.role.domain.store.Store;
 
 import java.io.IOException;
@@ -22,8 +22,8 @@ public class ProductOthersService {
     private static final Integer PAGE_SIZE = 9;
 
     @Transactional
-    public List<SearchProductOthersResponse> searchProductOthers
-            (Store store, String storeConditionValue, String productName) throws IOException {
+    public List<SearchProductOthersResponse> searchProductOthers(Store store, String storeConditionValue,
+                                                                 String productName) throws IOException {
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
         List<FindProductPage> searchProductUrlList = productService.findProductAllByName(store, storeCondition, productName);
         return convertUrlToResponse(searchProductUrlList);
@@ -36,8 +36,8 @@ public class ProductOthersService {
     }
 
     @Transactional
-    public List<SearchProductOthersResponse> getListOfSearchProductOthers
-            (Store store, String storeConditionValue, String searchConditionValue, Long productId) throws IOException {
+    public List<SearchProductOthersResponse> getListOfSearchProductOthers(Store store, String storeConditionValue,
+                                                                          String searchConditionValue, Long productId) throws IOException {
         Product product = productService.configPaging(productId);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
         SearchCondition searchCondition = SearchCondition.findSearchConditionByValue(searchConditionValue);

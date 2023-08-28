@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import umc.stockoneqback.business.service.BusinessProductService;
 import umc.stockoneqback.global.annotation.ExtractPayload;
 import umc.stockoneqback.global.base.BaseResponse;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
+import umc.stockoneqback.product.service.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.response.SearchProductOthersResponse;
 
 import java.io.IOException;
 import java.util.List;

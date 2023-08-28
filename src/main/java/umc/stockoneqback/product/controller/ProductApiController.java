@@ -7,12 +7,12 @@ import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.global.annotation.ExtractPayload;
 import umc.stockoneqback.global.base.BaseResponse;
 import umc.stockoneqback.global.exception.GlobalErrorCode;
-import umc.stockoneqback.product.dto.request.ProductRequest;
-import umc.stockoneqback.product.dto.response.GetRequiredInfoResponse;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.LoadProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductResponse;
+import umc.stockoneqback.product.controller.dto.request.ProductRequest;
 import umc.stockoneqback.product.service.ProductService;
+import umc.stockoneqback.product.service.response.GetRequiredInfoResponse;
+import umc.stockoneqback.product.service.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.response.LoadProductResponse;
+import umc.stockoneqback.product.service.response.SearchProductResponse;
 
 import java.io.IOException;
 import java.util.List;

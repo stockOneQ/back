@@ -1,4 +1,4 @@
-package umc.stockoneqback.product.dto.request;
+package umc.stockoneqback.product.controller.dto.request;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import umc.stockoneqback.product.domain.Product;

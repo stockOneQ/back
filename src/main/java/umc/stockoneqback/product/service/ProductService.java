@@ -11,12 +11,12 @@ import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.global.exception.GlobalErrorCode;
 import umc.stockoneqback.product.domain.*;
-import umc.stockoneqback.product.dto.response.GetRequiredInfoResponse;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.LoadProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductResponse;
 import umc.stockoneqback.product.exception.ProductErrorCode;
 import umc.stockoneqback.product.infra.query.dto.FindProductPage;
+import umc.stockoneqback.product.service.response.GetRequiredInfoResponse;
+import umc.stockoneqback.product.service.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.response.LoadProductResponse;
+import umc.stockoneqback.product.service.response.SearchProductResponse;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.PartTimerService;
 import umc.stockoneqback.role.service.StoreService;
@@ -96,8 +96,8 @@ public class ProductService {
     }
 
     @Transactional
-    public List<SearchProductResponse> searchProduct
-            (Long userId, Long storeId, String storeConditionValue, String productName) throws IOException {
+    public List<SearchProductResponse> searchProduct(Long userId, Long storeId, String storeConditionValue,
+                                                     String productName) throws IOException {
         Store store = storeService.findById(storeId);
         checkRequestIdHasRequestStore(userId, store);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
@@ -131,8 +131,9 @@ public class ProductService {
     }
 
     @Transactional
-    public List<SearchProductResponse> getListOfSearchProduct
-            (Long userId, Long storeId, String storeConditionValue, String searchConditionValue, Long productId, String sortConditionValue) throws IOException {
+    public List<SearchProductResponse> getListOfSearchProduct(Long userId, Long storeId,
+                                                              String storeConditionValue, String searchConditionValue,
+                                                              Long productId, String sortConditionValue) throws IOException {
         Product product = configPaging(productId);
         SortCondition sortCondition = SortCondition.findSortConditionByValue(sortConditionValue);
         Store store = storeService.findById(storeId);

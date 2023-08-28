@@ -9,8 +9,8 @@ import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.product.domain.Product;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
+import umc.stockoneqback.product.service.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.response.SearchProductOthersResponse;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.service.UserService;
 

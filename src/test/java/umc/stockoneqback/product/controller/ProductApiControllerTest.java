@@ -13,12 +13,12 @@ import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.global.exception.GlobalErrorCode;
-import umc.stockoneqback.product.dto.request.ProductRequest;
-import umc.stockoneqback.product.dto.response.GetRequiredInfoResponse;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.LoadProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductResponse;
+import umc.stockoneqback.product.controller.dto.request.ProductRequest;
 import umc.stockoneqback.product.exception.ProductErrorCode;
+import umc.stockoneqback.product.service.response.GetRequiredInfoResponse;
+import umc.stockoneqback.product.service.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.response.LoadProductResponse;
+import umc.stockoneqback.product.service.response.SearchProductResponse;
 import umc.stockoneqback.role.exception.StoreErrorCode;
 import umc.stockoneqback.user.exception.UserErrorCode;
 

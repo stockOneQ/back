@@ -13,10 +13,10 @@ import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.product.domain.Product;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.LoadProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductResponse;
 import umc.stockoneqback.product.exception.ProductErrorCode;
+import umc.stockoneqback.product.service.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.response.LoadProductResponse;
+import umc.stockoneqback.product.service.response.SearchProductResponse;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.exception.UserErrorCode;
@@ -44,12 +44,6 @@ public class ProductServiceTest extends ServiceTest {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private StoreService storeService;
-
-    @Autowired
-    private UserFindService userFindService;
 
     @Autowired
     private AuthService authService;
