@@ -371,13 +371,13 @@ public class BusinessProductApiControllerTest extends ControllerTest {
                             status().isOk(),
                             jsonPath("$.result[0]").exists(),
                             jsonPath("$.result[0].name").value(DURIAN.getName()),
-                            jsonPath("$.result[0].stockQuant").value(DURIAN.getStockQuant()),
+                            jsonPath("$.result[0].stockQuantity").value(DURIAN.getStockQuantity()),
                             jsonPath("$.result[1]").exists(),
                             jsonPath("$.result[1].name").value(BLUEBERRY.getName()),
-                            jsonPath("$.result[1].stockQuant").value(BLUEBERRY.getStockQuant()),
+                            jsonPath("$.result[1].stockQuantity").value(BLUEBERRY.getStockQuantity()),
                             jsonPath("$.result[2]").exists(),
                             jsonPath("$.result[2].name").value(CHERRY.getName()),
-                            jsonPath("$.result[2].stockQuant").value(CHERRY.getStockQuant()),
+                            jsonPath("$.result[2].stockQuantity").value(CHERRY.getStockQuantity()),
                             jsonPath("$.result[3]").doesNotExist()
                     )
                     .andDo(
@@ -399,7 +399,7 @@ public class BusinessProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
                                             fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
                                             fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
-                                            fieldWithPath("result[].stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("result[].stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("result[].image").type(JsonFieldType.ARRAY).description("제품 이미지").optional()
                                     )
                             )
@@ -507,31 +507,31 @@ public class BusinessProductApiControllerTest extends ControllerTest {
                             status().isOk(),
                             jsonPath("$.result[0]").exists(),
                             jsonPath("$.result[0].name").value(productFixtureList.get(0).getName()),
-                            jsonPath("$.result[0].stockQuant").value(productFixtureList.get(0).getStockQuant()),
+                            jsonPath("$.result[0].stockQuantity").value(productFixtureList.get(0).getStockQuantity()),
                             jsonPath("$.result[1]").exists(),
                             jsonPath("$.result[1].name").value(productFixtureList.get(1).getName()),
-                            jsonPath("$.result[1].stockQuant").value(productFixtureList.get(1).getStockQuant()),
+                            jsonPath("$.result[1].stockQuantity").value(productFixtureList.get(1).getStockQuantity()),
                             jsonPath("$.result[2]").exists(),
                             jsonPath("$.result[2].name").value(productFixtureList.get(2).getName()),
-                            jsonPath("$.result[2].stockQuant").value(productFixtureList.get(2).getStockQuant()),
+                            jsonPath("$.result[2].stockQuantity").value(productFixtureList.get(2).getStockQuantity()),
                             jsonPath("$.result[3]").exists(),
                             jsonPath("$.result[3].name").value(productFixtureList.get(3).getName()),
-                            jsonPath("$.result[3].stockQuant").value(productFixtureList.get(3).getStockQuant()),
+                            jsonPath("$.result[3].stockQuantity").value(productFixtureList.get(3).getStockQuantity()),
                             jsonPath("$.result[4]").exists(),
                             jsonPath("$.result[4].name").value(productFixtureList.get(4).getName()),
-                            jsonPath("$.result[4].stockQuant").value(productFixtureList.get(4).getStockQuant()),
+                            jsonPath("$.result[4].stockQuantity").value(productFixtureList.get(4).getStockQuantity()),
                             jsonPath("$.result[5]").exists(),
                             jsonPath("$.result[5].name").value(productFixtureList.get(5).getName()),
-                            jsonPath("$.result[5].stockQuant").value(productFixtureList.get(5).getStockQuant()),
+                            jsonPath("$.result[5].stockQuantity").value(productFixtureList.get(5).getStockQuantity()),
                             jsonPath("$.result[6]").exists(),
                             jsonPath("$.result[6].name").value(productFixtureList.get(6).getName()),
-                            jsonPath("$.result[6].stockQuant").value(productFixtureList.get(6).getStockQuant()),
+                            jsonPath("$.result[6].stockQuantity").value(productFixtureList.get(6).getStockQuantity()),
                             jsonPath("$.result[7]").exists(),
                             jsonPath("$.result[7].name").value(productFixtureList.get(7).getName()),
-                            jsonPath("$.result[7].stockQuant").value(productFixtureList.get(7).getStockQuant()),
+                            jsonPath("$.result[7].stockQuantity").value(productFixtureList.get(7).getStockQuantity()),
                             jsonPath("$.result[8]").exists(),
                             jsonPath("$.result[8].name").value(productFixtureList.get(8).getName()),
-                            jsonPath("$.result[8].stockQuant").value(productFixtureList.get(8).getStockQuant()),
+                            jsonPath("$.result[8].stockQuantity").value(productFixtureList.get(8).getStockQuantity()),
                             jsonPath("$.result[9]").doesNotExist()
                     )
                     .andDo(
@@ -554,7 +554,7 @@ public class BusinessProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지"),
                                             fieldWithPath("result[].id").type(JsonFieldType.NUMBER).description("제품 ID"),
                                             fieldWithPath("result[].name").type(JsonFieldType.STRING).description("제품명"),
-                                            fieldWithPath("result[].stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("result[].stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("result[].image").type(JsonFieldType.ARRAY).description("제품 이미지").optional()
                                     )
                             )
@@ -564,9 +564,9 @@ public class BusinessProductApiControllerTest extends ControllerTest {
 
     private List<SearchProductOthersResponse> searchProductOthersResponse() {
         List<SearchProductOthersResponse> searchProductOthersResponseList = new ArrayList<>();
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(4L, DURIAN.getName(), DURIAN.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(11L, BLUEBERRY.getName(), BLUEBERRY.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(8L, CHERRY.getName(), CHERRY.getStockQuant(), null));
+        searchProductOthersResponseList.add(new SearchProductOthersResponse(4L, DURIAN.getName(), DURIAN.getStockQuantity(), null));
+        searchProductOthersResponseList.add(new SearchProductOthersResponse(11L, BLUEBERRY.getName(), BLUEBERRY.getStockQuantity(), null));
+        searchProductOthersResponseList.add(new SearchProductOthersResponse(8L, CHERRY.getName(), CHERRY.getStockQuantity(), null));
         return searchProductOthersResponseList;
     }
 
@@ -581,15 +581,15 @@ public class BusinessProductApiControllerTest extends ControllerTest {
 
     private List<SearchProductOthersResponse> searchProductOthersPageResponse() {
         List<SearchProductOthersResponse> searchProductOthersResponseList = new ArrayList<>();
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(16L, PERSIMMON.getName(), PERSIMMON.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(15L, TANGERINE.getName(), TANGERINE.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(4L, DURIAN.getName(), DURIAN.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(3L, MANGO.getName(), MANGO.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(9L, MELON.getName(), MELON.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(2L, BANANA.getName(), BANANA.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(17L, PEAR.getName(), PEAR.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(13L, PEACH.getName(), PEACH.getStockQuant(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(11L, BLUEBERRY.getName(), BLUEBERRY.getStockQuant(), null));
+        searchProductOthersResponseList.add(new SearchProductOthersResponse(16L, PERSIMMON.getName(), PERSIMMON.getStockQuantity(), null));
+        searchProductOthersResponseList.add(new SearchProductOthersResponse(15L, TANGERINE.getName(), TANGERINE.getStockQuantity(), null));
+        searchProductOthersResponseList.add(new SearchProductOthersResponse(4L, DURIAN.getName(), DURIAN.getStockQuantity(), null));
+        searchProductOthersResponseList.add(new SearchProductOthersResponse(3L, MANGO.getName(), MANGO.getStockQuantity(), null));
+        searchProductOthersResponseList.add(new SearchProductOthersResponse(9L, MELON.getName(), MELON.getStockQuantity(), null));
+        searchProductOthersResponseList.add(new SearchProductOthersResponse(2L, BANANA.getName(), BANANA.getStockQuantity(), null));
+        searchProductOthersResponseList.add(new SearchProductOthersResponse(17L, PEAR.getName(), PEAR.getStockQuantity(), null));
+        searchProductOthersResponseList.add(new SearchProductOthersResponse(13L, PEACH.getName(), PEACH.getStockQuantity(), null));
+        searchProductOthersResponseList.add(new SearchProductOthersResponse(11L, BLUEBERRY.getName(), BLUEBERRY.getStockQuantity(), null));
         return searchProductOthersResponseList;
     }
 }

@@ -68,7 +68,7 @@ public class FriendProductServiceTest extends ServiceTest {
                 assertAll(
                         () -> assertThat(searchProductOthersResponseList.get(0).id()).isEqualTo(i + 1),
                         () -> assertThat(searchProductOthersResponseList.get(0).name()).isEqualTo(productFixtures[i].getName()),
-                        () -> assertThat(searchProductOthersResponseList.get(0).stockQuant()).isEqualTo(productFixtures[i].getStockQuant())
+                        () -> assertThat(searchProductOthersResponseList.get(0).stockQuantity()).isEqualTo(productFixtures[i].getStockQuantity())
                 );
             }
         }

@@ -101,7 +101,7 @@ public class BusinessProductServiceTest extends ServiceTest {
             assertAll(
                     () -> assertThat(searchProductOthersResponseList.get(0).id()).isEqualTo(products[0].getId()),
                     () -> assertThat(searchProductOthersResponseList.get(0).name()).isEqualTo(products[0].getName()),
-                    () -> assertThat(searchProductOthersResponseList.get(0).stockQuant()).isEqualTo(products[0].getStockQuant())
+                    () -> assertThat(searchProductOthersResponseList.get(0).stockQuantity()).isEqualTo(products[0].getStockQuant())
             );
         }
     }

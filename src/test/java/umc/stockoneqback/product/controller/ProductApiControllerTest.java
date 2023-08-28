@@ -315,8 +315,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
                                             fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
                                             fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
-                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
-                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("requireQuantity").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
                                             fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
@@ -389,8 +389,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
                                             fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
                                             fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
-                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
-                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("requireQuantity").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
                                             fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
@@ -456,8 +456,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
                                             fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
                                             fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
-                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
-                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("requireQuantity").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
                                             fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
@@ -571,8 +571,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("result.receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
                                             fieldWithPath("result.expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
                                             fieldWithPath("result.location").type(JsonFieldType.STRING).description("제품 위치").optional(),
-                                            fieldWithPath("result.requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
-                                            fieldWithPath("result.stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("result.requireQuantity").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("result.stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("result.siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
                                             fieldWithPath("result.orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     )
@@ -813,8 +813,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
                                             fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
                                             fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
-                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
-                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("requireQuantity").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
                                             fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
@@ -884,8 +884,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
                                             fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
                                             fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
-                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
-                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("requireQuantity").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
                                             fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
@@ -1463,8 +1463,8 @@ public class ProductApiControllerTest extends ControllerTest {
                 APPLE.getReceivingDate(),
                 APPLE.getExpirationDate(),
                 APPLE.getLocation(),
-                APPLE.getRequireQuant(),
-                APPLE.getStockQuant(),
+                APPLE.getRequireQuantity(),
+                APPLE.getStockQuantity(),
                 APPLE.getSiteToOrder(),
                 APPLE.getOrderFreq()
         );
@@ -1480,8 +1480,8 @@ public class ProductApiControllerTest extends ControllerTest {
                 APPLE.getReceivingDate(),
                 APPLE.getExpirationDate(),
                 APPLE.getLocation(),
-                APPLE.getRequireQuant(),
-                APPLE.getStockQuant(),
+                APPLE.getRequireQuantity(),
+                APPLE.getStockQuantity(),
                 APPLE.getSiteToOrder(),
                 APPLE.getOrderFreq()
         );

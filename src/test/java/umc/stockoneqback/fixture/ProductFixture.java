@@ -71,14 +71,14 @@ public enum ProductFixture {
     private final LocalDate receivingDate;
     private final LocalDate expirationDate;
     private final String location;
-    private final Long requireQuant;
-    private final Long stockQuant;
+    private final Long requireQuantity;
+    private final Long stockQuantity;
     private final String siteToOrder;
     private final Long orderFreq;
     private final StoreCondition storeCondition;
 
     public Product toProduct(Store store) {
         return Product.createProduct(name, price, vendor, receivingDate, expirationDate,
-                location, requireQuant, stockQuant, siteToOrder, orderFreq, storeCondition, store, imageUrl);
+                location, requireQuantity, stockQuantity, siteToOrder, orderFreq, storeCondition, store, imageUrl);
     }
 }

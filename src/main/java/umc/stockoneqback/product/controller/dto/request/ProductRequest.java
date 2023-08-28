@@ -33,10 +33,10 @@ public record ProductRequest(
         String location,
 
         @NotBlank(message = "필수 수량은 필수입니다.")
-        Long requireQuant,
+        Long requireQuantity,
 
         @NotBlank(message = "재고 수량은 필수입니다.")
-        Long stockQuant,
+        Long stockQuantity,
 
         @Size(max = 200, message = "발주사이트는 최대 200자까지 입력 가능합니다.")
         String siteToOrder,
@@ -52,8 +52,8 @@ public record ProductRequest(
                         .receivingDate(receivingDate)
                         .expirationDate(expirationDate)
                         .location(location)
-                        .requireQuant(requireQuant)
-                        .stockQuant(stockQuant)
+                        .requireQuant(requireQuantity)
+                        .stockQuant(stockQuantity)
                         .siteToOrder(siteToOrder)
                         .orderFreq(orderFreq)
                         .build();

@@ -5,101 +5,89 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.fixture.ProductFixture;
-import umc.stockoneqback.product.domain.Product;
+import umc.stockoneqback.product.domain.StoreCondition;
 import umc.stockoneqback.product.service.response.GetTotalProductResponse;
 import umc.stockoneqback.product.service.response.SearchProductOthersResponse;
 import umc.stockoneqback.role.domain.store.Store;
-import umc.stockoneqback.user.service.UserService;
+import umc.stockoneqback.user.domain.User;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
-import static umc.stockoneqback.fixture.UserFixture.ANNE;
+import static umc.stockoneqback.fixture.UserFixture.TONY;
 
 @DisplayName("Product [Service Layer] -> ProductOthersService 테스트")
 public class ProductOthersServiceTest extends ServiceTest {
     @Autowired
     private ProductOthersService productOthersService;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private AuthService authService;
-
     private final ProductFixture[] productFixtures = ProductFixture.values();
-    private final Product[] products = new Product[17];
-    private static Long USER_ID;
-    private static Store zStore;
+
+    private static User user;
+    private static Store store;
 
     @BeforeEach
     void setup() {
-        zStore = storeRepository.save(Z_YEONGTONG.toStore());
-        USER_ID = userService.saveManager(ANNE.toUser(), zStore.getId());
-        authService.login(ANNE.getLoginId(), ANNE.getPassword());
-        for (int i = 0; i < products.length-1; i++)
-            products[i] = productRepository.save(productFixtures[i].toProduct(zStore));
-    }
+        store = storeRepository.save(Z_YEONGTONG.toStore());
+        user = userRepository.save(TONY.toUser());
+        store.updateManager(user);
 
-    @Nested
-    @DisplayName("공통 예외")
-    class commonError {
-        @Test
-        @DisplayName("보관방법이 유효하지 않은 값일 경우 API 호출에 실패한다")
-        void throwExceptionByInvalidStoreCondition() throws Exception {
-            Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
-            String errorStoreCondition = "조회수";
-
-            assertThrows(NullPointerException.class, () -> {
-                productOthersService.getTotalProductOthers(zStore, errorStoreCondition);
-            });
-        }
+        for (int i = 0; i < productFixtures.length; i++)
+            productRepository.save(productFixtures[i].toProduct(store));
     }
 
     @Nested
     @DisplayName("제품명 검색")
-    class findProductOthers {
+    class searchProductOthers {
         @Test
         @DisplayName("제품명 검색에 성공한다")
         void success() throws IOException {
-            Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
-            List<SearchProductOthersResponse> searchProductOthersResponseList =
-                    productOthersService.searchProductOthers(zStore, products[0].getStoreCondition().getValue(), products[0].getName());
+            for (int i = 0; i < productFixtures.length; i++) {
+                int j = i;
+                List<SearchProductOthersResponse> searchProductOthersResponseList = productOthersService.searchProductOthers(
+                        store, productFixtures[j].getStoreCondition().getValue(), productFixtures[j].getName());
 
-            assertAll(
-                    () -> assertThat(searchProductOthersResponseList.get(0).id()).isEqualTo(products[0].getId()),
-                    () -> assertThat(searchProductOthersResponseList.get(0).name()).isEqualTo(products[0].getName()),
-                    () -> assertThat(searchProductOthersResponseList.get(0).stockQuant()).isEqualTo(products[0].getStockQuant())
-            );
+                assertAll(
+                        () -> assertThat(searchProductOthersResponseList.get(0).id()).isEqualTo(j + 1),
+                        () -> assertThat(searchProductOthersResponseList.get(0).name()).isEqualTo(productFixtures[j].getName()),
+                        () -> assertThat(searchProductOthersResponseList.get(0).stockQuantity()).isEqualTo(productFixtures[j].getStockQuantity())
+                );
+            }
+
         }
     }
 
     @Nested
     @DisplayName("분류 기준별 제품 개수 조회")
-    class findTotalProduct {
+    class getTotalProductOthers {
+        @Test
+        @DisplayName("보관방법이 유효하지 않은 값일 경우 분류 기준별 제품 개수 조회에 실패한다")
+        void throwExceptionByInvalidStoreCondition() {
+            assertThatThrownBy(() -> productOthersService.getTotalProductOthers(store, "wrong" + StoreCondition.ROOM))
+                    .isInstanceOf(NullPointerException.class);
+        }
+
         @Test
         @DisplayName("분류 기준별 제품 개수 조회에 성공한다")
         void success() {
-            Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
-            List<GetTotalProductResponse> getTotalProductResponseList =
-                    productOthersService.getTotalProductOthers(zStore, products[0].getStoreCondition().getValue());
+            List<GetTotalProductResponse> getTotalProductResponseList = productOthersService.getTotalProductOthers(
+                    store, StoreCondition.ROOM.getValue());
 
             assertAll(
                     () -> assertThat(getTotalProductResponseList.get(0).name()).isEqualTo("Total"),
-                    () -> assertThat(getTotalProductResponseList.get(0).total()).isEqualTo(15),
+                    () -> assertThat(getTotalProductResponseList.get(0).total()).isEqualTo(16),
                     () -> assertThat(getTotalProductResponseList.get(1).name()).isEqualTo("Pass"),
                     () -> assertThat(getTotalProductResponseList.get(1).total()).isEqualTo(2),
                     () -> assertThat(getTotalProductResponseList.get(2).name()).isEqualTo("Close"),
                     () -> assertThat(getTotalProductResponseList.get(2).total()).isEqualTo(5),
                     () -> assertThat(getTotalProductResponseList.get(3).name()).isEqualTo("Lack"),
-                    () -> assertThat(getTotalProductResponseList.get(3).total()).isEqualTo(4)
+                    () -> assertThat(getTotalProductResponseList.get(3).total()).isEqualTo(5)
             );
         }
     }

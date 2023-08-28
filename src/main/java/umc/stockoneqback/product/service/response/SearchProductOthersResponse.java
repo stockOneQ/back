@@ -5,11 +5,8 @@ import lombok.Builder;
 @Builder
 public record SearchProductOthersResponse(
         Long id,
-
         String name,
-
-        Long stockQuant,
-
+        Long stockQuantity,
         byte[] image
 ) {
 }

@@ -53,7 +53,7 @@ public class ProductOthersService {
             SearchProductOthersResponse searchProductOthersResponse = SearchProductOthersResponse.builder()
                     .id(findProductPage.getId())
                     .name(findProductPage.getName())
-                    .stockQuant(findProductPage.getStockQuant())
+                    .stockQuantity(findProductPage.getStockQuant())
                     .image(image)
                     .build();
             searchProductOthersResponseList.add(searchProductOthersResponse);

@@ -88,8 +88,8 @@ public class ProductService {
                 .receivingDate(product.getReceivingDate())
                 .expirationDate(product.getExpirationDate())
                 .location(product.getLocation())
-                .requireQuant(product.getRequireQuant())
-                .stockQuant(product.getStockQuant())
+                .requireQuantity(product.getRequireQuant())
+                .stockQuantity(product.getStockQuant())
                 .siteToOrder(product.getSiteToOrder())
                 .orderFreq(product.getOrderFreq())
                 .build();

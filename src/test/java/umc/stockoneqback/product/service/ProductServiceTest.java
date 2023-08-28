@@ -18,9 +18,7 @@ import umc.stockoneqback.product.service.response.GetTotalProductResponse;
 import umc.stockoneqback.product.service.response.LoadProductResponse;
 import umc.stockoneqback.product.service.response.SearchProductResponse;
 import umc.stockoneqback.role.domain.store.Store;
-import umc.stockoneqback.role.service.StoreService;
 import umc.stockoneqback.user.exception.UserErrorCode;
-import umc.stockoneqback.user.service.UserFindService;
 import umc.stockoneqback.user.service.UserService;
 
 import java.io.IOException;
@@ -140,8 +138,8 @@ public class ProductServiceTest extends ServiceTest {
                     () -> assertThat(loadProductResponse.receivingDate()).isEqualTo(APPLE.getReceivingDate()),
                     () -> assertThat(loadProductResponse.expirationDate()).isEqualTo(APPLE.getExpirationDate()),
                     () -> assertThat(loadProductResponse.location()).isEqualTo(APPLE.getLocation()),
-                    () -> assertThat(loadProductResponse.requireQuant()).isEqualTo(APPLE.getRequireQuant()),
-                    () -> assertThat(loadProductResponse.stockQuant()).isEqualTo(APPLE.getStockQuant()),
+                    () -> assertThat(loadProductResponse.requireQuantity()).isEqualTo(APPLE.getRequireQuantity()),
+                    () -> assertThat(loadProductResponse.stockQuantity()).isEqualTo(APPLE.getStockQuantity()),
                     () -> assertThat(loadProductResponse.siteToOrder()).isEqualTo(APPLE.getSiteToOrder()),
                     () -> assertThat(loadProductResponse.orderFreq()).isEqualTo(APPLE.getOrderFreq())
             );
