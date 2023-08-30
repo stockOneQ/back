@@ -23,28 +23,28 @@ public class FriendProductApiController {
 
     @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/search")
-    public BaseResponse<List<SearchProductOthersResponse>> searchProductOthers(@ExtractPayload Long userId1,
-                                                                               @RequestParam(value = "friend") Long userId2,
+    public BaseResponse<List<SearchProductOthersResponse>> searchProductOthers(@ExtractPayload Long friendUser1Id,
+                                                                               @RequestParam(value = "friend") Long friendUser2Id,
                                                                                @RequestParam(value = "condition") String storeConditionValue,
                                                                                @RequestParam(value = "name") String productName) throws IOException {
-        return new BaseResponse<>(friendProductService.searchProductOthers(userId1, userId2, storeConditionValue, productName));
+        return new BaseResponse<>(friendProductService.searchProductOthers(friendUser1Id, friendUser2Id, storeConditionValue, productName));
     }
 
     @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/count")
-    public BaseResponse<List<GetTotalProductResponse>> getTotalProductOthers(@ExtractPayload Long userId,
-                                                                             @RequestParam(value = "friend") Long friendId,
+    public BaseResponse<List<GetTotalProductResponse>> getTotalProductOthers(@ExtractPayload Long friendUser1Id,
+                                                                             @RequestParam(value = "friend") Long friendUser2Id,
                                                                              @RequestParam(value = "condition") String storeConditionValue) throws IOException {
-        return new BaseResponse<>(friendProductService.getTotalProductOthers(userId, friendId, storeConditionValue));
+        return new BaseResponse<>(friendProductService.getTotalProductOthers(friendUser1Id, friendUser2Id, storeConditionValue));
     }
 
     @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/page")
-    public BaseResponse<List<SearchProductOthersResponse>> getListOfSearchConditionProductOthers(@ExtractPayload Long userId,
-                                                                                                 @RequestParam(value = "friend") Long friendId,
+    public BaseResponse<List<SearchProductOthersResponse>> getListOfSearchConditionProductOthers(@ExtractPayload Long friendUser1Id,
+                                                                                                 @RequestParam(value = "friend") Long friendUser2Id,
                                                                                                  @RequestParam(value = "condition") String storeConditionValue,
                                                                                                  @RequestParam(value = "search") String searchConditionValue,
                                                                                                  @RequestParam(value = "last", defaultValue = "-1", required = false) Long productId) throws IOException {
-        return new BaseResponse<>(friendProductService.getListOfSearchProductOthers(userId, friendId, storeConditionValue, productId, searchConditionValue));
+        return new BaseResponse<>(friendProductService.getListOfSearchProductOthers(friendUser1Id, friendUser2Id, storeConditionValue, productId, searchConditionValue));
     }
 }
