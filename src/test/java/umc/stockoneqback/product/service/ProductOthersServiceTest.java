@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.fixture.ProductFixture;
+import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.product.domain.StoreCondition;
+import umc.stockoneqback.product.exception.ProductErrorCode;
 import umc.stockoneqback.product.service.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.service.dto.response.SearchProductOthersResponse;
 import umc.stockoneqback.role.domain.store.Store;
@@ -59,7 +61,6 @@ public class ProductOthersServiceTest extends ServiceTest {
                         () -> assertThat(searchProductOthersResponseList.get(0).stockQuantity()).isEqualTo(productFixtures[j].getStockQuantity())
                 );
             }
-
         }
     }
 
@@ -70,7 +71,8 @@ public class ProductOthersServiceTest extends ServiceTest {
         @DisplayName("보관방법이 유효하지 않은 값일 경우 분류 기준별 제품 개수 조회에 실패한다")
         void throwExceptionByInvalidStoreCondition() {
             assertThatThrownBy(() -> productOthersService.getTotalProductOthers(store, "wrong" + StoreCondition.ROOM))
-                    .isInstanceOf(NullPointerException.class);
+                    .isInstanceOf(BaseException.class)
+                    .hasMessage(ProductErrorCode.NOT_FOUND_STORE_CONDITION.getMessage());
         }
 
         @Test
@@ -91,81 +93,4 @@ public class ProductOthersServiceTest extends ServiceTest {
             );
         }
     }
-
-    /*
-    @Nested
-    @DisplayName("전체 제품 목록 조회")
-    class findListOfAllProduct {
-        @Test
-        @DisplayName("전체 제품 목록 조회에 성공한다")
-        void success() throws IOException {
-            Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
-            List<SearchProductOthersResponse> productOthersResponseList = productOthersService.getListOfAllProductOthers
-                    (zStore, products[0].getStoreCondition().getValue(), null);
-
-            assertAll(
-                    () -> assertThat(productOthersResponseList.get(0).name()).isEqualTo("감"),
-                    () -> assertThat(productOthersResponseList.get(0).name())
-                            .isLessThan(productOthersResponseList.get(1).name()),
-                    () -> assertThat(productOthersResponseList.size()).isEqualTo(9)
-            );
-        }
-    }
-
-    @Nested
-    @DisplayName("유통기한이 경과한 제품 목록 조회")
-    class findListOfPassProduct {
-        @Test
-        @DisplayName("유통기한이 경과한 제품 목록 조회에 성공한다")
-        void success() throws IOException {
-            Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
-            List<SearchProductOthersResponse> productOthersResponseList = productOthersService.getListOfPassProductOthers
-                    (zStore, products[0].getStoreCondition().getValue(), null);
-
-            assertAll(
-                    () -> assertThat(productOthersResponseList.get(0).name())
-                            .isLessThan(productOthersResponseList.get(1).name()),
-                    () -> assertThat(productOthersResponseList.size()).isEqualTo(2)
-            );
-        }
-    }
-
-    @Nested
-    @DisplayName("유통기한이 임박한 제품 목록 조회")
-    class findListOfCloseProduct {
-        @Test
-        @DisplayName("유통기한이 임박한 제품 목록 조회에 성공한다")
-        void success() throws IOException {
-            Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
-            List<SearchProductOthersResponse> productOthersResponseList = productOthersService.getListOfCloseProductOthers
-                    (zStore, products[0].getStoreCondition().getValue(), null);
-
-            assertAll(
-                    () -> assertThat(productOthersResponseList.get(1).name()).isEqualTo("메론"),
-                    () -> assertThat(productOthersResponseList.get(0).name())
-                            .isLessThan(productOthersResponseList.get(1).name()),
-                    () -> assertThat(productOthersResponseList.size()).isEqualTo(5)
-            );
-        }
-    }
-
-    @Nested
-    @DisplayName("재고가 부족한 제품 목록 조회")
-    class findListOfLackProduct {
-        @Test
-        @DisplayName("재고가 부족한 제품 목록 조회에 성공한다")
-        void success() throws IOException {
-            Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
-            List<SearchProductOthersResponse> productOthersResponseList = productOthersService.getListOfLackProductOthers
-                    (zStore, products[0].getStoreCondition().getValue(), null);
-
-            assertAll(
-                    () -> assertThat(productOthersResponseList.get(0).name()).isEqualTo("복숭아"),
-                    () -> assertThat(productOthersResponseList.get(0).name())
-                            .isLessThan(productOthersResponseList.get(1).name()),
-                    () -> assertThat(productOthersResponseList.size()).isEqualTo(4)
-            );
-        }
-    }
-     */
 }

@@ -62,7 +62,7 @@ public class ProductService {
     public Long saveProduct(Long userId, Long storeId, String storeConditionValue, Product product, MultipartFile image) {
         Store store = storeService.findById(storeId);
         checkRequestIdHasRequestStore(userId, store);
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
+        StoreCondition storeCondition = StoreCondition.from(storeConditionValue);
         isExistProductByName(store, storeCondition, product.getName());
 
         String imageUrl = null;

@@ -24,14 +24,14 @@ public class ProductOthersService {
     @Transactional
     public List<SearchProductOthersResponse> searchProductOthers(Store store, String storeConditionValue,
                                                                  String productName) throws IOException {
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
+        StoreCondition storeCondition = StoreCondition.from(storeConditionValue);
         List<ProductFindPage> searchProductUrlList = productService.findProductAllByName(store, storeCondition, productName);
         return convertUrlToResponse(searchProductUrlList);
     }
 
     @Transactional
     public List<GetTotalProductResponse> getTotalProductOthers(Store store, String storeConditionValue) {
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
+        StoreCondition storeCondition = StoreCondition.from(storeConditionValue);
         return productService.countProduct(store, storeCondition);
     }
 
@@ -39,7 +39,7 @@ public class ProductOthersService {
     public List<SearchProductOthersResponse> getListOfSearchProductOthers(Store store, String storeConditionValue,
                                                                           String searchConditionValue, Long productId) throws IOException {
         Product product = productService.configPaging(productId);
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
+        StoreCondition storeCondition = StoreCondition.from(storeConditionValue);
         SearchCondition searchCondition = SearchCondition.findSearchConditionByValue(searchConditionValue);
         List<ProductFindPage> searchProductUrlList = productRepository.findPageOfSearchConditionOrderBySortCondition
                 (store, storeCondition, searchCondition, SortCondition.NAME, product.getName(), product.getOrderFreq(), PAGE_SIZE);

@@ -6,8 +6,7 @@ import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.global.utils.EnumStandard;
 import umc.stockoneqback.product.exception.ProductErrorCode;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
 @Getter
 @AllArgsConstructor
@@ -15,20 +14,12 @@ public enum SortCondition implements EnumStandard {
     NAME("가나다"),
     ORDER_FREQUENCY("빈도");
 
-    private String value;
+    private final String value;
 
-    private static final Map<String, SortCondition> map = new HashMap<>();
-    static {
-        for (SortCondition sortCondition : values()) {
-            map.put(sortCondition.value, sortCondition);
-        }
-    }
-
-    public static SortCondition findSortConditionByValue(String sortConditionValue) {
-        try {
-            return map.get(sortConditionValue);
-        } catch (NullPointerException exception) {
-            throw BaseException.type(ProductErrorCode.NOT_FOUND_SORT_CONDITION);
-        }
+    public static SortCondition from(String value) {
+        return Arrays.stream(values())
+                .filter(sortCondition -> sortCondition.value.equals(value))
+                .findFirst()
+                .orElseThrow(() -> BaseException.type(ProductErrorCode.NOT_FOUND_SORT_CONDITION));
     }
 }

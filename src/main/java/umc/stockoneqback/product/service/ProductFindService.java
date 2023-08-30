@@ -39,17 +39,16 @@ public class ProductFindService {
                                                      String productName) throws IOException {
         Store store = storeService.findById(storeId);
         checkRequestIdHasRequestStore(userId, store);
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
+        StoreCondition storeCondition = StoreCondition.from(storeConditionValue);
         List<ProductFindPage> searchProductUrlList = findProductAllByName(store, storeCondition, productName);
         return convertUrlToResponse(searchProductUrlList);
     }
-
 
     @Transactional
     public List<GetTotalProductResponse> getTotalProduct(Long userId, Long storeId, String storeConditionValue) {
         Store store = storeService.findById(storeId);
         productService.checkRequestIdHasRequestStore(userId, store);
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
+        StoreCondition storeCondition = StoreCondition.from(storeConditionValue);
         return countProduct(store, storeCondition);
     }
 
@@ -57,10 +56,10 @@ public class ProductFindService {
     public List<SearchProductResponse> getListOfSearchProduct
             (Long userId, Long storeId, String storeConditionValue, String searchConditionValue, Long productId, String sortConditionValue) throws IOException {
         Product product = configPaging(productId);
-        SortCondition sortCondition = SortCondition.findSortConditionByValue(sortConditionValue);
+        SortCondition sortCondition = SortCondition.from(sortConditionValue);
         Store store = storeService.findById(storeId);
         productService.checkRequestIdHasRequestStore(userId, store);
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
+        StoreCondition storeCondition = StoreCondition.from(storeConditionValue);
         SearchCondition searchCondition = SearchCondition.findSearchConditionByValue(searchConditionValue);
         List<ProductFindPage> searchProductUrlList = productRepository.findPageOfSearchConditionOrderBySortCondition
                 (store, storeCondition, searchCondition, sortCondition, product.getName(), product.getOrderFreq(), PAGE_SIZE);

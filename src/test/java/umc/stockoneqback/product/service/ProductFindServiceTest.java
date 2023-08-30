@@ -12,7 +12,6 @@ import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.domain.SearchCondition;
 import umc.stockoneqback.product.domain.SortCondition;
 import umc.stockoneqback.product.domain.StoreCondition;
-import umc.stockoneqback.product.exception.ProductErrorCode;
 import umc.stockoneqback.product.service.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.service.dto.response.SearchProductResponse;
 import umc.stockoneqback.role.domain.store.Store;
@@ -25,7 +24,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static umc.stockoneqback.fixture.ProductFixture.*;
 import static umc.stockoneqback.fixture.StoreFixture.A_PASTA;
 import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
@@ -169,30 +167,6 @@ public class ProductFindServiceTest extends ServiceTest {
                     () -> assertThat(totalProductResponseList.get(3).name()).isEqualTo("Lack"),
                     () -> assertThat(totalProductResponseList.get(3).total()).isEqualTo(5)
             );
-        }
-    }
-
-    @Nested
-    @DisplayName("조회 시 보관방법 및 정렬조건 검증")
-    class checkConditionWhenFindProduct {
-        @Test
-        @DisplayName("존재하지 않는 보관방법이 입력되면 예외가 발생한다")
-        void throwExceptionByWrongStoreCondition() {
-            try{
-                StoreCondition.findStoreConditionByValue("고온");
-            } catch (BaseException e) {
-                assertEquals(e.getMessage(), ProductErrorCode.NOT_FOUND_STORE_CONDITION.getMessage());
-            }
-        }
-
-        @Test
-        @DisplayName("존재하지 않는 정렬조건이 입력되면 예외가 발생한다")
-        void throwExceptionByWrongSortCondition() {
-            try{
-                SortCondition.findSortConditionByValue("가격");
-            } catch (BaseException e) {
-                assertEquals(e.getMessage(), ProductErrorCode.NOT_FOUND_SORT_CONDITION.getMessage());
-            }
         }
     }
 }
