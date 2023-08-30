@@ -33,7 +33,7 @@ public class CommentListService {
     private static final Integer PAGE_SIZE = 20; // 대댓글 포함
 
     @Transactional
-    public CustomCommentListResponse<CommentListResponse> getCommentList(Long userId, Long boardId, int page) throws IOException {
+    public CustomCommentListResponse getCommentList(Long userId, Long boardId, int page) throws IOException {
         User user = userFindService.findById(userId);
         Board board = boardFindService.findById(boardId);
 
@@ -63,7 +63,7 @@ public class CommentListService {
                 comments.getNumberOfElements()
         );
 
-        return new CustomCommentListResponse<>(pageInfo, commentLists);
+        return new CustomCommentListResponse(pageInfo, commentLists);
     }
 
     byte[] getImageOrElseNull(String imageUrl) throws IOException {

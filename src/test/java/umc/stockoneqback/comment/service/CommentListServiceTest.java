@@ -3,7 +3,6 @@ package umc.stockoneqback.comment.service;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.board.domain.Board;
-import umc.stockoneqback.comment.controller.dto.CommentListResponse;
 import umc.stockoneqback.comment.controller.dto.CustomCommentListResponse;
 import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.common.ServiceTest;
@@ -78,7 +77,7 @@ class CommentListServiceTest extends ServiceTest {
         @DisplayName("댓글 목록 조회에 성공한다")
         void success() throws IOException {
             // when
-            CustomCommentListResponse<CommentListResponse> customCommentListResponse = commentListService.getCommentList(writer.getId(), board.getId(), PAGE);
+            CustomCommentListResponse customCommentListResponse = commentListService.getCommentList(writer.getId(), board.getId(), PAGE);
 
             // then
             assertThat(customCommentListResponse.CommentListResponse().size()).isLessThanOrEqualTo(PAGE_SIZE);
