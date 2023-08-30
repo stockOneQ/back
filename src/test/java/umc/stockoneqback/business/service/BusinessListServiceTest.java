@@ -60,7 +60,7 @@ class BusinessListServiceTest extends ServiceTest {
     @DisplayName("해당 매니저와 연결된 슈퍼바이저 목록을 조회한다")
     void getSupervisors() {
         // when - then
-        BusinessListResponse supervisors = businessListService.getSupervisors(managerList[0].getId(), -1L, SEARCH);
+        BusinessListResponse supervisors = businessListService.getSupervisors(managerList[0].getId(), Long.valueOf(-1), SEARCH);
 
         assertAll(
                 () -> assertThat(supervisors.userList().size()).isEqualTo(1),
