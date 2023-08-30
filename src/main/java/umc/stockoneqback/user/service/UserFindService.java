@@ -13,7 +13,7 @@ import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.user.domain.Email;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
-import umc.stockoneqback.user.domain.search.SearchType;
+import umc.stockoneqback.user.domain.search.UserSearchType;
 import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.infra.query.dto.FindManager;
 import umc.stockoneqback.user.service.dto.response.FindManagerResponse;
@@ -21,9 +21,6 @@ import umc.stockoneqback.user.service.dto.response.FindManagerResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static umc.stockoneqback.user.domain.search.SearchType.findBusinessSearchTypeByValue;
-import static umc.stockoneqback.user.domain.search.SearchType.findFriendSearchTypeByValue;
 
 @Service
 @Transactional(readOnly = true)
@@ -52,8 +49,8 @@ public class UserFindService {
     }
 
     public FindManagerResponse findFriendManagers(Long userId, Long lastUserId, String searchTypeValue, String searchWord) {
-        SearchType searchType = findFriendSearchTypeByValue(searchTypeValue);
-        List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(userId, searchType, searchWord);
+        UserSearchType userSearchType = UserSearchType.from(searchTypeValue);
+        List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(userId, userSearchType, searchWord);
         List<FindManager> findManagers = updateFriendRelationStatus(userId, managersBySearchType);
 
         int lastIndex = getLastIndex(findManagers, lastUserId);
@@ -92,8 +89,8 @@ public class UserFindService {
     }
 
     public FindManagerResponse findBusinessManagers(Long userId, Long lastUserId, String searchTypeValue, String searchWord) {
-        SearchType searchType = findBusinessSearchTypeByValue(searchTypeValue);
-        List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(userId, searchType, searchWord);
+        UserSearchType userSearchType = UserSearchType.from(searchTypeValue);
+        List<FindManager> managersBySearchType = userRepository.findManagersBySearchType(userId, userSearchType, searchWord);
         List<FindManager> findManagers = updateBusinessRelationStatus(userId, managersBySearchType);
 
         int lastIndex = getLastIndex(findManagers, lastUserId);

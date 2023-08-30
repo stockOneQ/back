@@ -7,15 +7,10 @@ import java.time.LocalDateTime;
 @Builder
 public record ReplyListResponse(
         Long id,
-
         byte[] image,
-
         String content,
-
         LocalDateTime createdDate,
-
         String writerId,
-
         String writerName
 ) {
 }

@@ -10,13 +10,13 @@ import java.util.Arrays;
 
 @Getter
 @AllArgsConstructor
-public enum SortCondition implements EnumStandard {
+public enum ProductSortCondition implements EnumStandard {
     NAME("가나다"),
     ORDER_FREQUENCY("빈도");
 
     private final String value;
 
-    public static SortCondition from(String value) {
+    public static ProductSortCondition from(String value) {
         return Arrays.stream(values())
                 .filter(sortCondition -> sortCondition.value.equals(value))
                 .findFirst()

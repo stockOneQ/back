@@ -19,7 +19,7 @@ import umc.stockoneqback.share.repository.ShareRepository;
 import java.util.List;
 
 import static umc.stockoneqback.share.controller.dto.ShareResponse.toResponse;
-import static umc.stockoneqback.share.domain.Category.findCategoryByValue;
+import static umc.stockoneqback.share.domain.Category.from;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,7 +31,7 @@ public class ShareService {
 
     @Transactional
     public void create(Long userId, Long businessId, String categoryValue, ShareRequest request, MultipartFile file) {
-        Category category = findCategoryByValue(categoryValue);
+        Category category = from(categoryValue);
         Business business = businessRepository.findById(businessId)
                 .orElseThrow(() -> BaseException.type(BusinessErrorCode.BUSINESS_NOT_FOUND));
 

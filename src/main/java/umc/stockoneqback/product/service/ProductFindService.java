@@ -56,13 +56,13 @@ public class ProductFindService {
     public List<SearchProductResponse> getListOfSearchProduct
             (Long userId, Long storeId, String storeConditionValue, String searchConditionValue, Long productId, String sortConditionValue) throws IOException {
         Product product = configPaging(productId);
-        SortCondition sortCondition = SortCondition.from(sortConditionValue);
+        ProductSortCondition productSortCondition = ProductSortCondition.from(sortConditionValue);
         Store store = storeService.findById(storeId);
         productService.checkRequestIdHasRequestStore(userId, store);
         StoreCondition storeCondition = StoreCondition.from(storeConditionValue);
         SearchCondition searchCondition = SearchCondition.findSearchConditionByValue(searchConditionValue);
         List<ProductFindPage> searchProductUrlList = productRepository.findPageOfSearchConditionOrderBySortCondition
-                (store, storeCondition, searchCondition, sortCondition, product.getName(), product.getOrderFreq(), PAGE_SIZE);
+                (store, storeCondition, searchCondition, productSortCondition, product.getName(), product.getOrderFreq(), PAGE_SIZE);
         return convertUrlToResponse(searchProductUrlList);
     }
 

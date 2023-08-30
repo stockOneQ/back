@@ -13,7 +13,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.file.config.S3MockConfig;
-import umc.stockoneqback.file.utils.exception.FileErrorCode;
+import umc.stockoneqback.file.exception.FileErrorCode;
 import umc.stockoneqback.global.exception.BaseException;
 
 import java.io.FileInputStream;
@@ -32,7 +32,7 @@ class FileServiceTest extends ServiceTest {
     @Autowired
     private S3Mock s3Mock;
 
-    private String FILE_PATH = "src/test/resources/files/";
+    private final String FILE_PATH = "src/test/resources/files/";
 
     @AfterEach
     public void tearDown() {

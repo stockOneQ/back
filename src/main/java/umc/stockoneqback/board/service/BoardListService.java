@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.board.controller.dto.CustomBoardListResponse;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.domain.BoardRepository;
-import umc.stockoneqback.board.domain.SearchType;
-import umc.stockoneqback.board.domain.SortCondition;
+import umc.stockoneqback.board.domain.BoardSearchType;
+import umc.stockoneqback.board.domain.BoardSortCondition;
 import umc.stockoneqback.board.domain.like.BoardLikeRepository;
 import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.board.infra.query.dto.BoardList;
@@ -38,13 +38,13 @@ public class BoardListService {
     @Transactional
     public CustomBoardListResponse<BoardList> getBoardList(Long userId, int page, String sortBy,
                                                            String searchBy, String searchWord) {
-        SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
-        SearchType searchType = SearchType.findSearchTypeByValue(searchBy);
+        BoardSortCondition boardSortCondition = BoardSortCondition.from(sortBy);
+        BoardSearchType boardSearchType = BoardSearchType.from(searchBy);
 
         CustomBoardListResponse<BoardList> boardList = new CustomBoardListResponse<>();
-        switch (sortCondition) {
-            case TIME -> boardList = boardRepository.getBoardListOrderByTime(searchType, searchWord, page);
-            case HIT -> boardList = boardRepository.getBoardListOrderByHit(searchType, searchWord, page);
+        switch (boardSortCondition) {
+            case TIME -> boardList = boardRepository.getBoardListOrderByTime(boardSearchType, searchWord, page);
+            case HIT -> boardList = boardRepository.getBoardListOrderByHit(boardSearchType, searchWord, page);
         }
 
         List<BoardList> boardLists = getSortedBoardList(boardList);
@@ -57,13 +57,13 @@ public class BoardListService {
         User user = userFindService.findById(userId);
         validateUser(user);
 
-        SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
-        SearchType searchType = SearchType.findMyBoardSearchTypeByValue(searchBy);
+        BoardSortCondition boardSortCondition = BoardSortCondition.from(sortBy);
+        BoardSearchType boardSearchType = BoardSearchType.from(searchBy);
 
         CustomBoardListResponse<BoardList> boardList = new CustomBoardListResponse<>();
-        switch (sortCondition) {
-            case TIME -> boardList = boardRepository.getMyBoardListOrderByTime(userId, searchType, searchWord, page);
-            case HIT -> boardList = boardRepository.getMyBoardListOrderByHit(userId, searchType, searchWord, page);
+        switch (boardSortCondition) {
+            case TIME -> boardList = boardRepository.getMyBoardListOrderByTime(userId, boardSearchType, searchWord, page);
+            case HIT -> boardList = boardRepository.getMyBoardListOrderByHit(userId, boardSearchType, searchWord, page);
         }
 
         List<BoardList> boardLists = getSortedBoardList(boardList);

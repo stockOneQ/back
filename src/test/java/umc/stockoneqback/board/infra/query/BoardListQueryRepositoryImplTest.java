@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.board.controller.dto.CustomBoardListResponse;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.domain.BoardRepository;
-import umc.stockoneqback.board.domain.SearchType;
+import umc.stockoneqback.board.domain.BoardSearchType;
 import umc.stockoneqback.board.infra.query.dto.BoardList;
 import umc.stockoneqback.common.RepositoryTest;
 import umc.stockoneqback.user.domain.User;
@@ -26,7 +26,7 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
 
     private final Board[] boardList = new Board[10];
     private User writer;
-    private static final SearchType SEARCH_TYPE = SearchType.TITLE;
+    private static final BoardSearchType SEARCH_TYPE = BoardSearchType.TITLE;
     private static final String SEARCH_TITLE = "제목";
     private static final String SEARCH_CONTENT = "5";
     private static final int PAGE = 0;

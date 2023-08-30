@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.global.exception.BaseException;
+import umc.stockoneqback.product.domain.ProductSortCondition;
 import umc.stockoneqback.product.domain.SearchCondition;
-import umc.stockoneqback.product.domain.SortCondition;
 import umc.stockoneqback.product.domain.StoreCondition;
 import umc.stockoneqback.product.infra.query.dto.ProductFindPage;
 import umc.stockoneqback.product.infra.query.dto.QProductFindPage;
@@ -42,13 +42,13 @@ public class ProductFindQueryRepositoryImpl implements ProductFindQueryRepositor
     @Override
     public List<ProductFindPage> findPageOfSearchConditionOrderBySortCondition
             (Store store, StoreCondition storeCondition, SearchCondition searchCondition,
-             SortCondition sortCondition, String productName, Long orderFreq, Integer pageSize) {
+             ProductSortCondition productSortCondition, String productName, Long orderFreq, Integer pageSize) {
         return query.selectDistinct(new QProductFindPage(product.id, product.name, product.imageUrl, product.stockQuant))
                 .from(product)
                 .where(product.store.eq(store), product.storeCondition.eq(storeCondition), product.status.eq(Status.NORMAL),
                         getWhereQueryBySearchCondition(searchCondition),
-                        getWhereQueryBySortCondition(sortCondition, productName, orderFreq))
-                .orderBy(getOrderByQueryBySortCondition(sortCondition))
+                        getWhereQueryBySortCondition(productSortCondition, productName, orderFreq))
+                .orderBy(getOrderByQueryBySortCondition(productSortCondition))
                 .limit(pageSize)
                 .fetch();
     }
@@ -69,14 +69,14 @@ public class ProductFindQueryRepositoryImpl implements ProductFindQueryRepositor
         };
     }
 
-    private BooleanBuilder getWhereQueryBySortCondition(SortCondition sortCondition, String productName, Long orderFreq) {
-        if (sortCondition == null) {
+    private BooleanBuilder getWhereQueryBySortCondition(ProductSortCondition productSortCondition, String productName, Long orderFreq) {
+        if (productSortCondition == null) {
             throw BaseException.type(UserErrorCode.INPUT_VALUE_REQUIRED);
         }
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-        switch (sortCondition) {
+        switch (productSortCondition) {
             case NAME -> booleanBuilder.and(
                     booleanTemplate("({0} > {1} or {1} is null)", product.name, productName));
             case ORDER_FREQUENCY -> booleanBuilder.and(
@@ -89,14 +89,14 @@ public class ProductFindQueryRepositoryImpl implements ProductFindQueryRepositor
         return booleanBuilder;
     }
 
-    private OrderSpecifier[] getOrderByQueryBySortCondition(SortCondition sortCondition) {
-        if (sortCondition == null) {
+    private OrderSpecifier[] getOrderByQueryBySortCondition(ProductSortCondition productSortCondition) {
+        if (productSortCondition == null) {
             throw BaseException.type(UserErrorCode.INPUT_VALUE_REQUIRED);
         }
 
         List<OrderSpecifier> orderSpecifierList = new ArrayList<>();
 
-        switch (sortCondition) {
+        switch (productSortCondition) {
             case NAME -> orderSpecifierList.add(new OrderSpecifier(Order.ASC, product.name));
             case ORDER_FREQUENCY -> {
                 orderSpecifierList.add(new OrderSpecifier(Order.DESC, product.orderFreq));

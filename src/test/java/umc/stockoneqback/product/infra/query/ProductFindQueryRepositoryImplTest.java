@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.RepositoryTest;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.product.domain.ProductRepository;
+import umc.stockoneqback.product.domain.ProductSortCondition;
 import umc.stockoneqback.product.domain.SearchCondition;
-import umc.stockoneqback.product.domain.SortCondition;
 import umc.stockoneqback.product.domain.StoreCondition;
 import umc.stockoneqback.product.infra.query.dto.ProductFindPage;
 import umc.stockoneqback.role.domain.store.Store;
@@ -61,7 +61,7 @@ public class ProductFindQueryRepositoryImplTest extends RepositoryTest {
         void findPageOfAllOrderByName() {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             List<ProductFindPage> firstPage = productRepository.findPageOfSearchConditionOrderBySortCondition
-                    (zStore, StoreCondition.ROOM, SearchCondition.ALL, SortCondition.NAME, null, null, PAGE_SIZE);
+                    (zStore, StoreCondition.ROOM, SearchCondition.ALL, ProductSortCondition.NAME, null, null, PAGE_SIZE);
 
             assertAll(
                     () -> assertThat(firstPage.get(0).getName()).isEqualTo("감"),
@@ -112,7 +112,7 @@ public class ProductFindQueryRepositoryImplTest extends RepositoryTest {
         void findPageOfPassOrderByName() {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             List<ProductFindPage> firstPage = productRepository.findPageOfSearchConditionOrderBySortCondition
-                    (zStore, StoreCondition.ROOM, SearchCondition.PASS, SortCondition.NAME, null, null, PAGE_SIZE);
+                    (zStore, StoreCondition.ROOM, SearchCondition.PASS, ProductSortCondition.NAME, null, null, PAGE_SIZE);
 
             assertAll(
                     () -> assertThat(firstPage.get(0).getName()).isEqualTo("감"),
@@ -143,7 +143,7 @@ public class ProductFindQueryRepositoryImplTest extends RepositoryTest {
         void findPageOfCloseOrderByName() {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             List<ProductFindPage> firstPage = productRepository.findPageOfSearchConditionOrderBySortCondition
-                    (zStore, StoreCondition.ROOM, SearchCondition.CLOSE, SortCondition.NAME, null, null, PAGE_SIZE);
+                    (zStore, StoreCondition.ROOM, SearchCondition.CLOSE, ProductSortCondition.NAME, null, null, PAGE_SIZE);
 
             assertAll(
                     () -> assertThat(firstPage.get(0).getName()).isEqualTo("두리안"),
@@ -180,7 +180,7 @@ public class ProductFindQueryRepositoryImplTest extends RepositoryTest {
         void findPageOfLackOrderByName() {
             Store zStore = storeRepository.findByName(Z_YEONGTONG.getName()).orElseThrow();
             List<ProductFindPage> firstPage = productRepository.findPageOfSearchConditionOrderBySortCondition
-                    (zStore, StoreCondition.ROOM, SearchCondition.LACK, SortCondition.NAME, null, null, PAGE_SIZE);
+                    (zStore, StoreCondition.ROOM, SearchCondition.LACK, ProductSortCondition.NAME, null, null, PAGE_SIZE);
 
             assertAll(
                     () -> assertThat(firstPage.get(0).getName()).isEqualTo("배"),

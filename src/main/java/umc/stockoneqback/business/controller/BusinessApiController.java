@@ -20,6 +20,7 @@ public class BusinessApiController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('SUPERVISOR')")
     @DeleteMapping("/{managerId}")
     public ResponseEntity<Void> cancel(@ExtractPayload Long supervisorId, @PathVariable Long managerId) {
         businessService.cancel(supervisorId, managerId);

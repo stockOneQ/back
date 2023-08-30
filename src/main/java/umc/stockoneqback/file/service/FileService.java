@@ -12,7 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import umc.stockoneqback.file.utils.exception.FileErrorCode;
+import umc.stockoneqback.file.exception.FileErrorCode;
 import umc.stockoneqback.global.exception.BaseException;
 
 import java.io.IOException;

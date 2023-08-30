@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import umc.stockoneqback.file.dto.UploadRequest;
+import umc.stockoneqback.file.exception.FileErrorCode;
 import umc.stockoneqback.file.service.FileService;
-import umc.stockoneqback.file.utils.exception.FileErrorCode;
 import umc.stockoneqback.global.annotation.ExtractPayload;
 import umc.stockoneqback.global.exception.BaseException;
 

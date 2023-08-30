@@ -23,7 +23,7 @@ public class Email {
     @Column(name = "email", nullable = false, unique = true, updatable = false)
     private String value;
 
-    private Email(String value){
+    private Email(String value) {
         this.value = value;
     }
 

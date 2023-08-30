@@ -1,4 +1,4 @@
-package umc.stockoneqback.file.utils.exception;
+package umc.stockoneqback.file.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

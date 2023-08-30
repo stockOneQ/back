@@ -42,7 +42,7 @@ public class ProductOthersService {
         StoreCondition storeCondition = StoreCondition.from(storeConditionValue);
         SearchCondition searchCondition = SearchCondition.findSearchConditionByValue(searchConditionValue);
         List<ProductFindPage> searchProductUrlList = productRepository.findPageOfSearchConditionOrderBySortCondition
-                (store, storeCondition, searchCondition, SortCondition.NAME, product.getName(), product.getOrderFreq(), PAGE_SIZE);
+                (store, storeCondition, searchCondition, ProductSortCondition.NAME, product.getName(), product.getOrderFreq(), PAGE_SIZE);
         return convertUrlToResponse(searchProductUrlList);
     }
 

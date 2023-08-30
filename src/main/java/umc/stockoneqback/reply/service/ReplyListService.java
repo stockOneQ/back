@@ -9,7 +9,6 @@ import umc.stockoneqback.file.service.FileService;
 import umc.stockoneqback.reply.controller.dto.ReplyListResponse;
 import umc.stockoneqback.reply.domain.Reply;
 import umc.stockoneqback.reply.domain.ReplyRepository;
-import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.service.UserFindService;
 
 import java.io.IOException;
@@ -27,13 +26,12 @@ public class ReplyListService {
 
     @Transactional
     public List<ReplyListResponse> getReplyList(Long userId, Long commentId) throws IOException {
-        User user = userFindService.findById(userId);
         Comment comment = commentFindService.findById(commentId);
 
         List<Reply> replies = replyRepository.findReplyListOrderByTime(comment.getId());
         List<ReplyListResponse> replyLists = new ArrayList<>();
 
-        for(Reply reply : replies){
+        for (Reply reply : replies) {
             byte[] image = getImageOrElseNull(reply.getImage());
             ReplyListResponse replyListResponse = ReplyListResponse.builder()
                     .id(reply.getId())

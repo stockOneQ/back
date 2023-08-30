@@ -9,8 +9,8 @@ import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.product.domain.Product;
+import umc.stockoneqback.product.domain.ProductSortCondition;
 import umc.stockoneqback.product.domain.SearchCondition;
-import umc.stockoneqback.product.domain.SortCondition;
 import umc.stockoneqback.product.domain.StoreCondition;
 import umc.stockoneqback.product.service.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.service.dto.response.SearchProductResponse;
@@ -126,9 +126,9 @@ public class ProductFindServiceTest extends ServiceTest {
 
             // when - then
             List<SearchProductResponse> productResponseOrderByNameList = productFindService.getListOfSearchProduct(
-                    user.getId(), store.getId(), StoreCondition.ROOM.getValue(), SearchCondition.ALL.getValue(), products[0].getId(), SortCondition.NAME.getValue());
+                    user.getId(), store.getId(), StoreCondition.ROOM.getValue(), SearchCondition.ALL.getValue(), products[0].getId(), ProductSortCondition.NAME.getValue());
             List<SearchProductResponse> productResponseOrderByOrderFreqList = productFindService.getListOfSearchProduct(
-                    user.getId(), store.getId(), StoreCondition.ROOM.getValue(), SearchCondition.ALL.getValue(), products[0].getId(), SortCondition.ORDER_FREQUENCY.getValue());
+                    user.getId(), store.getId(), StoreCondition.ROOM.getValue(), SearchCondition.ALL.getValue(), products[0].getId(), ProductSortCondition.ORDER_FREQUENCY.getValue());
 
             assertAll(
                     () -> assertThat(productResponseOrderByNameList.get(0).name()).isEqualTo(WATERMELON.getName()),

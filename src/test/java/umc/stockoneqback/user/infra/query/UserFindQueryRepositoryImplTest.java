@@ -9,7 +9,7 @@ import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.domain.store.StoreRepository;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.domain.UserRepository;
-import umc.stockoneqback.user.domain.search.SearchType;
+import umc.stockoneqback.user.domain.search.UserSearchType;
 import umc.stockoneqback.user.infra.query.dto.FindManager;
 
 import java.util.List;
@@ -29,9 +29,9 @@ class UserFindQueryRepositoryImplTest extends RepositoryTest {
 
     private final Store[] storeList = new Store[5];
     private final User[] userList = new User[9];
-    private final SearchType SEARCH_TYPE_NAME = SearchType.NAME;
-    private final SearchType SEARCH_TYPE_STORE = SearchType.STORE;
-    private final SearchType SEARCH_TYPE_ADDRESS = SearchType.ADDRESS;
+    private final UserSearchType SEARCH_TYPE_NAME = UserSearchType.NAME;
+    private final UserSearchType SEARCH_TYPE_STORE = UserSearchType.STORE;
+    private final UserSearchType SEARCH_TYPE_ADDRESS = UserSearchType.ADDRESS;
     private final static String SEARCH_NAME = "아";
     private final static String SEARCH_STORE = "과일";
     private final static String SEARCH_ADDRESS = "경기도";

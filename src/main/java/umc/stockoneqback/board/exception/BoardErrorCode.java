@@ -14,7 +14,7 @@ public enum BoardErrorCode implements ErrorCode {
     SELF_BOARD_LIKE_NOT_ALLOWED(HttpStatus.CONFLICT, "BOARD_004", "본인 게시글은 좋아요를 누를 수 없습니다."),
     BOARD_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD_005", "좋아요를 누르지 않은 게시글은 좋아요 취소를 할 수 없습니다."),
     NOT_FOUND_SORT_CONDITION(HttpStatus.NOT_FOUND, "BOARD_006", "지원하지 않는 정렬 방식입니다."),
-    NOT_FOUND_SEARCH_TYPE(HttpStatus.NOT_FOUND, "BOARD_006", "지원하지 않는 검색 조건입니다."),
+    NOT_FOUND_SEARCH_TYPE(HttpStatus.NOT_FOUND, "BOARD_007", "지원하지 않는 검색 조건입니다."),
     ;
 
     private final HttpStatus status;

@@ -9,7 +9,7 @@ import umc.stockoneqback.business.infra.query.dto.FilteredBusinessUser;
 import umc.stockoneqback.business.infra.query.dto.FindBusinessUser;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.share.domain.Category;
-import umc.stockoneqback.share.domain.SearchType;
+import umc.stockoneqback.share.domain.ShareSearchType;
 import umc.stockoneqback.share.exception.ShareErrorCode;
 import umc.stockoneqback.share.infra.query.dto.CustomShareListPage;
 import umc.stockoneqback.share.infra.query.dto.ShareList;
@@ -75,16 +75,16 @@ public class ShareListService {
 
     private CustomShareListPage<ShareList> getShareListResponse(Long businessId, int page, String categoryValue,
                                                                 String searchTypeValue, String searchWord) {
-        Category category = Category.findCategoryByValue(categoryValue);
-        SearchType searchType = SearchType.findShareSearchTypeByValue(searchTypeValue);
-        CustomShareListPage<ShareList> shareList = shareRepository.findShareList(businessId, category, searchType, searchWord, page);
+        Category category = Category.from(categoryValue);
+        ShareSearchType shareSearchType = ShareSearchType.from(searchTypeValue);
+        CustomShareListPage<ShareList> shareList = shareRepository.findShareList(businessId, category, shareSearchType, searchWord, page);
         return shareList;
     }
 
     private void validateFilteredBusiness(FilteredBusinessUser<FindBusinessUser> filteredBusiness, Long selectedBusinessId) {
         boolean flag = false;
         for (int i = 0; i < filteredBusiness.getTotal(); i++) {
-            if (filteredBusiness.getBusinessUserList().get(i).getUserBusinessId() == selectedBusinessId) {
+            if (filteredBusiness.getBusinessUserList().get(i).getUserBusinessId().equals(selectedBusinessId)) {
                 flag = true;
                 break;
             }
