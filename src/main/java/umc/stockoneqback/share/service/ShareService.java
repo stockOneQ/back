@@ -50,7 +50,7 @@ public class ShareService {
         validateWriter(userId, share);
 
         String fileUrl = null;
-        if (file != null && !file.isEmpty()) {
+        if (file != null || ((file != null) && !(file.isEmpty()))){
             fileUrl = fileService.uploadShareFiles(file);
         }
 
