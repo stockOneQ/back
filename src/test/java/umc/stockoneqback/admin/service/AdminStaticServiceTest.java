@@ -34,11 +34,9 @@ public class AdminStaticServiceTest extends ServiceTest {
                     "슈퍼바이저는 Connect와 마이페이지 메뉴를 이용할 수 있습니다."
     );
 
-    private static Long ADMIN_ID;
-
     @BeforeEach
     void setup() {
-        ADMIN_ID = userRepository.save(UserFixture.ADMIN.toUser()).getId();
+        userRepository.save(UserFixture.ADMIN.toUser()).getId();
 
         StaticFARedisRepository.deleteAll();
         for (int i = 0; i < questionList.size(); i++) {

@@ -124,7 +124,6 @@ public class BoardApiControllerTest extends ControllerTest {
     @DisplayName("게시글 수정 API [PATCH /api/boards/{boardId}]")
     class updateBoard {
         private static final String BASE_URL = "/api/boards/{boardId}";
-        private static final Long WRITER_ID = 1L;
         private static final Long BOARD_ID = 1L;
 
         @Test
@@ -265,12 +264,11 @@ public class BoardApiControllerTest extends ControllerTest {
     @DisplayName("게시글 상세조회 API [GET /api/boards/{boardId}]")
     class getDetailBoard {
         private static final String BASE_URL = "/api/boards/{boardId}";
-        private static final Long USER_ID = 1L;
         private static final Long BOARD_ID = 2L;
 
         @Test
         @DisplayName("유효하지 않은 권한으로 게시글 상세 조회 시 실패한다")
-        void throwExceptionInvalid_User_JWT() throws Exception {
+        void throwExceptionInvalidUserJWT() throws Exception {
             // given
             doThrow(BaseException.type(GlobalErrorCode.INVALID_USER))
                     .when(boardService)
@@ -280,7 +278,6 @@ public class BoardApiControllerTest extends ControllerTest {
             MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
                     .get(BASE_URL, BOARD_ID)
                     .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
-
 
             // then
             final GlobalErrorCode expectedError = GlobalErrorCode.INVALID_USER;
