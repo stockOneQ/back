@@ -1,4 +1,4 @@
-package umc.stockoneqback.product.service.response;
+package umc.stockoneqback.product.service.dto.response;
 
 public record GetRequiredInfoResponse(
         Long userId,

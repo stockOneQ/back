@@ -12,8 +12,8 @@ import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.product.domain.SearchCondition;
 import umc.stockoneqback.product.domain.SortCondition;
 import umc.stockoneqback.product.domain.StoreCondition;
-import umc.stockoneqback.product.infra.query.dto.FindProductPage;
-import umc.stockoneqback.product.infra.query.dto.QFindProductPage;
+import umc.stockoneqback.product.infra.query.dto.ProductFindPage;
+import umc.stockoneqback.product.infra.query.dto.QProductFindPage;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
@@ -26,12 +26,12 @@ import static umc.stockoneqback.product.domain.QProduct.product;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class FindProductQueryRepositoryImpl implements FindProductQueryRepository {
+public class ProductFindQueryRepositoryImpl implements ProductFindQueryRepository {
     private final JPAQueryFactory query;
 
     @Override
-    public List<FindProductPage> findProductByName(Store store, StoreCondition storeCondition, String productName) {
-        return query.selectDistinct(new QFindProductPage(product.id, product.name, product.imageUrl, product.stockQuant))
+    public List<ProductFindPage> findProductByName(Store store, StoreCondition storeCondition, String productName) {
+        return query.selectDistinct(new QProductFindPage(product.id, product.name, product.imageUrl, product.stockQuant))
                 .from(product)
                 .where(product.store.eq(store), product.storeCondition.eq(storeCondition), product.status.eq(Status.NORMAL),
                         product.name.contains(productName))
@@ -40,10 +40,10 @@ public class FindProductQueryRepositoryImpl implements FindProductQueryRepositor
     }
 
     @Override
-    public List<FindProductPage> findPageOfSearchConditionOrderBySortCondition
+    public List<ProductFindPage> findPageOfSearchConditionOrderBySortCondition
             (Store store, StoreCondition storeCondition, SearchCondition searchCondition,
              SortCondition sortCondition, String productName, Long orderFreq, Integer pageSize) {
-        return query.selectDistinct(new QFindProductPage(product.id, product.name, product.imageUrl, product.stockQuant))
+        return query.selectDistinct(new QProductFindPage(product.id, product.name, product.imageUrl, product.stockQuant))
                 .from(product)
                 .where(product.store.eq(store), product.storeCondition.eq(storeCondition), product.status.eq(Status.NORMAL),
                         getWhereQueryBySearchCondition(searchCondition),
@@ -77,17 +77,14 @@ public class FindProductQueryRepositoryImpl implements FindProductQueryRepositor
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         switch (sortCondition) {
-            case NAME -> {
-                booleanBuilder.and(
-                        booleanTemplate("({0} > {1} or {1} is null)", product.name, productName)
-                );}
-            case ORDER_FREQUENCY -> {
-                booleanBuilder.and(
-                        booleanTemplate(
-                                "(({0} < {1} or {0} = {1} and {2} > {3}) or ({1} is null and {3} is null))",
-                                product.orderFreq, orderFreq, product.name, productName
-                        )
-                );}
+            case NAME -> booleanBuilder.and(
+                    booleanTemplate("({0} > {1} or {1} is null)", product.name, productName));
+            case ORDER_FREQUENCY -> booleanBuilder.and(
+                    booleanTemplate(
+                            "(({0} < {1} or {0} = {1} and {2} > {3}) or ({1} is null and {3} is null))",
+                            product.orderFreq, orderFreq, product.name, productName
+                    )
+            );
         }
         return booleanBuilder;
     }

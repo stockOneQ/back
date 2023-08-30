@@ -50,6 +50,8 @@ import umc.stockoneqback.global.security.handler.JwtAccessDeniedHandler;
 import umc.stockoneqback.global.security.handler.JwtAuthenticationEntryPoint;
 import umc.stockoneqback.global.security.service.CustomUserDetailsService;
 import umc.stockoneqback.product.controller.ProductApiController;
+import umc.stockoneqback.product.controller.ProductFindApiController;
+import umc.stockoneqback.product.service.ProductFindService;
 import umc.stockoneqback.product.service.ProductOthersService;
 import umc.stockoneqback.product.service.ProductService;
 import umc.stockoneqback.reply.controller.ReplyApiController;
@@ -79,6 +81,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         CommentApiController.class,
         ReplyApiController.class,
         ProductApiController.class,
+        ProductFindApiController.class,
         FriendApiController.class,
         BoardLikeApiController.class,
         FriendInformationController.class,
@@ -125,6 +128,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected ProductService productService;
+
+    @MockBean
+    protected ProductFindService productFindService;
 
     @MockBean
     protected UserFindService userFindService;

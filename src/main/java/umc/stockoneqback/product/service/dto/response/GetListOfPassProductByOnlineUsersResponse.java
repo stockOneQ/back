@@ -1,4 +1,4 @@
-package umc.stockoneqback.product.service.response;
+package umc.stockoneqback.product.service.dto.response;
 
 import java.util.List;
 

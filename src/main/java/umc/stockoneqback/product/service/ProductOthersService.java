@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.product.domain.*;
-import umc.stockoneqback.product.infra.query.dto.FindProductPage;
-import umc.stockoneqback.product.service.response.GetTotalProductResponse;
-import umc.stockoneqback.product.service.response.SearchProductOthersResponse;
+import umc.stockoneqback.product.infra.query.dto.ProductFindPage;
+import umc.stockoneqback.product.service.dto.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.dto.response.SearchProductOthersResponse;
 import umc.stockoneqback.role.domain.store.Store;
 
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class ProductOthersService {
     public List<SearchProductOthersResponse> searchProductOthers(Store store, String storeConditionValue,
                                                                  String productName) throws IOException {
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
-        List<FindProductPage> searchProductUrlList = productService.findProductAllByName(store, storeCondition, productName);
+        List<ProductFindPage> searchProductUrlList = productService.findProductAllByName(store, storeCondition, productName);
         return convertUrlToResponse(searchProductUrlList);
     }
 
@@ -41,19 +41,19 @@ public class ProductOthersService {
         Product product = productService.configPaging(productId);
         StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
         SearchCondition searchCondition = SearchCondition.findSearchConditionByValue(searchConditionValue);
-        List<FindProductPage> searchProductUrlList = productRepository.findPageOfSearchConditionOrderBySortCondition
+        List<ProductFindPage> searchProductUrlList = productRepository.findPageOfSearchConditionOrderBySortCondition
                 (store, storeCondition, searchCondition, SortCondition.NAME, product.getName(), product.getOrderFreq(), PAGE_SIZE);
         return convertUrlToResponse(searchProductUrlList);
     }
 
-    private List<SearchProductOthersResponse> convertUrlToResponse(List<FindProductPage> searchProductUrlList) throws IOException {
+    private List<SearchProductOthersResponse> convertUrlToResponse(List<ProductFindPage> searchProductUrlList) throws IOException {
         List<SearchProductOthersResponse> searchProductOthersResponseList = new ArrayList<>();
-        for (FindProductPage findProductPage : searchProductUrlList) {
-            byte[] image = productService.getImageOrElseNull(findProductPage.getImageUrl());
+        for (ProductFindPage productFindPage : searchProductUrlList) {
+            byte[] image = productService.getImageOrElseNull(productFindPage.getImageUrl());
             SearchProductOthersResponse searchProductOthersResponse = SearchProductOthersResponse.builder()
-                    .id(findProductPage.getId())
-                    .name(findProductPage.getName())
-                    .stockQuantity(findProductPage.getStockQuant())
+                    .id(productFindPage.getId())
+                    .name(productFindPage.getName())
+                    .stockQuantity(productFindPage.getStockQuant())
                     .image(image)
                     .build();
             searchProductOthersResponseList.add(searchProductOthersResponse);

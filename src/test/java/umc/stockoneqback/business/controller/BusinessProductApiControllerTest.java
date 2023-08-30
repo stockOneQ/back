@@ -12,8 +12,8 @@ import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.global.exception.GlobalErrorCode;
 import umc.stockoneqback.product.exception.ProductErrorCode;
-import umc.stockoneqback.product.service.response.GetTotalProductResponse;
-import umc.stockoneqback.product.service.response.SearchProductOthersResponse;
+import umc.stockoneqback.product.service.dto.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.dto.response.SearchProductOthersResponse;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
 import java.util.ArrayList;
