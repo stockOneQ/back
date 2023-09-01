@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.user.domain.Role;
-import umc.stockoneqback.user.domain.search.SearchType;
+import umc.stockoneqback.user.domain.search.UserSearchType;
 import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.infra.query.dto.FindManager;
 import umc.stockoneqback.user.infra.query.dto.QFindManager;
@@ -22,25 +22,21 @@ public class UserFindQueryRepositoryImpl implements UserFindQueryRepository {
     private final JPAQueryFactory query;
 
     @Override
-    public List<FindManager> findManagersBySearchType(Long userId, SearchType searchType, String searchWord) {
+    public List<FindManager> findManagersBySearchType(Long userId, UserSearchType userSearchType, String searchWord) {
         return query
                 .selectDistinct(new QFindManager(user.id, user.name, user.managerStore.name, user.phoneNumber))
                 .from(user)
-                .where(search(searchType, searchWord), user.role.eq(Role.MANAGER), user.status.eq(Status.NORMAL), user.id.ne(userId))
+                .where(search(userSearchType, searchWord), user.role.eq(Role.MANAGER), user.status.eq(Status.NORMAL), user.id.ne(userId))
                 .orderBy(user.id.asc())
                 .fetch();
     }
       
-    private BooleanExpression search(SearchType searchType, String searchWord) {
-        if (searchWord == null || searchWord.isEmpty()) {
-            throw BaseException.type(UserErrorCode.INPUT_VALUE_REQUIRED);
-        } else {
-            switch (searchType) {
-                case NAME: return user.name.contains(searchWord);
-                case STORE: return user.managerStore.name.contains(searchWord);
-                case ADDRESS: return user.managerStore.address.contains(searchWord);
-                default: return null;
-            }
-        }
+    private BooleanExpression search(UserSearchType userSearchType, String searchWord) {
+        return switch (userSearchType) {
+                case NAME -> user.name.contains(searchWord);
+                case STORE -> user.managerStore.name.contains(searchWord);
+                case ADDRESS -> user.managerStore.address.contains(searchWord);
+                default -> throw BaseException.type(UserErrorCode.INPUT_VALUE_REQUIRED);
+        };
     }
 }

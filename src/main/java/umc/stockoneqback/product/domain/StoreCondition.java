@@ -7,8 +7,7 @@ import umc.stockoneqback.global.utils.EnumConverter;
 import umc.stockoneqback.global.utils.EnumStandard;
 import umc.stockoneqback.product.exception.ProductErrorCode;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
 @Getter
 @AllArgsConstructor
@@ -17,21 +16,13 @@ public enum StoreCondition implements EnumStandard {
     REFRIGERATING("냉장"),
     ROOM("상온");
 
-    private String value;
+    private final String value;
 
-    private static final Map<String, StoreCondition> map = new HashMap<>();
-    static {
-        for (StoreCondition storeCondition : values()) {
-            map.put(storeCondition.value, storeCondition);
-        }
-    }
-
-    public static StoreCondition findStoreConditionByValue(String storeConditionValue) {
-        try {
-            return map.get(storeConditionValue);
-        } catch (NullPointerException exception) {
-            throw BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION);
-        }
+    public static StoreCondition from(String value) {
+        return Arrays.stream(values())
+                .filter(storeCondition -> storeCondition.value.equals(value))
+                .findFirst()
+                .orElseThrow(() -> BaseException.type(ProductErrorCode.NOT_FOUND_STORE_CONDITION));
     }
 
     @javax.persistence.Converter

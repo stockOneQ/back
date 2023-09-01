@@ -9,8 +9,8 @@ import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.common.RepositoryTest;
 import umc.stockoneqback.fixture.ShareFixture;
 import umc.stockoneqback.share.domain.Category;
-import umc.stockoneqback.share.domain.SearchType;
 import umc.stockoneqback.share.domain.Share;
+import umc.stockoneqback.share.domain.ShareSearchType;
 import umc.stockoneqback.share.infra.query.dto.CustomShareListPage;
 import umc.stockoneqback.share.infra.query.dto.ShareList;
 import umc.stockoneqback.share.repository.ShareRepository;
@@ -40,7 +40,7 @@ class ShareListQueryRepositoryImplTest extends RepositoryTest {
     private User supervisor;
     private Business business;
     private static final Category ANNOUNCEMENT = Category.ANNOUNCEMENT;
-    private static final SearchType TITLE = SearchType.TITLE;
+    private static final ShareSearchType TITLE = ShareSearchType.TITLE;
     private static final String SEARCH_WORD = "제목";
     List<Share> shareList = new ArrayList<>();
 

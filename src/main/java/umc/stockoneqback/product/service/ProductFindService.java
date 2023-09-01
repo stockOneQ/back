@@ -4,13 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.global.exception.BaseException;
+import umc.stockoneqback.global.exception.GlobalErrorCode;
 import umc.stockoneqback.product.domain.*;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductResponse;
 import umc.stockoneqback.product.exception.ProductErrorCode;
 import umc.stockoneqback.product.infra.query.dto.ProductFindPage;
+import umc.stockoneqback.product.service.dto.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.dto.response.SearchProductResponse;
 import umc.stockoneqback.role.domain.store.Store;
+import umc.stockoneqback.role.service.PartTimerService;
 import umc.stockoneqback.role.service.StoreService;
+import umc.stockoneqback.user.domain.Role;
+import umc.stockoneqback.user.domain.User;
+import umc.stockoneqback.user.exception.UserErrorCode;
+import umc.stockoneqback.user.service.UserFindService;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -22,16 +28,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductFindService {
     private final ProductRepository productRepository;
+    private final UserFindService userFindService;
     private final StoreService storeService;
     private final ProductService productService;
+    private final PartTimerService partTimerService;
     private static final Integer PAGE_SIZE = 12;
 
     @Transactional
-    public List<SearchProductResponse> searchProduct
-            (Long userId, Long storeId, String storeConditionValue, String productName) throws IOException {
+    public List<SearchProductResponse> searchProduct(Long userId, Long storeId, String storeConditionValue,
+                                                     String productName) throws IOException {
         Store store = storeService.findById(storeId);
-        productService.checkRequestIdHasRequestStore(userId, store);
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
+        checkRequestIdHasRequestStore(userId, store);
+        StoreCondition storeCondition = StoreCondition.from(storeConditionValue);
         List<ProductFindPage> searchProductUrlList = findProductAllByName(store, storeCondition, productName);
         return convertUrlToResponse(searchProductUrlList);
     }
@@ -40,7 +48,7 @@ public class ProductFindService {
     public List<GetTotalProductResponse> getTotalProduct(Long userId, Long storeId, String storeConditionValue) {
         Store store = storeService.findById(storeId);
         productService.checkRequestIdHasRequestStore(userId, store);
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
+        StoreCondition storeCondition = StoreCondition.from(storeConditionValue);
         return countProduct(store, storeCondition);
     }
 
@@ -48,30 +56,30 @@ public class ProductFindService {
     public List<SearchProductResponse> getListOfSearchProduct
             (Long userId, Long storeId, String storeConditionValue, String searchConditionValue, Long productId, String sortConditionValue) throws IOException {
         Product product = configPaging(productId);
-        SortCondition sortCondition = SortCondition.findSortConditionByValue(sortConditionValue);
+        ProductSortCondition productSortCondition = ProductSortCondition.from(sortConditionValue);
         Store store = storeService.findById(storeId);
         productService.checkRequestIdHasRequestStore(userId, store);
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
+        StoreCondition storeCondition = StoreCondition.from(storeConditionValue);
         SearchCondition searchCondition = SearchCondition.findSearchConditionByValue(searchConditionValue);
         List<ProductFindPage> searchProductUrlList = productRepository.findPageOfSearchConditionOrderBySortCondition
-                (store, storeCondition, searchCondition, sortCondition, product.getName(), product.getOrderFreq(), PAGE_SIZE);
+                (store, storeCondition, searchCondition, productSortCondition, product.getName(), product.getOrderFreq(), PAGE_SIZE);
         return convertUrlToResponse(searchProductUrlList);
     }
 
-    Product configPaging(Long productId) {
+    private Product configPaging(Long productId) {
         if (productId == -1)
             return new Product();
         return productService.findProductById(productId);
     }
 
-    List<ProductFindPage> findProductAllByName(Store store, StoreCondition storeCondition, String productName) {
+    private List<ProductFindPage> findProductAllByName(Store store, StoreCondition storeCondition, String productName) {
         List<ProductFindPage> searchProductUrlList = productRepository.findProductByName(store, storeCondition, productName);
         if (searchProductUrlList.isEmpty())
             throw BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT);
         return searchProductUrlList;
     }
 
-    List<GetTotalProductResponse> countProduct(Store store, StoreCondition storeCondition) {
+    private List<GetTotalProductResponse> countProduct(Store store, StoreCondition storeCondition) {
         List<GetTotalProductResponse> countList = new ArrayList<>(4);
         LocalDate currentDate = LocalDate.now();
         LocalDate standardDate = currentDate.plusDays(3);
@@ -98,5 +106,20 @@ public class ProductFindService {
             searchProductResponseList.add(searchProductResponse);
         }
         return searchProductResponseList;
+    }
+
+    public void checkRequestIdHasRequestStore(Long userId, Store store) {
+        User user = userFindService.findById(userId);
+        if (user.getRole() == Role.SUPERVISOR)
+            throw BaseException.type(GlobalErrorCode.INVALID_USER);
+        else if (user.getRole() == Role.MANAGER) {
+            if (storeService.findByUser(user) == store)
+                return;
+            throw BaseException.type(UserErrorCode.USER_STORE_MATCH_FAIL);
+        } else if (user.getRole() == Role.PART_TIMER) {
+            if (partTimerService.findByUser(user).getStore() == store)
+                return;
+            throw BaseException.type(UserErrorCode.USER_STORE_MATCH_FAIL);
+        } else throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
     }
 }

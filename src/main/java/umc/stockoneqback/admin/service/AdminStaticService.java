@@ -6,36 +6,22 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.admin.domain.StaticFA;
 import umc.stockoneqback.admin.domain.StaticFARedisRepository;
 import umc.stockoneqback.admin.dto.request.AddFARequest;
-import umc.stockoneqback.global.exception.BaseException;
-import umc.stockoneqback.global.exception.GlobalErrorCode;
-import umc.stockoneqback.user.domain.Role;
-import umc.stockoneqback.user.domain.User;
-import umc.stockoneqback.user.service.UserFindService;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AdminStaticService {
-    private final UserFindService userFindService;
-    private final StaticFARedisRepository staticFARedisRepository;
+    private final StaticFARedisRepository StaticFARedisRepository;
+
     @Transactional
-    public void addFA(Long userId, AddFARequest addFARequest) {
-        isAdministrator(userId);
+    public void addFA(AddFARequest addFARequest) {
         for (AddFARequest.AddFAKeyValue addFAKeyValue : addFARequest.addFAKeyValueList()) {
-            staticFARedisRepository.save(StaticFA.createStaticFa(addFAKeyValue.question(), addFAKeyValue.answer()));
+            StaticFARedisRepository.save(StaticFA.createStaticFa(addFAKeyValue.question(), addFAKeyValue.answer()));
         }
     }
 
     @Transactional
-    public void deleteFA(Long userId, String question) {
-        isAdministrator(userId);
-        staticFARedisRepository.deleteById(question);
-    }
-
-    private void isAdministrator(Long userId) {
-        User user = userFindService.findById(userId);
-        if (user.getRole() == Role.ADMINISTRATOR)
-            return;
-        throw BaseException.type(GlobalErrorCode.NOT_FOUND);
+    public void deleteFA(String question) {
+        StaticFARedisRepository.deleteById(question);
     }
 }

@@ -49,7 +49,7 @@ class CompanyServiceTest extends ServiceTest {
     @DisplayName("회사에서 특정 슈퍼바이저를 삭제한다")
     void deleteSupervisorByUser() {
         // when
-        companyService.deleteSupervisorByUser(company, user);
+        companyService.deleteSupervisor(company, user);
         Company findCompany = companyService.findByName("A 납품업체");
 
         // then

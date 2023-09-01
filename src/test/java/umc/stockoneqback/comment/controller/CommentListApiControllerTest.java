@@ -166,7 +166,7 @@ class CommentListApiControllerTest extends ControllerTest {
     }
 
     private CustomCommentListResponse getCustomCommentListResponse() {
-        return new CustomCommentListResponse<>(createCustomPageable(), createCommentListResponses());
+        return new CustomCommentListResponse(createCustomPageable(), createCommentListResponses());
     }
 }
 

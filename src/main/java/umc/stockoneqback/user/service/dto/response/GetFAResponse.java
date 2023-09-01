@@ -5,7 +5,6 @@ import lombok.Builder;
 @Builder
 public record GetFAResponse(
         String question,
-
         String answer
 ) {
 }

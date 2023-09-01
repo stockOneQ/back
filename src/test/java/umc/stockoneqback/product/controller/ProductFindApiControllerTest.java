@@ -9,9 +9,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import umc.stockoneqback.common.ControllerTest;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.global.exception.BaseException;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductResponse;
 import umc.stockoneqback.product.exception.ProductErrorCode;
+import umc.stockoneqback.product.service.dto.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.dto.response.SearchProductResponse;
 import umc.stockoneqback.role.exception.StoreErrorCode;
 
 import java.util.ArrayList;

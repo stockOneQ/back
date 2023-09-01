@@ -9,8 +9,6 @@ import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.board.domain.like.BoardLikeRepository;
 import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.global.exception.BaseException;
-import umc.stockoneqback.global.exception.GlobalErrorCode;
-import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.service.UserFindService;
 
@@ -43,7 +41,6 @@ public class BoardService {
     @Transactional
     public BoardResponse loadBoard(Long userId, Long boardId) {
         Board board = boardFindService.findById(boardId);
-        validateUser(userId);
         return BoardResponse.builder()
                 .id(board.getId())
                 .title(board.getTitle())
@@ -60,7 +57,6 @@ public class BoardService {
     @Transactional
     public void updateHit(Long userId, Long boardId) {
         Board board = boardFindService.findById(boardId);
-        validateUser(userId);
         board.updateHit();
     }
 
@@ -76,22 +72,7 @@ public class BoardService {
         }
     }
 
-    private void validateUser(Long userId) {
-        User user = userFindService.findById(userId);
-        if (user.getRole() == Role.SUPERVISOR)
-            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
-        else if (user.getRole() == Role.PART_TIMER) {
-            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
-        }
-        else if (user.getRole() == Role.MANAGER) {
-            return;
-        }
-    }
-
     private boolean AlreadyBoardLike(Long userId, Long boardId) {
-        if (boardLikeRepository.existsByUserIdAndBoardId(userId, boardId)) {
-            return true;
-        }
-        return false;
+        return boardLikeRepository.existsByUserIdAndBoardId(userId, boardId);
     }
 }

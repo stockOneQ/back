@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.RepositoryTest;
 import umc.stockoneqback.friend.domain.Friend;
-import umc.stockoneqback.friend.repository.FriendRepository;
+import umc.stockoneqback.friend.domain.FriendRepository;
 import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.domain.store.StoreRepository;
@@ -50,7 +50,7 @@ class FriendFindQueryRepositoryImplTest extends RepositoryTest {
         userList[4] = userRepository.save(UNKNOWN.toUser());
 
         for (int i = 0; i < 5; i++) {
-            storeList[i].updateStoreManager(userList[i]);
+            storeList[i].updateManager(userList[i]);
         }
     }
 

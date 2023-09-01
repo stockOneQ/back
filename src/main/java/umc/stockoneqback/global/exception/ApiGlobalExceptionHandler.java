@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -94,6 +95,14 @@ public class ApiGlobalExceptionHandler {
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<ErrorResponse> httpMediaTypeNotSupportedException() {
         return convert(GlobalErrorCode.NOT_SUPPORTED_MEDIA_TYPE_ERROR);
+    }
+
+    /**
+     * HTTP Request Method 오류 전용 ExceptionHandler
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> accessDeniedException() {
+        return convert(GlobalErrorCode.INVALID_USER);
     }
 
     /**

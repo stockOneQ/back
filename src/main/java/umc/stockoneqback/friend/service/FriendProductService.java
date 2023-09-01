@@ -3,20 +3,15 @@ package umc.stockoneqback.friend.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import umc.stockoneqback.global.exception.BaseException;
-import umc.stockoneqback.global.exception.GlobalErrorCode;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductOthersResponse;
-import umc.stockoneqback.product.service.ProductFindOthersService;
+import umc.stockoneqback.product.service.ProductOthersService;
+import umc.stockoneqback.product.service.dto.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.dto.response.SearchProductOthersResponse;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.StoreService;
-import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.User;
-import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.service.UserFindService;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -25,54 +20,45 @@ import java.util.List;
 public class FriendProductService {
     private final UserFindService userFindService;
     private final StoreService storeService;
-    private final ProductFindOthersService productFindOthersService;
+    private final ProductOthersService productOthersService;
     private final FriendService friendService;
+    private final FriendFindService friendFindService;
 
     @Transactional
-    public List<SearchProductOthersResponse> searchProductOthers(Long userId,
-                                                                 Long friendId,
-                                                                 String storeConditionValue,
+    public List<SearchProductOthersResponse> searchProductOthers(Long userId1, Long userId2, String storeConditionValue,
                                                                  String productName) throws IOException {
-        User manager = isManager(userId);
-        User friend = checkRelation(manager, friendId);
-        Store friendStore = storeService.findByUser(friend);
-        return productFindOthersService.searchProductOthers(friendStore, storeConditionValue, productName);
+        User user1 = userFindService.findById(userId1);
+        User user2 = userFindService.findById(userId2);
+
+        friendService.validateNotFriend(user1, user2);
+        friendService.validateRequestStatus(friendFindService.findByUserId(userId1, userId2));
+
+        Store user2Store = storeService.findByUser(user2);
+        return productOthersService.searchProductOthers(user2Store, storeConditionValue, productName);
     }
 
     @Transactional
-    public List<GetTotalProductResponse> getTotalProductOthers(Long userId,
-                                                               Long friendId,
-                                                               String storeConditionValue) {
-        User manager = isManager(userId);
-        User friend = checkRelation(manager, friendId);
-        Store friendStore = storeService.findByUser(friend);
-        return productFindOthersService.getTotalProductOthers(friendStore, storeConditionValue);
+    public List<GetTotalProductResponse> getTotalProductOthers(Long userId1, Long userId2, String storeConditionValue) {
+        User user1 = userFindService.findById(userId1);
+        User user2 = userFindService.findById(userId2);
+
+        friendService.validateNotFriend(user1, user2);
+        friendService.validateRequestStatus(friendFindService.findByUserId(userId1, userId2));
+
+        Store user2Store = storeService.findByUser(user2);
+        return productOthersService.getTotalProductOthers(user2Store, storeConditionValue);
     }
 
     @Transactional
-    public List<SearchProductOthersResponse> getListOfSearchProductOthers(Long userId,
-                                                                            Long friendId,
-                                                                            String storeConditionValue,
-                                                                            Long productId,
-                                                                            String searchConditionValue) throws IOException {
-        User manager = isManager(userId);
-        User friend = checkRelation(manager, friendId);
-        Store friendStore = storeService.findByUser(friend);
-        return productFindOthersService.getListOfSearchProductOthers(friendStore, storeConditionValue, searchConditionValue, productId);
-    }
+    public List<SearchProductOthersResponse> getListOfSearchProductOthers(Long userId1, Long userId2, String storeConditionValue,
+                                                                          Long productId, String searchConditionValue) throws IOException {
+        User user1 = userFindService.findById(userId1);
+        User user2 = userFindService.findById(userId2);
 
-    User isManager(Long userId) {
-        User user = userFindService.findById(userId);
-        if (user.getRole() == Role.MANAGER)
-            return user;
-        if (Arrays.stream(Role.values()).anyMatch(role -> role.equals(user.getRole())))
-            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
-        throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
-    }
+        friendService.validateNotFriend(user1, user2);
+        friendService.validateRequestStatus(friendFindService.findByUserId(userId1, userId2));
 
-    User checkRelation(User user, Long friendId) {
-        User friend = userFindService.findById(friendId);
-        friendService.validateNotFriend(user, friend);
-        return friend;
+        Store user2Store = storeService.findByUser(user2);
+        return productOthersService.getListOfSearchProductOthers(user2Store, storeConditionValue, searchConditionValue, productId);
     }
 }

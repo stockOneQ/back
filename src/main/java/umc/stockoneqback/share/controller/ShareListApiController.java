@@ -2,6 +2,7 @@ package umc.stockoneqback.share.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,11 +20,13 @@ import java.io.IOException;
 public class ShareListApiController {
     private final ShareListService shareListService;
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'PART_TIMER', 'SUPERVISOR')")
     @GetMapping("/users")
     public ResponseEntity<FilteredBusinessUser> userSelectBox(@ExtractPayload Long userId) {
         return ResponseEntity.ok(shareListService.userSelectBox(userId));
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'PART_TIMER', 'SUPERVISOR')")
     @GetMapping("")
     public ResponseEntity<CustomShareListPage> shareList(@ExtractPayload Long userId,
                                                          @RequestParam(value = "user") Long userBusinessId,

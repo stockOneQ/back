@@ -13,9 +13,11 @@ import umc.stockoneqback.global.exception.GlobalErrorCode;
 import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.domain.ProductRepository;
 import umc.stockoneqback.product.domain.StoreCondition;
-import umc.stockoneqback.product.dto.response.GetRequiredInfoResponse;
-import umc.stockoneqback.product.dto.response.LoadProductResponse;
 import umc.stockoneqback.product.exception.ProductErrorCode;
+import umc.stockoneqback.product.infra.query.dto.ProductFindPage;
+import umc.stockoneqback.product.service.dto.response.GetRequiredInfoResponse;
+import umc.stockoneqback.product.service.dto.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.dto.response.LoadProductResponse;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.service.PartTimerService;
 import umc.stockoneqback.role.service.StoreService;
@@ -26,6 +28,7 @@ import umc.stockoneqback.user.service.UserFindService;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,28 +47,30 @@ public class ProductService {
     @Transactional
     public GetRequiredInfoResponse getRequiredInfo(Long userId) {
         User user = userFindService.findById(userId);
-        Store store;
-        if (user.getRole() == Role.SUPERVISOR)
-            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
-        else if (user.getRole() == Role.MANAGER) {
+        Store store = null;
+
+        if (user.getRole() == Role.MANAGER) {
             store = storeService.findByUser(user);
         } else if (user.getRole() == Role.PART_TIMER) {
             store = partTimerService.findByUser(user).getStore();
-        } else throw BaseException.type(UserErrorCode.ROLE_NOT_FOUND);
+        }
+
         return new GetRequiredInfoResponse(userId, store.getId());
     }
 
     @Transactional
-    public void saveProduct(Long userId, Long storeId, String storeConditionValue, Product product, MultipartFile image) {
+    public Long saveProduct(Long userId, Long storeId, String storeConditionValue, Product product, MultipartFile image) {
         Store store = storeService.findById(storeId);
         checkRequestIdHasRequestStore(userId, store);
-        StoreCondition storeCondition = StoreCondition.findStoreConditionByValue(storeConditionValue);
+        StoreCondition storeCondition = StoreCondition.from(storeConditionValue);
         isExistProductByName(store, storeCondition, product.getName());
+
         String imageUrl = null;
         if (image != null)
             imageUrl = fileService.uploadProductFiles(image);
         product.saveStoreAndStoreConditionAndImageUrl(storeCondition, store, imageUrl);
-        productRepository.save(product);
+
+        return productRepository.save(product).getId();
     }
 
     @Transactional
@@ -82,8 +87,8 @@ public class ProductService {
                 .receivingDate(product.getReceivingDate())
                 .expirationDate(product.getExpirationDate())
                 .location(product.getLocation())
-                .requireQuant(product.getRequireQuant())
-                .stockQuant(product.getStockQuant())
+                .requireQuantity(product.getRequireQuant())
+                .stockQuantity(product.getStockQuant())
                 .siteToOrder(product.getSiteToOrder())
                 .orderFreq(product.getOrderFreq())
                 .build();
@@ -136,9 +141,37 @@ public class ProductService {
             throw BaseException.type(ProductErrorCode.DUPLICATE_PRODUCT);
     }
 
-    Product findProductById(Long productId) {
+    List<ProductFindPage> findProductAllByName(Store store, StoreCondition storeCondition, String productName) {
+        List<ProductFindPage> searchProductUrlList = productRepository.findProductByName(store, storeCondition, productName);
+        if (searchProductUrlList.isEmpty())
+            throw BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT);
+        return searchProductUrlList;
+    }
+
+    public Product findProductById(Long productId) {
         return productRepository.findProductById(productId)
                 .orElseThrow(() -> BaseException.type(ProductErrorCode.NOT_FOUND_PRODUCT));
+    }
+
+    List<GetTotalProductResponse> countProduct(Store store, StoreCondition storeCondition) {
+        List<GetTotalProductResponse> countList = new ArrayList<>(4);
+        LocalDate currentDate = LocalDate.now();
+        LocalDate standardDate = currentDate.plusDays(3);
+        countList.add(new GetTotalProductResponse
+                ("Total", productRepository.countProductAll(store, storeCondition.getValue())));
+        countList.add(new GetTotalProductResponse
+                ("Pass", productRepository.countProductPass(store, storeCondition.getValue(), currentDate)));
+        countList.add(new GetTotalProductResponse
+                ("Close", productRepository.countProductClose(store, storeCondition.getValue(), currentDate, standardDate)));
+        countList.add(new GetTotalProductResponse
+                ("Lack", productRepository.countProductLack(store, storeCondition.getValue())));
+        return countList;
+    }
+
+    Product configPaging(Long productId) {
+        if (productId == -1)
+            return new Product();
+        return findProductById(productId);
     }
 
     byte[] getImageOrElseNull(String imageUrl) throws IOException {
@@ -147,10 +180,10 @@ public class ProductService {
         return fileService.downloadToResponseDto(imageUrl);
     }
 
-    void checkRequestIdHasRequestStore(Long userId, Store store) {
+    public void checkRequestIdHasRequestStore(Long userId, Store store) {
         User user = userFindService.findById(userId);
         if (user.getRole() == Role.SUPERVISOR)
-            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
+            throw BaseException.type(GlobalErrorCode.INVALID_USER);
         else if (user.getRole() == Role.MANAGER) {
             if (storeService.findByUser(user) == store)
                 return;
@@ -165,7 +198,7 @@ public class ProductService {
     private void checkRequestIdHasRequestProduct(Long userId, Product product) {
         User user = userFindService.findById(userId);
         if (user.getRole() == Role.SUPERVISOR)
-            throw BaseException.type(GlobalErrorCode.INVALID_USER_JWT);
+            throw BaseException.type(GlobalErrorCode.INVALID_USER);
         else if (user.getRole() == Role.MANAGER) {
             if (storeService.findByUser(user) == product.getStore())
                 return;

@@ -2,6 +2,7 @@ package umc.stockoneqback.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import umc.stockoneqback.global.annotation.ExtractPayload;
 import umc.stockoneqback.role.service.StoreService;
@@ -41,9 +42,11 @@ public class UserApiController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAnyRole('MANAGER', 'PART_TIMER', 'SUPERVISOR')")
     @DeleteMapping("/withdraw")
     public ResponseEntity<Void> withdrawUser(@ExtractPayload Long userId) {
         userService.withdrawUser(userId);
+
         return ResponseEntity.ok().build();
     }
 }

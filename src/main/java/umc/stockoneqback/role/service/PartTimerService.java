@@ -25,16 +25,16 @@ public class PartTimerService {
 
     public PartTimer findByUser(User user) {
         return partTimerRepository.findByPartTimer(user)
-                .orElseThrow(() -> BaseException.type(PartTimerErrorCode.PARTTIMER_NOT_FOUND));
+                .orElseThrow(() -> BaseException.type(PartTimerErrorCode.PART_TIMER_NOT_FOUND));
     }
 
     @Transactional
-    public void deleteByUser(User user) {
+    public void deletePartTimer(User user) {
         Optional<PartTimer> partTimer = partTimerRepository.findByPartTimer(user);
         if (partTimer.isEmpty())
             return;
 
-        storeService.deletePartTimersByPartTimer(partTimer.get().getStore(), partTimer.get());
+        storeService.deletePartTimer(partTimer.get().getStore(), partTimer.get());
         partTimerRepository.deleteByPartTimer(user);
     }
 }

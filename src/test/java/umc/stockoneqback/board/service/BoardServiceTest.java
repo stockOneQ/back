@@ -7,10 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.exception.BoardErrorCode;
-import umc.stockoneqback.comment.service.CommentService;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.global.exception.BaseException;
-import umc.stockoneqback.global.exception.GlobalErrorCode;
 import umc.stockoneqback.user.domain.User;
 
 import java.time.LocalDateTime;
@@ -20,7 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.BoardFixture.BOARD_0;
-import static umc.stockoneqback.fixture.UserFixture.*;
+import static umc.stockoneqback.fixture.UserFixture.ANNE;
+import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 
 @DisplayName("Board [Service Layer] -> BoardService 테스트")
 public class BoardServiceTest extends ServiceTest {
@@ -30,12 +29,8 @@ public class BoardServiceTest extends ServiceTest {
     @Autowired
     private BoardFindService boardFindService;
 
-    @Autowired
-    private CommentService commentService;
-
     private User writer;
     private User not_writer;
-    private User invalid_writer;
     private Board board;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -43,7 +38,6 @@ public class BoardServiceTest extends ServiceTest {
     void setup() {
         writer = userRepository.save(ANNE.toUser());
         not_writer = userRepository.save(SAEWOO.toUser());
-        invalid_writer = userRepository.save(WIZ.toUser()); // 매니저가 아닌 유저
         board = boardRepository.save(BOARD_0.toBoard(writer));
     }
 
@@ -117,15 +111,6 @@ public class BoardServiceTest extends ServiceTest {
     @DisplayName("게시글 상세 조회")
     class loadBoard {
         @Test
-        @DisplayName("유효하지 않은 권한으로 게시글 상세 조회 시 실패한다.")
-        void throwExceptionByInvalid_User_JWT() {
-            // when - then
-            assertThatThrownBy(() -> boardService.loadBoard(invalid_writer.getId(),board.getId()))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(GlobalErrorCode.INVALID_USER_JWT.getMessage());
-        }
-
-        @Test
         @DisplayName("게시글 상세 조회에 성공한다")
         void success() {
             // given
@@ -147,15 +132,6 @@ public class BoardServiceTest extends ServiceTest {
     @Nested
     @DisplayName("게시글 조회수 증가")
     class updateView {
-        @Test
-        @DisplayName("유효하지 않은 권한으로 게시글 조회수 증가 시 실패한다.")
-        void throwExceptionByInvalid_User_JWT() {
-            // when - then
-            assertThatThrownBy(() -> boardService.updateHit(invalid_writer.getId(),board.getId()))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(GlobalErrorCode.INVALID_USER_JWT.getMessage());
-        }
-
         @Test
         @DisplayName("게시글 조회수 증가에 성공한다")
         void success() {

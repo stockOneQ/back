@@ -12,19 +12,24 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long>, UserFindQueryRepository {
+    // @Query
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(value = "UPDATE users SET status = '소멸' WHERE id = :userId", nativeQuery = true)
+    void expireById(@Param("userId") Long userId);
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(value = "DELETE FROM users WHERE modified_date <= :overYear and status = '소멸'", nativeQuery = true)
+    void deleteModifiedOverYearAndExpireUser(@Param("overYear") LocalDate overYear);
+
+    @Transactional
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(value = "UPDATE users SET modified_date = :modifiedDate WHERE id = :userId", nativeQuery = true)
+    void updateModifiedDateById(@Param("userId") Long userId, @Param("modifiedDate") LocalDate modifiedDate);
+
+    // Query Method
     boolean existsByLoginIdAndStatus(String loginId, Status status);
     boolean existsByEmailAndStatus(Email email, Status status);
     Optional<User> findByLoginIdAndStatus(String loginId, Status status);
     Optional<User> findByEmailAndStatus(Email email, Status status);
     Optional<User> findByIdAndStatus(Long id, Status status);
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query(value = "UPDATE users SET status = '소멸' WHERE id = :userId", nativeQuery = true)
-    void expireById(@Param("userId") Long userId);
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query(value = "DELETE FROM users WHERE modified_date <= :overYear and status = '소멸'", nativeQuery = true)
-    void deleteModifiedOverYearAndExpireUser(@Param("overYear") LocalDate overYear);
-    @Transactional
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query(value = "UPDATE users SET modified_date = :modifiedDate WHERE id = :userId", nativeQuery = true)
-    void updateModifiedDateById(@Param("userId") Long userId, @Param("modifiedDate") LocalDate modifiedDate);
 }

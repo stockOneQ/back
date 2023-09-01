@@ -1,4 +1,4 @@
-package umc.stockoneqback.file.utils.validation;
+package umc.stockoneqback.file.utils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

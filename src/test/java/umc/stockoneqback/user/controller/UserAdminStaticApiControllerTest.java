@@ -27,7 +27,7 @@ import static umc.stockoneqback.fixture.TokenFixture.ACCESS_TOKEN;
 import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 
 @DisplayName("User [Controller Layer] -> UserFAApiController 테스트")
-public class UserFAApiControllerTest extends ControllerTest {
+public class UserAdminStaticApiControllerTest extends ControllerTest {
     @Nested
     @DisplayName("사용자 F&A 조회 API [GET /api/user/fa]")
     class getFAList {

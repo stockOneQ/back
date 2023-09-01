@@ -13,12 +13,9 @@ import umc.stockoneqback.comment.controller.dto.CustomCommentListResponse;
 import umc.stockoneqback.comment.domain.Comment;
 import umc.stockoneqback.comment.domain.CommentRepository;
 import umc.stockoneqback.file.service.FileService;
-import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.reply.controller.dto.ReplyListResponse;
 import umc.stockoneqback.reply.service.ReplyListService;
-import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.User;
-import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.service.UserFindService;
 
 import java.io.IOException;
@@ -33,13 +30,12 @@ public class CommentListService {
     private final UserFindService userFindService;
     private final FileService fileService;
     private final ReplyListService replyListService;
-    private static final Integer PAGE_SIZE = 20; //대댓글 포함 20
+    private static final Integer PAGE_SIZE = 20; // 대댓글 포함
 
     @Transactional
-    public CustomCommentListResponse<CommentListResponse> getCommentList(Long userId, Long boardId, int page) throws IOException {
+    public CustomCommentListResponse getCommentList(Long userId, Long boardId, int page) throws IOException {
         User user = userFindService.findById(userId);
         Board board = boardFindService.findById(boardId);
-        validateManager(user);
 
         Pageable pageable = PageRequest.of(page, PAGE_SIZE);
         Page<Comment> comments = commentRepository.findCommentListOrderByTime(board.getId() ,pageable);
@@ -60,22 +56,19 @@ public class CommentListService {
             commentLists.add(commentListResponse);
         }
 
-        CustomCommentListResponse.CustomPageable pageInfo = new
-                CustomCommentListResponse.CustomPageable(comments.getTotalPages(), comments.getTotalElements(),
-                                                        comments.hasNext(), comments.getNumberOfElements());
+        CustomCommentListResponse.CustomPageable pageInfo = new CustomCommentListResponse.CustomPageable(
+                comments.getTotalPages(),
+                comments.getTotalElements(),
+                comments.hasNext(),
+                comments.getNumberOfElements()
+        );
 
-        return new CustomCommentListResponse<>(pageInfo, commentLists);
+        return new CustomCommentListResponse(pageInfo, commentLists);
     }
 
     byte[] getImageOrElseNull(String imageUrl) throws IOException {
         if (imageUrl == null)
             return null;
         return fileService.downloadToResponseDto(imageUrl);
-    }
-
-    private void validateManager(User user) {
-        if (user.getRole() != Role.MANAGER) {
-            throw BaseException.type(UserErrorCode.USER_IS_NOT_MANAGER);
-        }
     }
 }

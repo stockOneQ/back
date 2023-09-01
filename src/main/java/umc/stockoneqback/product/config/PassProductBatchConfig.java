@@ -17,18 +17,15 @@ import umc.stockoneqback.product.service.ProductService;
 @EnableBatchProcessing
 @RequiredArgsConstructor
 public class PassProductBatchConfig {
-    public final JobBuilderFactory jobBuilderFactory;
-
-    public final StepBuilderFactory stepBuilderFactory;
-
-    public final ProductService productService;
+    private final JobBuilderFactory jobBuilderFactory;
+    private final StepBuilderFactory stepBuilderFactory;
+    private final ProductService productService;
 
     @Bean
     public Job job() {
-        Job job = jobBuilderFactory.get("PassProductJob")
+        return jobBuilderFactory.get("PassProductJob")
                 .start(step())
                 .build();
-        return job;
     }
 
     @Bean

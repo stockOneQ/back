@@ -73,18 +73,6 @@ class BoardListServiceTest extends ServiceTest {
     @DisplayName("전체 게시글 조회")
     class allBoardList {
         @Test
-        @DisplayName("매니저가 아닌 유저라면 게시글 목록 조회에 실패한다")
-        void throwUserIsNotManager() {
-            // given
-            Long invalidUserId = userRepository.save(SAEWOO.toUser()).getId();
-
-            // when - then
-            assertThatThrownBy(() -> boardListService.getBoardList(invalidUserId, PAGE, null, SEARCH_TYPE, SEARCH_WORD))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(UserErrorCode.USER_IS_NOT_MANAGER.getMessage());
-        }
-
-        @Test
         @DisplayName("유효한 정렬 조건이 아니면 게시글 목록 조회에 실패한다")
         void throwNotFoundSortCondition() {
             // when - then

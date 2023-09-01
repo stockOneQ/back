@@ -1,4 +1,4 @@
-package umc.stockoneqback.product.dto.request;
+package umc.stockoneqback.product.controller.dto.request;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import umc.stockoneqback.product.domain.Product;
@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
-public record EditProductRequest(
+public record ProductRequest(
         @NotBlank(message = "제품명은 필수입니다.")
         @Size(max = 11, message = "제품명은 최대 11자까지 입력 가능합니다.")
         String name,
@@ -33,10 +33,10 @@ public record EditProductRequest(
         String location,
 
         @NotBlank(message = "필수 수량은 필수입니다.")
-        Long requireQuant,
+        Long requireQuantity,
 
         @NotBlank(message = "재고 수량은 필수입니다.")
-        Long stockQuant,
+        Long stockQuantity,
 
         @Size(max = 200, message = "발주사이트는 최대 200자까지 입력 가능합니다.")
         String siteToOrder,
@@ -52,8 +52,8 @@ public record EditProductRequest(
                         .receivingDate(receivingDate)
                         .expirationDate(expirationDate)
                         .location(location)
-                        .requireQuant(requireQuant)
-                        .stockQuant(stockQuant)
+                        .requireQuant(requireQuantity)
+                        .stockQuant(stockQuantity)
                         .siteToOrder(siteToOrder)
                         .orderFreq(orderFreq)
                         .build();

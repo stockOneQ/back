@@ -6,9 +6,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public record CustomCommentListResponse<C>(
+public record CustomCommentListResponse(
         CustomPageable pageInfo,
-
         List<CommentListResponse> CommentListResponse
 
 ) {

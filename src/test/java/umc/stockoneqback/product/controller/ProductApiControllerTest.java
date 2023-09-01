@@ -10,23 +10,18 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import umc.stockoneqback.common.ControllerTest;
-import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.global.exception.BaseException;
-import umc.stockoneqback.global.exception.GlobalErrorCode;
-import umc.stockoneqback.product.dto.request.EditProductRequest;
-import umc.stockoneqback.product.dto.response.GetRequiredInfoResponse;
-import umc.stockoneqback.product.dto.response.GetTotalProductResponse;
-import umc.stockoneqback.product.dto.response.LoadProductResponse;
-import umc.stockoneqback.product.dto.response.SearchProductResponse;
+import umc.stockoneqback.product.controller.dto.request.ProductRequest;
 import umc.stockoneqback.product.exception.ProductErrorCode;
+import umc.stockoneqback.product.service.dto.response.GetRequiredInfoResponse;
+import umc.stockoneqback.product.service.dto.response.GetTotalProductResponse;
+import umc.stockoneqback.product.service.dto.response.LoadProductResponse;
+import umc.stockoneqback.product.service.dto.response.SearchProductResponse;
 import umc.stockoneqback.role.exception.StoreErrorCode;
-import umc.stockoneqback.user.exception.UserErrorCode;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -50,158 +45,6 @@ public class ProductApiControllerTest extends ControllerTest {
     private static final Long ERROR_STORE_ID = Long.MAX_VALUE;
     private static final Long ERROR_PRODUCT_ID = Long.MAX_VALUE;
     private static final String ERROR_STORE_CONDITION = "고온";
-
-    @Nested
-    @DisplayName("공통 예외")
-    class commonError {
-        private static final String BASE_URL = "/api/product/count";
-        private static final String STORE_CONDITION = "상온";
-        private static final Long STORE_ID = 1L;
-
-        @Test
-        @DisplayName("권한이 없는 사용자가 Product API를 호출한 경우 API 호출에 실패한다")
-        void throwExceptionByUnauthorizedUser() throws Exception {
-            // given
-            doThrow(BaseException.type(GlobalErrorCode.INVALID_USER_JWT))
-                    .when(productFindService)
-                    .getTotalProduct(anyLong(), anyLong(), anyString());
-
-            // when
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .get(BASE_URL)
-                    .param("store", String.valueOf(STORE_ID))
-                    .param("condition", STORE_CONDITION)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
-
-            // then
-            final GlobalErrorCode expectedError = GlobalErrorCode.INVALID_USER_JWT;
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(
-                            status().isForbidden(),
-                            jsonPath("$.status").exists(),
-                            jsonPath("$.status").value(expectedError.getStatus().value()),
-                            jsonPath("$.errorCode").exists(),
-                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
-                            jsonPath("$.message").exists(),
-                            jsonPath("$.message").value(expectedError.getMessage())
-                    )
-                    .andDo(
-                            document(
-                                    "ProductApi/CommonError/Case1",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName(AUTHORIZATION).description("Access Token")
-                                    ),
-                                    requestParameters(
-                                            parameterWithName("store").description("현재 가게 ID"),
-                                            parameterWithName("condition").description("현재 설정된 보관방법")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
-                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
-                                    )
-                            )
-                    );
-        }
-
-        @Test
-        @DisplayName("입력된 사용자가 입력된 가게 소속이 아닌 경우 API 호출에 실패한다")
-        void throwExceptionByConflictUserAndStore() throws Exception {
-            // given
-            doThrow(BaseException.type(UserErrorCode.USER_STORE_MATCH_FAIL))
-                    .when(productFindService)
-                    .getTotalProduct(anyLong(), anyLong(), anyString());
-
-            // when
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .get(BASE_URL)
-                    .param("store", String.valueOf(STORE_ID))
-                    .param("condition", STORE_CONDITION)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
-
-            // then
-            final UserErrorCode expectedError = UserErrorCode.USER_STORE_MATCH_FAIL;
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(
-                            status().isBadRequest(),
-                            jsonPath("$.status").exists(),
-                            jsonPath("$.status").value(expectedError.getStatus().value()),
-                            jsonPath("$.errorCode").exists(),
-                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
-                            jsonPath("$.message").exists(),
-                            jsonPath("$.message").value(expectedError.getMessage())
-                    )
-                    .andDo(
-                            document(
-                                    "ProductApi/CommonError/Case2",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName(AUTHORIZATION).description("Access Token")
-                                    ),
-                                    requestParameters(
-                                            parameterWithName("store").description("현재 가게 ID"),
-                                            parameterWithName("condition").description("현재 설정된 보관방법")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
-                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
-                                    )
-                            )
-                    );
-        }
-
-        @Test
-        @DisplayName("입력된 사용자가 유효하지 않은 역할을 가지고 있는 경우 API 호출에 실패한다")
-        void throwExceptionByInvalidUser() throws Exception {
-            // given
-            doThrow(BaseException.type(UserErrorCode.ROLE_NOT_FOUND))
-                    .when(productFindService)
-                    .getTotalProduct(anyLong(), anyLong(), anyString());
-
-            // when
-            MockHttpServletRequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                    .get(BASE_URL)
-                    .param("store", String.valueOf(STORE_ID))
-                    .param("condition", STORE_CONDITION)
-                    .header(AUTHORIZATION, BEARER_TOKEN + " " + ACCESS_TOKEN);
-
-            // then
-            final UserErrorCode expectedError = UserErrorCode.ROLE_NOT_FOUND;
-            mockMvc.perform(requestBuilder)
-                    .andExpectAll(
-                            status().isNotFound(),
-                            jsonPath("$.status").exists(),
-                            jsonPath("$.status").value(expectedError.getStatus().value()),
-                            jsonPath("$.errorCode").exists(),
-                            jsonPath("$.errorCode").value(expectedError.getErrorCode()),
-                            jsonPath("$.message").exists(),
-                            jsonPath("$.message").value(expectedError.getMessage())
-                    )
-                    .andDo(
-                            document(
-                                    "ProductApi/CommonError/Case3",
-                                    preprocessRequest(prettyPrint()),
-                                    preprocessResponse(prettyPrint()),
-                                    requestHeaders(
-                                            headerWithName(AUTHORIZATION).description("Access Token")
-                                    ),
-                                    requestParameters(
-                                            parameterWithName("store").description("현재 가게 ID"),
-                                            parameterWithName("condition").description("현재 설정된 보관방법")
-                                    ),
-                                    responseFields(
-                                            fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                            fieldWithPath("errorCode").type(JsonFieldType.STRING).description("커스텀 예외 코드"),
-                                            fieldWithPath("message").type(JsonFieldType.STRING).description("예외 메시지")
-                                    )
-                            )
-                    );
-        }
-    }
 
     @Nested
     @DisplayName("메인 호출 시 사용자의 가게 정보 조회 API [GET /api/product]")
@@ -266,7 +109,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .saveProduct(anyLong(), anyLong(), anyString(), any(), any());
 
             // when
-            final EditProductRequest request = createEditProductRequest();
+            final ProductRequest request = createEditProductRequest();
             MockMultipartFile file = new MockMultipartFile("image", null,
                     "multipart/form-data", new byte[]{});
             MockMultipartFile mockRequest = new MockMultipartFile("editProductRequest", null,
@@ -313,8 +156,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
                                             fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
                                             fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
-                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
-                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("requireQuantity").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
                                             fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
@@ -340,7 +183,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .saveProduct(anyLong(), anyLong(), anyString(), any(), any());
 
             // when
-            final EditProductRequest request = createEditProductRequest();
+            final ProductRequest request = createEditProductRequest();
             MockMultipartFile file = new MockMultipartFile("image", null,
                     "multipart/form-data", new byte[]{});
             MockMultipartFile mockRequest = new MockMultipartFile("editProductRequest", null,
@@ -387,8 +230,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
                                             fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
                                             fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
-                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
-                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("requireQuantity").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
                                             fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
@@ -409,12 +252,12 @@ public class ProductApiControllerTest extends ControllerTest {
         @DisplayName("제품 등록에 성공한다")
         void success() throws Exception {
             // given
-            doNothing()
+            doReturn(1L)
                     .when(productService)
                     .saveProduct(anyLong(), anyLong(), anyString(), any(), any());
 
             // when
-            final EditProductRequest request = createEditProductRequest();
+            final ProductRequest request = createEditProductRequest();
             MockMultipartFile file = new MockMultipartFile("image", null,
                     "multipart/form-data", new byte[]{});
             MockMultipartFile mockRequest = new MockMultipartFile("editProductRequest", null,
@@ -454,8 +297,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
                                             fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
                                             fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
-                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
-                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("requireQuantity").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
                                             fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
@@ -569,8 +412,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("result.receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
                                             fieldWithPath("result.expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
                                             fieldWithPath("result.location").type(JsonFieldType.STRING).description("제품 위치").optional(),
-                                            fieldWithPath("result.requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
-                                            fieldWithPath("result.stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("result.requireQuantity").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("result.stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("result.siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
                                             fieldWithPath("result.orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     )
@@ -594,7 +437,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .editProduct(anyLong(), anyLong(), any(), any());
 
             // when
-            final EditProductRequest request = createEditProductRequest();
+            final ProductRequest request = createEditProductRequest();
             MockMultipartFile file = new MockMultipartFile("image", null,
                     "multipart/form-data", new byte[]{});
             MockMultipartFile mockRequest = new MockMultipartFile("editProductRequest", null,
@@ -649,8 +492,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
                                             fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
                                             fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
-                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
-                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("requireQuantity").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
                                             fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
@@ -672,7 +515,7 @@ public class ProductApiControllerTest extends ControllerTest {
                     .editProduct(anyLong(), anyLong(), any(), any());
 
             // when
-            final EditProductRequest request = createEditProductRequest();
+            final ProductRequest request = createEditProductRequest();
             MockMultipartFile file = new MockMultipartFile("image", null,
                     "multipart/form-data", new byte[]{});
             MockMultipartFile mockRequest = new MockMultipartFile("editProductRequest", null,
@@ -720,8 +563,8 @@ public class ProductApiControllerTest extends ControllerTest {
                                             fieldWithPath("receivingDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("입고일"),
                                             fieldWithPath("expirationDate").type(JsonFieldType.STRING).attributes(getDateFormat()).description("유통기한"),
                                             fieldWithPath("location").type(JsonFieldType.STRING).description("재료위치").optional(),
-                                            fieldWithPath("requireQuant").type(JsonFieldType.NUMBER).description("필수 수량"),
-                                            fieldWithPath("stockQuant").type(JsonFieldType.NUMBER).description("재고 수량"),
+                                            fieldWithPath("requireQuantity").type(JsonFieldType.NUMBER).description("필수 수량"),
+                                            fieldWithPath("stockQuantity").type(JsonFieldType.NUMBER).description("재고 수량"),
                                             fieldWithPath("siteToOrder").type(JsonFieldType.STRING).description("발주사이트").optional(),
                                             fieldWithPath("orderFreq").type(JsonFieldType.NUMBER).description("발주 빈도")
                                     ),
@@ -825,16 +668,16 @@ public class ProductApiControllerTest extends ControllerTest {
         }
     }
 
-    private EditProductRequest createEditProductRequest() {
-        return new EditProductRequest(
+    private ProductRequest createEditProductRequest() {
+        return new ProductRequest(
                 APPLE.getName(),
                 APPLE.getPrice(),
                 APPLE.getVendor(),
                 APPLE.getReceivingDate(),
                 APPLE.getExpirationDate(),
                 APPLE.getLocation(),
-                APPLE.getRequireQuant(),
-                APPLE.getStockQuant(),
+                APPLE.getRequireQuantity(),
+                APPLE.getStockQuantity(),
                 APPLE.getSiteToOrder(),
                 APPLE.getOrderFreq()
         );
@@ -850,11 +693,45 @@ public class ProductApiControllerTest extends ControllerTest {
                 APPLE.getReceivingDate(),
                 APPLE.getExpirationDate(),
                 APPLE.getLocation(),
-                APPLE.getRequireQuant(),
-                APPLE.getStockQuant(),
+                APPLE.getRequireQuantity(),
+                APPLE.getStockQuantity(),
                 APPLE.getSiteToOrder(),
                 APPLE.getOrderFreq()
         );
+    }
+
+    private List<SearchProductResponse> searchProductResponse() {
+        List<SearchProductResponse> searchProductResponseList = new ArrayList<>();
+        searchProductResponseList.add(new SearchProductResponse(4L, DURIAN.getName(), null));
+        searchProductResponseList.add(new SearchProductResponse(11L, BLUEBERRY.getName(), null));
+        searchProductResponseList.add(new SearchProductResponse(8L, CHERRY.getName(), null));
+        return searchProductResponseList;
+    }
+
+    private List<GetTotalProductResponse> getTotalProductResponse() {
+        List<GetTotalProductResponse> getTotalProductResponseList = new ArrayList<>();
+        getTotalProductResponseList.add(new GetTotalProductResponse("Total", 16));
+        getTotalProductResponseList.add(new GetTotalProductResponse("Pass", 2));
+        getTotalProductResponseList.add(new GetTotalProductResponse("Close", 5));
+        getTotalProductResponseList.add(new GetTotalProductResponse("Lack", 5));
+        return getTotalProductResponseList;
+    }
+
+    private List<SearchProductResponse> searchProductPageResponse() {
+        List<SearchProductResponse> searchProductResponseList = new ArrayList<>();
+        searchProductResponseList.add(new SearchProductResponse(16L, PERSIMMON.getName(), null));
+        searchProductResponseList.add(new SearchProductResponse(15L, TANGERINE.getName(), null));
+        searchProductResponseList.add(new SearchProductResponse(4L, DURIAN.getName(), null));
+        searchProductResponseList.add(new SearchProductResponse(3L, MANGO.getName(), null));
+        searchProductResponseList.add(new SearchProductResponse(9L, MELON.getName(), null));
+        searchProductResponseList.add(new SearchProductResponse(2L, BANANA.getName(), null));
+        searchProductResponseList.add(new SearchProductResponse(17L, PEAR.getName(), null));
+        searchProductResponseList.add(new SearchProductResponse(13L, PEACH.getName(), null));
+        searchProductResponseList.add(new SearchProductResponse(11L, BLUEBERRY.getName(), null));
+        searchProductResponseList.add(new SearchProductResponse(1L, APPLE.getName(), null));
+        searchProductResponseList.add(new SearchProductResponse(10L, WATERMELON.getName(), null));
+        searchProductResponseList.add(new SearchProductResponse(5L, ORANGE.getName(), null));
+        return searchProductResponseList;
     }
 
     private GetRequiredInfoResponse getRequiredInfoResponse() {

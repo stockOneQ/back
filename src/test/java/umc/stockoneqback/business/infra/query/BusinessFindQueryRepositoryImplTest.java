@@ -45,8 +45,8 @@ class BusinessFindQueryRepositoryImplTest extends RepositoryTest {
         partTimer = userRepository.save((BOB.toUser()));
         store = storeRepository.save(G_TTEOKBOKKI.toStore());
         partTimerRepository.save(PartTimer.createPartTimer(store, partTimer));
-        store.updateStoreManager(manager);
-        store.updateStorePartTimers(partTimer);
+        store.updateManager(manager);
+        store.updatePartTimer(partTimer);
         business = businessRepository.save(new Business(manager, supervisor));
     }
 

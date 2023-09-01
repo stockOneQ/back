@@ -46,8 +46,8 @@ class ShareListServiceTest extends ServiceTest {
     private User partTimer1;
     private Business business1, business2, business3;
     private Store store1;
-    private List<Share> shareList = new ArrayList<>();
-    private List<Business> businessList = new ArrayList<>();
+    private final List<Share> shareList = new ArrayList<>();
+    private final List<Business> businessList = new ArrayList<>();
     private static final String CATEGORY = "레시피";
     private static final String SEARCH_TYPE = "내용";
     private static final String SEARCH_WORD = "쿠키";
@@ -70,8 +70,8 @@ class ShareListServiceTest extends ServiceTest {
         partTimer1 = userRepository.save((BOB.toUser()));
         store1 = storeRepository.save(C_COFFEE.toStore());
         partTimerRepository.save(PartTimer.createPartTimer(store1, partTimer1));
-        store1.updateStoreManager(manager2);
-        store1.updateStorePartTimers(partTimer1);
+        store1.updateManager(manager2);
+        store1.updatePartTimer(partTimer1);
 
         for (ShareFixture shareFixture : ShareFixture.values())
             shareList.add(shareFixture.toShare(business3));

@@ -1,15 +1,12 @@
-package umc.stockoneqback.product.dto.response;
+package umc.stockoneqback.product.service.dto.response;
 
 import lombok.Builder;
 
 @Builder
 public record SearchProductOthersResponse(
         Long id,
-
         String name,
-
-        Long stockQuant,
-
+        Long stockQuantity,
         byte[] image
 ) {
 }

@@ -9,17 +9,11 @@ import java.util.List;
 @Builder
 public record CommentListResponse(
         Long id,
-
         byte[] image,
-
         String content,
-
         LocalDateTime createdDate,
-
         String writerId,
-
         String writerName,
-
         List<ReplyListResponse> replyList
 ) {
 }

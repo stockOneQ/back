@@ -9,9 +9,10 @@ import umc.stockoneqback.global.utils.EnumStandard;
 @AllArgsConstructor
 public enum Status implements EnumStandard {
     NORMAL("정상"),
-    EXPIRED("소멸");
+    EXPIRED("소멸")
+    ;
 
-    private String value;
+    private final String value;
 
     @javax.persistence.Converter
     public static class StatusConverter extends EnumConverter<Status> {

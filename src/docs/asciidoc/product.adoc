@@ -87,8 +87,8 @@ Request Header
 include::{snippets}/ProductApi/Add/Failure/Case1/request-headers.adoc[]
 Request Part
 include::{snippets}/ProductApi/Add/Failure/Case1/request-parts.adoc[]
-Request Part (editProductRequest)
-include::{snippets}/ProductApi/Add/Failure/Case1/request-part-editProductRequest-fields.adoc[]
+Request Part (productRequest)
+include::{snippets}/ProductApi/Add/Failure/Case1/request-part-productRequest-fields.adoc[]
 Request Parameter
 include::{snippets}/ProductApi/Add/Failure/Case1/request-parameters.adoc[]
 
@@ -103,8 +103,8 @@ Request Header
 include::{snippets}/ProductApi/Add/Failure/Case2/request-headers.adoc[]
 Request Part
 include::{snippets}/ProductApi/Add/Failure/Case2/request-parts.adoc[]
-Request Part (editProductRequest)
-include::{snippets}/ProductApi/Add/Failure/Case2/request-part-editProductRequest-fields.adoc[]
+Request Part (productRequest)
+include::{snippets}/ProductApi/Add/Failure/Case2/request-part-productRequest-fields.adoc[]
 Request Parameter
 include::{snippets}/ProductApi/Add/Failure/Case2/request-parameters.adoc[]
 
@@ -119,8 +119,8 @@ Request Header
 include::{snippets}/ProductApi/Add/Success/request-headers.adoc[]
 Request Part
 include::{snippets}/ProductApi/Add/Success/request-parts.adoc[]
-Request Part (editProductRequest)
-include::{snippets}/ProductApi/Add/Success/request-part-editProductRequest-fields.adoc[]
+Request Part (productRequest)
+include::{snippets}/ProductApi/Add/Success/request-part-productRequest-fields.adoc[]
 Request Parameter
 include::{snippets}/ProductApi/Add/Success/request-parameters.adoc[]
 
@@ -198,8 +198,8 @@ Request Header
 include::{snippets}/ProductApi/Modify/Failure/Case1/request-headers.adoc[]
 Request Part
 include::{snippets}/ProductApi/Modify/Failure/Case1/request-parts.adoc[]
-Request Part (editProductRequest)
-include::{snippets}/ProductApi/Modify/Failure/Case1/request-part-editProductRequest-fields.adoc[]
+Request Part (productRequest)
+include::{snippets}/ProductApi/Modify/Failure/Case1/request-part-productRequest-fields.adoc[]
 Path Parameter
 include::{snippets}/ProductApi/Modify/Failure/Case1/path-parameters.adoc[]
 
@@ -214,8 +214,8 @@ Request Header
 include::{snippets}/ProductApi/Modify/Failure/Case1/request-headers.adoc[]
 Request Part
 include::{snippets}/ProductApi/Modify/Failure/Case1/request-parts.adoc[]
-Request Part (editProductRequest)
-include::{snippets}/ProductApi/Modify/Failure/Case1/request-part-editProductRequest-fields.adoc[]
+Request Part (productRequest)
+include::{snippets}/ProductApi/Modify/Failure/Case1/request-part-productRequest-fields.adoc[]
 Path Parameter
 include::{snippets}/ProductApi/Modify/Failure/Case1/path-parameters.adoc[]
 

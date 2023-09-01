@@ -10,7 +10,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.share.domain.Category;
-import umc.stockoneqback.share.domain.SearchType;
+import umc.stockoneqback.share.domain.ShareSearchType;
 import umc.stockoneqback.share.infra.query.dto.CustomShareListPage;
 import umc.stockoneqback.share.infra.query.dto.QShareList;
 import umc.stockoneqback.share.infra.query.dto.ShareList;
@@ -26,7 +26,7 @@ public class ShareListQueryRepositoryImpl implements ShareListQueryRepository{
     private final JPAQueryFactory query;
 
     @Override
-    public CustomShareListPage<ShareList> findShareList(Long businessId, Category category, SearchType searchType, String searchWord, int page) {
+    public CustomShareListPage<ShareList> findShareList(Long businessId, Category category, ShareSearchType shareSearchType, String searchWord, int page) {
         Pageable pageable = PageRequest.of(page, 6);
         List<ShareList> shareLists = query
                 .selectDistinct(new QShareList(
@@ -39,7 +39,7 @@ public class ShareListQueryRepositoryImpl implements ShareListQueryRepository{
                 .innerJoin(business).on(share.business.id.eq(businessId))
                 .where(share.status.eq(Status.NORMAL),
                         share.category.eq(category),
-                        search(searchType, searchWord))
+                        search(shareSearchType, searchWord))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(share.createdDate.desc())
@@ -51,20 +51,16 @@ public class ShareListQueryRepositoryImpl implements ShareListQueryRepository{
                 .innerJoin(business).on(share.business.id.eq(businessId))
                 .where(share.status.eq(Status.NORMAL),
                         share.category.eq(category),
-                        search(searchType, searchWord));
+                        search(shareSearchType, searchWord));
 
         return new CustomShareListPage<>(PageableExecutionUtils.getPage(shareLists, pageable, countQuery::fetchOne));
     }
 
-    private BooleanExpression search(SearchType searchType, String searchWord) {
-        if (searchWord == null || searchWord.isEmpty()) {
-            return null;
-        } else {
-            switch (searchType) {
-                case TITLE: return share.title.contains(searchWord);
-                case CONTENT: return share.content.contains(searchWord);
-                default: return null;
-            }
-        }
+    private BooleanExpression search(ShareSearchType shareSearchType, String searchWord) {
+        return switch (shareSearchType) {
+            case TITLE -> share.title.contains(searchWord);
+            case CONTENT -> share.content.contains(searchWord);
+            default -> null;
+        };
     }
 }

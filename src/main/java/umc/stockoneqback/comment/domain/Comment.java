@@ -42,8 +42,7 @@ public class Comment extends BaseTimeEntity {
 
     // 댓글 삭제시 달려있는 대댓글 모두 삭제
     @OneToMany(mappedBy = "comment", cascade = PERSIST, orphanRemoval = true)
-    private List<Reply> replyList = new ArrayList<>();
-
+    private final List<Reply> replyList = new ArrayList<>();
 
     @Builder
     private Comment (User writer, Board board, String image, String content) {

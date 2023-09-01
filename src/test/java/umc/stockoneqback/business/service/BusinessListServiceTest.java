@@ -45,7 +45,7 @@ class BusinessListServiceTest extends ServiceTest {
         company = companyRepository.save(new Company("CafeCompany", "카페", "QWE987"));
 
         for (int i = 0; i < 3; i++) {
-            storeList[i].updateStoreManager(managerList[i]);
+            storeList[i].updateManager(managerList[i]);
             supervisorList[i].registerCompany(company);
             businessRepository.save(new Business(managerList[i], supervisorList[0]));
             Thread.sleep(1);
@@ -60,7 +60,7 @@ class BusinessListServiceTest extends ServiceTest {
     @DisplayName("해당 매니저와 연결된 슈퍼바이저 목록을 조회한다")
     void getSupervisors() {
         // when - then
-        BusinessListResponse supervisors = businessListService.getSupervisors(managerList[0].getId(), Long.valueOf(-1), SEARCH);
+        BusinessListResponse supervisors = businessListService.getSupervisors(managerList[0].getId(), -1L, SEARCH);
 
         assertAll(
                 () -> assertThat(supervisors.userList().size()).isEqualTo(1),
@@ -73,7 +73,7 @@ class BusinessListServiceTest extends ServiceTest {
     @DisplayName("해당 슈퍼바이저와 연결된 점주 목록을 조회한다")
     void getManagers() {
         // when - then
-        BusinessListResponse managers = businessListService.getManagers(supervisorList[1].getId(), Long.valueOf(-1));
+        BusinessListResponse managers = businessListService.getManagers(supervisorList[1].getId(), -1L);
 
         int size = managers.userList().size();
         for (int i = 0; i < size; i++) {

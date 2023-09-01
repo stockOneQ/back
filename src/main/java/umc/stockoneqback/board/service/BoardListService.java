@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.board.controller.dto.CustomBoardListResponse;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.domain.BoardRepository;
-import umc.stockoneqback.board.domain.SearchType;
-import umc.stockoneqback.board.domain.SortCondition;
+import umc.stockoneqback.board.domain.BoardSearchType;
+import umc.stockoneqback.board.domain.BoardSortCondition;
 import umc.stockoneqback.board.domain.like.BoardLikeRepository;
 import umc.stockoneqback.board.exception.BoardErrorCode;
 import umc.stockoneqback.board.infra.query.dto.BoardList;
@@ -21,7 +21,6 @@ import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.service.UserFindService;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,17 +36,15 @@ public class BoardListService {
     private final UserFindService userFindService;
 
     @Transactional
-    public CustomBoardListResponse<BoardList> getBoardList(Long userId, int page, String sortBy, String searchBy, String searchWord) throws IOException {
-        User user = userFindService.findById(userId);
-        validateManager(user);
-
-        SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
-        SearchType searchType = SearchType.findSearchTypeByValue(searchBy);
+    public CustomBoardListResponse<BoardList> getBoardList(Long userId, int page, String sortBy,
+                                                           String searchBy, String searchWord) {
+        BoardSortCondition boardSortCondition = BoardSortCondition.from(sortBy);
+        BoardSearchType boardSearchType = BoardSearchType.from(searchBy);
 
         CustomBoardListResponse<BoardList> boardList = new CustomBoardListResponse<>();
-        switch (sortCondition) {
-            case TIME -> boardList = boardRepository.getBoardListOrderByTime(searchType, searchWord, page);
-            case HIT -> boardList = boardRepository.getBoardListOrderByHit(searchType, searchWord, page);
+        switch (boardSortCondition) {
+            case TIME -> boardList = boardRepository.getBoardListOrderByTime(boardSearchType, searchWord, page);
+            case HIT -> boardList = boardRepository.getBoardListOrderByHit(boardSearchType, searchWord, page);
         }
 
         List<BoardList> boardLists = getSortedBoardList(boardList);
@@ -55,17 +52,18 @@ public class BoardListService {
     }
 
     @Transactional
-    public CustomBoardListResponse<BoardList> getMyBoardList(Long userId, int page, String sortBy, String searchBy, String searchWord) throws IOException {
+    public CustomBoardListResponse<BoardList> getMyBoardList(Long userId, int page, String sortBy,
+                                                             String searchBy, String searchWord) {
         User user = userFindService.findById(userId);
         validateUser(user);
 
-        SortCondition sortCondition = SortCondition.findSortConditionByValue(sortBy);
-        SearchType searchType = SearchType.findMyBoardSearchTypeByValue(searchBy);
+        BoardSortCondition boardSortCondition = BoardSortCondition.from(sortBy);
+        BoardSearchType boardSearchType = BoardSearchType.from(searchBy);
 
         CustomBoardListResponse<BoardList> boardList = new CustomBoardListResponse<>();
-        switch (sortCondition) {
-            case TIME -> boardList = boardRepository.getMyBoardListOrderByTime(userId, searchType, searchWord, page);
-            case HIT -> boardList = boardRepository.getMyBoardListOrderByHit(userId, searchType, searchWord, page);
+        switch (boardSortCondition) {
+            case TIME -> boardList = boardRepository.getMyBoardListOrderByTime(userId, boardSearchType, searchWord, page);
+            case HIT -> boardList = boardRepository.getMyBoardListOrderByHit(userId, boardSearchType, searchWord, page);
         }
 
         List<BoardList> boardLists = getSortedBoardList(boardList);
@@ -80,7 +78,7 @@ public class BoardListService {
         }
     }
 
-    private List<BoardList> getSortedBoardList(CustomBoardListResponse<BoardList> boardLists) throws IOException {
+    private List<BoardList> getSortedBoardList(CustomBoardListResponse<BoardList> boardLists) {
         List<BoardList> boardList1 = boardLists.getBoardList();
         List<BoardList> boardListResponseList = new ArrayList<>();
 
@@ -122,12 +120,6 @@ public class BoardListService {
             content = contentPreview.concat("...");
         }
         return content;
-    }
-
-    private void validateManager(User user) {
-        if (user.getRole() != Role.MANAGER) {
-            throw BaseException.type(UserErrorCode.USER_IS_NOT_MANAGER);
-        }
     }
 
     private void validateWriter(Long boardId, Long writerId) {

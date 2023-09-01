@@ -51,8 +51,8 @@ import umc.stockoneqback.global.security.handler.JwtAuthenticationEntryPoint;
 import umc.stockoneqback.global.security.service.CustomUserDetailsService;
 import umc.stockoneqback.product.controller.ProductApiController;
 import umc.stockoneqback.product.controller.ProductFindApiController;
-import umc.stockoneqback.product.service.ProductFindOthersService;
 import umc.stockoneqback.product.service.ProductFindService;
+import umc.stockoneqback.product.service.ProductOthersService;
 import umc.stockoneqback.product.service.ProductService;
 import umc.stockoneqback.reply.controller.ReplyApiController;
 import umc.stockoneqback.reply.service.ReplyFindService;
@@ -190,13 +190,13 @@ public abstract class ControllerTest {
     protected BusinessProductService businessProductService;
 
     @MockBean
-    protected ProductFindOthersService productFindOthersService;
+    protected ProductOthersService productOthersService;
 
     @MockBean
     protected UserFAService userFAService;
 
     @MockBean
-    protected AdminStaticService adminStaticService;
+    protected AdminStaticService AdminStaticService;
 
     @MockBean
     protected ShareService shareService;

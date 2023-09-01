@@ -47,11 +47,11 @@ public class StoreService {
 
     @Transactional
     public void deleteManager(Store store) {
-        store.deleteStoreManager();
+        store.deleteManager();
     }
 
     @Transactional
-    public void deletePartTimersByPartTimer(Store store, PartTimer partTimer) {
-        store.deleteStorePartTimers(partTimer);
+    public void deletePartTimer(Store store, PartTimer partTimer) {
+        store.deletePartTimer(partTimer);
     }
 }

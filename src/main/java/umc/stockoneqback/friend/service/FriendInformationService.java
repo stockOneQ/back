@@ -3,8 +3,8 @@ package umc.stockoneqback.friend.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import umc.stockoneqback.friend.domain.FriendRepository;
 import umc.stockoneqback.friend.infra.query.dto.response.FriendInformation;
-import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.friend.service.dto.FriendAssembler;
 import umc.stockoneqback.global.base.RelationStatus;
 

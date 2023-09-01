@@ -13,14 +13,14 @@ import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.role.domain.company.Company;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.domain.User;
-import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.service.UserFindService;
 import umc.stockoneqback.user.service.UserService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static umc.stockoneqback.fixture.UserFixture.*;
+import static umc.stockoneqback.fixture.UserFixture.ANNE;
+import static umc.stockoneqback.fixture.UserFixture.UNKNOWN;
 
 @DisplayName("Friend [Service Layer] -> FriendService 테스트")
 class FriendServiceTest extends ServiceTest {
@@ -55,23 +55,6 @@ class FriendServiceTest extends ServiceTest {
             assertThatThrownBy(() -> friendService.requestFriend(senderId, senderId))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(FriendErrorCode.SELF_FRIEND_REQUEST_NOT_ALLOWED.getMessage());
-        }
-
-        @Test
-        @DisplayName("점주가 아니면 친구 신청에 실패한다")
-        void throwExceptionByUserIsNotAManager() {
-            // given
-            companyRepository.save(createCompany("A 납품업체", "과일", "ABC123"));
-
-            Long supervisorId = userService.saveSupervisor(WIZ.toUser(), "A 납품업체", "ABC123");
-
-            // when - then
-            assertThatThrownBy(() -> friendService.requestFriend(supervisorId, receiverId))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(UserErrorCode.USER_IS_NOT_MANAGER.getMessage());
-            assertThatThrownBy(() -> friendService.requestFriend(senderId, supervisorId))
-                    .isInstanceOf(BaseException.class)
-                    .hasMessage(UserErrorCode.USER_IS_NOT_MANAGER.getMessage());
         }
 
         @Test

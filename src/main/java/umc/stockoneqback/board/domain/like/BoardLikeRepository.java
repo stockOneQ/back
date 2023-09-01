@@ -8,14 +8,14 @@ import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.user.domain.User;
 
 public interface BoardLikeRepository extends JpaRepository<BoardLike, Long> {
+    // @Query
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("DELETE FROM BoardLike i WHERE i.user.id = :userId AND i.board.id = :boardId")
     void deleteByUserIdAndBoardId(@Param("userId") Long userId, @Param("boardId") Long boardId);
 
+    // Query Method
     boolean existsByUserIdAndBoardId(Long userId, Long boardId);
-
     int countByBoard(Board board);
-
     void deleteByUser(User user);
 }
 

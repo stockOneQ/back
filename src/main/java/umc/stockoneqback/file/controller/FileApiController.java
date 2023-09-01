@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import umc.stockoneqback.file.dto.UploadRequest;
+import umc.stockoneqback.file.exception.FileErrorCode;
 import umc.stockoneqback.file.service.FileService;
-import umc.stockoneqback.file.utils.exception.FileErrorCode;
 import umc.stockoneqback.global.annotation.ExtractPayload;
 import umc.stockoneqback.global.exception.BaseException;
 
@@ -20,7 +20,6 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 public class FileApiController {
     private final FileService fileService;
 
-    // upload
     @PostMapping(value = "/upload", consumes = MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> upload(@ExtractPayload Long userId, @ModelAttribute @Valid UploadRequest request) {
         String dir = request.dir();
@@ -49,7 +48,6 @@ public class FileApiController {
         }
     }
 
-    // download
     @GetMapping(value = "/download")
     public ResponseEntity<byte[]> download(@ExtractPayload Long userId, String fileKey) throws IOException {
         return fileService.download(fileKey);

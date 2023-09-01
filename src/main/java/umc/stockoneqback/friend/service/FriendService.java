@@ -4,13 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.friend.domain.Friend;
+import umc.stockoneqback.friend.domain.FriendRepository;
 import umc.stockoneqback.friend.exception.FriendErrorCode;
-import umc.stockoneqback.friend.repository.FriendRepository;
 import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.global.exception.BaseException;
-import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.User;
-import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.service.UserFindService;
 
 @Service
@@ -27,8 +25,6 @@ public class FriendService {
         User receiver = userFindService.findById(receiverId);
 
         validateSameUser(senderId, receiverId);
-        validateManager(sender);
-        validateManager(receiver);
         validateAlreadyFriend(sender, receiver);
 
         return friendRepository.save(Friend.createFriend(sender, receiver, RelationStatus.REQUEST)).getId();
@@ -37,12 +33,6 @@ public class FriendService {
     private void validateSameUser(Long senderId, Long receiverId) {
         if (senderId.equals(receiverId)) {
             throw BaseException.type(FriendErrorCode.SELF_FRIEND_REQUEST_NOT_ALLOWED);
-        }
-    }
-
-    private void validateManager(User user) {
-        if (user.getRole() != Role.MANAGER) {
-            throw BaseException.type(UserErrorCode.USER_IS_NOT_MANAGER);
         }
     }
 
@@ -76,7 +66,7 @@ public class FriendService {
         friendRepository.delete(friend);
     }
 
-    private void validateAcceptStatus(Friend friend) {
+    public void validateAcceptStatus(Friend friend) {
         if (friend.getRelationStatus().equals(RelationStatus.ACCEPT)) {
             throw BaseException.type(FriendErrorCode.STATUS_IS_ACCEPT);
         }
@@ -94,16 +84,16 @@ public class FriendService {
 
     @Transactional
     public void deleteFriendByUser(User user) {
-        friendRepository.deleteByUser(user);
+        friendRepository.deleteFriendByUser(user);
     }
 
-    private void validateRequestStatus(Friend friend) {
+    public void validateRequestStatus(Friend friend) {
         if (friend.getRelationStatus().equals(RelationStatus.REQUEST)) {
             throw BaseException.type(FriendErrorCode.STATUS_IS_REQUEST);
         }
     }
 
-    void validateNotFriend(User sender, User receiver) {
+    public void validateNotFriend(User sender, User receiver) {
         if (!friendRepository.existsBySenderAndReceiver(sender, receiver) && !friendRepository.existsBySenderAndReceiver(receiver, sender)) {
             throw BaseException.type(FriendErrorCode.FRIEND_NOT_FOUND);
         }
