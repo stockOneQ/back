@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.business.domain.Business;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.fixture.ProductFixture;
-import umc.stockoneqback.fixture.StoreFixture;
 import umc.stockoneqback.product.domain.StoreCondition;
 import umc.stockoneqback.product.service.dto.response.GetTotalProductResponse;
 import umc.stockoneqback.product.service.dto.response.SearchProductOthersResponse;
@@ -21,9 +20,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static umc.stockoneqback.fixture.StoreFixture.D_PIZZA;
 import static umc.stockoneqback.fixture.StoreFixture.Z_SIHEUNG;
-import static umc.stockoneqback.fixture.UserFixture.*;
+import static umc.stockoneqback.fixture.UserFixture.ELLA;
+import static umc.stockoneqback.fixture.UserFixture.JACK;
 
 @DisplayName("Business [Service Layer] -> BusinessProductService 테스트")
 public class BusinessProductServiceTest extends ServiceTest {

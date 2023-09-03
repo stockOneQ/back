@@ -6,21 +6,16 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.fixture.StoreFixture;
 import umc.stockoneqback.friend.domain.Friend;
 import umc.stockoneqback.friend.exception.FriendErrorCode;
 import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.global.exception.BaseException;
-import umc.stockoneqback.role.domain.company.Company;
-import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.service.UserFindService;
-import umc.stockoneqback.user.service.UserService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static umc.stockoneqback.fixture.StoreFixture.*;
 import static umc.stockoneqback.fixture.UserFixture.ANNE;
 import static umc.stockoneqback.fixture.UserFixture.UNKNOWN;
 
