@@ -38,18 +38,18 @@ public class Store extends BaseTimeEntity {
     private Status status;
 
     @Builder
-    public Store(String name, String sector, String code, String address) {
+    public Store(String name, String sector, String code, String address, User manager) {
         this.name = name;
         this.sector = sector;
         this.code = code;
         this.address = address;
-        this.manager = null;
+        this.manager = manager;
         this.partTimers = PartTimers.createPartTimers();
         this.status = NORMAL;
     }
 
-    public static Store createStore(String name, String sector, String address) {
-        return new Store(name, sector, generateRandomCode(), address);
+    public static Store createStore(String name, String sector, String address, User manager) {
+        return new Store(name, sector, generateRandomCode(), address, manager);
     }
 
     public void updateManager(User manager) {

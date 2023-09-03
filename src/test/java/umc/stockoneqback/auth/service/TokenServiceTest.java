@@ -134,7 +134,7 @@ class TokenServiceTest extends ServiceTest {
     void findAllOnlineUsers() {
         // given
         final Long SECOND_USER_ID = 2L;
-        final String SECOND_USER_FCM_TOKEN = "secondexampleFcmToken";
+        final String SECOND_USER_FCM_TOKEN = "example_refresh_token_2";
         fcmTokenRedisRepository.save(FcmToken.createFcmToken(USER_ID, FCM_TOKEN));
         fcmTokenRedisRepository.save(FcmToken.createFcmToken(SECOND_USER_ID, SECOND_USER_FCM_TOKEN));
 

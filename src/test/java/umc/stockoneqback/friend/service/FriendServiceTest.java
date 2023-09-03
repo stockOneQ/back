@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.ServiceTest;
+import umc.stockoneqback.fixture.StoreFixture;
 import umc.stockoneqback.friend.domain.Friend;
 import umc.stockoneqback.friend.exception.FriendErrorCode;
 import umc.stockoneqback.global.base.RelationStatus;
@@ -19,16 +20,14 @@ import umc.stockoneqback.user.service.UserService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static umc.stockoneqback.fixture.StoreFixture.*;
 import static umc.stockoneqback.fixture.UserFixture.ANNE;
 import static umc.stockoneqback.fixture.UserFixture.UNKNOWN;
 
 @DisplayName("Friend [Service Layer] -> FriendService 테스트")
 class FriendServiceTest extends ServiceTest {
     @Autowired
-    protected FriendService friendService;
-
-    @Autowired
-    private UserService userService;
+    private FriendService friendService;
 
     @Autowired
     private UserFindService userFindService;
@@ -38,11 +37,8 @@ class FriendServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        Long storeId1 = storeRepository.save(createStore("스타벅스 - 광화문점", "카페", "ABC123", "서울시 종로구")).getId();
-        Long storeId2 = storeRepository.save(createStore("스타벅스 - 시청점", "카페", "ABCD1234", "서울시 종로구")).getId();
-
-        senderId = userService.saveManager(ANNE.toUser(), storeId1);
-        receiverId = userService.saveManager(UNKNOWN.toUser(), storeId2);
+        senderId = userRepository.save(ANNE.toUser()).getId();
+        receiverId = userRepository.save(UNKNOWN.toUser()).getId();
     }
 
     @Nested
@@ -280,22 +276,5 @@ class FriendServiceTest extends ServiceTest {
 
         // then
         assertThat(friendRepository.findById(senderId).isEmpty()).isTrue();
-    }
-
-    private Store createStore(String name, String sector, String code, String address) {
-        return Store.builder()
-                .name(name)
-                .sector(sector)
-                .code(code)
-                .address(address)
-                .build();
-    }
-
-    private Company createCompany(String name, String sector, String code) {
-        return Company.builder()
-                .name(name)
-                .sector(sector)
-                .code(code)
-                .build();
     }
 }

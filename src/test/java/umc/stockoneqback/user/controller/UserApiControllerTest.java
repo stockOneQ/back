@@ -45,7 +45,7 @@ class UserApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(StoreErrorCode.ALREADY_EXIST_STORE))
                     .when(storeService)
-                    .save(any(), any(), any());
+                    .save(any(), any(), any(), anyLong());
 
             // when
             final SignUpManagerRequest request = createSignUpManagerRequest();
@@ -98,10 +98,10 @@ class UserApiControllerTest extends ControllerTest {
             // given
             doReturn(STORE_ID)
                     .when(storeService)
-                    .save(anyString(), anyString(), anyString());
+                    .save(anyString(), anyString(), anyString(), anyLong());
             doThrow(BaseException.type(UserErrorCode.DUPLICATE_LOGIN_ID))
                     .when(userService)
-                    .saveManager(any(), anyLong());
+                    .saveManager(any());
 
             // when
             final SignUpManagerRequest request = createSignUpManagerRequest();
@@ -153,10 +153,10 @@ class UserApiControllerTest extends ControllerTest {
             // given
             doReturn(STORE_ID)
                     .when(storeService)
-                    .save(anyString(), anyString(), anyString());
+                    .save(anyString(), anyString(), anyString(), anyLong());
             doThrow(BaseException.type(UserErrorCode.DUPLICATE_LOGIN_ID))
                     .when(userService)
-                    .saveManager(any(), anyLong());
+                    .saveManager(any());
 
             // when
             final SignUpManagerRequest request = createSignUpManagerRequest();
@@ -209,10 +209,10 @@ class UserApiControllerTest extends ControllerTest {
             // given
             doReturn(STORE_ID)
                     .when(storeService)
-                    .save(anyString(), anyString(), anyString());
+                    .save(anyString(), anyString(), anyString(), anyLong());
             doReturn(USER_ID)
                     .when(userService)
-                    .saveManager(any(), anyLong());
+                    .saveManager(any());
 
             // when
             final SignUpManagerRequest request = createSignUpManagerRequest();

@@ -9,67 +9,61 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import umc.stockoneqback.auth.service.AuthService;
-import umc.stockoneqback.common.DatabaseCleaner;
 import umc.stockoneqback.common.EmbeddedRedisConfig;
-import umc.stockoneqback.common.RedisCleaner;
 import umc.stockoneqback.common.TestBatchLegacyConfig;
 import umc.stockoneqback.fixture.ProductFixture;
-import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.domain.ProductRepository;
+import umc.stockoneqback.role.domain.company.Company;
+import umc.stockoneqback.role.domain.company.CompanyRepository;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.domain.store.StoreRepository;
-import umc.stockoneqback.user.service.UserFindService;
-import umc.stockoneqback.user.service.UserService;
+import umc.stockoneqback.user.domain.User;
+import umc.stockoneqback.user.domain.UserRepository;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
-import static umc.stockoneqback.fixture.UserFixture.ANNE;
+import static umc.stockoneqback.fixture.StoreFixture.Z_SIHEUNG;
+import static umc.stockoneqback.fixture.UserFixture.BOB;
+import static umc.stockoneqback.fixture.UserFixture.JACK;
 
 @Import({PassProductBatchConfig.class, TestBatchLegacyConfig.class, EmbeddedRedisConfig.class})
 @SpringBootTest
 @DisplayName("Product [Config Layer] -> PassProductBatchConfig 테스트")
 public class PassProductBatchConfigTest {
     @Autowired
-    private DatabaseCleaner databaseCleaner;
-    @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Autowired
-    private UserFindService userFindService;
+    private StoreRepository storeRepository;
 
     @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private RedisCleaner redisCleaner;
-
-    @Autowired
-    protected StoreRepository storeRepository;
+    private CompanyRepository companyRepository;
 
     @Autowired
     protected ProductRepository productRepository;
 
     private final ProductFixture[] productFixtures = ProductFixture.values();
-    private final Product[] products = new Product[17];
-    private static final String FCM_TOKEN = "edwyeS_bHlpNcN-9play0t:APA91bHaigpNbcbNb2mng4Ho7vhbQYjIKnv_1AZTMx01tRN4CTKpadFTRYzSCfUFKPGfz1nCrZfTUxAYhuSHMNlty-1GEbZBCVdD451NDXuA-O8YwPj91MHtfy3XqdmLcKJICoYf47Dr";
-    private static Long USER_ID;
+
+    private static User manager;
+    private static User supervisor;
+    private static Store store;
+    private static Company company;
 
     @BeforeEach
     void setup() {
-        databaseCleaner.execute();
-        redisCleaner.flushAll();
-        Store zStore = storeRepository.save(Z_YEONGTONG.toStore());
-        USER_ID = userService.saveManager(ANNE.toUser(), zStore.getId());
-        authService.saveFcm(USER_ID, FCM_TOKEN);
-        for (int i = 0; i < products.length-1; i++)
-            products[i] = productRepository.save(productFixtures[i].toProduct(zStore));
+        manager = userRepository.save(BOB.toUser());
+        store = storeRepository.save(Store.createStore(Z_SIHEUNG.getName(), Z_SIHEUNG.getSector(), Z_SIHEUNG.getAddress(), manager));
+
+        company = companyRepository.save(new Company("A 납품업체", "과일", "ABC123"));
+        supervisor = userRepository.save(JACK.toUser());
+
+        for (int i = 0; i < productFixtures.length; i++)
+            productRepository.save(productFixtures[i].toProduct(store));
     }
 
     @Nested

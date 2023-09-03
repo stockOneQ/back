@@ -3,27 +3,27 @@ package umc.stockoneqback.role.domain.store;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import umc.stockoneqback.user.domain.Email;
-import umc.stockoneqback.user.domain.Password;
+import umc.stockoneqback.fixture.StoreFixture;
 import umc.stockoneqback.user.domain.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static umc.stockoneqback.fixture.UserFixture.ANNE;
+import static umc.stockoneqback.fixture.UserFixture.BOB;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
-import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
 @DisplayName("PartTimers 도메인 테스트")
 class PartTimersTest {
     private Store store;
-    private User user1;
-    private User user2;
+
+    private User partTimer1;
+    private User partTimer2;
 
     @BeforeEach
     void setUp() {
-        store = Store.createStore("스타벅스 - 광화문점", "카페", "서울시 중구");
-        user1 = User.createUser(Email.from(SAEWOO.getEmail()), SAEWOO.getLoginId(), Password.encrypt(SAEWOO.getPassword(), ENCODER), SAEWOO.getName(), SAEWOO.getBirth(), SAEWOO.getPhoneNumber(), SAEWOO.getRole());
-        user2 = User.createUser(Email.from(ANNE.getEmail()), ANNE.getLoginId(), Password.encrypt(ANNE.getPassword(), ENCODER), ANNE.getName(), ANNE.getBirth(), ANNE.getPhoneNumber(), ANNE.getRole());
+        partTimer1 = SAEWOO.toUser();
+        partTimer2 = BOB.toUser();
+
+        store = StoreFixture.A_PASTA.toStore();
     }
 
     @Test
@@ -33,15 +33,15 @@ class PartTimersTest {
         PartTimers partTimers = PartTimers.createPartTimers();
 
         // when
-        partTimers.addPartTimer(PartTimer.createPartTimer(store, user1));
-        partTimers.addPartTimer(PartTimer.createPartTimer(store, user2));
+        partTimers.addPartTimer(PartTimer.createPartTimer(store, partTimer1));
+        partTimers.addPartTimer(PartTimer.createPartTimer(store, partTimer2));
 
         // then
         assertAll(
                 () -> assertThat(partTimers.getPartTimers()).hasSize(2),
                 () -> assertThat(partTimers.getPartTimers())
                         .map(PartTimer::getPartTimer)
-                        .contains(user1, user2)
+                        .contains(partTimer1, partTimer2)
         );
     }
 
@@ -50,8 +50,8 @@ class PartTimersTest {
     void deletePartTimer() {
         // given
         PartTimers partTimers = PartTimers.createPartTimers();
-        PartTimer partTimer1 = PartTimer.createPartTimer(store, user1);
-        PartTimer partTimer2 = PartTimer.createPartTimer(store, user2);
+        PartTimer partTimer1 = PartTimer.createPartTimer(store, this.partTimer1);
+        PartTimer partTimer2 = PartTimer.createPartTimer(store, this.partTimer2);
         partTimers.addPartTimer(partTimer1);
         partTimers.addPartTimer(partTimer2);
 

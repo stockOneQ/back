@@ -22,8 +22,8 @@ public class UserApiController {
 
     @PostMapping("/sign-up/manager")
     public ResponseEntity<Void> signUpManager(@RequestBody @Valid SignUpManagerRequest request) {
-        Long savedStoreId = storeService.save(request.storeName(), request.storeSector(), request.storeAddress());
-        Long savedUserId = userService.saveManager(request.toUser(), savedStoreId);
+        Long savedUserId = userService.saveManager(request.toUser());
+        Long savedStoreId = storeService.save(request.storeName(), request.storeSector(), request.storeAddress(), savedUserId);
 
         return ResponseEntity.ok().build();
     }
