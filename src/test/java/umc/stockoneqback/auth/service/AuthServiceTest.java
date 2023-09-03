@@ -26,7 +26,7 @@ class AuthServiceTest extends ServiceTest {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    final Long USER_ID = 1L;
+    private final Long USER_ID = 1L;
 
     @Nested
     @DisplayName("로그인")

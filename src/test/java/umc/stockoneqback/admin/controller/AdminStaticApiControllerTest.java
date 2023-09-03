@@ -185,8 +185,11 @@ public class AdminStaticApiControllerTest extends ControllerTest {
     }
 
     private AddFARequest createAddFARequest() {
-        return new AddFARequest(List.of(new AddFARequest.AddFAKeyValue(questionList.get(0), answerList.get(0)),
-                new AddFARequest.AddFAKeyValue(questionList.get(1), answerList.get(1)),
-                new AddFARequest.AddFAKeyValue(questionList.get(2), answerList.get(2))));
+        return new AddFARequest(
+                List.of(new AddFARequest.AddFAKeyValue(questionList.get(0), answerList.get(0)),
+                        new AddFARequest.AddFAKeyValue(questionList.get(1), answerList.get(1)),
+                        new AddFARequest.AddFAKeyValue(questionList.get(2), answerList.get(2))
+                )
+        );
     }
 }

@@ -16,8 +16,8 @@ class TokenRepositoryTest extends RepositoryTest {
     @Autowired
     private TokenRepository tokenRepository;
 
-    final Long USER_ID = 1L;
-    final String REFRESH_TOKEN = "example_refresh_token";
+    private final Long USER_ID = 1L;
+    private final String REFRESH_TOKEN = "example_refresh_token";
 
     @BeforeEach
     void setup() {

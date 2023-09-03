@@ -31,7 +31,9 @@ public class BoardServiceTest extends ServiceTest {
 
     private User writer;
     private User not_writer;
+
     private Board board;
+
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @BeforeEach

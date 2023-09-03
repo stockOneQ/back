@@ -28,11 +28,13 @@ class BoardListServiceTest extends ServiceTest {
     @Autowired
     private BoardFindService boardFindService;
 
-    private final Board[] boardList = new Board[10];
-    private final List<Long> selectedBoardId = new ArrayList<>();
     private User writer;
     private User not_writer;
     private Long userId;
+
+    private final Board[] boardList = new Board[10];
+    private final List<Long> selectedBoardId = new ArrayList<>();
+
     private static final int PAGE = 0;
     private static final String SORT_BY = "조회순";
     private static final String INVALID_SORT = "댓글순";
@@ -92,7 +94,7 @@ class BoardListServiceTest extends ServiceTest {
 
         @Test
         @DisplayName("정렬 기준과 검색에 따른 게시글 목록 조회에 성공한다")
-        void getBoardListByHit() throws IOException {
+        void getBoardListByHit() {
             // when
             CustomBoardListResponse<BoardList> boardListResponse = boardListService.getBoardList(userId, PAGE, SORT_BY, SEARCH_TYPE, SEARCH_WORD);
 
@@ -144,7 +146,7 @@ class BoardListServiceTest extends ServiceTest {
 
         @Test
         @DisplayName("정렬 기준과 검색에 따른 게시글 목록 조회에 성공한다")
-        void getMyBoardList() throws IOException {
+        void getMyBoardList() {
             // when
             CustomBoardListResponse<BoardList> myBoardList = boardListService.getMyBoardList(userId, PAGE, SORT_BY, SEARCH_TYPE, SEARCH_WORD);
 

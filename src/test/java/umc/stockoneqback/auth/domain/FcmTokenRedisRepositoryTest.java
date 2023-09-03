@@ -22,7 +22,7 @@ public class FcmTokenRedisRepositoryTest {
     @Autowired
     private FcmTokenRedisRepository fcmTokenRedisRepository;
 
-    final Long USER_ID = 1L;
+    private final Long USER_ID = 1L;
 
     @BeforeEach
     void setup() {

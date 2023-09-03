@@ -20,8 +20,8 @@ class TokenServiceTest extends ServiceTest {
     @Autowired
     private TokenService tokenService;
 
-    final Long USER_ID = 1L;
-    final String REFRESH_TOKEN = "example_refresh_token";
+    private final Long USER_ID = 1L;
+    private final String REFRESH_TOKEN = "example_refresh_token";
 
     @Nested
     @DisplayName("Refresh Token 발급 혹은 재발급")
