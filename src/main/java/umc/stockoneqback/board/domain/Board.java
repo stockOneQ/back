@@ -38,10 +38,10 @@ public class Board extends BaseTimeEntity {
     private User writer;
 
     @OneToMany(mappedBy = "board", cascade = PERSIST, orphanRemoval = true)
-    private List<Comment> commentList = new ArrayList<>();
+    private final List<Comment> commentList = new ArrayList<>();
 
     @Builder
-    private Board (User writer, String title, String content) {
+    private Board(User writer, String title, String content) {
         this.writer = writer;
         this.title = title;
         this.content = content;

@@ -27,8 +27,7 @@ public class BoardApiController {
 
     @PreAuthorize("hasRole('MANAGER')")
     @PatchMapping("/{boardId}")
-    public ResponseEntity<Void> update(@ExtractPayload Long writerId,
-                                       @PathVariable Long boardId,
+    public ResponseEntity<Void> update(@ExtractPayload Long writerId, @PathVariable Long boardId,
                                        @RequestBody @Valid BoardRequest request) {
         boardService.update(writerId, boardId, request.title(), request.content());
         return ResponseEntity.ok().build();
@@ -36,15 +35,13 @@ public class BoardApiController {
 
     @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/{boardId}")
-    public ResponseEntity<BoardResponse> loadBoard(@ExtractPayload Long userId,
-                                                   @PathVariable Long boardId) {
+    public ResponseEntity<BoardResponse> loadBoard(@ExtractPayload Long userId, @PathVariable Long boardId) {
         return ResponseEntity.ok(boardService.loadBoard(userId, boardId));
     }
 
     @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/{boardId}/hit")
-    public ResponseEntity<Void> updateHit(@ExtractPayload Long userId,
-                                          @PathVariable Long boardId) {
+    public ResponseEntity<Void> updateHit(@ExtractPayload Long userId, @PathVariable Long boardId) {
         boardService.updateHit(userId, boardId);
         return ResponseEntity.ok().build();
     }

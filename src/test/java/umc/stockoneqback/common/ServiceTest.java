@@ -10,6 +10,7 @@ import umc.stockoneqback.auth.domain.FcmTokenRedisRepository;
 import umc.stockoneqback.auth.domain.TokenRepository;
 import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.board.domain.like.BoardLikeRepository;
+import umc.stockoneqback.board.domain.views.ViewsRedisRepository;
 import umc.stockoneqback.business.domain.BusinessRepository;
 import umc.stockoneqback.comment.domain.CommentRepository;
 import umc.stockoneqback.friend.domain.FriendRepository;
@@ -27,6 +28,9 @@ import umc.stockoneqback.user.domain.UserRepository;
 public class ServiceTest {
     @Autowired
     private DatabaseCleaner databaseCleaner;
+
+    @Autowired
+    private RedisCleaner redisCleaner;
 
     @Autowired
     protected UserRepository userRepository;
@@ -73,6 +77,9 @@ public class ServiceTest {
     @Autowired
     protected FcmTokenRedisRepository fcmTokenRedisRepository;
 
+    @Autowired
+    protected ViewsRedisRepository viewsRedisRepository;
+
     public void flushAndClear() {
         databaseCleaner.flushAndClear();
     }
@@ -80,5 +87,6 @@ public class ServiceTest {
     @BeforeEach
     void setUp() {
         databaseCleaner.execute();
+        redisCleaner.flushAll();
     }
 }
