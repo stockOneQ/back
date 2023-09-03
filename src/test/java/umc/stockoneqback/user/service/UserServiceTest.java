@@ -20,7 +20,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
+import static umc.stockoneqback.fixture.StoreFixture.D_PIZZA;
+import static umc.stockoneqback.fixture.UserFixture.*;
+import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
 
 @DisplayName("User [Service Layer] -> UserService 테스트")
 class UserServiceTest extends ServiceTest {
@@ -30,30 +32,35 @@ class UserServiceTest extends ServiceTest {
     @Autowired
     private AuthService authService;
 
-    private Store store;
-    private Company company;
-
-    @BeforeEach
-    void setUp() {
-        store = storeRepository.save(createStore("스타벅스 - 광화문점", "카페", "ABC123", "서울시 종로구"));
-        company = companyRepository.save(createCompany("A 납품업체", "과일", "ABC123"));
-    }
-
     @Test
     @DisplayName("가게 사장님 등록에 성공한다")
     void saveManager() {
         // when
-        User manager = SAEWOO.toUser();
-        userService.saveManager(manager, store.getId());
+        Long managerId = userService.saveManager(ELLA.toUser());
 
         // then
-        Store findStore = storeRepository.findById(store.getId()).orElseThrow();
-        assertThat(findStore.getManager()).isEqualTo(manager);
+        User findManager = userRepository.findById(managerId).orElseThrow();
+        assertAll(
+                () -> assertThat(findManager.getName()).isEqualTo(ELLA.getName()),
+                () -> assertThat(findManager.getLoginId()).isEqualTo(ELLA.getLoginId()),
+                () -> assertThat(findManager.getPassword().isSamePassword(ELLA.getPassword(), ENCODER)).isTrue(),
+                () -> assertThat(findManager.getBirth()).isEqualTo(ELLA.getBirth()),
+                () -> assertThat(findManager.getPhoneNumber()).isEqualTo(ELLA.getPhoneNumber()),
+                () -> assertThat(findManager.getRole()).isEqualTo(ELLA.getRole())
+        );
     }
 
     @Nested
     @DisplayName("아르바이트생 등록")
     class savePartTimer {
+        private Store store;
+
+        @BeforeEach
+        void setUp() {
+            User manager = userRepository.save(ELLA.toUser());
+            store = storeRepository.save(Store.createStore(D_PIZZA.getName(), D_PIZZA.getSector(), D_PIZZA.getAddress(), manager));
+        }
+
         @Test
         @DisplayName("가게 코드가 일치하지 않으면 아르바이트생 등록에 실패한다")
         void throwExceptionByInvalidStoreCode() {
@@ -61,7 +68,7 @@ class UserServiceTest extends ServiceTest {
             User partTimer = SAEWOO.toUser();
 
             // when - then
-            assertThatThrownBy(() -> userService.savePartTimer(partTimer, "스타벅스 - 광화문점", "ABC456"))
+            assertThatThrownBy(() -> userService.savePartTimer(partTimer, store.getName(), store.getCode() + "FAKE"))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(UserErrorCode.INVALID_STORE_CODE.getMessage());
         }
@@ -70,13 +77,20 @@ class UserServiceTest extends ServiceTest {
         @DisplayName("아르바이트생 등록에 성공한다")
         void success() {
             // when
-            Long savedUserId = userService.savePartTimer(SAEWOO.toUser(), store.getName(), store.getCode());
+            Long savedPartTimerId = userService.savePartTimer(SAEWOO.toUser(), store.getName(), store.getCode());
 
             // then
+            User findPartTimer = userRepository.findById(savedPartTimerId).orElseThrow();
             Store findStore = storeRepository.findById(store.getId()).orElseThrow();
             assertAll(
+                    () -> assertThat(findPartTimer.getName()).isEqualTo(SAEWOO.getName()),
+                    () -> assertThat(findPartTimer.getLoginId()).isEqualTo(SAEWOO.getLoginId()),
+                    () -> assertThat(findPartTimer.getPassword().isSamePassword(SAEWOO.getPassword(), ENCODER)).isTrue(),
+                    () -> assertThat(findPartTimer.getBirth()).isEqualTo(SAEWOO.getBirth()),
+                    () -> assertThat(findPartTimer.getPhoneNumber()).isEqualTo(SAEWOO.getPhoneNumber()),
+                    () -> assertThat(findPartTimer.getRole()).isEqualTo(SAEWOO.getRole()),
                     () -> assertThat(findStore.getPartTimers().getPartTimers().size()).isEqualTo(1),
-                    () -> assertThat(findStore.getPartTimers().getPartTimers().get(0).getPartTimer().getId()).isEqualTo(savedUserId)
+                    () -> assertThat(findStore.getPartTimers().getPartTimers().get(0).getPartTimer().getId()).isEqualTo(savedPartTimerId)
             );
         }
     }
@@ -84,6 +98,13 @@ class UserServiceTest extends ServiceTest {
     @Nested
     @DisplayName("슈퍼바이저 등록")
     class saveSupervisor {
+        private Company company;
+
+        @BeforeEach
+        void setUp() {
+            company = companyRepository.save(createCompany("A 납품업체", "과일", "ABC123"));
+        }
+
         @Test
         @DisplayName("회사 코드가 일치하지 않으면 슈퍼바이저 등록에 실패한다")
         void throwExceptionByInvalidCompanyCode() {
@@ -100,7 +121,7 @@ class UserServiceTest extends ServiceTest {
         @DisplayName("슈퍼바이저 등록에 성공한다")
         void success() {
             // given
-            User supervisor = SAEWOO.toUser();
+            User supervisor = JACK.toUser();
 
             // when
             Long saveSupervisorId = userService.saveSupervisor(supervisor, company.getName(), company.getCode());
@@ -109,22 +130,17 @@ class UserServiceTest extends ServiceTest {
             User findSupervisor = userRepository.findById(saveSupervisorId).orElseThrow();
             Company findCompany = companyRepository.findById(company.getId()).orElseThrow();
             assertAll(
+                    () -> assertThat(findSupervisor.getName()).isEqualTo(JACK.getName()),
+                    () -> assertThat(findSupervisor.getLoginId()).isEqualTo(JACK.getLoginId()),
+                    () -> assertThat(findSupervisor.getPassword().isSamePassword(JACK.getPassword(), ENCODER)).isTrue(),
+                    () -> assertThat(findSupervisor.getBirth()).isEqualTo(JACK.getBirth()),
+                    () -> assertThat(findSupervisor.getPhoneNumber()).isEqualTo(JACK.getPhoneNumber()),
+                    () -> assertThat(findSupervisor.getRole()).isEqualTo(JACK.getRole()),
                     () -> assertThat(findCompany.getEmployees().size()).isEqualTo(1),
                     () -> assertThat(findCompany.getEmployees()).contains(findSupervisor),
                     () -> assertThat(findSupervisor.getCompany()).isEqualTo(findCompany)
             );
         }
-    }
-
-    @Nested
-    @DisplayName("로그인 아이디 찾기")
-    class findLoginId {
-        @Test
-        @DisplayName("요청된 정보와 일치하는 사용자를 찾을 수 없으면 아이디 찾기에 실패한다")
-        void throwExceptionByDuplicateLoginId() {
-
-        }
-
     }
 
     @Test
@@ -159,15 +175,6 @@ class UserServiceTest extends ServiceTest {
         // then
         Optional<User> findUser = userRepository.findById(user.getId());
         assertThat(findUser.isEmpty()).isTrue();
-    }
-
-    private Store createStore(String name, String sector, String code, String address) {
-        return Store.builder()
-                .name(name)
-                .sector(sector)
-                .code(code)
-                .address(address)
-                .build();
     }
 
     private Company createCompany(String name, String sector, String code) {

@@ -9,17 +9,21 @@ import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.domain.store.StoreRepository;
 import umc.stockoneqback.role.exception.StoreErrorCode;
 import umc.stockoneqback.user.domain.User;
+import umc.stockoneqback.user.service.UserFindService;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StoreService {
     private final StoreRepository storeRepository;
+    private final UserFindService userFindService;
 
     @Transactional
-    public Long save(String name, String sector, String address) {
+    public Long save(String name, String sector, String address, Long managerId) {
         validateAlreadyExistStore(name);
-        Store store = Store.createStore(name, sector, address);
+
+        User manager = userFindService.findById(managerId);
+        Store store = Store.createStore(name, sector, address, manager);
 
         return storeRepository.save(store).getId();
     }

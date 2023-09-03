@@ -54,7 +54,7 @@ public class BusinessProductService {
         return productOthersService.getListOfSearchProductOthers(managerStore, storeConditionValue, searchConditionValue, productId);
     }
 
-    public User checkRelation(User supervisor, Long managerId) {
+    private User checkRelation(User supervisor, Long managerId) {
         User manager = userFindService.findById(managerId);
         businessService.validateNotExist(supervisor, manager);
 

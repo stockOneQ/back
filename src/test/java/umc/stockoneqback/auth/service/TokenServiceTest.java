@@ -20,8 +20,8 @@ class TokenServiceTest extends ServiceTest {
     @Autowired
     private TokenService tokenService;
 
-    final Long USER_ID = 1L;
-    final String REFRESH_TOKEN = "example_refresh_token";
+    private final Long USER_ID = 1L;
+    private final String REFRESH_TOKEN = "example_refresh_token";
 
     @Nested
     @DisplayName("Refresh Token 발급 혹은 재발급")
@@ -134,7 +134,7 @@ class TokenServiceTest extends ServiceTest {
     void findAllOnlineUsers() {
         // given
         final Long SECOND_USER_ID = 2L;
-        final String SECOND_USER_FCM_TOKEN = "secondexampleFcmToken";
+        final String SECOND_USER_FCM_TOKEN = "example_refresh_token_2";
         fcmTokenRedisRepository.save(FcmToken.createFcmToken(USER_ID, FCM_TOKEN));
         fcmTokenRedisRepository.save(FcmToken.createFcmToken(SECOND_USER_ID, SECOND_USER_FCM_TOKEN));
 

@@ -26,6 +26,7 @@ class BoardListQueryRepositoryImplTest extends RepositoryTest {
 
     private final Board[] boardList = new Board[10];
     private User writer;
+
     private static final BoardSearchType SEARCH_TYPE = BoardSearchType.TITLE;
     private static final String SEARCH_TITLE = "제목";
     private static final String SEARCH_CONTENT = "5";

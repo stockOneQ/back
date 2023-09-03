@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.business.domain.Business;
 import umc.stockoneqback.business.exception.BusinessErrorCode;
 import umc.stockoneqback.common.ServiceTest;
+import umc.stockoneqback.fixture.StoreFixture;
 import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.role.domain.company.Company;
-import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.service.UserFindService;
 import umc.stockoneqback.user.service.UserService;
@@ -40,11 +40,12 @@ class BusinessServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        Long storeId = storeRepository.save(createStore("스타벅스 - 광화문점", "카페", "ABC123", "서울시 종로구")).getId();
-        Long companyId = companyRepository.save(createCompany("A 납품업체", "과일", "ABC123")).getId();
-
-        managerId = userService.saveManager(SAEWOO.toUser(), storeId);
+        companyRepository.save(createCompany("A 납품업체", "과일", "ABC123"));
         supervisorId = userService.saveSupervisor(ANNE.toUser(), "A 납품업체", "ABC123");
+
+        managerId = userService.saveManager(SAEWOO.toUser());
+        Long storeId = storeRepository.save(StoreFixture.Z_SIHEUNG.toStore()).getId();
+        storeRepository.updateManagerIdById(storeId, managerId);
     }
 
     @Nested
@@ -161,15 +162,6 @@ class BusinessServiceTest extends ServiceTest {
 
         // then
         assertThat(businessRepository.findById(business.getId()).isEmpty()).isTrue();
-    }
-
-    private Store createStore(String name, String sector, String code, String address) {
-        return Store.builder()
-                .name(name)
-                .sector(sector)
-                .code(code)
-                .address(address)
-                .build();
     }
 
     private Company createCompany(String name, String sector, String code) {

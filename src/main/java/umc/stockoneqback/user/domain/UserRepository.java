@@ -26,6 +26,11 @@ public interface UserRepository extends JpaRepository<User, Long>, UserFindQuery
     @Query(value = "UPDATE users SET modified_date = :modifiedDate WHERE id = :userId", nativeQuery = true)
     void updateModifiedDateById(@Param("userId") Long userId, @Param("modifiedDate") LocalDate modifiedDate);
 
+    @Transactional
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(value = "UPDATE users SET manager_store_id = :storeId WHERE id = :userId", nativeQuery = true)
+    void updateManagerStoreIdById(@Param("userId") Long userId, @Param("storeId") Long storeId);
+
     // Query Method
     boolean existsByLoginIdAndStatus(String loginId, Status status);
     boolean existsByEmailAndStatus(Email email, Status status);

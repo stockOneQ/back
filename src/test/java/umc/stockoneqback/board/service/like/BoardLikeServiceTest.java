@@ -26,12 +26,14 @@ public class BoardLikeServiceTest extends ServiceTest {
 
     private User user1;
     private User user2;
+
     private Board board;
 
     @BeforeEach
     void setup() {
         user1 = userRepository.save(SAEWOO.toUser());
         user2 = userRepository.save(ANNE.toUser());
+
         board = boardRepository.save(BOARD_0.toBoard(user1));
     }
 

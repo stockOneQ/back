@@ -47,13 +47,10 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Long saveManager(User user, Long storeId) {
+    public Long saveManager(User user) {
         validateDuplicate(user.getLoginId(), user.getEmail());
 
-        Store store = storeService.findById(storeId);
         userRepository.save(user);
-        store.updateManager(user);
-
         return user.getId();
     }
 

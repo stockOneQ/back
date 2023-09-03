@@ -15,7 +15,7 @@ import static umc.stockoneqback.global.base.Status.NORMAL;
 
 @DisplayName("Board 도메인 테스트")
 public class BoardTest {
-    private User[] writer = new User[2];
+    private final User[] writer = new User[2];
     private Board board;
 
     @BeforeEach
@@ -40,10 +40,10 @@ public class BoardTest {
     @Test
     @DisplayName("Board에 Comment를 추가한다")
     void addComment() {
-        for(int i = 1; i <= 2; i++) {
+        for (int i = 1; i <= 2; i++) {
             board.addComment(writer[0], "이미지" + i, "댓글" + i);
         }
-        for(int i = 3; i <= 5; i++){
+        for (int i = 3; i <= 5; i++) {
             board.addComment(writer[1], "이미지" + i, "댓글" + i);
         }
 

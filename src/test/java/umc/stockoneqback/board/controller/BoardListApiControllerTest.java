@@ -42,6 +42,7 @@ class BoardListApiControllerTest extends ControllerTest {
     private static final String SORT_BY_TIME = "최신순";
     private static final String SEARCH_TYPE = "제목";
     private static final String SEARCH_WORD = "제목";
+
     @Nested
     @DisplayName("게시글 목록 조회 API [GET /api/boards]")
     class getBoardList {

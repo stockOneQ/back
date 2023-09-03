@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
-import umc.stockoneqback.auth.service.AuthService;
 import umc.stockoneqback.common.EmbeddedRedisConfig;
 import umc.stockoneqback.common.ServiceTest;
 import umc.stockoneqback.global.base.Status;
@@ -15,8 +14,8 @@ import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.exception.ProductErrorCode;
 import umc.stockoneqback.product.service.dto.response.LoadProductResponse;
 import umc.stockoneqback.role.domain.store.Store;
+import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.exception.UserErrorCode;
-import umc.stockoneqback.user.service.UserService;
 
 import java.io.IOException;
 
@@ -26,9 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.ProductFixture.APPLE;
 import static umc.stockoneqback.fixture.ProductFixture.CHERRY;
 import static umc.stockoneqback.fixture.StoreFixture.Z_SIHEUNG;
-import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
-import static umc.stockoneqback.fixture.UserFixture.ANNE;
 import static umc.stockoneqback.fixture.UserFixture.ELLA;
+import static umc.stockoneqback.fixture.UserFixture.SOPHIA;
 
 @Import(EmbeddedRedisConfig.class)
 @DisplayName("Product [Service Layer] -> ProductService 테스트")
@@ -36,24 +34,15 @@ public class ProductServiceTest extends ServiceTest {
     @Autowired
     private ProductService productService;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private AuthService authService;
-
-    private final String FCM_TOKEN = "examplefcmtokenblabla";
-
-    private Long userId;
-    private Store store;
+    private static User user;
+    private static Store store;
 
     @BeforeEach
     void setup() {
-        store = storeRepository.save(Z_YEONGTONG.toStore());
+        store = storeRepository.save(Z_SIHEUNG.toStore());
 
-        userId = userService.saveManager(ANNE.toUser(), store.getId());
-        authService.login(ANNE.getLoginId(), ANNE.getPassword());
-        authService.saveFcm(userId, FCM_TOKEN);
+        user = userRepository.save(SOPHIA.toUser());
+        store.updateManager(user);
     }
 
     @Nested
@@ -64,10 +53,11 @@ public class ProductServiceTest extends ServiceTest {
         void throwExceptionByConflictUserAndStore() {
             // given
             Store fakeStore = storeRepository.save(Z_SIHEUNG.toStore());
-            Long fakeUser = userService.saveManager(ELLA.toUser(), fakeStore.getId());
+            User fakeUser = userRepository.save(ELLA.toUser());
+            fakeStore.updateManager(fakeUser);
 
             // when - then
-            assertThatThrownBy(() -> productService.saveProduct(fakeUser, store.getId(), "상온", APPLE.toProduct(store), null))
+            assertThatThrownBy(() -> productService.saveProduct(fakeUser.getId(), store.getId(), "상온", APPLE.toProduct(store), null))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(UserErrorCode.USER_STORE_MATCH_FAIL.getMessage());
         }
@@ -76,10 +66,10 @@ public class ProductServiceTest extends ServiceTest {
         @DisplayName("이미 있는 제품명이면 Product 등록에 실패한다")
         void throwExceptionByAlreadyExistProduct() {
             // given
-            productService.saveProduct(userId, store.getId(), "상온", APPLE.toProduct(store), null);
+            productService.saveProduct(user.getId(), store.getId(), "상온", APPLE.toProduct(store), null);
 
             // when - then
-            assertThatThrownBy(() -> productService.saveProduct(userId, store.getId(), "상온", APPLE.toProduct(store), null))
+            assertThatThrownBy(() -> productService.saveProduct(user.getId(), store.getId(), "상온", APPLE.toProduct(store), null))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ProductErrorCode.DUPLICATE_PRODUCT.getMessage());
         }
@@ -88,7 +78,7 @@ public class ProductServiceTest extends ServiceTest {
         @DisplayName("제품 등록에 성공한다")
         void success() {
             // given
-            Long productId = productService.saveProduct(userId, store.getId(), "상온", APPLE.toProduct(store), null);
+            Long productId = productService.saveProduct(user.getId(), store.getId(), "상온", APPLE.toProduct(store), null);
 
             // when - then
             Product findProduct = productRepository.findProductById(productId).orElseThrow();
@@ -108,13 +98,13 @@ public class ProductServiceTest extends ServiceTest {
         @DisplayName("삭제된 제품은 검색할 수 없다")
         void throwExceptionByRemovedProduct() {
             // given
-            Long productId = productService.saveProduct(userId, store.getId(), "상온", APPLE.toProduct(store), null);
+            Long productId = productService.saveProduct(user.getId(), store.getId(), "상온", APPLE.toProduct(store), null);
 
             // when
-            productService.deleteProduct(userId, productId);
+            productService.deleteProduct(user.getId(), productId);
 
             // then
-            assertThatThrownBy(() -> productService.loadProduct(userId, productId))
+            assertThatThrownBy(() -> productService.loadProduct(user.getId(), productId))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ProductErrorCode.NOT_FOUND_PRODUCT.getMessage());
         }
@@ -123,10 +113,10 @@ public class ProductServiceTest extends ServiceTest {
         @DisplayName("제품 상세정보 조회에 성공한다")
         void success() throws IOException {
             // given
-            Long productId = productService.saveProduct(userId, store.getId(), "상온", APPLE.toProduct(store), null);
+            Long productId = productService.saveProduct(user.getId(), store.getId(), "상온", APPLE.toProduct(store), null);
 
             // when - then
-            LoadProductResponse loadProductResponse = productService.loadProduct(userId, productId);
+            LoadProductResponse loadProductResponse = productService.loadProduct(user.getId(), productId);
             assertAll(
                     () -> assertThat(loadProductResponse.name()).isEqualTo(APPLE.getName()),
                     () -> assertThat(loadProductResponse.price()).isEqualTo(APPLE.getPrice()),
@@ -149,11 +139,11 @@ public class ProductServiceTest extends ServiceTest {
         @DisplayName("제품 수정에 성공한다")
         void success() {
             // given
-            Long productId = productService.saveProduct(userId, store.getId(), "상온", APPLE.toProduct(store), null);
+            Long productId = productService.saveProduct(user.getId(), store.getId(), "상온", APPLE.toProduct(store), null);
 
             // when
             Product findProduct = productRepository.findProductById(productId).orElseThrow();
-            productService.editProduct(userId, findProduct.getId(), CHERRY.toProduct(store), null);
+            productService.editProduct(user.getId(), findProduct.getId(), CHERRY.toProduct(store), null);
 
             // then
             assertAll(
@@ -172,11 +162,11 @@ public class ProductServiceTest extends ServiceTest {
         @DisplayName("제품 삭제에 성공한다")
         void success() {
             // given
-            Long productId = productService.saveProduct(userId, store.getId(), "상온", APPLE.toProduct(store), null);
+            Long productId = productService.saveProduct(user.getId(), store.getId(), "상온", APPLE.toProduct(store), null);
 
             // when
             Product findProduct = productRepository.findById(productId).orElseThrow();
-            productService.deleteProduct(userId, findProduct.getId());
+            productService.deleteProduct(user.getId(), findProduct.getId());
 
             assertAll(
                     () -> assertThat(findProduct.getName()).isEqualTo(APPLE.getName()),
