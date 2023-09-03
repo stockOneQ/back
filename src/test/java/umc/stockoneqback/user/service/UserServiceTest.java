@@ -143,17 +143,6 @@ class UserServiceTest extends ServiceTest {
         }
     }
 
-    @Nested
-    @DisplayName("로그인 아이디 찾기")
-    class findLoginId {
-        @Test
-        @DisplayName("요청된 정보와 일치하는 사용자를 찾을 수 없으면 아이디 찾기에 실패한다")
-        void throwExceptionByDuplicateLoginId() {
-
-        }
-
-    }
-
     @Test
     @DisplayName("사용자 관련 정보를 삭제하고 사용자 개인정보의 상태를 변경한다")
     void withdrawUser() {
