@@ -38,16 +38,20 @@ class ShareListQueryRepositoryImplTest extends RepositoryTest {
 
     private User manager;
     private User supervisor;
+
     private Business business;
+
+    List<Share> shareList = new ArrayList<>();
+
     private static final Category ANNOUNCEMENT = Category.ANNOUNCEMENT;
     private static final ShareSearchType TITLE = ShareSearchType.TITLE;
     private static final String SEARCH_WORD = "제목";
-    List<Share> shareList = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
         manager = userRepository.save(ANNE.toUser());
         supervisor = userRepository.save(WIZ.toUser());
+
         business = businessRepository.save(new Business(manager, supervisor));
 
         for (ShareFixture shareFixture : ShareFixture.values()) {

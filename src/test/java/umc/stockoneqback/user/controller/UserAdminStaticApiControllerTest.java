@@ -72,7 +72,7 @@ public class UserAdminStaticApiControllerTest extends ControllerTest {
                             jsonPath("$.result[2].question").value(questionList.get(2)),
                             jsonPath("$.result[2].answer").value(answerList.get(2)),
                             jsonPath("$.result[3]").doesNotExist()
-                            )
+                    )
                     .andDo(
                             document(
                                     "UserFAApi/GetFAList/Success",

@@ -71,10 +71,11 @@ class ShareListServiceTest extends ServiceTest {
         supervisor2 = userRepository.save(OLIVIA.toUser());
 
         business1 = businessRepository.save(new Business(manager1, supervisor1));
-        businessList.add(business1);
         business2 = businessRepository.save(new Business(manager2, supervisor1));
-        businessList.add(business2);
         business3 = businessRepository.save(new Business(manager3, supervisor1));
+
+        businessList.add(business1);
+        businessList.add(business2);
         businessList.add(business3);
 
         for (ShareFixture shareFixture : ShareFixture.values())

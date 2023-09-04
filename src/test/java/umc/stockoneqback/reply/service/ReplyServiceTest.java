@@ -27,7 +27,6 @@ import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 
 @DisplayName("Reply [Service Layer] -> ReplyService 테스트")
 public class ReplyServiceTest extends ServiceTest {
-
     @Autowired
     private ReplyService replyService;
 
@@ -36,16 +35,21 @@ public class ReplyServiceTest extends ServiceTest {
 
     private User writer;
     private User not_writer;
+
     private Board board;
+
     private Comment comment;
     private final Reply[] replies = new Reply[3];
+
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @BeforeEach
     void setup() {
         writer = userRepository.save(SAEWOO.toUser());
         not_writer = userRepository.save(ANNE.toUser());
+
         board = boardRepository.save(BOARD_0.toBoard(writer));
+
         comment = commentRepository.save(COMMENT_0.toComment(writer, board));
         replies[0] = replyRepository.save(REPLY_0.toReply(writer, comment));
         replies[1] = replyRepository.save(REPLY_1.toReply(writer, comment));

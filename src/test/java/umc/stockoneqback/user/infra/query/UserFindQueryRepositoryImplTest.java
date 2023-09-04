@@ -27,8 +27,10 @@ class UserFindQueryRepositoryImplTest extends RepositoryTest {
     @Autowired
     private StoreRepository storeRepository;
 
-    private final Store[] storeList = new Store[5];
     private final User[] userList = new User[9];
+
+    private final Store[] storeList = new Store[5];
+
     private final UserSearchType SEARCH_TYPE_NAME = UserSearchType.NAME;
     private final UserSearchType SEARCH_TYPE_STORE = UserSearchType.STORE;
     private final UserSearchType SEARCH_TYPE_ADDRESS = UserSearchType.ADDRESS;

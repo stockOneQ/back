@@ -43,7 +43,7 @@ public class CommentTest {
     @Test
     @DisplayName("Comment에 Reply를 추가한다")
     void addChildComment() {
-        for(int i=1; i<=5; i++){
+        for (int i = 1; i <= 5; i++) {
             comment.addReply(writer, comment, "이미지" + i, "대댓글" + i);
         }
 

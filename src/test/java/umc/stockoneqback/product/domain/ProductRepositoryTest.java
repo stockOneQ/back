@@ -57,8 +57,10 @@ public class ProductRepositoryTest extends RepositoryTest {
     @Test
     @DisplayName("입력된 productId를 가지는 제품이 있다면 반환한다")
     void findProductById() {
+        // given
         Long savedProductId = productRepository.save(ProductFixture.APPLE.toProduct(store)).getId();
 
+        // when - then
         Product findProduct = productRepository.findProductById(savedProductId).orElseThrow();
         assertThat(findProduct.getName()).isEqualTo("사과");
     }
@@ -66,25 +68,31 @@ public class ProductRepositoryTest extends RepositoryTest {
     @Test
     @DisplayName("전체 제품 개수를 반환한다")
     void countProductAll() {
+        // when
         Integer total = productRepository.countProductAll(store, StoreCondition.ROOM.getValue());
 
+        // then
         assertThat(total).isEqualTo(16);
     }
 
     @Test
     @DisplayName("유통기한을 경과한 제품 개수를 반환한다")
     void countProductPass() {
+        // when
         Integer total = productRepository.countProductPass(store, StoreCondition.ROOM.getValue(), LocalDate.now());
 
+        // then
         assertThat(total).isEqualTo(2);
     }
 
     @Test
     @DisplayName("유통기한이 임박한 제품 개수를 반환한다")
     void countProductClose() {
-        Integer total = productRepository.countProductClose
-                (store, StoreCondition.ROOM.getValue(), LocalDate.now(), LocalDate.now().plusDays(3));
+        // when
+        Integer total = productRepository.countProductClose(
+                store, StoreCondition.ROOM.getValue(), LocalDate.now(), LocalDate.now().plusDays(3));
 
+        // then
         assertThat(total).isEqualTo(5);
     }
 
@@ -95,5 +103,4 @@ public class ProductRepositoryTest extends RepositoryTest {
 
         assertThat(total).isEqualTo(5);
     }
-
 }

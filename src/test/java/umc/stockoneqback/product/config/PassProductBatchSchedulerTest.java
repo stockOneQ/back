@@ -14,7 +14,6 @@ import umc.stockoneqback.common.RedisCleaner;
 import umc.stockoneqback.fixture.ProductFixture;
 import umc.stockoneqback.product.domain.Product;
 import umc.stockoneqback.product.domain.ProductRepository;
-import umc.stockoneqback.product.service.ProductService;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.domain.store.StoreRepository;
 import umc.stockoneqback.user.domain.User;
@@ -61,9 +60,6 @@ public class PassProductBatchSchedulerTest {
 
     @Autowired
     private UserFindService userFindService;
-
-    @Autowired
-    private ProductService productService;
 
     private final ProductFixture[] productFixtures = ProductFixture.values();
 

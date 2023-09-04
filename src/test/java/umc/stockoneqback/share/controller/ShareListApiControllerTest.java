@@ -16,8 +16,9 @@ import umc.stockoneqback.share.infra.query.dto.CustomShareListPage;
 import umc.stockoneqback.share.infra.query.dto.ShareList;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -341,12 +342,13 @@ class ShareListApiControllerTest extends ControllerTest {
     }
 
     private List<ShareList> createShareList() {
-        List<ShareList> shareLists = new ArrayList<>();
-        shareLists.add(new ShareList(1L, SHARE_1.getTitle(), LocalDateTime.now(), ANNE.getName(), SHARE_1.getFile()));
-        shareLists.add(new ShareList(2L, SHARE_2.getTitle(), LocalDateTime.now(), ANNE.getName(), SHARE_2.getFile()));
-        shareLists.add(new ShareList(3L, SHARE_3.getTitle(), LocalDateTime.now(), ANNE.getName(), SHARE_3.getFile()));
-        shareLists.add(new ShareList(4L, SHARE_4.getTitle(), LocalDateTime.now(), ANNE.getName(), SHARE_4.getFile()));
-        return shareLists;
+        LocalDateTime currentTime = LocalDateTime.now();
+        return Stream.of(
+                        new ShareList(1L, SHARE_1.getTitle(), currentTime, ANNE.getName(), SHARE_1.getFile()),
+                        new ShareList(2L, SHARE_2.getTitle(), currentTime, ANNE.getName(), SHARE_2.getFile()),
+                        new ShareList(3L, SHARE_3.getTitle(), currentTime, ANNE.getName(), SHARE_3.getFile()),
+                        new ShareList(4L, SHARE_4.getTitle(), currentTime, ANNE.getName(), SHARE_4.getFile()))
+                .collect(Collectors.toList());
     }
 
     private CustomShareListPage.CustomPageable createCustomPageable() {
@@ -358,11 +360,11 @@ class ShareListApiControllerTest extends ControllerTest {
     }
 
     private List<FindBusinessUser> createFindBusinessUser() {
-        List<FindBusinessUser> findBusinessUserList = new ArrayList<>();
-        findBusinessUserList.add(new FindBusinessUser(1L, 1L, "이혜리 슈퍼바이저"));
-        findBusinessUserList.add(new FindBusinessUser(5L, 3L, "김예리 슈퍼바이저"));
-        findBusinessUserList.add(new FindBusinessUser(10L, 8L, "홍아리 슈퍼바이저"));
-        return findBusinessUserList;
+        return Stream.of(
+                        new FindBusinessUser(1L, 1L, "이혜리 슈퍼바이저"),
+                        new FindBusinessUser(5L, 3L, "김예리 슈퍼바이저"),
+                        new FindBusinessUser(10L, 8L, "홍아리 슈퍼바이저"))
+                .collect(Collectors.toList());
     }
 
     private FilteredBusinessUser<FindBusinessUser> getFilteredBusinessUser() {

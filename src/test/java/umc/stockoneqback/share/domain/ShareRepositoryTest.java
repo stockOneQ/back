@@ -29,13 +29,16 @@ public class ShareRepositoryTest extends RepositoryTest {
 
     private User manager;
     private User supervisor;
+
     private Business business;
 
     @BeforeEach
     void setup() {
         manager = userRepository.save(ANNE.toUser());
         supervisor = userRepository.save(WIZ.toUser());
+
         business = businessRepository.save(Business.builder().manager(manager).supervisor(supervisor).build());
+
         shareRepository.save(SHARE_0.toShare(business));
         shareRepository.save(SHARE_1.toShare(business));
         shareRepository.save(SHARE_2.toShare(business));

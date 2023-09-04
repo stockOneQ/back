@@ -1,6 +1,9 @@
 package umc.stockoneqback.reply.service;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.comment.domain.Comment;
@@ -48,11 +51,6 @@ class ReplyListServiceTest extends ServiceTest {
         replyList[9] = replyRepository.save(REPLY_9.toReply(writer, comment));
 
 
-    }
-
-    @AfterEach
-    void clearAll() {
-        boardRepository.deleteAll();
     }
 
     @Nested

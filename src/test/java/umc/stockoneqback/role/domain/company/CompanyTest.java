@@ -2,12 +2,13 @@ package umc.stockoneqback.role.domain.company;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import umc.stockoneqback.fixture.UserFixture;
 import umc.stockoneqback.global.base.Status;
 import umc.stockoneqback.user.domain.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static umc.stockoneqback.fixture.UserFixture.OLIVIA;
+import static umc.stockoneqback.fixture.UserFixture.WIZ;
 
 @DisplayName("Company 도메인 테스트")
 class CompanyTest {
@@ -31,18 +32,19 @@ class CompanyTest {
     void addEmployees() {
         // given
         Company company = Company.createCompany("A 납품업체", "종이컵");
-        User partTimer1 = UserFixture.SAEWOO.toUser();
-        User partTimer2 = UserFixture.ANNE.toUser();
+
+        User supervisor1 = WIZ.toUser();
+        User supervisor2 = OLIVIA.toUser();
 
         // when
-        company.addEmployees(partTimer1);
-        company.addEmployees(partTimer2);
+        company.addEmployees(supervisor1);
+        company.addEmployees(supervisor2);
 
         // then
         assertAll(
                 () -> assertThat(company.getEmployees().size()).isEqualTo(2),
-                () -> assertThat(company.getEmployees()).contains(partTimer1),
-                () -> assertThat(company.getEmployees()).contains(partTimer2)
+                () -> assertThat(company.getEmployees()).contains(supervisor1),
+                () -> assertThat(company.getEmployees()).contains(supervisor2)
         );
     }
 
@@ -51,19 +53,20 @@ class CompanyTest {
     void deleteSupervisor() {
         // given
         Company company = Company.createCompany("A 납품업체", "종이컵");
-        User partTimer1 = UserFixture.SAEWOO.toUser();
-        User partTimer2 = UserFixture.ANNE.toUser();
-        company.addEmployees(partTimer1);
-        company.addEmployees(partTimer2);
+
+        User supervisor1 = WIZ.toUser();
+        User supervisor2 = OLIVIA.toUser();
+        company.addEmployees(supervisor1);
+        company.addEmployees(supervisor2);
 
         // when
-        company.deleteSupervisor(partTimer1);
+        company.deleteSupervisor(supervisor1);
 
         // then
         assertAll(
                 () -> assertThat(company.getEmployees().size()).isEqualTo(1),
-                () -> assertThat(company.getEmployees()).doesNotContain(partTimer1),
-                () -> assertThat(company.getEmployees()).contains(partTimer2)
+                () -> assertThat(company.getEmployees()).doesNotContain(supervisor1),
+                () -> assertThat(company.getEmployees()).contains(supervisor2)
         );
     }
 }

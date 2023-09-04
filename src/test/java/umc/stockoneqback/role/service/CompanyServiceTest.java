@@ -19,6 +19,7 @@ import static umc.stockoneqback.fixture.UserFixture.WIZ;
 class CompanyServiceTest extends ServiceTest {
     @Autowired
     private UserService userService;
+
     @Autowired
     private CompanyService companyService;
 
@@ -28,8 +29,7 @@ class CompanyServiceTest extends ServiceTest {
     @BeforeEach
     void setUp() {
         company = companyRepository.save(createCompany("A 납품업체", "과일", "ABC123"));
-        Long userId = userService.saveSupervisor(WIZ.toUser(), "A 납품업체", "ABC123");
-        user = userRepository.findById(userId).orElseThrow();
+        user = userRepository.save(WIZ.toUser());
     }
 
     @Test
