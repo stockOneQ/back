@@ -31,7 +31,6 @@ import static umc.stockoneqback.fixture.TokenFixture.BEARER_TOKEN;
 
 @DisplayName("Business [Controller Layer] -> BusinessApiController 테스트")
 class BusinessApiControllerTest extends ControllerTest {
-
     @Nested
     @DisplayName("슈퍼바이저 - 점주 관계 등록 API [POST /api/business/{managerId}]")
     class register {

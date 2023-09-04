@@ -11,18 +11,25 @@ import umc.stockoneqback.product.domain.StoreCondition;
 import umc.stockoneqback.product.infra.query.dto.ProductFindPage;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.role.domain.store.StoreRepository;
+import umc.stockoneqback.user.domain.User;
+import umc.stockoneqback.user.domain.UserRepository;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
+import static umc.stockoneqback.fixture.UserFixture.SOPHIA;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("Product [Repository Layer] -> ProductFindQueryRepository 테스트")
 public class ProductFindQueryRepositoryImplTest extends RepositoryTest {
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @Autowired
     private StoreRepository storeRepository;
 
@@ -30,9 +37,11 @@ public class ProductFindQueryRepositoryImplTest extends RepositoryTest {
 
     @BeforeEach
     void setup() {
-        Store zStore = storeRepository.save(Z_YEONGTONG.toStore());
+        User user = userRepository.save(SOPHIA.toUser());
+
+        Store store = storeRepository.save(Z_YEONGTONG.toStore(user));
         for (ProductFixture productFixture : ProductFixture.values())
-            productRepository.save(productFixture.toProduct(zStore));
+            productRepository.save(productFixture.toProduct(store));
     }
 
     @AfterEach

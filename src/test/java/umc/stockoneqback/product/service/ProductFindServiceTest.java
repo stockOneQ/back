@@ -43,9 +43,8 @@ public class ProductFindServiceTest extends ServiceTest {
 
     @BeforeEach
     void setup() {
-        store = storeRepository.save(Z_YEONGTONG.toStore());
         user = userRepository.save(ELLA.toUser());
-        store.updateManager(user);
+        store = storeRepository.save(Z_YEONGTONG.toStore(user));
     }
 
     @Nested
@@ -78,8 +77,7 @@ public class ProductFindServiceTest extends ServiceTest {
         void throwExceptionByConflictUserAndStore() {
             // given
             User fakeUser = userRepository.save(MIKE.toUser());
-            Store fakestore = storeRepository.save(A_PASTA.toStore());
-            fakestore.updateManager(fakeUser);
+            Store fakestore = storeRepository.save(A_PASTA.toStore(fakeUser));
 
             // when - then
             assertThatThrownBy(() -> productFindService.getTotalProduct(user.getId(), fakestore.getId(), StoreCondition.ROOM.getValue()))
@@ -92,9 +90,8 @@ public class ProductFindServiceTest extends ServiceTest {
         void success() {
             // given
             ProductFixture[] productFixtures = ProductFixture.values();
-            Product[] products = new Product[productFixtures.length];
-            for (int i = 0; i < products.length; i++)
-                products[i] = productRepository.save(productFixtures[i].toProduct(store));
+            for (int i = 0; i < productFixtures.length; i++)
+                productRepository.save(productFixtures[i].toProduct(store));
 
             // when - then
             List<GetTotalProductResponse> totalProductResponseList = productFindService.getTotalProduct(

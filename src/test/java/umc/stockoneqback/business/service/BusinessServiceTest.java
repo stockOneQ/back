@@ -8,21 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.business.domain.Business;
 import umc.stockoneqback.business.exception.BusinessErrorCode;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.fixture.StoreFixture;
 import umc.stockoneqback.global.base.RelationStatus;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.role.domain.company.Company;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.service.UserFindService;
-import umc.stockoneqback.user.service.UserService;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static umc.stockoneqback.fixture.StoreFixture.Z_SIHEUNG;
 import static umc.stockoneqback.fixture.UserFixture.ANNE;
-import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
+import static umc.stockoneqback.fixture.UserFixture.WIZ;
 
 @DisplayName("Business [Service Layer] -> BusinessService 테스트")
 class BusinessServiceTest extends ServiceTest {
@@ -30,22 +29,19 @@ class BusinessServiceTest extends ServiceTest {
     private BusinessService businessService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private UserFindService userFindService;
 
-    private Long managerId;
-    private Long supervisorId;
+    private User manager;
+    private User supervisor;
 
     @BeforeEach
     void setUp() {
-        companyRepository.save(createCompany("A 납품업체", "과일", "ABC123"));
-        supervisorId = userService.saveSupervisor(ANNE.toUser(), "A 납품업체", "ABC123");
+        manager = userRepository.save(ANNE.toUser());
+        storeRepository.save(Z_SIHEUNG.toStore(manager));
 
-        managerId = userService.saveManager(SAEWOO.toUser());
-        Long storeId = storeRepository.save(StoreFixture.Z_SIHEUNG.toStore()).getId();
-        storeRepository.updateManagerIdById(storeId, managerId);
+        Company company = companyRepository.save(createCompany("A 납품업체", "과일", "ABC123"));
+        supervisor = userRepository.save(WIZ.toUser());
+        supervisor.registerCompany(company);
     }
 
     @Nested
@@ -55,10 +51,10 @@ class BusinessServiceTest extends ServiceTest {
         @DisplayName("이미 존재하는 Business가 있다면 등록에 실패한다")
         void throwExceptionByAlreadyExistBusiness() {
             // given
-            businessService.register(supervisorId, managerId);
+            businessService.register(supervisor.getId(), manager.getId());
 
             // when - then
-            assertThatThrownBy(() -> businessService.register(supervisorId, managerId))
+            assertThatThrownBy(() -> businessService.register(supervisor.getId(), manager.getId()))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(BusinessErrorCode.ALREADY_EXIST_BUSINESS.getMessage());
         }
@@ -67,17 +63,17 @@ class BusinessServiceTest extends ServiceTest {
         @DisplayName("슈퍼바이저 - 점주님 Business 등록에 성공한다")
         void success() {
             // given
-            businessService.register(supervisorId, managerId);
+            businessService.register(supervisor.getId(), manager.getId());
 
             // when
-            User supervisor = userFindService.findById(supervisorId);
-            User manager = userFindService.findById(managerId);
-            Business findBusiness = businessRepository.findBySupervisorAndManager(supervisor, manager).orElseThrow();
+            User findSupervisor = userFindService.findById(supervisor.getId());
+            User findManager = userFindService.findById(manager.getId());
+            Business findBusiness = businessRepository.findBySupervisorAndManager(findSupervisor, findManager).orElseThrow();
 
             // then
             assertAll(
-                    () -> assertThat(findBusiness.getSupervisor()).isEqualTo(supervisor),
-                    () -> assertThat(findBusiness.getManager()).isEqualTo(manager),
+                    () -> assertThat(findBusiness.getSupervisor()).isEqualTo(findSupervisor),
+                    () -> assertThat(findBusiness.getManager()).isEqualTo(findManager),
                     () -> assertThat(findBusiness.getRelationStatus()).isEqualTo(RelationStatus.ACCEPT)
             );
         }
@@ -90,7 +86,7 @@ class BusinessServiceTest extends ServiceTest {
         @DisplayName("Business가 존재하지 않는다면 Business 삭제에 실패한다")
         void throwExceptionByBusinessNotFound() {
             // when - then
-            assertThatThrownBy(() -> businessService.cancel(supervisorId, managerId))
+            assertThatThrownBy(() -> businessService.cancel(supervisor.getId(), manager.getId()))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(BusinessErrorCode.BUSINESS_NOT_FOUND.getMessage());
         }
@@ -99,14 +95,12 @@ class BusinessServiceTest extends ServiceTest {
         @DisplayName("슈퍼바이저 - 점주님 Business 삭제에 성공한다")
         void success() {
             // given
-            businessService.register(supervisorId, managerId);
+            businessService.register(supervisor.getId(), manager.getId());
 
             // when
-            businessService.cancel(supervisorId, managerId);
+            businessService.cancel(supervisor.getId(), manager.getId());
 
             // then
-            User supervisor = userFindService.findById(supervisorId);
-            User manager = userFindService.findById(managerId);
             assertThat(businessRepository.existsBySupervisorAndManager(supervisor, manager)).isFalse();
         }
     }
@@ -115,9 +109,7 @@ class BusinessServiceTest extends ServiceTest {
     @DisplayName("Supervisor의 Business 목록 조회에 성공한다")
     void getBusinessBySupervisor() {
         // given
-        User supervisor = userFindService.findById(supervisorId);
-        User manager = userFindService.findById(managerId);
-        businessService.register(supervisorId, managerId);
+        businessService.register(supervisor.getId(), manager.getId());
 
         // when
         List<Business> businessList = businessService.getBusinessBySupervisor(supervisor);
@@ -134,9 +126,7 @@ class BusinessServiceTest extends ServiceTest {
     @DisplayName("Manager의 Business 목록 조회에 성공한다")
     void getBusinessByManager() {
         // given
-        User supervisor = userFindService.findById(supervisorId);
-        User manager = userFindService.findById(managerId);
-        businessService.register(supervisorId, managerId);
+        businessService.register(supervisor.getId(), manager.getId());
 
         // when
         List<Business> businessList = businessService.getBusinessByManager(manager);
@@ -153,8 +143,6 @@ class BusinessServiceTest extends ServiceTest {
     @DisplayName("Business ID를 통한 Business 삭제에 성공한다")
     void deleteAll() {
         // given
-        User supervisor = userFindService.findById(supervisorId);
-        User manager = userFindService.findById(managerId);
         Business business = businessRepository.save(Business.builder().supervisor(supervisor).manager(manager).build());
 
         // when

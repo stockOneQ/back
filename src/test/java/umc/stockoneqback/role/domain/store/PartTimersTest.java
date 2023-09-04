@@ -8,8 +8,7 @@ import umc.stockoneqback.user.domain.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static umc.stockoneqback.fixture.UserFixture.BOB;
-import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
+import static umc.stockoneqback.fixture.UserFixture.*;
 
 @DisplayName("PartTimers 도메인 테스트")
 class PartTimersTest {
@@ -20,10 +19,11 @@ class PartTimersTest {
 
     @BeforeEach
     void setUp() {
+        User manager = ANNE.toUser();
         partTimer1 = SAEWOO.toUser();
         partTimer2 = BOB.toUser();
 
-        store = StoreFixture.A_PASTA.toStore();
+        store = StoreFixture.A_PASTA.toStore(manager);
     }
 
     @Test

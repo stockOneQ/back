@@ -3,6 +3,7 @@ package umc.stockoneqback.fixture;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import umc.stockoneqback.role.domain.store.Store;
+import umc.stockoneqback.user.domain.User;
 
 @Getter
 @RequiredArgsConstructor
@@ -24,12 +25,13 @@ public enum StoreFixture {
     private final String code;
     private final String address;
 
-    public Store toStore() {
+    public Store toStore(User manager) {
         return Store.builder()
                 .name(name)
                 .sector(sector)
                 .code(code)
                 .address(address)
+                .manager(manager)
                 .build();
     }
 }
