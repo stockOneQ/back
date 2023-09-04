@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.admin.domain.StaticFARedisRepository;
 import umc.stockoneqback.auth.domain.FcmTokenRedisRepository;
-import umc.stockoneqback.auth.domain.TokenRepository;
+import umc.stockoneqback.auth.domain.RefreshTokenRedisRepository;
 import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.board.domain.like.BoardLikeRepository;
 import umc.stockoneqback.board.domain.views.ViewsRedisRepository;
@@ -51,7 +51,7 @@ public class ServiceTest {
     protected BoardRepository boardRepository;
 
     @Autowired
-    protected TokenRepository tokenRepository;
+    protected RefreshTokenRedisRepository refreshTokenRedisRepository;
 
     @Autowired
     protected CommentRepository commentRepository;
