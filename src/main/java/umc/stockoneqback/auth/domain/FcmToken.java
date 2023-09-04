@@ -9,10 +9,10 @@ import org.springframework.data.redis.core.index.Indexed;
 
 import javax.persistence.Id;
 
+@Builder
+@AllArgsConstructor
 @Getter
 @RedisHash("FcmToken")
-@AllArgsConstructor
-@Builder
 public class FcmToken {
     public static final Long DEFAULT_TTL = 604800L;
 

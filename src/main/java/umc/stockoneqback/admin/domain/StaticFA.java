@@ -8,10 +8,10 @@ import org.springframework.data.redis.core.index.Indexed;
 
 import javax.persistence.Id;
 
+@Builder
+@AllArgsConstructor
 @Getter
 @RedisHash("staticFa")
-@AllArgsConstructor
-@Builder
 public class StaticFA {
     @Id
     private String id;

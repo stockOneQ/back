@@ -7,7 +7,9 @@ import umc.stockoneqback.board.controller.dto.BoardResponse;
 import umc.stockoneqback.board.domain.Board;
 import umc.stockoneqback.board.domain.BoardRepository;
 import umc.stockoneqback.board.domain.like.BoardLikeRepository;
+import umc.stockoneqback.board.domain.views.Views;
 import umc.stockoneqback.board.exception.BoardErrorCode;
+import umc.stockoneqback.board.service.views.ViewsService;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.service.UserFindService;
@@ -18,6 +20,7 @@ import umc.stockoneqback.user.service.UserFindService;
 public class BoardService {
     private final UserFindService userFindService;
     private final BoardFindService boardFindService;
+    private final ViewsService viewsService;
     private final BoardRepository boardRepository;
     private final BoardLikeRepository boardLikeRepository;
 
@@ -56,8 +59,12 @@ public class BoardService {
 
     @Transactional
     public void updateHit(Long userId, Long boardId) {
-        Board board = boardFindService.findById(boardId);
-        board.updateHit();
+        if (!viewsService.existBoardIdByUserId(userId, boardId)) {
+            Views views = viewsService.findById(userId).orElseGet(() -> viewsService.saveViews(userId));
+            viewsService.updateViews(views, boardId);
+
+            boardFindService.findById(boardId).updateHit();
+        }
     }
 
     @Transactional

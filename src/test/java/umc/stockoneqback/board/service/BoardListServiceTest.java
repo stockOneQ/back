@@ -11,7 +11,6 @@ import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

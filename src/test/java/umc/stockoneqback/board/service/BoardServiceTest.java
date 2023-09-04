@@ -146,5 +146,19 @@ public class BoardServiceTest extends ServiceTest {
             // then
             assertThat(findBoard.getHit()).isEqualTo(1);
         }
+
+        @Test
+        @DisplayName("중복으로 게시글 조회수 증가가 증가되지 않는다")
+        void successNotDuplicateViews() {
+            // given
+            boardService.updateHit(writer.getId(), board.getId());
+            boardService.updateHit(writer.getId(), board.getId());
+
+            // when
+            Board findBoard = boardFindService.findById(board.getId());
+
+            // then
+            assertThat(findBoard.getHit()).isEqualTo(1);
+        }
     }
 }
