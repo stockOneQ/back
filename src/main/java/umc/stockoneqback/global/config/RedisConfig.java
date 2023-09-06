@@ -17,12 +17,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.util.HashMap;
 import java.util.Map;
 
-@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
 @Configuration
 @EnableCaching
+@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
 public class RedisConfig {
     @Bean
-    public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory){
+    public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration configuration = RedisCacheConfiguration.defaultCacheConfig()
                 .disableCachingNullValues()
                 .computePrefixWith(CacheKeyPrefix.simple())
@@ -32,15 +32,9 @@ public class RedisConfig {
 
                 .serializeValuesWith(
                         RedisSerializationContext.SerializationPair
-                        .fromSerializer(new GenericJackson2JsonRedisSerializer()));
+                                .fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
-
-        // 캐시키 별 default 유효시간 설정
         Map<String, RedisCacheConfiguration> cacheConfiguration = new HashMap<>();
-        /*
-        cacheConfiguration.put(CacheKey.ZONE, RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(CacheKey.ZONE_EXPIRE_SEC)));
-         */
 
         return RedisCacheManager.RedisCacheManagerBuilder
                 .fromConnectionFactory(redisConnectionFactory)
