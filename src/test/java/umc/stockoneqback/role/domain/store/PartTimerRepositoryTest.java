@@ -11,6 +11,7 @@ import umc.stockoneqback.user.domain.UserRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.StoreFixture.Z_YEONGTONG;
+import static umc.stockoneqback.fixture.UserFixture.ANNE;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 
 @DisplayName("PartTimer [Repository Layer] -> PartTimerRepository 테스트")
@@ -29,8 +30,10 @@ public class PartTimerRepositoryTest extends RepositoryTest {
 
     @BeforeEach
     void setup() {
+        User manager = userRepository.save(ANNE.toUser());
         partTimer = userRepository.save(SAEWOO.toUser());
-        store = storeRepository.save(Z_YEONGTONG.toStore());
+
+        store = storeRepository.save(Z_YEONGTONG.toStore(manager));
         partTimerRepository.save(PartTimer.createPartTimer(store, partTimer));
     }
 

@@ -17,8 +17,8 @@ class PartTimerTest {
 
     @BeforeEach
     void setUp() {
-        store = A_PASTA.toStore();
         user = SAEWOO.toUser();
+        store = A_PASTA.toStore(user);
     }
 
     @Test

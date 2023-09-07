@@ -36,9 +36,8 @@ public class ProductOthersServiceTest extends ServiceTest {
 
     @BeforeEach
     void setup() {
-        store = storeRepository.save(Z_YEONGTONG.toStore());
         user = userRepository.save(TONY.toUser());
-        store.updateManager(user);
+        store = storeRepository.save(Z_YEONGTONG.toStore(user));
 
         for (int i = 0; i < productFixtures.length; i++)
             productRepository.save(productFixtures[i].toProduct(store));

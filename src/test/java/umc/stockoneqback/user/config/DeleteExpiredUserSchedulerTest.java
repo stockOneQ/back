@@ -72,7 +72,7 @@ public class DeleteExpiredUserSchedulerTest {
     class getListSpecificTimeOfPassProductByOnlineUsers {
         @Test
         @DisplayName("특정 시간마다 현재 접속중인 사용자별 유통기한 경과 제품 목록 조회에 성공한다")
-        void success() throws Exception {
+        void success() {
             // when
             deleteExpiredUserScheduler.deleteExpiredUser();
 

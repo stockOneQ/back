@@ -563,33 +563,33 @@ public class BusinessProductApiControllerTest extends ControllerTest {
     }
 
     private List<SearchProductOthersResponse> searchProductOthersResponse() {
-        List<SearchProductOthersResponse> searchProductOthersResponseList = new ArrayList<>();
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(4L, DURIAN.getName(), DURIAN.getStockQuantity(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(11L, BLUEBERRY.getName(), BLUEBERRY.getStockQuantity(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(8L, CHERRY.getName(), CHERRY.getStockQuantity(), null));
-        return searchProductOthersResponseList;
+        return Stream.of(
+                        new SearchProductOthersResponse(4L, DURIAN.getName(), DURIAN.getStockQuantity(), null),
+                        new SearchProductOthersResponse(11L, BLUEBERRY.getName(), BLUEBERRY.getStockQuantity(), null),
+                        new SearchProductOthersResponse(8L, CHERRY.getName(), CHERRY.getStockQuantity(), null))
+                .collect(Collectors.toList());
     }
 
     private List<GetTotalProductResponse> getTotalProductResponse() {
-        List<GetTotalProductResponse> getTotalProductResponseList = new ArrayList<>();
-        getTotalProductResponseList.add(new GetTotalProductResponse("Total", 16));
-        getTotalProductResponseList.add(new GetTotalProductResponse("Pass", 2));
-        getTotalProductResponseList.add(new GetTotalProductResponse("Close", 5));
-        getTotalProductResponseList.add(new GetTotalProductResponse("Lack", 5));
-        return getTotalProductResponseList;
+        return Stream.of(
+                        new GetTotalProductResponse("Total", 16),
+                        new GetTotalProductResponse("Pass", 2),
+                        new GetTotalProductResponse("Close", 5),
+                        new GetTotalProductResponse("Lack", 5))
+                .collect(Collectors.toList());
     }
 
     private List<SearchProductOthersResponse> searchProductOthersPageResponse() {
-        List<SearchProductOthersResponse> searchProductOthersResponseList = new ArrayList<>();
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(16L, PERSIMMON.getName(), PERSIMMON.getStockQuantity(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(15L, TANGERINE.getName(), TANGERINE.getStockQuantity(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(4L, DURIAN.getName(), DURIAN.getStockQuantity(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(3L, MANGO.getName(), MANGO.getStockQuantity(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(9L, MELON.getName(), MELON.getStockQuantity(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(2L, BANANA.getName(), BANANA.getStockQuantity(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(17L, PEAR.getName(), PEAR.getStockQuantity(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(13L, PEACH.getName(), PEACH.getStockQuantity(), null));
-        searchProductOthersResponseList.add(new SearchProductOthersResponse(11L, BLUEBERRY.getName(), BLUEBERRY.getStockQuantity(), null));
-        return searchProductOthersResponseList;
+        return Stream.of(
+                        new SearchProductOthersResponse(16L, PERSIMMON.getName(), PERSIMMON.getStockQuantity(), null),
+                        new SearchProductOthersResponse(15L, TANGERINE.getName(), TANGERINE.getStockQuantity(), null),
+                        new SearchProductOthersResponse(4L, DURIAN.getName(), DURIAN.getStockQuantity(), null),
+                        new SearchProductOthersResponse(3L, MANGO.getName(), MANGO.getStockQuantity(), null),
+                        new SearchProductOthersResponse(9L, MELON.getName(), MELON.getStockQuantity(), null),
+                        new SearchProductOthersResponse(2L, BANANA.getName(), BANANA.getStockQuantity(), null),
+                        new SearchProductOthersResponse(17L, PEAR.getName(), PEAR.getStockQuantity(), null),
+                        new SearchProductOthersResponse(13L, PEACH.getName(), PEACH.getStockQuantity(), null),
+                        new SearchProductOthersResponse(11L, BLUEBERRY.getName(), BLUEBERRY.getStockQuantity(), null))
+                .collect(Collectors.toList());
     }
 }

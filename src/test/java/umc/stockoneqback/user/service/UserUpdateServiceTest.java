@@ -19,6 +19,7 @@ import static java.lang.Boolean.TRUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static umc.stockoneqback.fixture.StoreFixture.Z_SIHEUNG;
 import static umc.stockoneqback.fixture.UserFixture.SAEWOO;
 import static umc.stockoneqback.fixture.UserFixture.WIZ;
 import static umc.stockoneqback.global.utils.PasswordEncoderUtils.ENCODER;
@@ -34,9 +35,10 @@ class UserUpdateServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        store = storeRepository.save(createStore("스타벅스 - 광화문점", "카페", "ABC123", "서울시 종로구"));
-        company = companyRepository.save(createCompany("A 납품업체", "과일", "ABC123"));
         user = userRepository.save(SAEWOO.toUser());
+        store = storeRepository.save(Z_SIHEUNG.toStore(user));
+
+        company = companyRepository.save(createCompany("A 납품업체", "과일", "ABC123"));
     }
 
     @Nested
@@ -130,15 +132,6 @@ class UserUpdateServiceTest extends ServiceTest {
             User findUser = userRepository.findByLoginIdAndStatus(SAEWOO.getLoginId(), Status.NORMAL).orElseThrow();
             assertThat(findUser.getPassword().isSamePassword("newnew!1", ENCODER)).isTrue();
         }
-    }
-
-        private Store createStore(String name, String sector, String code, String address) {
-        return Store.builder()
-                .name(name)
-                .sector(sector)
-                .code(code)
-                .address(address)
-                .build();
     }
 
     private Company createCompany(String name, String sector, String code) {

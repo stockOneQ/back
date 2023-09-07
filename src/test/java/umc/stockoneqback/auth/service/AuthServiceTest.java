@@ -3,7 +3,7 @@ package umc.stockoneqback.auth.service;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.auth.domain.FcmToken;
-import umc.stockoneqback.auth.domain.Token;
+import umc.stockoneqback.auth.domain.RefreshToken;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.auth.service.dto.response.LoginResponse;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
@@ -63,8 +63,8 @@ class AuthServiceTest extends ServiceTest {
                     () -> assertThat(jwtTokenProvider.getId(loginResponse.accessToken())).isEqualTo(userId),
                     () -> assertThat(jwtTokenProvider.getId(loginResponse.refreshToken())).isEqualTo(userId),
                     () -> {
-                        Token findToken = tokenRepository.findByUserId(userId).orElseThrow();
-                        assertThat(findToken.getRefreshToken()).isEqualTo(loginResponse.refreshToken());
+                        RefreshToken findRefreshToken = refreshTokenRedisRepository.findById(userId).orElseThrow();
+                        assertThat(findRefreshToken.getRefreshToken()).isEqualTo(loginResponse.refreshToken());
                     }
             );
         }
@@ -91,7 +91,7 @@ class AuthServiceTest extends ServiceTest {
             authService.logout(userId);
 
             // then
-            Optional<Token> findToken = tokenRepository.findByUserId(userId);
+            Optional<RefreshToken> findToken = refreshTokenRedisRepository.findById(userId);
             assertThat(findToken).isEmpty();
         }
     }

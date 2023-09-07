@@ -39,10 +39,8 @@ public class ProductServiceTest extends ServiceTest {
 
     @BeforeEach
     void setup() {
-        store = storeRepository.save(Z_SIHEUNG.toStore());
-
         user = userRepository.save(SOPHIA.toUser());
-        store.updateManager(user);
+        store = storeRepository.save(Z_SIHEUNG.toStore(user));
     }
 
     @Nested
@@ -52,9 +50,8 @@ public class ProductServiceTest extends ServiceTest {
         @DisplayName("입력된 사용자가 입력된 가게 소속이 아니면 Product 등록에 실패한다")
         void throwExceptionByConflictUserAndStore() {
             // given
-            Store fakeStore = storeRepository.save(Z_SIHEUNG.toStore());
             User fakeUser = userRepository.save(ELLA.toUser());
-            fakeStore.updateManager(fakeUser);
+            storeRepository.save(Z_SIHEUNG.toStore(fakeUser));
 
             // when - then
             assertThatThrownBy(() -> productService.saveProduct(fakeUser.getId(), store.getId(), "상온", APPLE.toProduct(store), null))

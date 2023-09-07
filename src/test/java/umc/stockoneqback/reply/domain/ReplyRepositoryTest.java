@@ -33,12 +33,14 @@ public class ReplyRepositoryTest extends RepositoryTest {
     private ReplyRepository replyRepository;
 
     private User writer;
+
     private Comment comment;
     private final Reply[] replies = new Reply[3];
 
     @BeforeEach
     void setup() {
         writer = userRepository.save(SAEWOO.toUser());
+
         Board board = boardRepository.save(BOARD_0.toBoard(writer));
         comment = commentRepository.save(COMMENT_0.toComment(writer, board));
         replies[0] = replyRepository.save(REPLY_0.toReply(writer, comment));

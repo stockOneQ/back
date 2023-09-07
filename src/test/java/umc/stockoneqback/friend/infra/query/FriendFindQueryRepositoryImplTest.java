@@ -37,21 +37,17 @@ class FriendFindQueryRepositoryImplTest extends RepositoryTest {
 
     @BeforeEach
     void setUp() {
-        storeList[0] = storeRepository.save(Z_YEONGTONG.toStore());
-        storeList[1] = storeRepository.save(Z_SIHEUNG.toStore());
-        storeList[2] = storeRepository.save(Y_YEONGTONG.toStore());
-        storeList[3] = storeRepository.save(A_PASTA.toStore());
-        storeList[4] = storeRepository.save(B_CHICKEN.toStore());
-
         userList[0] = userRepository.save(ANNE.toUser());
         userList[1] = userRepository.save(ELLA.toUser());
         userList[2] = userRepository.save(MIKE.toUser());
         userList[3] = userRepository.save(SOPHIA.toUser());
         userList[4] = userRepository.save(UNKNOWN.toUser());
 
-        for (int i = 0; i < 5; i++) {
-            storeList[i].updateManager(userList[i]);
-        }
+        storeList[0] = storeRepository.save(Z_YEONGTONG.toStore(userList[0]));
+        storeList[1] = storeRepository.save(Z_SIHEUNG.toStore(userList[1]));
+        storeList[2] = storeRepository.save(Y_YEONGTONG.toStore(userList[2]));
+        storeList[3] = storeRepository.save(A_PASTA.toStore(userList[3]));
+        storeList[4] = storeRepository.save(B_CHICKEN.toStore(userList[4]));
     }
 
     @Test

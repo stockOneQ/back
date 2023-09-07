@@ -27,8 +27,10 @@ class UserFindQueryRepositoryImplTest extends RepositoryTest {
     @Autowired
     private StoreRepository storeRepository;
 
-    private final Store[] storeList = new Store[5];
     private final User[] userList = new User[9];
+
+    private final Store[] storeList = new Store[5];
+
     private final UserSearchType SEARCH_TYPE_NAME = UserSearchType.NAME;
     private final UserSearchType SEARCH_TYPE_STORE = UserSearchType.STORE;
     private final UserSearchType SEARCH_TYPE_ADDRESS = UserSearchType.ADDRESS;
@@ -38,12 +40,6 @@ class UserFindQueryRepositoryImplTest extends RepositoryTest {
 
     @BeforeEach
     void setUp() {
-        storeList[0] = storeRepository.save(Z_YEONGTONG.toStore());
-        storeList[1] = storeRepository.save(Z_SIHEUNG.toStore());
-        storeList[2] = storeRepository.save(Y_YEONGTONG.toStore());
-        storeList[3] = storeRepository.save(A_PASTA.toStore());
-        storeList[4] = storeRepository.save(B_CHICKEN.toStore());
-
         userList[0] = userRepository.save(ANNE.toUser());
         userList[1] = userRepository.save(ELLA.toUser());
         userList[2] = userRepository.save(MIKE.toUser());
@@ -54,9 +50,18 @@ class UserFindQueryRepositoryImplTest extends RepositoryTest {
         userList[7] = userRepository.save(WONI.toUser());
         userList[8] = userRepository.save(OLIVIA.toUser());
 
-        for (int i = 0; i < 5; i++) {
-            storeList[i].updateManager(userList[i]);
-        }
+        storeList[0] = storeRepository.save(Z_YEONGTONG.toStore(userList[0]));
+        storeList[1] = storeRepository.save(Z_SIHEUNG.toStore(userList[1]));
+        storeList[2] = storeRepository.save(Y_YEONGTONG.toStore(userList[2]));
+        storeList[3] = storeRepository.save(A_PASTA.toStore(userList[3]));
+        storeList[4] = storeRepository.save(B_CHICKEN.toStore(userList[4]));
+
+        userList[0].registerManagerStore(storeList[0]);
+        userList[1].registerManagerStore(storeList[1]);
+        userList[2].registerManagerStore(storeList[2]);
+        userList[3].registerManagerStore(storeList[3]);
+        userList[4].registerManagerStore(storeList[4]);
+
         storeList[0].updatePartTimer(userList[5]);
         storeList[1].updatePartTimer(userList[7]);
     }
@@ -65,7 +70,11 @@ class UserFindQueryRepositoryImplTest extends RepositoryTest {
     @DisplayName("주어진 값이 이름에 포함되어 있는 매니저인 유저를 검색한다")
     void findManagersBySearchTypeName() {
         // when - then
-        List<FindManager> findManagers = userRepository.findManagersBySearchType(userList[4].getId(), SEARCH_TYPE_NAME, SEARCH_NAME);
+        List<FindManager> findManagers = userRepository.findManagersBySearchType(userList[0].getId(), SEARCH_TYPE_NAME, SEARCH_NAME);
+
+        System.out.println("************");
+        System.out.println(findManagers);
+        System.out.println("************");
 
         assertAll(
                 () -> assertThat(findManagers.size()).isEqualTo(1),

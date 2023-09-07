@@ -673,36 +673,36 @@ public class ProductFindApiControllerTest extends ControllerTest {
     }
 
     private List<SearchProductResponse> searchProductResponse() {
-        List<SearchProductResponse> searchProductResponseList = new ArrayList<>();
-        searchProductResponseList.add(new SearchProductResponse(4L, DURIAN.getName(), null));
-        searchProductResponseList.add(new SearchProductResponse(11L, BLUEBERRY.getName(), null));
-        searchProductResponseList.add(new SearchProductResponse(8L, CHERRY.getName(), null));
-        return searchProductResponseList;
+        return Stream.of(
+                        new SearchProductResponse(4L, DURIAN.getName(), null),
+                        new SearchProductResponse(11L, BLUEBERRY.getName(), null),
+                        new SearchProductResponse(8L, CHERRY.getName(), null))
+                .collect(Collectors.toList());
     }
 
     private List<GetTotalProductResponse> getTotalProductResponse() {
-        List<GetTotalProductResponse> getTotalProductResponseList = new ArrayList<>();
-        getTotalProductResponseList.add(new GetTotalProductResponse("Total", 16));
-        getTotalProductResponseList.add(new GetTotalProductResponse("Pass", 2));
-        getTotalProductResponseList.add(new GetTotalProductResponse("Close", 5));
-        getTotalProductResponseList.add(new GetTotalProductResponse("Lack", 5));
-        return getTotalProductResponseList;
+        return Stream.of(
+                        new GetTotalProductResponse("Total", 16),
+                        new GetTotalProductResponse("Pass", 2),
+                        new GetTotalProductResponse("Close", 5),
+                        new GetTotalProductResponse("Lack", 5))
+                .collect(Collectors.toList());
     }
 
     private List<SearchProductResponse> searchProductPageResponse() {
-        List<SearchProductResponse> searchProductResponseList = new ArrayList<>();
-        searchProductResponseList.add(new SearchProductResponse(16L, PERSIMMON.getName(), null));
-        searchProductResponseList.add(new SearchProductResponse(15L, TANGERINE.getName(), null));
-        searchProductResponseList.add(new SearchProductResponse(4L, DURIAN.getName(), null));
-        searchProductResponseList.add(new SearchProductResponse(3L, MANGO.getName(), null));
-        searchProductResponseList.add(new SearchProductResponse(9L, MELON.getName(), null));
-        searchProductResponseList.add(new SearchProductResponse(2L, BANANA.getName(), null));
-        searchProductResponseList.add(new SearchProductResponse(17L, PEAR.getName(), null));
-        searchProductResponseList.add(new SearchProductResponse(13L, PEACH.getName(), null));
-        searchProductResponseList.add(new SearchProductResponse(11L, BLUEBERRY.getName(), null));
-        searchProductResponseList.add(new SearchProductResponse(1L, APPLE.getName(), null));
-        searchProductResponseList.add(new SearchProductResponse(10L, WATERMELON.getName(), null));
-        searchProductResponseList.add(new SearchProductResponse(5L, ORANGE.getName(), null));
-        return searchProductResponseList;
+        return Stream.of(
+                        new SearchProductResponse(16L, PERSIMMON.getName(), null),
+                        new SearchProductResponse(15L, TANGERINE.getName(), null),
+                        new SearchProductResponse(4L, DURIAN.getName(), null),
+                        new SearchProductResponse(3L, MANGO.getName(), null),
+                        new SearchProductResponse(9L, MELON.getName(), null),
+                        new SearchProductResponse(2L, BANANA.getName(), null),
+                        new SearchProductResponse(17L, PEAR.getName(), null),
+                        new SearchProductResponse(13L, PEACH.getName(), null),
+                        new SearchProductResponse(11L, BLUEBERRY.getName(), null),
+                        new SearchProductResponse(1L, APPLE.getName(), null),
+                        new SearchProductResponse(10L, WATERMELON.getName(), null),
+                        new SearchProductResponse(5L, ORANGE.getName(), null))
+                .collect(Collectors.toList());
     }
 }

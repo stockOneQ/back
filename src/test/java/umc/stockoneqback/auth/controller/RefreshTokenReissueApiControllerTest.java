@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static umc.stockoneqback.fixture.TokenFixture.*;
 
 @DisplayName("Auth [Controller Layer] -> TokenReissueApiController 테스트")
-class TokenReissueApiControllerTest extends ControllerTest {
+class RefreshTokenReissueApiControllerTest extends ControllerTest {
     @Nested
     @DisplayName("토큰 재발급 API 테스트 [POST /api/token/reissue]")
     class reissueTokens {

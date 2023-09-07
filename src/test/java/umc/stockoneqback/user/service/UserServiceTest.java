@@ -157,7 +157,7 @@ class UserServiceTest extends ServiceTest {
         User expiredUser = userRepository.findById(user.getId()).orElseThrow();
         assertAll(
                 () -> assertThat(expiredUser.getStatus()).isEqualTo(Status.EXPIRED),
-                () -> assertThat(tokenRepository.findByUserId(user.getId()).isEmpty()).isTrue()
+                () -> assertThat(refreshTokenRedisRepository.findById(user.getId()).isEmpty()).isTrue()
         );
     }
 

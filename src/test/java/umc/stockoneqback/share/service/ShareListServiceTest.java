@@ -23,7 +23,6 @@ import umc.stockoneqback.user.domain.Password;
 import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.exception.UserErrorCode;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,13 +43,18 @@ class ShareListServiceTest extends ServiceTest {
     private User manager1, manager2, manager3;
     private User supervisor1, supervisor2;
     private User partTimer1;
+
     private Business business1, business2, business3;
+
     private Store store1;
+
     private final List<Share> shareList = new ArrayList<>();
     private final List<Business> businessList = new ArrayList<>();
+
     private static final String CATEGORY = "레시피";
     private static final String SEARCH_TYPE = "내용";
     private static final String SEARCH_WORD = "쿠키";
+
     private static final int PAGE = 0;
 
     @BeforeEach
@@ -58,20 +62,21 @@ class ShareListServiceTest extends ServiceTest {
         manager1 = userRepository.save(ANNE.toUser());
         manager2 = userRepository.save(SOPHIA.toUser());
         manager3 = userRepository.save(MIKE.toUser());
+        partTimer1 = userRepository.save((BOB.toUser()));
+
+        store1 = storeRepository.save(C_COFFEE.toStore(manager1));
+        partTimerRepository.save(PartTimer.createPartTimer(store1, partTimer1));
+
         supervisor1 = userRepository.save(WIZ.toUser());
         supervisor2 = userRepository.save(OLIVIA.toUser());
-        business1 = businessRepository.save(new Business(manager1, supervisor1));
-        businessList.add(business1);
-        business2 = businessRepository.save(new Business(manager2, supervisor1));
-        businessList.add(business2);
-        business3 = businessRepository.save(new Business(manager3, supervisor1));
-        businessList.add(business3);
 
-        partTimer1 = userRepository.save((BOB.toUser()));
-        store1 = storeRepository.save(C_COFFEE.toStore());
-        partTimerRepository.save(PartTimer.createPartTimer(store1, partTimer1));
-        store1.updateManager(manager2);
-        store1.updatePartTimer(partTimer1);
+        business1 = businessRepository.save(new Business(manager1, supervisor1));
+        business2 = businessRepository.save(new Business(manager2, supervisor1));
+        business3 = businessRepository.save(new Business(manager3, supervisor1));
+
+        businessList.add(business1);
+        businessList.add(business2);
+        businessList.add(business3);
 
         for (ShareFixture shareFixture : ShareFixture.values())
             shareList.add(shareFixture.toShare(business3));
@@ -130,7 +135,7 @@ class ShareListServiceTest extends ServiceTest {
 
         @Test
         @DisplayName("연결 되어있지 않은 비즈니스 관계라면 자료 글 목록 반환에 실패한다")
-        void throwBusinessNotFound() throws IOException {
+        void throwBusinessNotFound() {
             // when - then
             assertThatThrownBy(() -> shareListService.getShareList(supervisor2.getId(), business1.getId(), PAGE, CATEGORY, SEARCH_TYPE, SEARCH_WORD))
                     .isInstanceOf(BaseException.class)
@@ -139,16 +144,16 @@ class ShareListServiceTest extends ServiceTest {
 
         @Test
         @DisplayName("셀렉트박스에 없는 유저라면 자료 글 목록 반환에 실패한다")
-        void throwNotFilteredUser() throws IOException {
+        void throwNotFilteredUser() {
             // when - then
-            assertThatThrownBy(() -> shareListService.getShareList(partTimer1.getId(), business1.getId(), PAGE, CATEGORY, SEARCH_TYPE, SEARCH_WORD))
+            assertThatThrownBy(() -> shareListService.getShareList(partTimer1.getId(), business2.getId(), PAGE, CATEGORY, SEARCH_TYPE, SEARCH_WORD))
                     .isInstanceOf(BaseException.class)
                     .hasMessage(ShareErrorCode.NOT_FILTERED_USER.getMessage());
         }
 
         @Test
         @DisplayName("커넥트 - 자료 글 목록 반환에 성공한다")
-        void success() throws IOException {
+        void success() {
             // given - when
             CustomShareListPage<ShareList> shareLists = shareListService.getShareList(manager3.getId(), business3.getId(), PAGE, CATEGORY, SEARCH_TYPE, SEARCH_WORD);
 

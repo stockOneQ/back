@@ -19,8 +19,6 @@ import umc.stockoneqback.user.domain.User;
 import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.service.UserFindService;
 
-import java.io.IOException;
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -34,21 +32,17 @@ public class ShareListService {
         User user = userFindService.findById(userId);
         Role role = classifyUser(user);
 
-        switch (role) {
-            case MANAGER:
-                return businessRepository.findBusinessByManager(userId);
-            case PART_TIMER:
-                return businessRepository.findBusinessByPartTimer(userId);
-            case SUPERVISOR:
-                return businessRepository.findBusinessBySupervisor(userId);
-            default:
-                return null;
-        }
+        return switch (role) {
+            case MANAGER -> businessRepository.findBusinessByManager(userId);
+            case PART_TIMER -> businessRepository.findBusinessByPartTimer(userId);
+            case SUPERVISOR -> businessRepository.findBusinessBySupervisor(userId);
+            default -> null;
+        };
     }
 
     @Transactional
     public CustomShareListPage getShareList(Long userId, Long selectedBusinessId, int page, String category,
-                                            String searchType, String searchWord) throws IOException {
+                                            String searchType, String searchWord) {
         User user = userFindService.findById(userId);
         Role role = classifyUser(user);
 
@@ -89,7 +83,9 @@ public class ShareListService {
                 break;
             }
         }
-        if(!flag) throw BaseException.type(ShareErrorCode.NOT_FILTERED_USER);
+        if (!flag) {
+            throw BaseException.type(ShareErrorCode.NOT_FILTERED_USER);
+        }
     }
 
     private Role classifyUser(User user) {

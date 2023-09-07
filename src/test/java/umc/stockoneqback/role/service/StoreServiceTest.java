@@ -30,11 +30,13 @@ class StoreServiceTest extends ServiceTest {
 
     private static User manager1;
     private static User manager2;
+    private static User manager3;
 
     @BeforeEach
     void setup() {
         manager1 = userRepository.save(SOPHIA.toUser());
         manager2 = userRepository.save(ELLA.toUser());
+        manager3 = userRepository.save(ANNE.toUser());
     }
 
     @Nested
@@ -79,9 +81,9 @@ class StoreServiceTest extends ServiceTest {
     @DisplayName("가게 ID로 가게를 조회한다")
     void findById() {
         // given
-        Store store1 = A_PASTA.toStore();
-        Store store2 = B_CHICKEN.toStore();
-        Store store3 = D_PIZZA.toStore();
+        Store store1 = A_PASTA.toStore(manager1);
+        Store store2 = B_CHICKEN.toStore(manager2);
+        Store store3 = D_PIZZA.toStore(manager3);
 
         Long storeId1 = storeRepository.save(store1).getId();
         Long storeId2 = storeRepository.save(store2).getId();
@@ -114,9 +116,9 @@ class StoreServiceTest extends ServiceTest {
     @DisplayName("가게 이름으로 가게를 조회한다")
     void findByName() {
         // given
-        Store store1 = storeRepository.save(A_PASTA.toStore());
-        Store store2 = storeRepository.save(B_CHICKEN.toStore());
-        Store store3 = storeRepository.save(D_PIZZA.toStore());
+        Store store1 = storeRepository.save(A_PASTA.toStore(manager1));
+        Store store2 = storeRepository.save(B_CHICKEN.toStore(manager2));
+        Store store3 = storeRepository.save(D_PIZZA.toStore(manager3));
 
         // when
         Store findStore1 = storeService.findByName(A_PASTA.getName());

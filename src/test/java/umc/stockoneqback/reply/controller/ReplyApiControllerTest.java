@@ -214,6 +214,7 @@ public class ReplyApiControllerTest extends ControllerTest {
                             )
                     );
         }
+
         @Test
         @DisplayName("다른 사람의 대댓글은 수정할 수 없다")
         void throwExceptionByUserIsNotReplyWriter() throws Exception {
@@ -393,7 +394,7 @@ public class ReplyApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(ReplyErrorCode.USER_IS_NOT_REPLY_WRITER))
                     .when(replyService)
-                    .delete(anyLong(),anyLong());
+                    .delete(anyLong(), anyLong());
 
             // when
             final ReplyRequest request = createReplyRequest();

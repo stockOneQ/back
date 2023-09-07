@@ -31,17 +31,6 @@ class FriendInformationServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        storeList[0] = storeRepository.save(Z_YEONGTONG.toStore());
-        storeList[1] = storeRepository.save(Z_SIHEUNG.toStore());
-        storeList[2] = storeRepository.save(Y_YEONGTONG.toStore());
-        storeList[3] = storeRepository.save(A_PASTA.toStore());
-        storeList[4] = storeRepository.save(B_CHICKEN.toStore());
-        storeList[5] = storeRepository.save(C_COFFEE.toStore());
-        storeList[6] = storeRepository.save(D_PIZZA.toStore());
-        storeList[7] = storeRepository.save(E_CHINESE.toStore());
-        storeList[8] = storeRepository.save(F_COMPANY.toStore());
-        storeList[9] = storeRepository.save(G_TTEOKBOKKI.toStore());
-
         userList[0] = userRepository.save(SAEWOO.toUser());
         userList[1] = userRepository.save(ANNE.toUser());
         userList[2] = userRepository.save(WIZ.toUser());
@@ -53,9 +42,16 @@ class FriendInformationServiceTest extends ServiceTest {
         userList[8] = userRepository.save(MIKE.toUser());
         userList[9] = userRepository.save(OLIVIA.toUser());
 
-        for (int i = 0; i < 10; i++) {
-            storeList[i].updateManager(userList[i]);
-        }
+        storeList[0] = storeRepository.save(Z_YEONGTONG.toStore(userList[0]));
+        storeList[1] = storeRepository.save(Z_SIHEUNG.toStore(userList[1]));
+        storeList[2] = storeRepository.save(Y_YEONGTONG.toStore(userList[2]));
+        storeList[3] = storeRepository.save(A_PASTA.toStore(userList[3]));
+        storeList[4] = storeRepository.save(B_CHICKEN.toStore(userList[4]));
+        storeList[5] = storeRepository.save(C_COFFEE.toStore(userList[5]));
+        storeList[6] = storeRepository.save(D_PIZZA.toStore(userList[6]));
+        storeList[7] = storeRepository.save(E_CHINESE.toStore(userList[7]));
+        storeList[8] = storeRepository.save(F_COMPANY.toStore(userList[8]));
+        storeList[9] = storeRepository.save(G_TTEOKBOKKI.toStore(userList[9]));
     }
 
     @Test

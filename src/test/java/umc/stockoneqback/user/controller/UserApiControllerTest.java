@@ -137,7 +137,7 @@ class UserApiControllerTest extends ControllerTest {
                                             fieldWithPath("phoneNumber").description("전화번호"),
                                             fieldWithPath("storeName").description("가게 이름"),
                                             fieldWithPath("storeSector").description("가게 업종"),
-                                            fieldWithPath("storeAddress").description("가게 주소")                                    ),
+                                            fieldWithPath("storeAddress").description("가게 주소")),
                                     responseFields(
                                             fieldWithPath("status").description("HTTP 상태 코드"),
                                             fieldWithPath("errorCode").description("커스텀 예외 코드"),
@@ -192,7 +192,7 @@ class UserApiControllerTest extends ControllerTest {
                                             fieldWithPath("phoneNumber").description("전화번호"),
                                             fieldWithPath("storeName").description("가게 이름"),
                                             fieldWithPath("storeSector").description("가게 업종"),
-                                            fieldWithPath("storeAddress").description("가게 주소")                                    ),
+                                            fieldWithPath("storeAddress").description("가게 주소")),
                                     responseFields(
                                             fieldWithPath("status").description("HTTP 상태 코드"),
                                             fieldWithPath("errorCode").description("커스텀 예외 코드"),

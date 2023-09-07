@@ -37,15 +37,20 @@ public class CommentServiceTest extends ServiceTest {
 
     private User writer;
     private User not_writer;
+
     private Board board;
+
     private final Comment[] comments = new Comment[3];
+
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @BeforeEach
     void setup() {
         writer = userRepository.save(SAEWOO.toUser());
         not_writer = userRepository.save(ANNE.toUser());
+
         board = boardRepository.save(BOARD_0.toBoard(writer));
+
         comments[0] = commentRepository.save(COMMENT_0.toComment(writer, board));
         comments[1] = commentRepository.save(COMMENT_1.toComment(writer, board));
         comments[2] = commentRepository.save(COMMENT_2.toComment(writer, board));

@@ -36,8 +36,7 @@ public class UserAdminStaticServiceTest extends ServiceTest {
     );
 
     @BeforeEach
-    void setup(){
-        StaticFARedisRepository.deleteAll();
+    void setup() {
         for (int i = 0; i < questionList.size(); i++) {
             StaticFARedisRepository.save(StaticFA.builder()
                     .id(questionList.get(i))

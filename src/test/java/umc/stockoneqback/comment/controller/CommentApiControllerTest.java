@@ -179,7 +179,7 @@ public class CommentApiControllerTest extends ControllerTest {
                             request.setMethod("PATCH");
                             return request;
                         }
-            });
+                    });
 
 
             // then
@@ -408,7 +408,7 @@ public class CommentApiControllerTest extends ControllerTest {
             // given
             doThrow(BaseException.type(CommentErrorCode.USER_IS_NOT_COMMENT_WRITER))
                     .when(commentService)
-                    .delete(anyLong(),anyLong());
+                    .delete(anyLong(), anyLong());
 
             // when
             final CommentRequest request = createCommentRequest();

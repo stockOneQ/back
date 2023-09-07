@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import umc.stockoneqback.common.ServiceTest;
-import umc.stockoneqback.fixture.StoreFixture;
 import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.role.domain.store.Store;
 import umc.stockoneqback.user.domain.Email;
@@ -18,6 +17,7 @@ import umc.stockoneqback.user.service.dto.response.UserInformationResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static umc.stockoneqback.fixture.StoreFixture.A_PASTA;
 import static umc.stockoneqback.fixture.UserFixture.MIKE;
 
 @DisplayName("User [Service Layer] -> UserInformationService 테스트")
@@ -29,8 +29,8 @@ class UserInformationServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        Store store = storeRepository.save(StoreFixture.A_PASTA.toStore());
         user = userRepository.save(MIKE.toUser());
+        Store store = storeRepository.save(A_PASTA.toStore(user));
         user.registerManagerStore(store);
     }
 

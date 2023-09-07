@@ -25,14 +25,15 @@ class CommentListServiceTest extends ServiceTest {
 
     private final Comment[] commentList = new Comment[15];
     private final Reply[] replyList = new Reply[10];
+
     private User writer;
     private Board board;
+
     private static final int PAGE = 0;
     private static final int PAGE_SIZE = 20; // 대댓글 포함 20개
 
     @BeforeEach
     void setUp() {
-        boardRepository.deleteAll();
         writer = userRepository.save(ANNE.toUser());
         board = boardRepository.save(BOARD_0.toBoard(writer));
 
@@ -62,7 +63,6 @@ class CommentListServiceTest extends ServiceTest {
         replyList[7] = replyRepository.save(REPLY_7.toReply(writer, commentList[0]));
         replyList[8] = replyRepository.save(REPLY_8.toReply(writer, commentList[0]));
         replyList[9] = replyRepository.save(REPLY_9.toReply(writer, commentList[0]));
-
     }
 
     @AfterEach

@@ -21,16 +21,18 @@ public class FriendRepositoryTest extends RepositoryTest {
     private FriendRepository friendRepository;
 
     private User user;
-    private User friend1;
-    private User friend2;
+    private User friendUser1;
+    private User friendUser2;
 
     @BeforeEach
     void setup() {
         user = userRepository.save(ANNE.toUser());
-        friend1 = userRepository.save(ELLA.toUser());
-        friend2 = userRepository.save(MIKE.toUser());
-        friendRepository.save(Friend.createFriend(user, friend1, RelationStatus.ACCEPT));
-        friendRepository.save(Friend.createFriend(user, friend2, RelationStatus.ACCEPT));
+
+        friendUser1 = userRepository.save(ELLA.toUser());
+        friendUser2 = userRepository.save(MIKE.toUser());
+
+        friendRepository.save(Friend.createFriend(user, friendUser1, RelationStatus.ACCEPT));
+        friendRepository.save(Friend.createFriend(user, friendUser2, RelationStatus.ACCEPT));
     }
 
     @Test

@@ -28,7 +28,6 @@ public class EmbeddedRedisConfig {
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(host, port);
-        // 패스워드가 있는경우
         // lettuceConnectionFactory.setPassword("");
         return lettuceConnectionFactory;
     }

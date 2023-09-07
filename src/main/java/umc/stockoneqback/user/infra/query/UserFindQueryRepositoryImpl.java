@@ -5,10 +5,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import umc.stockoneqback.global.base.Status;
-import umc.stockoneqback.global.exception.BaseException;
 import umc.stockoneqback.user.domain.Role;
 import umc.stockoneqback.user.domain.search.UserSearchType;
-import umc.stockoneqback.user.exception.UserErrorCode;
 import umc.stockoneqback.user.infra.query.dto.FindManager;
 import umc.stockoneqback.user.infra.query.dto.QFindManager;
 
@@ -30,13 +28,12 @@ public class UserFindQueryRepositoryImpl implements UserFindQueryRepository {
                 .orderBy(user.id.asc())
                 .fetch();
     }
-      
+
     private BooleanExpression search(UserSearchType userSearchType, String searchWord) {
         return switch (userSearchType) {
-                case NAME -> user.name.contains(searchWord);
-                case STORE -> user.managerStore.name.contains(searchWord);
-                case ADDRESS -> user.managerStore.address.contains(searchWord);
-                default -> throw BaseException.type(UserErrorCode.INPUT_VALUE_REQUIRED);
+            case NAME -> user.name.contains(searchWord);
+            case STORE -> user.managerStore.name.contains(searchWord);
+            case ADDRESS -> user.managerStore.address.contains(searchWord);
         };
     }
 }

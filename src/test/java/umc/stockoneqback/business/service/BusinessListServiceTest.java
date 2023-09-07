@@ -23,8 +23,10 @@ class BusinessListServiceTest extends ServiceTest {
     private BusinessListService businessListService;
 
     private static Company company;
+
     private final User[] managerList = new User[3];
     private final User[] supervisorList = new User[3];
+
     private final Store[] storeList = new Store[3];
     private static final String SEARCH = "위즈";
 
@@ -38,15 +40,16 @@ class BusinessListServiceTest extends ServiceTest {
         supervisorList[1] = userRepository.save(JACK.toUser());
         supervisorList[2] = userRepository.save(OLIVIA.toUser());
 
-        storeList[0] = storeRepository.save(Z_YEONGTONG.toStore());
-        storeList[1] = storeRepository.save(Z_SIHEUNG.toStore());
-        storeList[2] = storeRepository.save(Y_YEONGTONG.toStore());
+        storeList[0] = storeRepository.save(Z_YEONGTONG.toStore(managerList[0]));
+        storeList[1] = storeRepository.save(Z_SIHEUNG.toStore(managerList[1]));
+        storeList[2] = storeRepository.save(Y_YEONGTONG.toStore(managerList[2]));
 
         company = companyRepository.save(new Company("CafeCompany", "카페", "QWE987"));
+        supervisorList[0].registerCompany(company);
+        supervisorList[1].registerCompany(company);
+        supervisorList[2].registerCompany(company);
 
         for (int i = 0; i < 3; i++) {
-            storeList[i].updateManager(managerList[i]);
-            supervisorList[i].registerCompany(company);
             businessRepository.save(new Business(managerList[i], supervisorList[0]));
             Thread.sleep(1);
             businessRepository.save(new Business(managerList[i], supervisorList[1]));

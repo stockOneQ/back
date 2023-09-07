@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import umc.stockoneqback.auth.domain.Token;
+import umc.stockoneqback.auth.domain.RefreshToken;
 import umc.stockoneqback.auth.exception.AuthErrorCode;
 import umc.stockoneqback.auth.service.dto.response.TokenResponse;
 import umc.stockoneqback.auth.utils.JwtTokenProvider;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static umc.stockoneqback.fixture.TokenFixture.FCM_TOKEN;
 
 @DisplayName("Auth [Service Layer] -> TokenReissueService 테스트")
-class TokenReissueServiceTest extends ServiceTest {
+class RefreshTokenReissueServiceTest extends ServiceTest {
     @Autowired
     private TokenReissueService tokenReissueService;
 
@@ -49,7 +49,7 @@ class TokenReissueServiceTest extends ServiceTest {
         @DisplayName("RefreshToken을 통해서 AccessToken과 RefreshToken을 재발급받는데 성공한다")
         void success() {
             // given
-            tokenRepository.save(Token.createToken(USER_ID, refreshToken));
+            refreshTokenRedisRepository.save(RefreshToken.createRefreshToken(USER_ID, refreshToken));
 
             // when
             TokenResponse response = tokenReissueService.reissueTokens(USER_ID, refreshToken, FCM_TOKEN);

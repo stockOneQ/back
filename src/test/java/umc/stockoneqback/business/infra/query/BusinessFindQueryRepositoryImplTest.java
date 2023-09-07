@@ -25,29 +25,32 @@ import static umc.stockoneqback.fixture.UserFixture.*;
 class BusinessFindQueryRepositoryImplTest extends RepositoryTest {
     @Autowired
     private BusinessRepository businessRepository;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private PartTimerRepository partTimerRepository;
+
     @Autowired
     private StoreRepository storeRepository;
 
     private User manager;
     private User supervisor;
     private User partTimer;
+
     private Store store;
-    private Business business;
 
     @BeforeEach
     void setUp() {
         manager = userRepository.save(ELLA.toUser());
-        supervisor = userRepository.save(JACK.toUser());
+        store = storeRepository.save(Store.createStore(G_TTEOKBOKKI.getName(), G_TTEOKBOKKI.getSector(), G_TTEOKBOKKI.getAddress(), manager));
+
         partTimer = userRepository.save((BOB.toUser()));
-        store = storeRepository.save(G_TTEOKBOKKI.toStore());
         partTimerRepository.save(PartTimer.createPartTimer(store, partTimer));
-        store.updateManager(manager);
-        store.updatePartTimer(partTimer);
-        business = businessRepository.save(new Business(manager, supervisor));
+
+        supervisor = userRepository.save(JACK.toUser());
+        Business business = businessRepository.save(new Business(manager, supervisor));
     }
 
     @Test

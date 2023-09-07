@@ -39,13 +39,11 @@ public class FriendProductServiceTest extends ServiceTest {
 
     @BeforeEach
     void setup() {
-        store1 = storeRepository.save(Z_YEONGTONG.toStore());
-        store2 = storeRepository.save(Z_SIHEUNG.toStore());
-
         user1 = userRepository.save(UserFixture.SAEWOO.toUser());
         user2 = userRepository.save(UserFixture.JACK.toUser());
-        store1.updateManager(user1);
-        store2.updateManager(user2);
+
+        store1 = storeRepository.save(Z_YEONGTONG.toStore(user1));
+        store2 = storeRepository.save(Z_SIHEUNG.toStore(user2));
 
         for (int i = 0; i < productFixtures.length; i++)
             productRepository.save(productFixtures[i].toProduct(store1));

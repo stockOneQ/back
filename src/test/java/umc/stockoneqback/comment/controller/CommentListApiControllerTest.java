@@ -38,7 +38,6 @@ import static umc.stockoneqback.fixture.UserFixture.ELLA;
 
 @DisplayName("Comment [Controller Layer] -> CommentListApiController 테스트")
 class CommentListApiControllerTest extends ControllerTest {
-
     @Nested
     @DisplayName("댓글 목록 조회 API [GET /api/comments/{boardId}]")
     class getCommentList {

@@ -16,7 +16,6 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
     @Override
     public SecurityContext createSecurityContext(WithMockCustomUser customUser) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-
         CustomUserDetails customUserDetails = new CustomUserDetails(new UserDetailsDto(1L, SAEWOO.getLoginId(), SAEWOO.getPassword(), SAEWOO.getName(), List.of(customUser.role())));
         Authentication authentication = new UsernamePasswordAuthenticationToken(customUserDetails, "", customUserDetails.getAuthorities());
         context.setAuthentication(authentication);
